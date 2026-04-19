@@ -47,7 +47,7 @@ const palette: PaletteOptions = {
 
 const appTheme = createTheme(
   {
-    direction: 'rtl',
+    direction: 'ltr',
     typography: {
       fontFamily: fontStack,
     },
