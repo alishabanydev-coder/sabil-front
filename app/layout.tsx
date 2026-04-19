@@ -19,6 +19,14 @@ export const metadata: Metadata = {
     "project breakdowns",
     "kids blog",
   ],
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/logo32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/icon-192.png',
+  },
   authors: [{ name: "Sabil Group", url: "https://sabilkids.com" }],
   creator: "Sabil Group",
   publisher: "Sabil Kids",

@@ -1,7 +1,7 @@
-import Image from "next/image";
+import { Stack, Typography } from "@mui/material";
 
 export default function Home() {
   return (
-   <> hi </>
+   <Typography color=""> hi </Typography>
   );
 }
