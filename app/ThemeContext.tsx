@@ -1,8 +1,13 @@
-'use client';
+"use client";
 
-import React, { createContext, Dispatch, SetStateAction, useState } from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useState,
+} from "react";
 
-export type PaletteType = 'default';
+export type PaletteType = "default";
 
 interface ThemeContextType {
   palette: PaletteType;
@@ -12,7 +17,7 @@ interface ThemeContextType {
 export const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [palette, setPalette] = useState<PaletteType>('default');
+  const [palette, setPalette] = useState<PaletteType>("default");
 
   return (
     <ThemeContext.Provider value={{ palette, setPalette }}>

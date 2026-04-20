@@ -3,7 +3,7 @@ import { Stack, Typography } from "@mui/material";
 
 export default function Home() {
   return (
-    <Stack sx={{ width: '100%' }}>
+    <Stack sx={{ width: "100%" }}>
       <Banner />
     </Stack>
   );
