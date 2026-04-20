@@ -19,7 +19,7 @@ export const PrimaryButton = styled(
 
   "&:hover": {
     transform: "translateY(-1px)",
-    boxShadow: "0px 3px 5px rgba(0, 0, 0, 0.7)",
+    boxShadow: "0px 3px 5px rgba(0, 0, 3, 0.7)",
     transition: "all .2s ease",
   },
 }));
