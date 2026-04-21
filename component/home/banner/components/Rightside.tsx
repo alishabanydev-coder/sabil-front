@@ -1,8 +1,8 @@
 "use client";
 
-import { alpha, Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -24,7 +24,11 @@ const slides = [
   },
 ];
 
-const Rightside = () => {
+type RightsideProps = {
+  onSwiperInit?: (swiper: any) => void;
+};
+
+const Rightside = ({ onSwiperInit }: RightsideProps) => {
   return (
     <Box
       sx={{
@@ -47,6 +51,7 @@ const Rightside = () => {
       >
         <Swiper
           modules={[Autoplay]}
+          onSwiper={onSwiperInit}
           pagination={{ clickable: true }}
           autoplay={{ delay: 3500, disableOnInteraction: false }}
           loop

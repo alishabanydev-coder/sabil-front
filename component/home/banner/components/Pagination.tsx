@@ -2,10 +2,16 @@ import { Box, IconButton, Stack } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 
-const Pagination = () => {
+type PaginationProps = {
+  onNext?: () => void;
+  onPrev?: () => void;
+};
+
+const Pagination = ({ onNext, onPrev }: PaginationProps) => {
   return (
     <Stack direction="row" sx={{ gap: 1 }}>
       <IconButton
+        onClick={onNext}
         sx={{
           width: 72,
           height: 40,
@@ -72,6 +78,7 @@ const Pagination = () => {
         </Box>
       </IconButton>
       <IconButton
+        onClick={onPrev}
         sx={{
           width: 40,
           height: 40,

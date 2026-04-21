@@ -38,7 +38,7 @@ const OnSubscribtion = () => {
       <Stack
         direction="row"
         sx={{
-          gap: 5,
+          gap: 6,
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -49,6 +49,8 @@ const OnSubscribtion = () => {
             src={item.src}
             alt={item.name}
             style={{
+              width: "15%",
+              height: "auto",
               cursor: "pointer",
               filter: selectedProject === item.id ? "none" : "grayscale(100%)",
               transition: "all 0.3s ease",
