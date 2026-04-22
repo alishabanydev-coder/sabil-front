@@ -28,7 +28,7 @@ const OnSubscribtion = () => {
       }}
     >
       <Typography
-        sx={{ fontSize: "30px", fontWeight: "bold", color: "primary.main" }}
+        sx={{ fontSize: 36, fontWeight: "bold", color: "primary.main" }}
       >
         ON SUBSCRIBTION
       </Typography>
