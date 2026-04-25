@@ -32,7 +32,15 @@ const OnSubscribtion = () => {
       >
         ON SUBSCRIBTION
       </Typography>
-      <Typography sx={{ color: "secondary.main", fontSize: 14 }}>
+      <Typography
+        sx={{
+          color: "secondary.main",
+          fontSize: 14,
+          fontFamily: "Namecat",
+          letterSpacing: 1.2,
+          textdecoreation: "uppercase",
+        }}
+      >
         A WHOLE WORLD OF AN AMAZING FEATURE AND BENEFITS FOR YOUR FAMILY
       </Typography>
       <Stack

@@ -68,10 +68,15 @@ const WatchUs = () => {
               transition: "transform 300ms ease, opacity 300ms ease",
               boxShadow: "0 4px 18px rgba(0,0,0,0.9)",
               borderRadius: "25px",
+              scale: 0.9,
+            },
+            ".play-button-wrap": {
+              display: "none",
             },
             ".swiper-slide-active .watch-us-card": {
-              transition: "transform 300ms ease, opacity 300ms ease",
               transitionDelay: "100ms",
+              scale: 1,
+              transition: "all 360ms ease, opacity 300ms ease",
               ".play-button-wrap": {
                 position: "absolute",
                 bottom: -28,
@@ -121,11 +126,11 @@ const WatchUs = () => {
         >
           <Swiper
             modules={[Autoplay]}
-            slidesPerView={4}
+            slidesPerView={3.5}
             loop
             centeredSlides
             autoplay={{ delay: 3500, disableOnInteraction: false }}
-            spaceBetween={30}
+            spaceBetween={5}
             style={{
               width: "100%",
               height: "100%",
@@ -140,7 +145,7 @@ const WatchUs = () => {
                   sx={{
                     position: "relative",
                     width: "100%",
-                    aspectRatio: "16 / 9",
+                    aspectRatio: "16 / 10",
                   }}
                 >
                   <Image
