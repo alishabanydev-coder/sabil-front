@@ -15,7 +15,7 @@ const Banner = () => {
   const handlePrev = () => bannerSwiperRef.current?.slidePrev();
 
   return (
-    <Stack sx={{ position: "relative", width: "100%", aspectRatio: "16 / 6" }}>
+    <Stack sx={{ position: "relative", width: "100%", aspectRatio: "16 / 6.5" }}>
       <Image src={banner} alt="some image" fill style={{ objectFit: "fill" }} />
       <Leftside />
       <Rightside onSwiperInit={(swiper) => (bannerSwiperRef.current = swiper)} />

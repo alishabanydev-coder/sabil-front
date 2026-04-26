@@ -7,10 +7,11 @@ import WatchUs from "@/component/home/watchUs/WatchUs";
 import PeopleOpinion from "@/component/home/peopleOpinion/PeopleOpinion";
 import NewsFromUs from "@/component/home/newsFromUs/NewsFromUs";
 import FollowUs from "@/component/home/followUs/FollowUs";
+import LetUsCallYou from "@/component/home/letUsCallYou/LetUsCallYou";
 
 export default function Home() {
   return (
-    <Stack sx={{ width: "100%", pb: 10 }}>
+    <Stack sx={{ width: "100%" }}>
       <Banner />
       <OnSubscribtion />
       <Catalogue />
@@ -19,6 +20,7 @@ export default function Home() {
       <PeopleOpinion />
       <NewsFromUs />
       <FollowUs />
+      <LetUsCallYou />
     </Stack>
   );
 }

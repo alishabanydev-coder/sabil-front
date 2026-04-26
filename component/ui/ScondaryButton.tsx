@@ -2,17 +2,17 @@
 
 import { Button, ButtonProps, styled } from "@mui/material";
 
-export const PrimaryButton = styled(
+export const ScondaryButton = styled(
   ({ children, disableRipple, ...otherProps }: ButtonProps) => (
     <Button disableRipple={true} {...otherProps}>
       {children}
     </Button>
   )
 )(({ theme }) => ({
-  background: theme.palette.primary.main,
+  background: theme.palette.warning.main,
   borderRadius: 50,
-  border: `5px solid ${theme.palette.secondary.main}`,
-  color: theme.palette.warning.main,
+  border: `5px solid #5e92fc`, //new color
+  color: theme.palette.primary.main,
   paddingRight: 25,
   paddingLeft: 25,
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.9)",
