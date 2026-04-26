@@ -119,7 +119,7 @@ export default function Footer() {
         direction="row"
         sx={{
           position: "absolute",
-          bottom: 20,
+          bottom: 35,
           left: "40%",
           alignItems: "center",
           gap: 1,
