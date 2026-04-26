@@ -28,7 +28,7 @@ export default function Footer() {
     <Stack sx={{ position: "relative", width: "100%", aspectRatio: "16 / 5" }}>
       <Image src={footer} alt="some image" fill style={{ objectFit: "fill" }} />
 
-      <Stack sx={{ position: "absolute", top: "-55%", left: "5%" }}>
+      <Stack sx={{ position: "absolute", top: "-40%", left: "5%" }}>
         <Stack sx={{ position: "relative", width: 260, height: 414 }}>
           <Image
             src={Kid}
