@@ -15,6 +15,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useMemo, useState } from "react";
 import Admins from "./components/Admins";
+import Projects from "./components/Projects";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -38,21 +39,33 @@ const allTabs = [
   },
   { id: 3, label: "Blog", title: "Blog", permissionKey: "blog" },
   { id: 4, label: "Comments", title: "Comments", permissionKey: "comments" },
-  { id: 5, label: "Projects", title: "Projects", permissionKey: "projects" },
+  {
+    id: 5,
+    label: "Projects",
+    title: "Projects",
+    permissionKey: "projects",
+    component: <Projects />,
+  },
   {
     id: 6,
+    label: "Channels",
+    title: "Channels",
+    permissionKey: "users",
+  },
+  {
+    id: 7,
     label: "Users (Supporters)",
     title: "Users / Supporters",
     permissionKey: "users",
   },
   {
-    id: 7,
+    id: 8,
     label: "Social Media",
     title: "Social Media",
     permissionKey: "socialMedia",
   },
   {
-    id: 8,
+    id: 9,
     label: "Admins",
     title: "Admins",
     permissionKey: "admins",

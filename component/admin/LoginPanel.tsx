@@ -20,17 +20,6 @@ type Props = {
   setIsValid: (value: boolean) => void;
 };
 
-/** Theme fonts are display faces; use a normal UI font in inputs so mixed case is visible. */
-const loginTextFieldSx = {
-  direction: "ltr" as const,
-  textAlign: "right" as const,
-  "& .MuiOutlinedInput-input": {
-    fontFamily:
-      'system-ui, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif',
-    textTransform: "none" as const,
-  },
-};
-
 export default function LoginPanel({ setIsValid }: Props) {
   const theme = useTheme();
   const [userName, setUserName] = useState("");
@@ -280,7 +269,7 @@ export default function LoginPanel({ setIsValid }: Props) {
             fullWidth
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            sx={loginTextFieldSx}
+            sx={{ direction: "ltr" }}
             slotProps={{
               htmlInput: {
                 autoCapitalize: "off",
@@ -297,7 +286,7 @@ export default function LoginPanel({ setIsValid }: Props) {
             fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            sx={loginTextFieldSx}
+            sx={{ direction: "ltr" }}
             slotProps={{
               htmlInput: {
                 autoCapitalize: "off",
@@ -339,9 +328,17 @@ export default function LoginPanel({ setIsValid }: Props) {
             color="primary"
             fullWidth
             type="submit"
-            startIcon={loading ? <CircularProgress size={22} color="inherit" /> : null}
+            startIcon={
+              loading ? <CircularProgress size={22} color="inherit" /> : null
+            }
             disabled={loading}
-            sx={{ mt: 1, height: 45, fontFamily: "Namecat", fontSize: 16, letterSpacing: 1.4 }}
+            sx={{
+              mt: 1,
+              height: 45,
+              fontFamily: "Namecat",
+              fontSize: 16,
+              letterSpacing: 1.4,
+            }}
           >
             Login
           </Button>

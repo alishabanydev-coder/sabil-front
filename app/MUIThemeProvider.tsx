@@ -13,10 +13,10 @@ import { faIR as DataTableFa } from "@mui/x-data-grid/locales";
 import { faIR as DateFaIR } from "@mui/x-date-pickers/locales";
 
 const fontStack = [
+  "system-ui",
   '"Bhel Puri"',
   '"Namecat"',
   '"Arco"',
-  "system-ui",
   "sans-serif",
 ].join(", ");
 
