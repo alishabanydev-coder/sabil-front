@@ -19,6 +19,7 @@ import {
   fetchAdmins,
   updateAdmin,
 } from "../services/adminsApi";
+import { fetchProjects } from "../services/projectsApi";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 
@@ -52,8 +53,22 @@ type AdminRecord = {
   userName?: string;
   name?: string;
   role?: string;
-  permissions?: Array<{ tab?: string }>;
+  permissions?: Array<{ tab?: string; projectIds?: Array<string | ProjectRecord> }>;
 };
+
+type ProjectRecord = {
+  _id?: string;
+  id?: string;
+  name?: string;
+};
+
+function getRecordId(record: { _id?: string; id?: string } | string) {
+  return typeof record === "string" ? record : record._id || record.id || "";
+}
+
+function getProjectName(projects: ProjectRecord[], projectId: string) {
+  return projects.find((project) => getRecordId(project) === projectId)?.name;
+}
 
 const Admins = () => {
   const firstFieldRef = useRef<HTMLInputElement>(null);
@@ -64,12 +79,14 @@ const Admins = () => {
   const [adminPermissions, setAdminPermissions] = useState<PermissionTabKey[]>(
     []
   );
+  const [adminProjectIds, setAdminProjectIds] = useState<string[]>([]);
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingAdminId, setEditingAdminId] = useState("");
   const [admins, setAdmins] = useState<AdminRecord[]>([]);
+  const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [loadingAdmins, setLoadingAdmins] = useState(false);
 
   const loadAdmins = useCallback(async () => {
@@ -79,6 +96,14 @@ const Admins = () => {
 
     if (result.ok) {
       setAdmins(result.admins);
+    }
+  }, []);
+
+  const loadProjects = useCallback(async () => {
+    const result = await fetchProjects();
+
+    if (result.ok) {
+      setProjects(result.projects);
     }
   }, []);
 
@@ -97,6 +122,7 @@ const Admins = () => {
     setAdminPassword("");
     setAdminRole("admin");
     setAdminPermissions([]);
+    setAdminProjectIds([]);
     setFormError("");
     setIsEditing(false);
     setEditingAdminId("");
@@ -127,6 +153,11 @@ const Admins = () => {
           Boolean(tab) &&
           (PERMISSION_TAB_KEYS as readonly string[]).includes(tab as string)
       );
+    const nextProjectIds =
+      (admin.permissions || [])
+        .find((permission) => permission.tab === "projects")
+        ?.projectIds?.map(getRecordId)
+        .filter(Boolean) || [];
 
     setFormError("");
     setFormSuccess("");
@@ -135,6 +166,7 @@ const Admins = () => {
     setAdminPassword("");
     setAdminRole(nextRole);
     setAdminPermissions(nextPermissions);
+    setAdminProjectIds(nextProjectIds);
     setIsEditing(true);
     setIsFormOpen(true);
   };
@@ -168,6 +200,14 @@ const Admins = () => {
         );
         return;
       }
+
+      if (
+        adminPermissions.includes("projects") &&
+        adminProjectIds.length === 0
+      ) {
+        setFormError("Select at least one project for project access.");
+        return;
+      }
     }
 
     const permissions =
@@ -178,7 +218,7 @@ const Admins = () => {
             canCreate: true,
             canUpdate: true,
             canDelete: true,
-            projectIds: [],
+            projectIds: tab === "projects" ? adminProjectIds : [],
           }))
         : undefined;
 
@@ -243,6 +283,10 @@ const Admins = () => {
   useEffect(() => {
     loadAdmins();
   }, [formSuccess]);
+
+  useEffect(() => {
+    loadProjects();
+  }, [loadProjects]);
 
   const disabled = !isFormOpen;
 
@@ -382,6 +426,55 @@ const Admins = () => {
               ))}
             </TextField>
           </Stack>
+          {adminRole === "admin" && adminPermissions.includes("projects") && (
+            <Stack
+              direction="row"
+              sx={{ justifyContent: "space-between", alignItems: "center" }}
+            >
+              <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
+                Project access:
+              </Typography>
+              <TextField
+                variant="standard"
+                select
+                value={adminProjectIds}
+                disabled={disabled}
+                onChange={(e) =>
+                  setAdminProjectIds(e.target.value as unknown as string[])
+                }
+                slotProps={{
+                  select: {
+                    multiple: true,
+                    renderValue: (selected) =>
+                      (selected as string[])
+                        .map(
+                          (projectId) =>
+                            projects.find(
+                              (project) => getRecordId(project) === projectId
+                            )?.name || projectId
+                        )
+                        .join(", "),
+                  },
+                }}
+                helperText="Only selected projects will be visible/editable for this admin."
+              >
+                {projects.length === 0 ? (
+                  <MenuItem disabled>No projects uploaded yet</MenuItem>
+                ) : (
+                  projects.map((project) => {
+                    const projectId = getRecordId(project);
+
+                    return (
+                      <MenuItem key={projectId} value={projectId}>
+                        <Checkbox checked={adminProjectIds.includes(projectId)} />
+                        <ListItemText primary={project.name || projectId} />
+                      </MenuItem>
+                    );
+                  })
+                )}
+              </TextField>
+            </Stack>
+          )}
           {isFormOpen && (
             <Stack
               direction="row"
@@ -516,20 +609,31 @@ const Admins = () => {
                     <Chip size="small" label="Full access" variant="outlined" />
                   ) : (
                     (admin.permissions || [])
-                      .map((permission) => permission.tab)
-                      .filter(Boolean)
-                      .map((tab) => (
-                        <Chip
-                          key={`${admin._id || admin.id || admin.userName}-${tab}`}
-                          size="small"
-                          label={
-                            PERMISSION_TAB_LABELS[tab as PermissionTabKey] ||
-                            tab
-                          }
-                          variant="outlined"
-                          color="primary"
-                        />
-                      ))
+                      .filter((permission) => permission.tab)
+                      .map((permission) => {
+                        const tab = permission.tab as PermissionTabKey;
+                        const projectNames = (permission.projectIds || [])
+                          .map(getRecordId)
+                          .filter(Boolean)
+                          .map(
+                            (projectId) =>
+                              getProjectName(projects, projectId) || projectId
+                          );
+                        const label =
+                          tab === "projects" && projectNames.length > 0
+                            ? `Projects: ${projectNames.join(", ")}`
+                            : PERMISSION_TAB_LABELS[tab] || permission.tab;
+
+                        return (
+                          <Chip
+                            key={`${admin._id || admin.id || admin.userName}-${permission.tab}`}
+                            size="small"
+                            label={label}
+                            variant="outlined"
+                            color="primary"
+                          />
+                        );
+                      })
                   )}
                 </Stack>
               </Stack>

@@ -1,3 +1,5 @@
+import { handleExpiredAdminSession } from "./adminSession";
+
 const API_BASE =
   (typeof process !== "undefined" &&
     process.env?.NEXT_PUBLIC_ADMIN_API_URL) ||
@@ -30,6 +32,8 @@ export async function fetchProjects({ signal } = {}) {
   const data = await readJson(response);
 
   if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
     return {
       ok: false,
       projects: [],
@@ -56,6 +60,8 @@ export async function createProject(body, { signal } = {}) {
   const data = await readJson(response);
 
   if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
     return {
       ok: false,
       project: null,
@@ -82,6 +88,8 @@ export async function updateProject(id, body, { signal } = {}) {
   const data = await readJson(response);
 
   if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
     return {
       ok: false,
       project: null,
@@ -107,6 +115,8 @@ export async function deleteProject(id, { signal } = {}) {
   const data = await readJson(response);
 
   if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
     return {
       ok: false,
       message: data?.message || "Failed to delete project.",

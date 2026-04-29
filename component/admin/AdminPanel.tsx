@@ -13,9 +13,14 @@ import {
   useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Admins from "./components/Admins";
 import Projects from "./components/Projects";
+import {
+  ADMIN_SESSION_EXPIRED_EVENT,
+  clearAdminSession,
+} from "./services/adminSession";
+import Channels from "./components/Channels";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -51,6 +56,7 @@ const allTabs = [
     label: "Channels",
     title: "Channels",
     permissionKey: "users",
+    component: <Channels />,
   },
   {
     id: 7,
@@ -84,7 +90,11 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+      {value === index && (
+        <Box sx={{ px: 3, py: 2, height: "calc(100vh - 180px)" }}>
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
@@ -96,33 +106,37 @@ type AdminPanelProps = {
 const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   const theme = useTheme();
   const [value, setValue] = useState<number>(0);
-  const [adminName] = useState(() => {
-    if (typeof window === "undefined") {
-      return "ادمین";
-    }
+  const [adminName, setAdminName] = useState("ادمین");
+  const [adminRole, setAdminRole] = useState("");
+  const [permissions, setPermissions] = useState<
+    Array<{ tab?: string; canRead?: boolean }>
+  >([]);
 
-    return localStorage.getItem("name") || "ادمین";
-  });
-  const [adminRole] = useState(() => {
-    if (typeof window === "undefined") {
-      return "";
-    }
+  useEffect(() => {
+    setAdminName(localStorage.getItem("name") || "ادمین");
+    setAdminRole(localStorage.getItem("role") || "");
 
-    return localStorage.getItem("role") || "";
-  });
-  const [permissions] = useState<Array<{ tab?: string; canRead?: boolean }>>(
-    () => {
-      if (typeof window === "undefined") {
-        return [];
-      }
-
-      try {
-        return JSON.parse(localStorage.getItem("permissions") || "[]");
-      } catch {
-        return [];
-      }
+    try {
+      setPermissions(JSON.parse(localStorage.getItem("permissions") || "[]"));
+    } catch {
+      setPermissions([]);
     }
-  );
+  }, []);
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      onLogout();
+    };
+
+    window.addEventListener(ADMIN_SESSION_EXPIRED_EVENT, handleSessionExpired);
+
+    return () => {
+      window.removeEventListener(
+        ADMIN_SESSION_EXPIRED_EVENT,
+        handleSessionExpired
+      );
+    };
+  }, [onLogout]);
 
   const visibleTabs = useMemo(() => {
     if (adminRole === "super_admin") {
@@ -144,10 +158,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("permissions");
-    localStorage.removeItem("role");
-    localStorage.removeItem("name");
+    clearAdminSession();
     onLogout();
   };
 
@@ -168,6 +179,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
         direction="row"
         sx={{
           minHeight: 120,
+          maxHeight: 120,
           position: "relative",
           width: "100%",
           px: 5,
@@ -182,7 +194,6 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
           component="div"
           sx={{
             left: 0,
-            minHeight: 200,
             pointerEvents: "none",
             position: "absolute",
             right: 0,
@@ -195,7 +206,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
           <svg
             width="100%"
             height="100%"
-            viewBox="0 0 1440 220"
+            viewBox="0 0 1440 180"
             preserveAspectRatio="xMidYMax slice"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -255,6 +266,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             Admin Panel
           </Typography>
         </Stack>
+
         <Stack
           direction="row"
           sx={{
@@ -359,17 +371,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
 
         {visibleTabs.map((tab) => (
           <CustomTabPanel key={tab.id} value={selectedTabValue} index={tab.id}>
-            <Paper
-              elevation={0}
-              sx={{
-                border: 1,
-                borderColor: "divider",
-                borderRadius: 3,
-                p: 3,
-              }}
-            >
-              {tab.component}
-            </Paper>
+            {tab.component}
           </CustomTabPanel>
         ))}
         {visibleTabs.length === 0 && (

@@ -5,7 +5,7 @@ import Image from "next/image";
 import sabeelToons from "@/public/sabeel-toons.png";
 import sabeelKids from "@/public/sabeel-kids.png";
 import storyBook from "@/public/story-book.png";
-import yousofMaryam from "@/public/yousef-maryam.png";
+import yousofMaryam from "@/public/yusuf-aur-maryam.png";
 import { useState } from "react";
 
 const ProjectImage = [
