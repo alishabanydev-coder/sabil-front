@@ -55,7 +55,7 @@ const allTabs = [
     id: 6,
     label: "Channels",
     title: "Channels",
-    permissionKey: "users",
+    permissionKey: "channels",
     component: <Channels />,
   },
   {
@@ -144,7 +144,10 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
     }
 
     return allTabs
-      .filter((tab) => tab.permissionKey !== "admins")
+      .filter(
+        (tab) =>
+          tab.permissionKey !== "admins" && tab.permissionKey !== "projects"
+      )
       .filter((tab) =>
         permissions.some(
           (permission) =>

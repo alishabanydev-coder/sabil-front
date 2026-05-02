@@ -29,7 +29,7 @@ const PERMISSION_TAB_KEYS = [
   "breakdowns",
   "blog",
   "comments",
-  "projects",
+  "channels",
   "users",
   "socialMedia",
 ] as const;
@@ -42,7 +42,7 @@ const PERMISSION_TAB_LABELS: Record<PermissionTabKey, string> = {
   breakdowns: "Breakdowns",
   blog: "Blog",
   comments: "Comments",
-  projects: "Projects",
+  channels: "Channels",
   users: "Users",
   socialMedia: "Social Media",
 };
@@ -68,6 +68,10 @@ function getRecordId(record: { _id?: string; id?: string } | string) {
 
 function getProjectName(projects: ProjectRecord[], projectId: string) {
   return projects.find((project) => getRecordId(project) === projectId)?.name;
+}
+
+function hasProject(projects: ProjectRecord[], projectId: string) {
+  return projects.some((project) => getRecordId(project) === projectId);
 }
 
 const Admins = () => {
@@ -155,9 +159,10 @@ const Admins = () => {
       );
     const nextProjectIds =
       (admin.permissions || [])
-        .find((permission) => permission.tab === "projects")
+        .find((permission) => permission.tab === "channels")
         ?.projectIds?.map(getRecordId)
-        .filter(Boolean) || [];
+        .filter((projectId) => projectId && hasProject(projects, projectId)) ||
+      [];
 
     setFormError("");
     setFormSuccess("");
@@ -202,10 +207,10 @@ const Admins = () => {
       }
 
       if (
-        adminPermissions.includes("projects") &&
+        adminPermissions.includes("channels") &&
         adminProjectIds.length === 0
       ) {
-        setFormError("Select at least one project for project access.");
+        setFormError("Select at least one project for channel access.");
         return;
       }
     }
@@ -218,7 +223,7 @@ const Admins = () => {
             canCreate: true,
             canUpdate: true,
             canDelete: true,
-            projectIds: tab === "projects" ? adminProjectIds : [],
+            projectIds: tab === "channels" ? adminProjectIds : [],
           }))
         : undefined;
 
@@ -426,13 +431,13 @@ const Admins = () => {
               ))}
             </TextField>
           </Stack>
-          {adminRole === "admin" && adminPermissions.includes("projects") && (
+          {adminRole === "admin" && adminPermissions.includes("channels") && (
             <Stack
               direction="row"
               sx={{ justifyContent: "space-between", alignItems: "center" }}
             >
               <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
-                Project access:
+                Channel project access:
               </Typography>
               <TextField
                 variant="standard"
@@ -451,12 +456,13 @@ const Admins = () => {
                           (projectId) =>
                             projects.find(
                               (project) => getRecordId(project) === projectId
-                            )?.name || projectId
+                            )?.name
                         )
+                        .filter(Boolean)
                         .join(", "),
                   },
                 }}
-                helperText="Only selected projects will be visible/editable for this admin."
+                helperText="Only selected projects will be visible in the Channels tab for this admin."
               >
                 {projects.length === 0 ? (
                   <MenuItem disabled>No projects uploaded yet</MenuItem>
@@ -615,13 +621,11 @@ const Admins = () => {
                         const projectNames = (permission.projectIds || [])
                           .map(getRecordId)
                           .filter(Boolean)
-                          .map(
-                            (projectId) =>
-                              getProjectName(projects, projectId) || projectId
-                          );
+                          .map((projectId) => getProjectName(projects, projectId))
+                          .filter(Boolean);
                         const label =
-                          tab === "projects" && projectNames.length > 0
-                            ? `Projects: ${projectNames.join(", ")}`
+                          tab === "channels" && projectNames.length > 0
+                            ? `Channels: ${projectNames.join(", ")}`
                             : PERMISSION_TAB_LABELS[tab] || permission.tab;
 
                         return (
