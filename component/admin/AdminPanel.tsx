@@ -21,6 +21,8 @@ import {
   clearAdminSession,
 } from "./services/adminSession";
 import Channels from "./components/Channels";
+import Banner from "./components/Banner";
+import Breakdown from "./components/Breakdown";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -35,12 +37,19 @@ const allTabs = [
     title: "Main Page Layout",
     permissionKey: "mainPageLayout",
   },
-  { id: 1, label: "Banner", title: "Banner", permissionKey: "banner" },
+  {
+    id: 1,
+    label: "Banner",
+    title: "Banner",
+    permissionKey: "banner",
+    component: <Banner />,
+  },
   {
     id: 2,
     label: "Breakdowns",
     title: "Breakdowns",
     permissionKey: "breakdowns",
+    component: <Breakdown />,
   },
   { id: 3, label: "Blog", title: "Blog", permissionKey: "blog" },
   { id: 4, label: "Comments", title: "Comments", permissionKey: "comments" },

@@ -53,7 +53,10 @@ type AdminRecord = {
   userName?: string;
   name?: string;
   role?: string;
-  permissions?: Array<{ tab?: string; projectIds?: Array<string | ProjectRecord> }>;
+  permissions?: Array<{
+    tab?: string;
+    projectIds?: Array<string | ProjectRecord>;
+  }>;
 };
 
 type ProjectRecord = {
@@ -472,7 +475,9 @@ const Admins = () => {
 
                     return (
                       <MenuItem key={projectId} value={projectId}>
-                        <Checkbox checked={adminProjectIds.includes(projectId)} />
+                        <Checkbox
+                          checked={adminProjectIds.includes(projectId)}
+                        />
                         <ListItemText primary={project.name || projectId} />
                       </MenuItem>
                     );
@@ -621,7 +626,9 @@ const Admins = () => {
                         const projectNames = (permission.projectIds || [])
                           .map(getRecordId)
                           .filter(Boolean)
-                          .map((projectId) => getProjectName(projects, projectId))
+                          .map((projectId) =>
+                            getProjectName(projects, projectId)
+                          )
                           .filter(Boolean);
                         const label =
                           tab === "channels" && projectNames.length > 0

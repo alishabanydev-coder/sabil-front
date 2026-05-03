@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
   createChannelVideo,
+  deleteChannelVideo,
   fetchChannelProjects,
   fetchChannelVideos,
   updateChannelVideo,
@@ -198,10 +199,10 @@ const Channels = () => {
             ...currentVideos.filter((video) => video._id !== result.video?._id),
             result.video,
           ].sort(
-              (firstVideo, secondVideo) =>
-                firstVideo.season - secondVideo.season ||
-                firstVideo.episode - secondVideo.episode
-            )
+            (firstVideo, secondVideo) =>
+              firstVideo.season - secondVideo.season ||
+              firstVideo.episode - secondVideo.episode
+          )
         );
       }
 
@@ -209,6 +210,44 @@ const Channels = () => {
     } catch (error) {
       setSubmitErrorMsg(
         error instanceof Error ? error.message : "Failed to create video."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedProject) {
+      setSubmitErrorMsg("Please select a project first.");
+      return;
+    }
+
+    if (!selectedVideo) {
+      setSubmitErrorMsg("Please select a video first.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitErrorMsg("");
+
+    try {
+      const result = await deleteChannelVideo(
+        selectedProject,
+        selectedVideo._id
+      );
+
+      if (!result.ok) {
+        setSubmitErrorMsg(result.message);
+        return;
+      }
+
+      setVideos((currentVideos) =>
+        currentVideos.filter((video) => video._id !== selectedVideo._id)
+      );
+      handleClose();
+    } catch (error) {
+      setSubmitErrorMsg(
+        error instanceof Error ? error.message : "Failed to delete video."
       );
     } finally {
       setIsSubmitting(false);
@@ -725,6 +764,17 @@ const Channels = () => {
               >
                 {isSubmitting ? "Uploading..." : "Submit"}
               </Button>
+
+              {isEditingVideo && selectedVideo && !isSubmitting && (
+                <Button
+                  color="error"
+                  variant="outlined"
+                  onClick={handleDelete}
+                  disabled={!isEditingVideo || !selectedVideo || isSubmitting}
+                >
+                  Delete
+                </Button>
+              )}
 
               <Button onClick={handleClose} variant="outlined" color="primary">
                 Cancel

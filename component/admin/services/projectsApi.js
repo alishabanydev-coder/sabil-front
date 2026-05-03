@@ -213,6 +213,34 @@ export async function updateChannelVideo(
   };
 }
 
+export async function deleteChannelVideo(projectId, videoId, { signal } = {}) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/projects/${projectId}/videos/${videoId}`,
+    {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      message: data?.message || "Failed to delete video.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    message: data?.message || "Video deleted.",
+    status: response.status,
+  };
+}
+
 export async function createProject(body, { signal } = {}) {
   const response = await fetch(`${API_BASE}/api/admin/projects`, {
     method: "POST",
