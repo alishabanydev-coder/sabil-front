@@ -149,8 +149,6 @@ const Blog = () => {
     });
   };
 
-  console.log(blogs);
-
   const handleEdit = async () => {};
 
   const handleSelectImages = (event: ChangeEvent<HTMLInputElement>) => {
@@ -329,7 +327,7 @@ const Blog = () => {
                   <Typography
                     variant="body2"
                     sx={{
-                      border: theme => `1px solid ${theme.palette.divider}`,
+                      border: (theme) => `1px solid ${theme.palette.divider}`,
                       p: 1,
                       borderRadius: 2,
                       whiteSpace: "pre-wrap",
