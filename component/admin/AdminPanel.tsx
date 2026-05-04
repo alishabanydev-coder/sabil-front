@@ -23,6 +23,7 @@ import {
 import Channels from "./components/Channels";
 import Banner from "./components/Banner";
 import Breakdown from "./components/Breakdown";
+import Blog from "./components/Blog";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -51,7 +52,13 @@ const allTabs = [
     permissionKey: "breakdowns",
     component: <Breakdown />,
   },
-  { id: 3, label: "Blog", title: "Blog", permissionKey: "blog" },
+  {
+    id: 3,
+    label: "Blog",
+    title: "Blog",
+    permissionKey: "blog",
+    component: <Blog />,
+  },
   { id: 4, label: "Comments", title: "Comments", permissionKey: "comments" },
   {
     id: 5,

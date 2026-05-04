@@ -1,13 +1,37 @@
 import {
+  alpha,
   Button,
   CircularProgress,
+  MenuItem,
   Modal,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { createBreakdown, fetchBreakdowns } from "../services/breakdownApi";
+import {
+  createBreakdown,
+  deleteBreakdown,
+  fetchBreakdowns,
+  updateBreakdown,
+} from "../services/breakdownApi";
+import { fetchProjects } from "../services/projectsApi";
+
+type ProjectRecord = {
+  _id?: string;
+  id?: string;
+  name?: string;
+  thumbnail?: string;
+  description?: string;
+};
+
+type BreakdownRecord = {
+  _id: string;
+  projectId: string;
+  title: string;
+  content: string;
+  videoUrl?: string;
+};
 
 const Breakdown = () => {
   const [open, setOpen] = useState(false);
@@ -15,31 +39,84 @@ const Breakdown = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [breakdowns, setBreakdowns] = useState<
-    {
-      _id: string;
-      projectId: string;
-      title: string;
-      content: string;
-      videoUrl?: string;
-    }[]
-  >([]);
+  const [breakdowns, setBreakdowns] = useState<BreakdownRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [projects, setProjects] = useState<ProjectRecord[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingBreakdownId, setEditingBreakdownId] = useState<string | null>(
+    null
+  );
+
+  const handleAddBreakdown = () => {
+    setIsEditing(false);
+    setEditingBreakdownId(null);
+    setProjectId("");
+    setTitle("");
+    setContent("");
+    setVideoUrl("");
+    setSubmitErrorMsg("");
+    setOpen(true);
+  };
+
+  const handleEditBreakdown = (breakdown: BreakdownRecord) => {
+    setIsEditing(true);
+    setEditingBreakdownId(breakdown._id);
+    setOpen(true);
+    setProjectId(breakdown.projectId);
+    setTitle(breakdown.title);
+    setContent(breakdown.content);
+    setVideoUrl(breakdown.videoUrl || "");
+  };
+
+  const handleDelete = async () => {
+    if (!isEditing || !editingBreakdownId) {
+      return;
+    }
+
+    setSubmitErrorMsg("");
+    setIsSubmitting(true);
+
+    try {
+      const result = await deleteBreakdown(editingBreakdownId);
+
+      if (!result.ok) {
+        setSubmitErrorMsg(result.message);
+        return;
+      }
+
+      setBreakdowns((currentBreakdowns) =>
+        currentBreakdowns.filter(
+          (breakdown) => breakdown._id !== editingBreakdownId
+        )
+      );
+      handleCancel();
+    } catch (error) {
+      setSubmitErrorMsg(
+        error instanceof Error ? error.message : "Failed to delete breakdown."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSubmit = async () => {
     setSubmitErrorMsg("");
     setIsSubmitting(true);
 
     try {
-      const result = await createBreakdown({
+      const payload = {
         projectId: projectId.trim(),
         title: title.trim(),
         content: content.trim(),
         videoUrl: videoUrl.trim(),
-      });
+      };
+      const result =
+        isEditing && editingBreakdownId
+          ? await updateBreakdown(editingBreakdownId, payload)
+          : await createBreakdown(payload);
 
       if (!result.ok) {
         setSubmitErrorMsg(result.message);
@@ -47,16 +124,25 @@ const Breakdown = () => {
       }
 
       if (result.breakdown) {
-        setBreakdowns((currentBreakdowns) => [
-          result.breakdown,
-          ...currentBreakdowns,
-        ]);
+        setBreakdowns((currentBreakdowns) =>
+          isEditing
+            ? currentBreakdowns.map((breakdown) =>
+                breakdown._id === result.breakdown._id
+                  ? result.breakdown
+                  : breakdown
+              )
+            : [result.breakdown, ...currentBreakdowns]
+        );
       }
 
       handleCancel();
     } catch (error) {
       setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to create breakdown."
+        error instanceof Error
+          ? error.message
+          : isEditing
+            ? "Failed to update breakdown."
+            : "Failed to create breakdown."
       );
     } finally {
       setIsSubmitting(false);
@@ -65,6 +151,8 @@ const Breakdown = () => {
 
   const handleCancel = () => {
     setOpen(false);
+    setIsEditing(false);
+    setEditingBreakdownId(null);
     setProjectId("");
     setTitle("");
     setContent("");
@@ -106,7 +194,39 @@ const Breakdown = () => {
       }
     }
 
+    async function loadProjects() {
+      setLoading(true);
+      setErrorMsg("");
+
+      try {
+        const result = await fetchProjects({ signal: controller.signal });
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setLoading(false);
+
+        if (!result.ok) {
+          setErrorMsg(result.message);
+          return;
+        }
+
+        setProjects(result.projects);
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setLoading(false);
+        setErrorMsg(
+          error instanceof Error ? error.message : "Failed to load Projects."
+        );
+      }
+    }
+
     loadBreakdowns();
+    loadProjects();
 
     return () => controller.abort("Breakdowns tab unmounted");
   }, []);
@@ -140,7 +260,7 @@ const Breakdown = () => {
             }}
             variant="contained"
             color="primary"
-            onClick={() => setOpen(true)}
+            onClick={handleAddBreakdown}
           >
             Add Breakdown
           </Button>
@@ -169,22 +289,35 @@ const Breakdown = () => {
               No breakdowns yet.
             </Typography>
           ) : (
-            <Stack sx={{ gap: 1.5 }}>
+            <Stack direction="row" sx={{ gap: 1.5 }}>
               {breakdowns.map((breakdown) => (
                 <Stack
                   key={breakdown._id}
+                  onClick={() => handleEditBreakdown(breakdown)}
                   sx={{
                     p: 1.5,
                     borderRadius: 2,
                     border: (theme) => `1px solid ${theme.palette.divider}`,
                     gap: 0.75,
+                    width: 300,
+                    boxShadow: 3,
+                    cursor: "pointer",
+                    "&:hover": {
+                      bgcolor: (theme) =>
+                        alpha(theme.palette.primary.main, 0.3),
+                    },
                   }}
                 >
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                     {breakdown.title}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Project: {String(breakdown.projectId)}
+                  <Typography variant="caption" color="secondary">
+                    Project:{" "}
+                    {String(
+                      projects.find(
+                        (project) => project._id === breakdown.projectId
+                      )?.name ?? breakdown.projectId
+                    )}
                   </Typography>
                   <Typography variant="body2">{breakdown.content}</Typography>
                   {breakdown.videoUrl ? (
@@ -215,14 +348,33 @@ const Breakdown = () => {
           }}
         >
           <Stack sx={{ gap: 2, alignItems: "center", direction: "ltr" }}>
-            <Typography variant="h6">Add Breakdown</Typography>
+            <Typography variant="h6">
+              {isEditing ? "Edit Breakdown" : "Add Breakdown"}
+            </Typography>
             <TextField
-              label="Project ID"
+              label="Project"
+              select
               variant="standard"
               value={projectId}
               onChange={(event) => setProjectId(event.target.value)}
               fullWidth
-            />
+              slotProps={{
+                select: {
+                  renderValue: (selected) =>
+                    projects.find((project) => project._id === selected)?.name,
+                },
+              }}
+            >
+              {projects.length === 0 ? (
+                <MenuItem disabled>No projects uploaded yet</MenuItem>
+              ) : (
+                projects.map((project) => (
+                  <MenuItem key={project._id} value={project._id}>
+                    {project.name}
+                  </MenuItem>
+                ))
+              )}
+            </TextField>
             <TextField
               label="Title"
               variant="standard"
@@ -254,14 +406,27 @@ const Breakdown = () => {
                 sx={{ width: "100%" }}
                 onClick={handleSubmit}
                 disabled={
-                  isSubmitting ||
-                  !projectId.trim() ||
-                  !title.trim() ||
-                  !content.trim()
+                  isSubmitting || !projectId || !title.trim() || !content.trim()
                 }
               >
-                {isSubmitting ? "Saving..." : "Add Breakdown"}
+                {isSubmitting
+                  ? "Saving..."
+                  : isEditing
+                    ? "Edit Breakdown"
+                    : "Add Breakdown"}
               </Button>
+
+              {isEditing && (
+                <Button
+                  onClick={handleDelete}
+                  variant="outlined"
+                  color="error"
+                  disabled={!isEditing || isSubmitting}
+                >
+                  Delete
+                </Button>
+              )}
+
               <Button onClick={handleCancel} variant="outlined" color="primary">
                 Cancel
               </Button>

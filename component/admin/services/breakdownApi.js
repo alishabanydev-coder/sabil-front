@@ -77,3 +77,56 @@ export async function createBreakdown(body, { signal } = {}) {
     status: response.status,
   };
 }
+
+export async function updateBreakdown(id, body, { signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/breakdowns/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(true),
+    body: JSON.stringify(body),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      breakdown: null,
+      message: data?.message || "Failed to update breakdown.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    breakdown: data?.breakdown ?? null,
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function deleteBreakdown(id, { signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/breakdowns/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      message: data?.message || "Failed to delete breakdown.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    message: data?.message || "",
+    status: response.status,
+  };
+}

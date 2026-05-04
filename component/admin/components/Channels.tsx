@@ -82,6 +82,8 @@ const Channels = () => {
   const [previewThumbnail, setPreviewThumbnail] = useState(false);
   const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState("");
 
+  console.log(videos)
+
   const videosBySeason = videos.reduce<Record<number, VideoRecord[]>>(
     (groups, video) => {
       const seasonNumber = video.season || 1;
