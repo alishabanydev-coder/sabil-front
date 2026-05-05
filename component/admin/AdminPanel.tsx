@@ -136,7 +136,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   const [adminName, setAdminName] = useState("ادمین");
   const [adminRole, setAdminRole] = useState("");
   const [permissions, setPermissions] = useState<
-    Array<{ tab?: string; canRead?: boolean }>
+    Array<{ tab?: string; canRead?: boolean; projectIds?: string[] }>
   >([]);
 
   useEffect(() => {
@@ -170,12 +170,21 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
       return allTabs;
     }
 
+    const hasProjectScopedChannelAccess = permissions.some(
+      (permission) =>
+        permission.tab === "channels" &&
+        permission.canRead === true &&
+        Array.isArray(permission.projectIds) &&
+        permission.projectIds.length > 0
+    );
+
     return allTabs
       .filter(
         (tab) =>
           tab.permissionKey !== "admins" && tab.permissionKey !== "projects"
       )
       .filter((tab) =>
+        (tab.permissionKey === "comments" && hasProjectScopedChannelAccess) ||
         permissions.some(
           (permission) =>
             permission.tab === tab.permissionKey && permission.canRead === true

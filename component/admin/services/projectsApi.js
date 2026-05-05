@@ -120,6 +120,36 @@ export async function fetchChannelVideos(projectId, { signal } = {}) {
   };
 }
 
+export async function fetchChannelBreakdowns(projectId, { signal } = {}) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/projects/${projectId}/breakdowns`,
+    {
+      method: "GET",
+      headers: getAuthHeaders(),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      breakdowns: [],
+      message: data?.message || "Failed to load channel breakdowns.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    breakdowns: Array.isArray(data?.breakdowns) ? data.breakdowns : [],
+    message: "",
+    status: response.status,
+  };
+}
+
 export async function createChannelVideo(projectId, body, { signal } = {}) {
   const formData = new FormData();
 

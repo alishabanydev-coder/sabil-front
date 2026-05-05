@@ -343,19 +343,26 @@ const Users = () => {
               fullWidth
             />
             <Stack direction="row" sx={{ gap: 2 }}>
-              <Button variant="contained" color="primary" onClick={handleClose}>
-                {modalMode === "edit" ? "Close" : "Cancel"}
-              </Button>
               {modalMode === "add" ? (
                 <Button
+                  fullWidth
                   variant="contained"
                   color="primary"
                   onClick={handleSubmit}
-                  disabled={isSubmitting}
+                  disabled={
+                    isSubmitting ||
+                    !username.trim() ||
+                    !email.trim() ||
+                    !phoneNumbers.trim() ||
+                    !message.trim()
+                  }
                 >
                   {isSubmitting ? "Adding..." : "Add"}
                 </Button>
               ) : null}
+              <Button variant="outlined" color="primary" onClick={handleClose}>
+                {modalMode === "edit" ? "Close" : "Cancel"}
+              </Button>
             </Stack>
             {selectedUserId ? (
               <Typography variant="caption" color="text.secondary">

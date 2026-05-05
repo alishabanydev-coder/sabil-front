@@ -15,8 +15,8 @@ import {
   updateComment,
 } from "../services/commentsApi";
 import { fetchBlogs } from "../services/blogApi";
-import { fetchBreakdowns } from "../services/breakdownApi";
 import {
+  fetchChannelBreakdowns,
   fetchChannelProjects,
   fetchChannelVideos,
 } from "../services/projectsApi";
@@ -77,6 +77,9 @@ const Comment = () => {
   const [filterTargetType, setFilterTargetType] = useState("");
   const [targetOptions, setTargetOptions] = useState<TargetOption[]>([]);
   const [targetOptionsLoading, setTargetOptionsLoading] = useState(false);
+  const [adminRole, setAdminRole] = useState("");
+  const [hasProjectScopedChannelAccess, setHasProjectScopedChannelAccess] =
+    useState(false);
 
   const resetForm = () => {
     setText("");
@@ -152,9 +155,8 @@ const Comment = () => {
   const loadTargetOptions = async (signal?: AbortSignal) => {
     setTargetOptionsLoading(true);
 
-    const [blogsResult, breakdownsResult, projectsResult] = await Promise.all([
+    const [blogsResult, projectsResult] = await Promise.all([
       fetchBlogs({ signal }),
-      fetchBreakdowns({ signal }),
       fetchChannelProjects({ signal }),
     ]);
 
@@ -170,42 +172,62 @@ const Comment = () => {
       });
     }
 
-    if (breakdownsResult.ok) {
-      breakdownsResult.breakdowns.forEach((breakdown) => {
-        nextOptions.push({
-          _id: breakdown._id,
-          targetType: "breakdown",
-          label: breakdown.title || breakdown._id,
-        });
-      });
-    }
-
     if (projectsResult.ok) {
-      const videosPerProject = await Promise.all(
+      const targetsPerProject = await Promise.all(
         projectsResult.projects.map(async (project) => {
-          const videosResult = await fetchChannelVideos(project._id, {
-            signal,
-          });
-          if (!videosResult.ok) {
-            return [];
-          }
+          const [videosResult, breakdownsResult] = await Promise.all([
+            fetchChannelVideos(project._id, { signal }),
+            fetchChannelBreakdowns(project._id, { signal }),
+          ]);
 
-          return videosResult.videos.map((video) => ({
-            _id: video._id,
-            targetType: "video" as const,
-            label: `${project.name || project._id} - ${video.title || video._id}`,
-          }));
+          const videoTargets = videosResult.ok
+            ? videosResult.videos.map((video) => ({
+                _id: video._id,
+                targetType: "video" as const,
+                label: `${project.name || project._id} - ${video.title || video._id}`,
+              }))
+            : [];
+
+          const breakdownTargets = breakdownsResult.ok
+            ? breakdownsResult.breakdowns.map((breakdown) => ({
+                _id: breakdown._id,
+                targetType: "breakdown" as const,
+                label: `${project.name || project._id} - ${breakdown.title || breakdown._id}`,
+              }))
+            : [];
+
+          return [...videoTargets, ...breakdownTargets];
         })
       );
 
-      videosPerProject.forEach((projectVideos) => {
-        nextOptions.push(...projectVideos);
+      targetsPerProject.forEach((projectTargets) => {
+        nextOptions.push(...projectTargets);
       });
     }
 
     setTargetOptions(nextOptions);
     setTargetOptionsLoading(false);
   };
+
+  useEffect(() => {
+    setAdminRole(localStorage.getItem("role") || "");
+    try {
+      const savedPermissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+      const hasScopedChannels = Array.isArray(savedPermissions)
+        ? savedPermissions.some(
+            (permission) =>
+              permission?.tab === "channels" &&
+              permission?.canRead === true &&
+              Array.isArray(permission?.projectIds) &&
+              permission.projectIds.length > 0
+          )
+        : false;
+
+      setHasProjectScopedChannelAccess(hasScopedChannels);
+    } catch {
+      setHasProjectScopedChannelAccess(false);
+    }
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -237,6 +259,30 @@ const Comment = () => {
     () => targetOptions.filter((item) => item.targetType === targetType),
     [targetOptions, targetType]
   );
+  const hasVideoTargetOption = targetOptions.some(
+    (item) => item.targetType === "video"
+  );
+  const hasBreakdownTargetOption = targetOptions.some(
+    (item) => item.targetType === "breakdown"
+  );
+  const shouldRestrictToProjectTypes =
+    adminRole !== "super_admin" && hasProjectScopedChannelAccess;
+  const showBlogTargetOption = !shouldRestrictToProjectTypes;
+
+  useEffect(() => {
+    if (showBlogTargetOption) {
+      return;
+    }
+
+    if (targetType === "blog") {
+      setTargetType("");
+      setTargetId("");
+    }
+
+    if (filterTargetType === "blog") {
+      setFilterTargetType("");
+    }
+  }, [showBlogTargetOption, targetType, filterTargetType]);
 
   const handleSubmit = async () => {
     const normalizedText = text.trim();
@@ -337,9 +383,16 @@ const Comment = () => {
     }
 
     setRows((currentRows) =>
-      currentRows.filter(
-        (row) => row._id !== comment._id && row.parentCommentId !== comment._id
-      )
+      currentRows
+        .filter((row) => row._id !== comment._id)
+        .map((row) =>
+          row.parentCommentId === comment._id
+            ? {
+                ...row,
+                parentCommentId: null,
+              }
+            : row
+        )
     );
   };
 
@@ -352,7 +405,17 @@ const Comment = () => {
         sortable: false,
         filterable: false,
         renderCell: (params) => (
-          <Stack direction="row" sx={{ gap: 1, py: 0.5 }}>
+          <Stack
+            direction="row"
+            sx={{
+              width: "100%",
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 1,
+              py: 0.5,
+            }}
+          >
             <Button
               size="small"
               variant="outlined"
@@ -424,9 +487,27 @@ const Comment = () => {
             sx={{ minWidth: 180 }}
           >
             <MenuItem value="">All target types</MenuItem>
-            <MenuItem value="video">video</MenuItem>
-            <MenuItem value="blog">blog</MenuItem>
-            <MenuItem value="breakdown">breakdown</MenuItem>
+            {hasVideoTargetOption ? (
+              <MenuItem value="video">video</MenuItem>
+            ) : (
+              <MenuItem value="video" disabled>
+                video (not allowed)
+              </MenuItem>
+            )}
+            {showBlogTargetOption ? (
+              <MenuItem value="blog">blog</MenuItem>
+            ) : (
+              <MenuItem value="blog" disabled>
+                blog (not allowed)
+              </MenuItem>
+            )}
+            {hasBreakdownTargetOption ? (
+              <MenuItem value="breakdown">breakdown</MenuItem>
+            ) : (
+              <MenuItem value="breakdown" disabled>
+                breakdown (not allowed)
+              </MenuItem>
+            )}
           </TextField>
           <Button variant="contained" onClick={handleOpen}>
             Add Comment
@@ -484,9 +565,27 @@ const Comment = () => {
               disabled={targetOptionsLoading}
             >
               <MenuItem value="">Select target type</MenuItem>
-              <MenuItem value="video">video</MenuItem>
-              <MenuItem value="blog">blog</MenuItem>
-              <MenuItem value="breakdown">breakdown</MenuItem>
+              {hasVideoTargetOption ? (
+                <MenuItem value="video">video</MenuItem>
+              ) : (
+                <MenuItem value="video" disabled>
+                  video (not allowed)
+                </MenuItem>
+              )}
+              {showBlogTargetOption ? (
+                <MenuItem value="blog">blog</MenuItem>
+              ) : (
+                <MenuItem value="blog" disabled>
+                  blog (not allowed)
+                </MenuItem>
+              )}
+              {hasBreakdownTargetOption ? (
+                <MenuItem value="breakdown">breakdown</MenuItem>
+              ) : (
+                <MenuItem value="breakdown" disabled>
+                  breakdown (not allowed)
+                </MenuItem>
+              )}
             </TextField>
             <TextField
               label="Target ID"
@@ -522,14 +621,18 @@ const Comment = () => {
               fullWidth
             />
             <Stack direction="row" sx={{ gap: 2 }}>
-              <Button variant="contained" color="primary" onClick={handleClose}>
-                Cancel
-              </Button>
               <Button
+                fullWidth
+                disabled={
+                  !text.trim() ||
+                  !username.trim() ||
+                  !targetType.trim() ||
+                  !targetId.trim() ||
+                  isSubmitting
+                }
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
               >
                 {modalMode === "edit"
                   ? isSubmitting
@@ -542,6 +645,9 @@ const Comment = () => {
                     : isSubmitting
                       ? "Adding..."
                       : "Add"}
+              </Button>
+              <Button variant="outlined" color="primary" onClick={handleClose}>
+                Cancel
               </Button>
             </Stack>
             {submitErrorMsg ? (
