@@ -1,18 +1,21 @@
 import {
   Button,
   CircularProgress,
+  IconButton,
   Modal,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { createBlog, fetchBlogs } from "../services/blogApi";
+import { createBlog, deleteBlog, fetchBlogs, updateBlog } from "../services/blogApi";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 const style = {
   direction: "ltr",
@@ -37,7 +40,6 @@ type BlogRecord = {
   title: string;
   subHeader?: string;
   content: string;
-  textSections?: string[];
   image?: string[];
   videoUrl?: string;
 };
@@ -52,17 +54,22 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [images, setImages] = useState<File[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<BlogRecord | null>(null);
 
   const handleOpenModal = () => {
     setOpen(true);
+    setEditingBlog(null);
     setTitle("");
     setSubHeader("");
+    setVideoUrl("");
     setContent("");
     setImages([]);
+    setExistingImageUrls([]);
     setImagePreviewUrls([]);
     setActiveSlideIndex(0);
     setSubmitErrorMsg("");
@@ -70,10 +77,13 @@ const Blog = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setEditingBlog(null);
     setSubHeader("");
     setTitle("");
+    setVideoUrl("");
     setContent("");
     setImages([]);
+    setExistingImageUrls([]);
     setImagePreviewUrls([]);
     setActiveSlideIndex(0);
     setSubmitErrorMsg("");
@@ -94,13 +104,22 @@ const Blog = () => {
     setSubmitErrorMsg("");
 
     try {
-      const result = await createBlog({
-        title: normalizedTitle,
-        subHeader: normalizedSubHeader,
-        videoUrl: normalizedVideoUrl,
-        textSections: [normalizedContent],
-        images,
-      });
+      const result = editingBlog
+        ? await updateBlog(editingBlog._id, {
+            title: normalizedTitle,
+            subHeader: normalizedSubHeader,
+            videoUrl: normalizedVideoUrl,
+            content: normalizedContent,
+            images,
+            keepImages: existingImageUrls,
+          })
+        : await createBlog({
+            title: normalizedTitle,
+            subHeader: normalizedSubHeader,
+            videoUrl: normalizedVideoUrl,
+            content: normalizedContent,
+            images,
+          });
 
       if (!result.ok) {
         setSubmitErrorMsg(result.message);
@@ -108,48 +127,104 @@ const Blog = () => {
       }
 
       if (result.blog) {
-        setBlogs((currentBlogs) => [result.blog, ...currentBlogs]);
+        if (editingBlog) {
+          setBlogs((currentBlogs) =>
+            currentBlogs.map((blogItem) =>
+              blogItem._id === editingBlog._id ? result.blog : blogItem
+            )
+          );
+        } else {
+          setBlogs((currentBlogs) => [result.blog, ...currentBlogs]);
+        }
       }
       handleClose();
     } catch (error) {
       setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to create blog."
+        error instanceof Error
+          ? error.message
+          : editingBlog
+          ? "Failed to update blog."
+          : "Failed to create blog."
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete = () => {
-    if (imagePreviewUrls.length === 0) {
+  const handleDeleteImage = () => {
+    const totalImageUrls = [...existingImageUrls, ...imagePreviewUrls];
+    if (totalImageUrls.length === 0) {
       return;
     }
 
-    const indexToRemove = Math.min(
-      activeSlideIndex,
-      imagePreviewUrls.length - 1
-    );
+    const indexToRemove = Math.min(activeSlideIndex, totalImageUrls.length - 1);
 
-    setImages((currentImages) =>
-      currentImages.filter((_image, index) => index !== indexToRemove)
-    );
-    setImagePreviewUrls((currentUrls) => {
-      const urlToRemove = currentUrls[indexToRemove];
-      if (urlToRemove) {
-        URL.revokeObjectURL(urlToRemove);
-      }
+    if (indexToRemove < existingImageUrls.length) {
+      setExistingImageUrls((currentUrls) =>
+        currentUrls.filter((_previewUrl, index) => index !== indexToRemove)
+      );
+    } else {
+      const newImageIndex = indexToRemove - existingImageUrls.length;
+      setImages((currentImages) =>
+        currentImages.filter((_image, index) => index !== newImageIndex)
+      );
+      setImagePreviewUrls((currentUrls) => {
+        const urlToRemove = currentUrls[newImageIndex];
+        if (urlToRemove?.startsWith("blob:")) {
+          URL.revokeObjectURL(urlToRemove);
+        }
 
-      const nextUrls = currentUrls.filter(
-        (_previewUrl, index) => index !== indexToRemove
-      );
-      setActiveSlideIndex(
-        nextUrls.length === 0 ? 0 : Math.min(indexToRemove, nextUrls.length - 1)
-      );
-      return nextUrls;
-    });
+        return currentUrls.filter(
+          (_previewUrl, index) => index !== newImageIndex
+        );
+      });
+    }
+
+    const nextTotalCount = totalImageUrls.length - 1;
+    setActiveSlideIndex(
+      nextTotalCount === 0 ? 0 : Math.min(indexToRemove, nextTotalCount - 1)
+    );
   };
 
-  const handleEdit = async () => {};
+  const handleDeleteBlog = async (blog: BlogRecord) => {
+    if (isSubmitting) {
+      return;
+    }
+
+    const shouldDelete = window.confirm(`Delete blog "${blog.title}"?`);
+    if (!shouldDelete) {
+      return;
+    }
+
+    try {
+      const result = await deleteBlog(blog._id);
+
+      if (!result.ok) {
+        setErrorMsg(result.message);
+        return;
+      }
+
+      setBlogs((currentBlogs) =>
+        currentBlogs.filter((blogItem) => blogItem._id !== blog._id)
+      );
+    } catch (error) {
+      setErrorMsg(error instanceof Error ? error.message : "Failed to delete blog.");
+    }
+  };
+
+  const handleEdit = (blog: BlogRecord) => {
+    setEditingBlog(blog);
+    setOpen(true);
+    setTitle(blog.title || "");
+    setSubHeader(blog.subHeader || "");
+    setVideoUrl(blog.videoUrl || "");
+    setContent(blog.content || "");
+    setImages([]);
+    setExistingImageUrls(Array.isArray(blog.image) ? blog.image : []);
+    setImagePreviewUrls([]);
+    setActiveSlideIndex(0);
+    setSubmitErrorMsg("");
+  };
 
   const handleSelectImages = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -219,6 +294,8 @@ const Blog = () => {
     return () => controller.abort("Blog tab unmounted");
   }, []);
 
+  const modalImageUrls = [...existingImageUrls, ...imagePreviewUrls];
+
   return (
     <Stack sx={{ width: "100%", height: "100%", position: "relative" }}>
       <Stack
@@ -258,10 +335,12 @@ const Blog = () => {
           sx={{
             width: "100%",
             height: "100%",
-            pt: 6,
+            pt: 4,
             px: 2,
             pb: 2,
-            overflow: "auto",
+            overflow: "hidden",
+            overflowX: "clip",
+            overflowY: "auto",
           }}
         >
           {loading ? (
@@ -277,7 +356,7 @@ const Blog = () => {
               No blogs yet.
             </Typography>
           ) : (
-            <Stack sx={{ gap: 1.5 }}>
+            <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
               {blogs.map((blog) => (
                 <Stack
                   key={blog._id}
@@ -286,11 +365,40 @@ const Blog = () => {
                     borderRadius: 2,
                     border: (theme) => `1px solid ${theme.palette.divider}`,
                     gap: 0.75,
-                    width: 500,
+                    width: 450,
                     height: 250,
                     boxShadow: 3,
+                    position: "relative",
                   }}
                 >
+                  <Stack
+                    direction={"row"}
+                    sx={{
+                      position: "absolute",
+                      bottom: 4,
+                      right: 10,
+                      zIndex: 1000,
+                    }}
+                  >
+                    <IconButton
+                      aria-label="Edit blog"
+                      size="small"
+                      onClick={() => handleEdit(blog)}
+                    >
+                      <ModeEditOutlineOutlinedIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      aria-label="Delete blog"
+                      size="small"
+                      color="error"
+                      onClick={() => handleDeleteBlog(blog)}
+                    >
+                      <DeleteOutlineOutlinedIcon
+                        fontSize="small"
+                        color="error"
+                      />
+                    </IconButton>
+                  </Stack>
                   <Typography
                     variant="subtitle1"
                     sx={{
@@ -300,7 +408,8 @@ const Blog = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    title: {blog.title}
+                    title: {""}
+                    {blog.title}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -311,7 +420,8 @@ const Blog = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    subHeader: {blog.subHeader}
+                    <b>subHeader:</b> {""}
+                    {blog.subHeader}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -322,7 +432,7 @@ const Blog = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    link: {blog.videoUrl}
+                    <b>link:</b> {""} {blog.videoUrl}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -339,7 +449,7 @@ const Blog = () => {
                       wordBreak: "break-word",
                     }}
                   >
-                    {blog.content} aisdfjlkasjd;fkjas;dlkj;aslkd
+                    {blog.content}
                   </Typography>
                   {Array.isArray(blog.image) && blog.image.length > 0 ? (
                     <Typography variant="caption" color="error">
@@ -356,7 +466,9 @@ const Blog = () => {
       <Modal open={open} onClose={handleClose}>
         <Stack sx={style}>
           <Stack sx={{ width: "100%", gap: 2, alignItems: "center" }}>
-            <Typography variant="h6">Add Blog</Typography>
+            <Typography variant="h6">
+              {editingBlog ? "Edit Blog" : "Add Blog"}
+            </Typography>
             <TextField
               label="Title"
               variant="standard"
@@ -413,7 +525,7 @@ const Blog = () => {
                     },
                 }}
               >
-                {imagePreviewUrls.length > 0 ? (
+                {modalImageUrls.length > 0 ? (
                   <Swiper
                     modules={[Pagination, Navigation]}
                     navigation={true}
@@ -424,7 +536,7 @@ const Blog = () => {
                     onSwiper={(swiper) => setActiveSlideIndex(swiper.realIndex)}
                     style={{ width: "100%", height: "100%" }}
                   >
-                    {imagePreviewUrls.map((previewUrl, index) => (
+                    {modalImageUrls.map((previewUrl, index) => (
                       <SwiperSlide
                         key={`${previewUrl}-${index}`}
                         style={{
@@ -439,7 +551,7 @@ const Blog = () => {
                           style={{
                             width: "100%",
                             height: "100%",
-                            objectFit: "cover",
+                            objectFit: "contain",
                           }}
                         />
                       </SwiperSlide>
@@ -480,8 +592,8 @@ const Blog = () => {
                   fullWidth
                   variant="outlined"
                   color="error"
-                  onClick={handleDelete}
-                  disabled={imagePreviewUrls.length === 0}
+                  onClick={handleDeleteImage}
+                  disabled={modalImageUrls.length === 0}
                 >
                   Delete Image
                 </Button>
@@ -496,7 +608,11 @@ const Blog = () => {
                 onClick={handleSubmit}
                 disabled={isSubmitting || !title.trim() || !content.trim()}
               >
-                {isSubmitting ? "Saving..." : "Add Blog"}
+                {isSubmitting
+                  ? "Saving..."
+                  : editingBlog
+                  ? "Save Changes"
+                  : "Add Blog"}
               </Button>
               <Button variant="outlined" color="primary" onClick={handleClose}>
                 Cancel

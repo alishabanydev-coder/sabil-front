@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import type { PaletteOptions } from "@mui/material/styles";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { faIR } from "@mui/material/locale";
-import { faIR as DataTableFa } from "@mui/x-data-grid/locales";
-import { faIR as DateFaIR } from "@mui/x-date-pickers/locales";
+// import { faIR } from "@mui/material/locale";
+// import { faIR as DataTableFa } from "@mui/x-data-grid/locales";
+// import { faIR as DateFaIR } from "@mui/x-date-pickers/locales";
 
 const fontStack = [
   "system-ui",
@@ -66,9 +66,9 @@ const appTheme = createTheme(
     },
     palette,
   },
-  faIR,
-  DateFaIR,
-  DataTableFa
+  // faIR,
+  // DateFaIR,
+  // DataTableFa
 );
 
 type MUIThemeProviderProps = {

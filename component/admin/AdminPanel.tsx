@@ -24,6 +24,9 @@ import Channels from "./components/Channels";
 import Banner from "./components/Banner";
 import Breakdown from "./components/Breakdown";
 import Blog from "./components/Blog";
+import SocialMedia from "./components/SocialMedia";
+import Comment from "./components/Comment";
+import Users from "./components/Users";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -59,7 +62,13 @@ const allTabs = [
     permissionKey: "blog",
     component: <Blog />,
   },
-  { id: 4, label: "Comments", title: "Comments", permissionKey: "comments" },
+  {
+    id: 4,
+    label: "Comments",
+    title: "Comments",
+    permissionKey: "comments",
+    component: <Comment />,
+  },
   {
     id: 5,
     label: "Projects",
@@ -79,12 +88,14 @@ const allTabs = [
     label: "Users (Supporters)",
     title: "Users / Supporters",
     permissionKey: "users",
+    component: <Users />,
   },
   {
     id: 8,
     label: "Social Media",
     title: "Social Media",
     permissionKey: "socialMedia",
+    component: <SocialMedia />,
   },
   {
     id: 9,
