@@ -245,7 +245,7 @@ const Banner = () => {
                     gap: 1.5,
                     alignItems: "center",
                     boxShadow: 3,
-                    width: 200,
+                    width: 250,
                     p: 1,
                     borderRadius: 2,
                     border: (theme) => `1px solid ${theme.palette.divider}`,

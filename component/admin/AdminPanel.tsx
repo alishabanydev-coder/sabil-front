@@ -27,6 +27,7 @@ import Blog from "./components/Blog";
 import SocialMedia from "./components/SocialMedia";
 import Comment from "./components/Comment";
 import Users from "./components/Users";
+import MainPageLayout from "./components/MainPageLayout";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -40,6 +41,7 @@ const allTabs = [
     label: "Main Page Layout",
     title: "Main Page Layout",
     permissionKey: "mainPageLayout",
+    component: <MainPageLayout />,
   },
   {
     id: 1,
@@ -183,12 +185,14 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
         (tab) =>
           tab.permissionKey !== "admins" && tab.permissionKey !== "projects"
       )
-      .filter((tab) =>
-        (tab.permissionKey === "comments" && hasProjectScopedChannelAccess) ||
-        permissions.some(
-          (permission) =>
-            permission.tab === tab.permissionKey && permission.canRead === true
-        )
+      .filter(
+        (tab) =>
+          (tab.permissionKey === "comments" && hasProjectScopedChannelAccess) ||
+          permissions.some(
+            (permission) =>
+              permission.tab === tab.permissionKey &&
+              permission.canRead === true
+          )
       );
   }, [adminRole, permissions]);
 
