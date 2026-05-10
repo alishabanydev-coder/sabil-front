@@ -1,34 +1,33 @@
 "use client";
 
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import Image from "next/image";
 
-const slides = [
-  {
-    title: "Fast Learning",
-    description:
-      "Interactive activities and modern tools that keep students engaged.",
-  },
-  {
-    title: "Creative Thinking",
-    description:
-      "Hands-on projects that grow confidence and problem-solving skills.",
-  },
-  {
-    title: "Future Ready",
-    description:
-      "Programs designed to prepare young minds for tomorrow's world.",
-  },
-];
+type BannerData = {
+  createdAt: string;
+  homepageOrder: number;
+  isActive: boolean;
+  name: string;
+  poster: string;
+  showInHomepage: boolean;
+  title: string;
+  updatedAt: string;
+  __v: number;
+  _id: string;
+};
 
 type RightsideProps = {
   onSwiperInit?: (swiper: any) => void;
+  bannerData: BannerData[];
 };
 
-const Rightside = ({ onSwiperInit }: RightsideProps) => {
+const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
+  console.log(process.env.NEXT_PUBLIC_BACKEND_API_URL);
+  console.log(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${bannerData[0].poster}`);
   return (
     <Box
       sx={{
@@ -46,7 +45,7 @@ const Rightside = ({ onSwiperInit }: RightsideProps) => {
           width: "100%",
           height: "100%",
           justifyContent: "center",
-          clipPath: "polygon(1% 0%, 100% 0%, 100% 98%, 25.5% 89%)",
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 98%, 25.5% 89%)",
         }}
       >
         <Swiper
@@ -57,8 +56,8 @@ const Rightside = ({ onSwiperInit }: RightsideProps) => {
           loop
           style={{ width: "100%", height: "100%" }}
         >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.title}>
+          {bannerData.map((bannerItem) => (
+            <SwiperSlide key={bannerItem.title}>
               <Stack
                 sx={{
                   width: "100%",
@@ -72,32 +71,15 @@ const Rightside = ({ onSwiperInit }: RightsideProps) => {
                 <Box
                   sx={{
                     width: "100%",
-                    maxWidth: 460,
-                    borderRadius: 4,
-                    p: { xs: 2, md: 4 },
-                    bgcolor: "rgba(255,255,255,0.16)",
-                    backdropFilter: "blur(6px)",
+                    height: "100%",
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontSize: { xs: 16, sm: 20, md: 28 },
-                      fontWeight: 700,
-                      color: "#fff",
-                      mb: 1,
-                    }}
-                  >
-                    {slide.title}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: { xs: 12, sm: 14, md: 18 },
-                      color: "rgba(255,255,255,0.95)",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {slide.description}
-                  </Typography>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${bannerItem.poster}`}
+                    alt={bannerItem.title}
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
                 </Box>
               </Stack>
             </SwiperSlide>

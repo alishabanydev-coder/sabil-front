@@ -56,8 +56,6 @@ const Banner = () => {
 
   const activePreview = posterPreviewUrl || selectedBanner?.poster || "";
 
-  console.log(banners);
-
   const handleOpen = () => {
     setOpen(true);
     setTitle("");

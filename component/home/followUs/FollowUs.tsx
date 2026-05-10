@@ -15,8 +15,6 @@ const icons = [
 ];
 
 const FollowUs = () => {
-  console.log(kidsGroup);
-
   return (
     <Stack
       sx={{ width: "100%", justifyContent: "center", alignItems: "center" }}

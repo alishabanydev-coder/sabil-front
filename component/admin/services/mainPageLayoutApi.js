@@ -83,6 +83,13 @@ export async function fetchMainPageLayoutItems(section, { signal } = {}) {
   };
 }
 
+export async function fetchPublicMainPageLayoutItems(section) {
+  const response = await fetch(`${API_BASE}/api/admin/public/main-page-layout/${section}`, {
+    method: "GET",
+  });
+  return await response.json();
+}
+
 export async function updateMainPageLayoutItem(section, id, body, { signal } = {}) {
   const response = await fetch(
     `${API_BASE}/api/admin/main-page-layout/${section}/${id}`,

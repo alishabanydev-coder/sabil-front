@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   fetchMainPageLayoutItems,
+  fetchPublicMainPageLayoutItems,
   updateMainPageLayoutItem,
 } from "../services/mainPageLayoutApi";
 import { Navigation, Pagination } from "swiper/modules";
@@ -403,6 +404,7 @@ const MainPageLayout = () => {
                   const sectionPreviewData = sortHomepageItems(
                     sectionItems[section.name] || []
                   );
+                  console.log(sectionPreviewData)
                   if (sectionPreviewData.length === 0) {
                     return (
                       <Typography
