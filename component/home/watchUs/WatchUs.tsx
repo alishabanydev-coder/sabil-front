@@ -5,27 +5,23 @@ import Image from "next/image";
 import MediaSectionImage from "@/public/Media section.png";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-import panjatan from "@/public/panjatan.png";
-import ramazan from "@/public/ramazan.png";
-import rocketProgram from "@/public/rocket-program.png";
-import ustad from "@/public/ustad.png";
-import sceneProphetStory from "@/public/scene-prophet-story.png";
-import sceneToons from "@/public/scene-toons.png";
-import sceneYusufMaryam from "@/public/scene-yusuf-maryam.png";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 
-const slides = [
-  { id: 1, name: "panjatan", image: panjatan },
-  { id: 2, name: "ramazan", image: ramazan },
-  { id: 3, name: "syawal", image: rocketProgram },
-  { id: 4, name: "ustad", image: ustad },
-  { id: 5, name: "prophet story", image: sceneProphetStory },
-  { id: 6, name: "toons", image: sceneToons },
-  { id: 7, name: "yusuf maryam", image: sceneYusufMaryam },
-  { id: 8, name: "syawal", image: rocketProgram },
-];
+type VideoData = {
+  _id: string;
+  title: string;
+  description: string;
+  url: string;
+  thumbnail: string;
+  projectId: string;
+  season: number;
+  episode: number;
+  showInHomepage: boolean;
+  homepageOrder: number;
+};
 
-const WatchUs = () => {
+const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
+  console.log(videoData);
   return (
     <Stack
       sx={{
@@ -138,8 +134,8 @@ const WatchUs = () => {
               paddingTop: 40,
             }}
           >
-            {slides.map((slide) => (
-              <SwiperSlide key={slide.id}>
+            {videoData.map((slide) => (
+              <SwiperSlide key={slide._id}>
                 <Stack
                   className="watch-us-card"
                   sx={{
@@ -149,10 +145,10 @@ const WatchUs = () => {
                   }}
                 >
                   <Image
-                    src={slide.image}
-                    alt={slide.name}
+                    src={slide.thumbnail}
+                    alt={slide.title}
                     fill
-                    style={{ objectFit: "cover", borderRadius: "25px" }}
+                    style={{ objectFit: "contain", borderRadius: "25px" }}
                   />
                   <Box className="play-button-wrap">
                     <Box className="play-button-ring" />

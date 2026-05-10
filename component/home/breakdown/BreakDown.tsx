@@ -5,47 +5,22 @@ import Image from "next/image";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import sceneYusufMaryam from "@/public/scene-yusuf-maryam.png";
-import sceneProphetStory from "@/public/scene-prophet-story.png";
-import sceneToons from "@/public/scene-toons.png";
 import { PrimaryButton } from "@/component/ui/PrimaryButton";
 
-const projectBreakDowns = [
-  {
-    id: 1,
-    name: "yusuf Aur Maryam",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
-    image: sceneYusufMaryam,
-  },
-  {
-    id: 2,
-    name: "Sabeel Kids",
-    description:
-      "Lorem  sit amet consectetur adipisicing elit. Quisquam, quos.",
-    image: sceneProphetStory,
-  },
-  {
-    id: 3,
-    name: "Story Book",
-    description: "Lorem ipsum dolor  adipisicing elit. Quisquam, quos.",
-    image: sceneToons,
-  },
-  {
-    id: 4,
-    name: "Story Prophet",
-    description: "Lorem ipsum dolor sit adipisicing elit. Quisquam, quos.",
-    image: sceneProphetStory,
-  },
-  {
-    id: 5,
-    name: "toons",
-    description: "Lorem adipisicing elit. Quisquam, quos.",
-    image: sceneToons,
-  },
-];
+type ProjectBreakDown = {
+  _id: string;
+  projectId: string;
+  title: string;
+  content: string;
+  videoUrl?: string;
+  thumbnail: string;
+};
 
-const BreakDown = () => {
+const BreakDown = ({
+  projectBreakDowns,
+}: {
+  projectBreakDowns: ProjectBreakDown[];
+}) => {
   return (
     <Stack
       sx={{
@@ -165,7 +140,7 @@ const BreakDown = () => {
           }}
         >
           {projectBreakDowns.map((item) => (
-            <SwiperSlide key={item.id}>
+            <SwiperSlide key={item._id}>
               <Stack className="breakdown-card">
                 <Stack
                   sx={{
@@ -178,8 +153,8 @@ const BreakDown = () => {
                   }}
                 >
                   <Image
-                    src={item.image}
-                    alt={item.name}
+                    src={item.thumbnail}
+                    alt={item.title}
                     fill
                     style={{ objectFit: "cover" }}
                   />
@@ -195,7 +170,7 @@ const BreakDown = () => {
                       lineHeight: 1,
                     }}
                   >
-                    {item.name}
+                    {item.title}
                   </Typography>
                   <Typography
                     component="span"
@@ -206,7 +181,7 @@ const BreakDown = () => {
                       textTransform: "uppercase",
                     }}
                   >
-                    {item.description}
+                    {item.content}
                   </Typography>
                 </Stack>
 

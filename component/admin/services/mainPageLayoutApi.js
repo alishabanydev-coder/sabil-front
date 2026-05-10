@@ -25,7 +25,7 @@ async function readJson(response) {
 
 function normalizeAssetUrl(value) {
   if (typeof value !== "string" || !value.startsWith("/")) {
-    return value;
+    return typeof value === "string" && value.startsWith("data:") ? "" : value;
   }
 
   return `${API_BASE}${value}`;
@@ -47,6 +47,21 @@ function normalizeSectionItem(section, item) {
     return {
       ...item,
       thumbnail: normalizeAssetUrl(item.thumbnail),
+    };
+  }
+
+  if (section === "blog") {
+    const firstImage =
+      Array.isArray(item.image) && item.image.length > 0
+        ? normalizeAssetUrl(item.image[0])
+        : "";
+
+    return {
+      ...item,
+      image: Array.isArray(item.image)
+        ? item.image.map((imageItem) => normalizeAssetUrl(imageItem)).filter(Boolean)
+        : [],
+      images: firstImage,
     };
   }
 
@@ -87,7 +102,22 @@ export async function fetchPublicMainPageLayoutItems(section) {
   const response = await fetch(`${API_BASE}/api/admin/public/main-page-layout/${section}`, {
     method: "GET",
   });
-  return await response.json();
+  const data = await response.json();
+  const rawItems = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
+  return rawItems.map((item) => normalizeSectionItem(section, item)).filter(Boolean);
+}
+
+export async function fetchPublicAllVideos() {
+  const response = await fetch(`${API_BASE}/api/admin/public/videos`, {
+    method: "GET",
+  });
+  const data = await readJson(response);
+
+  const rawVideos = Array.isArray(data?.videos) ? data.videos : [];
+  return rawVideos.map((video) => ({
+    ...video,
+    thumbnail: normalizeAssetUrl(video.thumbnail),
+  }));
 }
 
 export async function updateMainPageLayoutItem(section, id, body, { signal } = {}) {

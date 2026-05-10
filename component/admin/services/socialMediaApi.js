@@ -72,6 +72,34 @@ export async function fetchSocialMediaLinks({ signal } = {}) {
   };
 }
 
+export async function fetchPublicSocialMediaLinks({ signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/public/social-media`, {
+    method: "GET",
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      socialMediaLinks: [],
+      message: data?.message || "Failed to load social media links.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    socialMediaLinks: Array.isArray(data?.socialMediaLinks)
+      ? data.socialMediaLinks
+          .map(normalizeSocialMediaLink)
+          .filter((item) => item !== null)
+      : [],
+    message: "",
+    status: response.status,
+  };
+}
+
 export async function createSocialMediaLink(body, { signal } = {}) {
   const formData = new FormData();
   formData.append("name", body?.name || "");

@@ -2,28 +2,29 @@
 
 import { Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import sabeelToons from "@/public/sabeel-toons.png";
-import sabeelKids from "@/public/sabeel-kids.png";
-import storyBook from "@/public/story-book.png";
-import yousofMaryam from "@/public/yusuf-aur-maryam.png";
 import { useState } from "react";
 
-const ProjectImage = [
-  { id: 4, name: "yousof maryam", src: yousofMaryam },
-  { id: 3, name: "sabeel kids", src: sabeelKids },
-  { id: 2, name: "story book", src: storyBook },
-  { id: 1, name: "sabeel toons", src: sabeelToons },
-];
+type ProjectData = {
+  _id: string;
+  name: string;
+  title: string;
+  thumbnail: string;
+  description: string;
+  showInHomepage: boolean;
+  homepageOrder: number;
+};
 
-const OnSubscribtion = () => {
-  const [selectedProject, setSelectedProject] = useState(1);
+const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
+  const [selectedProject, setSelectedProject] = useState<string>(
+    projects[0]._id
+  );
   return (
     <Stack
       sx={{
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
-        gap: 1,
+        gap: 2,
         pt: 8,
       }}
     >
@@ -51,20 +52,26 @@ const OnSubscribtion = () => {
           alignItems: "center",
         }}
       >
-        {ProjectImage.map((item) => (
-          <Image
-            key={item.name}
-            src={item.src}
-            alt={item.name}
-            style={{
-              width: "15%",
-              height: "auto",
+        {projects.map((item) => (
+          <Stack
+            key={item._id}
+            sx={{
+              position: "relative",
+              width: "15vw",
+              aspectRatio: "16 / 9",
               cursor: "pointer",
-              filter: selectedProject === item.id ? "none" : "grayscale(100%)",
+              filter: selectedProject === item._id ? "none" : "grayscale(100%)",
               transition: "all 0.3s ease",
             }}
-            onClick={() => setSelectedProject(item.id)}
-          />
+            onClick={() => setSelectedProject(item._id)}
+          >
+            <Image
+              src={item.thumbnail}
+              alt={item.name}
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </Stack>
         ))}
       </Stack>
     </Stack>

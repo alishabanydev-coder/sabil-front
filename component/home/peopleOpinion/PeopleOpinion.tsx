@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Typography } from "@mui/material";
+import { Avatar, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -75,7 +75,15 @@ const slides = [
   },
 ];
 
-const PeopleOpinion = () => {
+type CommentData = {
+  _id: string;
+  text: string;
+  username: string;
+  targetType: string;
+  targetId: string;
+};
+
+const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
   return (
     <Stack
       sx={{
@@ -187,8 +195,8 @@ const PeopleOpinion = () => {
             paddingBottom: 36,
           }}
         >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.id}>
+          {commentData.map((comment) => (
+            <SwiperSlide key={comment._id}>
               <Stack
                 className="people-opinion-card"
                 sx={{
@@ -214,7 +222,7 @@ const PeopleOpinion = () => {
                         letterSpacing: 1,
                       }}
                     >
-                      {slide.name}
+                      {comment.username}
                     </Typography>
                     <Typography
                       sx={{
@@ -224,15 +232,18 @@ const PeopleOpinion = () => {
                         letterSpacing: 2,
                       }}
                     >
-                      {slide.occupation}
+                      {comment.targetType}
                     </Typography>
                   </Stack>
-                  <Image
-                    src={slide.avatar as any}
-                    alt={slide.name}
-                    width={55}
-                    height={55}
-                    style={{ objectFit: "cover", borderRadius: "50%" }}
+                  <Avatar
+                    alt={comment.username}
+                    sx={{
+                      objectFit: "cover",
+                      bgcolor: "secondary.light",
+                      borderRadius: "50%",
+                      width: 55,
+                      height: 55,
+                    }}
                   />
                 </Stack>
                 <Stack sx={{ position: "relative", px: 6, pt: 2 }}>
@@ -251,7 +262,7 @@ const PeopleOpinion = () => {
                       letterSpacing: 1,
                     }}
                   >
-                    {slide.description}
+                    {comment.text}
                   </Typography>
                   <Image
                     src={virgol}

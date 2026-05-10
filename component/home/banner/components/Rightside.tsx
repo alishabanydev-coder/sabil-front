@@ -26,8 +26,6 @@ type RightsideProps = {
 };
 
 const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
-  console.log(process.env.NEXT_PUBLIC_BACKEND_API_URL);
-  console.log(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${bannerData[0].poster}`);
   return (
     <Box
       sx={{
@@ -75,7 +73,7 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
                   }}
                 >
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BACKEND_API_URL}${bannerItem.poster}`}
+                    src={bannerItem.poster}
                     alt={bannerItem.title}
                     fill
                     style={{ objectFit: "cover" }}

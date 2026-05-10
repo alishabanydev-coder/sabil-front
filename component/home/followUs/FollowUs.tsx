@@ -7,14 +7,42 @@ import instagramIcon from "@/public/insta-icon.png";
 import facebookIcon from "@/public/facebook-icon.png";
 import kidsGroup from "@/public/follow-us-image.png";
 
-const icons = [
+const fallbackIcons = [
   { id: 1, name: "youtube", icon: youtubeIcon },
   { id: 4, name: "facebook", icon: facebookIcon },
   { id: 3, name: "instagram", icon: instagramIcon },
   { id: 2, name: "x", icon: xIcon },
 ];
 
-const FollowUs = () => {
+type SocialMediaLink = {
+  _id?: string;
+  name?: string;
+  url?: string;
+  icon?: string;
+};
+
+const FollowUs = ({
+  socialMediaLinks = [],
+}: {
+  socialMediaLinks?: SocialMediaLink[];
+}) => {
+  const icons =
+    socialMediaLinks.length > 0
+      ? socialMediaLinks
+          .filter((item) => typeof item?.icon === "string" && item.icon)
+          .map((item, index) => ({
+            id: item._id || index,
+            name: item.name || "social-media",
+            icon: item.icon as string,
+            url: item.url || "#",
+          }))
+      : fallbackIcons.map((item) => ({
+          ...item,
+          url: "#",
+        }));
+
+  console.log(socialMediaLinks.map((item) => item));
+
   return (
     <Stack
       sx={{ width: "100%", justifyContent: "center", alignItems: "center" }}
@@ -59,7 +87,11 @@ const FollowUs = () => {
             {icons.map((icon) => (
               <IconButton
                 key={icon.id}
-                sx={{ width: 40, height: 32, position: "relative" }}
+                component="a"
+                href={icon.url}
+                target="_blank"
+                rel="noreferrer"
+                sx={{ width: 40, height: 32, position: "relative", cursor: "pointer" }}
               >
                 <Image
                   src={icon.icon}

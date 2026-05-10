@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   fetchMainPageLayoutItems,
-  fetchPublicMainPageLayoutItems,
   updateMainPageLayoutItem,
 } from "../services/mainPageLayoutApi";
 import { Navigation, Pagination } from "swiper/modules";
@@ -50,6 +49,7 @@ const sections = [
   },
   { name: "video", title: "Watch Us", header: "thumbnail", text: "title" },
   { name: "comment", title: "People Opinion", header: "", text: "username" },
+  { name: "blog", title: "Blog", header: "images", text: "title" },
 ];
 
 type Section = {
@@ -404,7 +404,7 @@ const MainPageLayout = () => {
                   const sectionPreviewData = sortHomepageItems(
                     sectionItems[section.name] || []
                   );
-                  console.log(sectionPreviewData)
+                  console.log(sectionPreviewData);
                   if (sectionPreviewData.length === 0) {
                     return (
                       <Typography

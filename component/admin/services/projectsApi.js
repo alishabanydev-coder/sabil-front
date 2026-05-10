@@ -7,7 +7,7 @@ const API_BASE =
 
 function normalizeAssetUrl(value) {
   if (typeof value !== "string" || !value.startsWith("/")) {
-    return value;
+    return typeof value === "string" && value.startsWith("data:") ? "" : value;
   }
 
   return `${API_BASE}${value}`;
@@ -52,7 +52,12 @@ export async function fetchProjects({ signal } = {}) {
 
   return {
     ok: true,
-    projects: Array.isArray(data?.projects) ? data.projects : [],
+    projects: Array.isArray(data?.projects)
+      ? data.projects.map((project) => ({
+          ...project,
+          thumbnail: normalizeAssetUrl(project.thumbnail),
+        }))
+      : [],
     message: "",
     status: response.status,
   };
@@ -79,7 +84,12 @@ export async function fetchChannelProjects({ signal } = {}) {
 
   return {
     ok: true,
-    projects: Array.isArray(data?.projects) ? data.projects : [],
+    projects: Array.isArray(data?.projects)
+      ? data.projects.map((project) => ({
+          ...project,
+          thumbnail: normalizeAssetUrl(project.thumbnail),
+        }))
+      : [],
     message: "",
     status: response.status,
   };
@@ -272,10 +282,17 @@ export async function deleteChannelVideo(projectId, videoId, { signal } = {}) {
 }
 
 export async function createProject(body, { signal } = {}) {
+  const formData = new FormData();
+  Object.entries(body || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
   const response = await fetch(`${API_BASE}/api/admin/projects`, {
     method: "POST",
-    headers: getAuthHeaders(true),
-    body: JSON.stringify(body),
+    headers: getAuthHeaders(),
+    body: formData,
     signal,
   });
   const data = await readJson(response);
@@ -293,17 +310,29 @@ export async function createProject(body, { signal } = {}) {
 
   return {
     ok: true,
-    project: data?.project ?? null,
+    project: data?.project
+      ? {
+          ...data.project,
+          thumbnail: normalizeAssetUrl(data.project.thumbnail),
+        }
+      : null,
     message: "",
     status: response.status,
   };
 }
 
 export async function updateProject(id, body, { signal } = {}) {
+  const formData = new FormData();
+  Object.entries(body || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
   const response = await fetch(`${API_BASE}/api/admin/projects/${id}`, {
     method: "PATCH",
-    headers: getAuthHeaders(true),
-    body: JSON.stringify(body),
+    headers: getAuthHeaders(),
+    body: formData,
     signal,
   });
   const data = await readJson(response);
@@ -321,7 +350,12 @@ export async function updateProject(id, body, { signal } = {}) {
 
   return {
     ok: true,
-    project: data?.project ?? null,
+    project: data?.project
+      ? {
+          ...data.project,
+          thumbnail: normalizeAssetUrl(data.project.thumbnail),
+        }
+      : null,
     message: "",
     status: response.status,
   };

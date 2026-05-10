@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Stack, Typography } from "@mui/material";
 import Image from "next/image";
+import type { StaticImageData } from "next/image";
 import Link from "next/link";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -11,7 +12,25 @@ import news1 from "@/public/news1.png";
 import news2 from "@/public/news2.png";
 import Pagination from "../banner/components/Pagination";
 
-const slides = [
+type Slide = {
+  id: number | string;
+  title: string;
+  image: string | StaticImageData;
+  link: string;
+};
+
+type BlogDataItem = {
+  _id: string;
+  title?: string;
+  images?: string;
+  image?: string[];
+};
+
+type NewsFromUsProps = {
+  blogData?: BlogDataItem[];
+};
+
+const fallbackSlides: Slide[] = [
   {
     id: 1,
     title: "I really can't believe this animation was made by an Iranian team!",
@@ -48,8 +67,19 @@ const slides = [
   },
 ];
 
-const NewsFromUs = () => {
+export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
   const newsSwiperRef = useRef<any>(null);
+  const slides: Slide[] =
+    blogData.length > 0
+      ? blogData
+          .map((item) => ({
+            id: item._id,
+            title: item.title || "Untitled blog",
+            image: item.images || (Array.isArray(item.image) ? item.image[0] : "") || news1,
+            link: `/news/${item._id}`,
+          }))
+          .filter((slide) => Boolean(slide.image))
+      : fallbackSlides;
 
   const handleNext = () => newsSwiperRef.current?.slideNext();
   const handlePrev = () => newsSwiperRef.current?.slidePrev();
@@ -200,6 +230,4 @@ const NewsFromUs = () => {
       </Stack>
     </Stack>
   );
-};
-
-export default NewsFromUs;
+}

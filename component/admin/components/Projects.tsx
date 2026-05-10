@@ -29,6 +29,7 @@ type ProjectRecord = {
 const Projects = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [projectImage, setProjectImage] = useState("");
+  const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
@@ -57,6 +58,7 @@ const Projects = () => {
 
   const resetForm = () => {
     setProjectImage("");
+    setProjectImageFile(null);
     setProjectName("");
     setProjectDescription("");
     setEditingProjectId("");
@@ -70,6 +72,7 @@ const Projects = () => {
       return;
     }
 
+    setProjectImageFile(file);
     const reader = new FileReader();
     reader.onload = () => {
       setProjectImage(typeof reader.result === "string" ? reader.result : "");
@@ -88,7 +91,8 @@ const Projects = () => {
     setFormError("");
     setFormSuccess("");
 
-    if (!name || !projectImage || !description) {
+    const isCreate = !editingProjectId;
+    if (!name || !description || (isCreate && !projectImageFile)) {
       setFormError("Project name, image, and description are required.");
       return;
     }
@@ -96,8 +100,8 @@ const Projects = () => {
     setSubmitting(true);
     const payload = {
       name,
-      thumbnail: projectImage,
       description,
+      ...(projectImageFile ? { thumbnail: projectImageFile } : {}),
     };
     const result = editingProjectId
       ? await updateProject(editingProjectId, payload)
@@ -124,6 +128,7 @@ const Projects = () => {
     setEditingProjectId(project._id || project.id || "");
     setProjectName(project.name || "");
     setProjectImage(project.thumbnail || "");
+    setProjectImageFile(null);
     setProjectDescription(project.description || "");
   };
 

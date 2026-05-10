@@ -9,32 +9,26 @@ import { Autoplay } from "swiper/modules";
 import { PrimaryButton } from "@/component/ui/PrimaryButton";
 import Pagination from "../banner/components/Pagination";
 import { AnimatePresence, motion } from "framer-motion";
-import flyingGirl from "@/public/flying-girl.png";
-import flyingBoy from "@/public/flying-boy.png";
-import flyingLittleGirl from "@/public/flying-little-boy.png";
 
-const slides = [
-  {
-    title: "Real Children",
-    description: "in islamic lifeStyle",
-    text: "Inspired by the teachings of the Ahlul Bayt(AS) and under the scientific supervision of seminary professors, Sebil Kids produces content that is both engaging and understandable for children, as well as profound, accurate, and in line with Islamic principles. This is a place where children feel seen, heard, and can find themselves in a mirror of Islamic values ​​and identity.",
-    charecterImages: [flyingGirl, flyingBoy, flyingLittleGirl],
-  },
-  {
-    title: "Quality Content",
-    description: "in islamic lifeStyle",
-    text: "Inspired by the teachings of the Ahlul Bayt(AS) and under the scientific supervision of as well as profound, accurate, and in line with Islamic principles. This is a place where children feel seen, heard, and can find themselves in a mirror of Islamic values ​​and identity.",
-    charecterImages: [flyingBoy, flyingLittleGirl, flyingGirl],
-  },
-  {
-    title: "Future Ready",
-    description: "in islamic lifeStyle",
-    text: "Inspired by the teachings rofessors, Sebil Kids, as well as profound, accurate, and in line with Islamic principles. This is a place where children feel seen, heard, and can find themselves in a mirror of Islamic values ​​and identity.",
-    charecterImages: [flyingLittleGirl, flyingGirl, flyingBoy],
-  },
-];
+type VideoData = {
+  _id: string;
+  title: string;
+  description: string;
+  url: string;
+  thumbnail: string;
+  projectId: string;
+  season: number;
+  episode: number;
+};
 
-const Catalogue = () => {
+type ProjectData = {
+  _id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+};
+
+const Catalogue = ({ addVideos, projectsData }: { addVideos: VideoData[], projectsData: ProjectData[] }) => {
   const catalogueLeftSwiperRef = useRef<any>(null);
   const catalogueRightSwiperRef = useRef<any>(null);
   const lastSlideIndexRef = useRef(0);
@@ -104,7 +98,7 @@ const Catalogue = () => {
               gap: 1.5,
             }}
           >
-            {slides[activeSlideIndex].charecterImages.map((imageSrc, index) => (
+            {projectsData.map((project, index) => (
               <Box
                 key={`character-${index}`}
                 component={motion.div}
@@ -138,8 +132,8 @@ const Catalogue = () => {
                 }}
               >
                 <Image
-                  src={imageSrc}
-                  alt={`${slides[activeSlideIndex].title} ${index + 1}`}
+                  src={project.thumbnail}
+                  alt={project.title}
                   fill
                   style={{ objectFit: "contain" }}
                 />
@@ -156,7 +150,6 @@ const Catalogue = () => {
           position: "absolute",
           top: 0,
           left: 0,
-          bgcolor: "#000",
           clipPath:
             "polygon(75% 20%, 76% 20.8%, 77% 22%, 78% 24%, 85% 75%, 85% 77.1%, 84% 79.2%, 83% 80.1%, 81.5% 81%, 0 89%, 0 12%, 73% 19.1%)",
         }}
@@ -171,7 +164,7 @@ const Catalogue = () => {
           onSlideChange={(swiper) => {
             const nextIndex = swiper.realIndex;
             const prevIndex = lastSlideIndexRef.current;
-            const totalSlides = slides.length;
+            const totalSlides = projectsData.length;
             const movedNext = nextIndex === (prevIndex + 1) % totalSlides;
 
             setSlideDirection(movedNext ? 1 : -1);
@@ -184,47 +177,31 @@ const Catalogue = () => {
           loop
           style={{ width: "100%", height: "100%" }}
         >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.title}>
+          {addVideos.map((video) => (
+            <SwiperSlide key={video._id}>
               <Stack
                 sx={{
                   width: "100%",
                   height: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  px: { xs: 3, md: 6 },
-                  textAlign: "center",
+                  position: "relative",
                 }}
               >
                 <Box
                   sx={{
-                    width: "100%",
-                    maxWidth: 460,
+                    width: "95%",
+                    aspectRatio: "16 / 9",
                     borderRadius: 4,
                     p: { xs: 2, md: 4 },
-                    bgcolor: "rgba(255,255,255,0.16)",
+                    // bgcolor: "rgba(255,255,255,0.16)",
                     backdropFilter: "blur(6px)",
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontSize: { xs: 16, sm: 20, md: 28 },
-                      fontWeight: 700,
-                      color: "#fff",
-                      mb: 1,
-                    }}
-                  >
-                    {slide.title}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: { xs: 12, sm: 14, md: 18 },
-                      color: "rgba(255,255,255,0.95)",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {slide.description}
-                  </Typography>
+                 <Image
+                  src={video.thumbnail}
+                  alt={video.title}
+                  fill
+                  style={{ objectFit: "contain" }}
+                 />
                 </Box>
               </Stack>
             </SwiperSlide>
@@ -252,8 +229,8 @@ const Catalogue = () => {
           loop
           style={{ width: "100%", height: "100%" }}
         >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.title}>
+          {addVideos.map((slide) => (
+            <SwiperSlide key={slide._id}>
               <Stack
                 sx={{
                   width: "100%",
@@ -283,7 +260,7 @@ const Catalogue = () => {
                         textTransform: "uppercase",
                       }}
                     >
-                      {slide.title}
+                      {projectsData.find((project) => project._id === slide.projectId)?.title}
                     </Typography>
                     <Typography
                       sx={{
@@ -312,7 +289,7 @@ const Catalogue = () => {
                       whiteSpace: "pre-line",
                     }}
                   >
-                    {slide.text}
+                    {slide.description}
                   </Typography>
                 </Stack>
               </Stack>
