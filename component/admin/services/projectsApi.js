@@ -13,6 +13,77 @@ function normalizeAssetUrl(value) {
   return `${API_BASE}${value}`;
 }
 
+function normalizeProjectCharacters(characters) {
+  if (!Array.isArray(characters)) {
+    return [];
+  }
+
+  return characters
+    .map((item) => ({
+      ...item,
+      name: typeof item?.name === "string" ? item.name : "",
+      image: normalizeAssetUrl(item?.image),
+    }))
+    .filter((item) => item.name && item.image);
+}
+
+function normalizeProjectRecord(project) {
+  if (!project || typeof project !== "object") {
+    return project;
+  }
+
+  return {
+    ...project,
+    thumbnail: normalizeAssetUrl(project.thumbnail),
+    characters: normalizeProjectCharacters(project.characters),
+  };
+}
+
+function buildProjectFormData(body = {}) {
+  const formData = new FormData();
+
+  if (typeof body.name === "string") {
+    formData.append("name", body.name);
+  }
+
+  if (typeof body.description === "string") {
+    formData.append("description", body.description);
+  }
+
+  if (body.thumbnail instanceof File) {
+    formData.append("thumbnail", body.thumbnail);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "characters")) {
+    const characterInput = Array.isArray(body.characters) ? body.characters : [];
+    const characterPayload = [];
+    let uploadedCharacterIndex = 0;
+
+    characterInput.forEach((item) => {
+      const name = typeof item?.name === "string" ? item.name.trim() : "";
+      if (!name) {
+        return;
+      }
+
+      const payloadItem = { name };
+
+      if (item?.imageFile instanceof File) {
+        formData.append("characterImages", item.imageFile);
+        payloadItem.imageFileIndex = uploadedCharacterIndex;
+        uploadedCharacterIndex += 1;
+      } else if (typeof item?.image === "string" && item.image.trim()) {
+        payloadItem.image = item.image.trim();
+      }
+
+      characterPayload.push(payloadItem);
+    });
+
+    formData.append("characters", JSON.stringify(characterPayload));
+  }
+
+  return formData;
+}
+
 function getAuthHeaders(json = false) {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -53,10 +124,7 @@ export async function fetchProjects({ signal } = {}) {
   return {
     ok: true,
     projects: Array.isArray(data?.projects)
-      ? data.projects.map((project) => ({
-          ...project,
-          thumbnail: normalizeAssetUrl(project.thumbnail),
-        }))
+      ? data.projects.map((project) => normalizeProjectRecord(project))
       : [],
     message: "",
     status: response.status,
@@ -85,10 +153,7 @@ export async function fetchChannelProjects({ signal } = {}) {
   return {
     ok: true,
     projects: Array.isArray(data?.projects)
-      ? data.projects.map((project) => ({
-          ...project,
-          thumbnail: normalizeAssetUrl(project.thumbnail),
-        }))
+      ? data.projects.map((project) => normalizeProjectRecord(project))
       : [],
     message: "",
     status: response.status,
@@ -282,12 +347,7 @@ export async function deleteChannelVideo(projectId, videoId, { signal } = {}) {
 }
 
 export async function createProject(body, { signal } = {}) {
-  const formData = new FormData();
-  Object.entries(body || {}).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, value);
-    }
-  });
+  const formData = buildProjectFormData(body);
 
   const response = await fetch(`${API_BASE}/api/admin/projects`, {
     method: "POST",
@@ -310,24 +370,14 @@ export async function createProject(body, { signal } = {}) {
 
   return {
     ok: true,
-    project: data?.project
-      ? {
-          ...data.project,
-          thumbnail: normalizeAssetUrl(data.project.thumbnail),
-        }
-      : null,
+    project: data?.project ? normalizeProjectRecord(data.project) : null,
     message: "",
     status: response.status,
   };
 }
 
 export async function updateProject(id, body, { signal } = {}) {
-  const formData = new FormData();
-  Object.entries(body || {}).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, value);
-    }
-  });
+  const formData = buildProjectFormData(body);
 
   const response = await fetch(`${API_BASE}/api/admin/projects/${id}`, {
     method: "PATCH",
@@ -350,12 +400,7 @@ export async function updateProject(id, body, { signal } = {}) {
 
   return {
     ok: true,
-    project: data?.project
-      ? {
-          ...data.project,
-          thumbnail: normalizeAssetUrl(data.project.thumbnail),
-        }
-      : null,
+    project: data?.project ? normalizeProjectRecord(data.project) : null,
     message: "",
     status: response.status,
   };

@@ -24,7 +24,25 @@ type ProjectRecord = {
   name?: string;
   thumbnail?: string;
   description?: string;
+  characters?: Array<{
+    name?: string;
+    image?: string;
+  }>;
 };
+
+type CharacterFormRecord = {
+  key: string;
+  name: string;
+  image: string;
+  imageFile: File | null;
+};
+
+const createCharacterDraft = (): CharacterFormRecord => ({
+  key: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
+  name: "",
+  image: "",
+  imageFile: null,
+});
 
 const Projects = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,6 +50,7 @@ const Projects = () => {
   const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
+  const [characters, setCharacters] = useState<CharacterFormRecord[]>([]);
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -61,6 +80,7 @@ const Projects = () => {
     setProjectImageFile(null);
     setProjectName("");
     setProjectDescription("");
+    setCharacters([]);
     setEditingProjectId("");
     setFormError("");
   };
@@ -87,6 +107,15 @@ const Projects = () => {
 
     const name = projectName.trim();
     const description = projectDescription.trim();
+    const normalizedCharacters = characters
+      .map((character) => ({
+        name: character.name.trim(),
+        image: character.image,
+        imageFile: character.imageFile,
+      }))
+      .filter(
+        (character) => character.name || character.image || character.imageFile
+      );
 
     setFormError("");
     setFormSuccess("");
@@ -97,11 +126,22 @@ const Projects = () => {
       return;
     }
 
+    const hasInvalidCharacter = normalizedCharacters.some(
+      (character) =>
+        !character.name || (!character.image && !character.imageFile)
+    );
+
+    if (hasInvalidCharacter) {
+      setFormError("Each character must include both name and image.");
+      return;
+    }
+
     setSubmitting(true);
     const payload = {
       name,
       description,
       ...(projectImageFile ? { thumbnail: projectImageFile } : {}),
+      characters: normalizedCharacters,
     };
     const result = editingProjectId
       ? await updateProject(editingProjectId, payload)
@@ -130,6 +170,56 @@ const Projects = () => {
     setProjectImage(project.thumbnail || "");
     setProjectImageFile(null);
     setProjectDescription(project.description || "");
+    setCharacters(
+      Array.isArray(project.characters)
+        ? project.characters.map((character) => ({
+            key: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
+            name: character.name || "",
+            image: character.image || "",
+            imageFile: null,
+          }))
+        : []
+    );
+  };
+
+  const handleCharacterNameChange = (key: string, value: string) => {
+    setCharacters((prevCharacters) =>
+      prevCharacters.map((character) =>
+        character.key === key ? { ...character, name: value } : character
+      )
+    );
+  };
+
+  const handleCharacterImageChange = (
+    key: string,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCharacters((prevCharacters) =>
+        prevCharacters.map((character) =>
+          character.key === key
+            ? {
+                ...character,
+                image: typeof reader.result === "string" ? reader.result : "",
+                imageFile: file,
+              }
+            : character
+        )
+      );
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveCharacter = (key: string) => {
+    setCharacters((prevCharacters) =>
+      prevCharacters.filter((character) => character.key !== key)
+    );
   };
 
   const handleDeleteProject = async (project: ProjectRecord) => {
@@ -161,7 +251,7 @@ const Projects = () => {
       resetForm();
     }
   };
-
+  //FIXME: fix this Charecter Image in a good way and send it and get it in the main page layout
   return (
     <Stack direction="row" sx={{ gap: 3, height: "100%" }}>
       <Stack sx={{ gap: 0.5, width: "60%", height: "100%" }}>
@@ -177,7 +267,7 @@ const Projects = () => {
             gap: 2,
             border: (theme) => `1px solid ${theme.palette.primary.dark}`,
             borderRadius: 2,
-            p: 2,
+            p: 1.5,
             height: "100%",
           }}
         >
@@ -197,7 +287,11 @@ const Projects = () => {
                 <img
                   src={projectImage}
                   alt="project"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
                 />
               ) : (
                 <ImageOutlinedIcon sx={{ fontSize: 60, color: "grey.600" }} />
@@ -219,8 +313,8 @@ const Projects = () => {
             </Button>
           </Stack>
 
-          <Stack sx={{ width: "100%", gap: 1 }}>
-            <Stack sx={{ gap: 3 }}>
+          <Stack sx={{ width: "100%", gap: 1, overflow: "auto"}}>
+            <Stack sx={{ gap: 3, height: "100%" }}>
               <TextField
                 variant="standard"
                 label="Project Name"
@@ -236,6 +330,133 @@ const Projects = () => {
                 value={projectDescription}
                 onChange={(e) => setProjectDescription(e.target.value)}
               />
+
+              <Stack
+                sx={{
+                  gap: 1.5,
+                  height: "100%",
+                  width: "100%",
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
+                  borderRadius: 2,
+                  p: 1,
+                  pb: 0
+                }}
+              >
+                <Stack
+                  direction="row"
+                  sx={{ justifyContent: "space-between", alignItems: "center" }}
+                >
+                  <Typography component="h3" sx={{ fontWeight: 700 }}>
+                    Characters
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() =>
+                      setCharacters((prevCharacters) => [
+                        ...prevCharacters,
+                        createCharacterDraft(),
+                      ])
+                    }
+                  >
+                    Add Character
+                  </Button>
+                </Stack>
+                {characters.length === 0 ? (
+                  <Typography component="p" sx={{ color: "text.secondary" }}>
+                    No characters added yet.
+                  </Typography>
+                ) : (
+                  <Stack
+                    sx={{ gap: 1.5, maxHeight: 145, overflow: "auto", pr: 1 }}
+                  >
+                    {characters.map((character) => (
+                      <Paper
+                        key={character.key}
+                        elevation={0}
+                        sx={{
+                          border: 1,
+                          borderColor: "divider",
+                          borderRadius: 2,
+                          p: 1,
+                        }}
+                      >
+                        <Stack
+                          direction="row"
+                          sx={{ gap: 1.5, alignItems: "center", width: "100%" }}
+                        >
+                          <Box
+                            sx={{
+                              width: 80,
+                              height: 80,
+                              borderRadius: 1.5,
+                              overflow: "hidden",
+                              bgcolor: "#bbb",
+                              display: "grid",
+                              placeItems: "center",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {character.image ? (
+                              <img
+                                src={character.image}
+                                alt={character.name || "character"}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            ) : (
+                              <ImageOutlinedIcon sx={{ color: "grey.600" }} />
+                            )}
+                          </Box>
+                          <Stack sx={{ flex: 1, minWidth: 0, gap: 1 }}>
+                            <TextField
+                              size="small"
+                              label="Character Name"
+                              value={character.name}
+                              onChange={(event) =>
+                                handleCharacterNameChange(
+                                  character.key,
+                                  event.target.value
+                                )
+                              }
+                            />
+                            <Button
+                              component="label"
+                              variant="outlined"
+                              size="small"
+                            >
+                              {character.image
+                                ? "Change Image"
+                                : "Upload Image"}
+                              <input
+                                hidden
+                                type="file"
+                                accept="image/*"
+                                onChange={(event) =>
+                                  handleCharacterImageChange(
+                                    character.key,
+                                    event
+                                  )
+                                }
+                              />
+                            </Button>
+                          </Stack>
+                          <IconButton
+                            color="error"
+                            aria-label="Remove character"
+                            onClick={() => handleRemoveCharacter(character.key)}
+                          >
+                            <DeleteOutlineOutlinedIcon />
+                          </IconButton>
+                        </Stack>
+                      </Paper>
+                    ))}
+                  </Stack>
+                )}
+              </Stack>
             </Stack>
 
             {(formError || formSuccess) && (
@@ -260,13 +481,7 @@ const Projects = () => {
               }}
             >
               <Button
-                variant="outlined"
-                onClick={resetForm}
-                disabled={submitting}
-              >
-                Cancel
-              </Button>
-              <Button
+                fullWidth
                 variant="contained"
                 onClick={handleSubmit}
                 disabled={submitting}
@@ -276,6 +491,13 @@ const Projects = () => {
                   : editingProjectId
                     ? "Update Project"
                     : "Upload Project"}
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={resetForm}
+                disabled={submitting}
+              >
+                Cancel
               </Button>
             </Stack>
           </Stack>
@@ -360,6 +582,12 @@ const Projects = () => {
                       }}
                     >
                       {project.description}
+                    </Typography>
+                    <Typography
+                      component="p"
+                      sx={{ color: "text.secondary", fontSize: 13, mt: 0.5 }}
+                    >
+                      {`Characters: ${Array.isArray(project.characters) ? project.characters.length : 0}`}
                     </Typography>
                   </Stack>
 

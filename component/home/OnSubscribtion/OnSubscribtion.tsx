@@ -69,7 +69,7 @@ const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
               src={item.thumbnail}
               alt={item.name}
               fill
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: "contain" }}
             />
           </Stack>
         ))}

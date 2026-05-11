@@ -26,14 +26,26 @@ type ProjectData = {
   title: string;
   description: string;
   thumbnail: string;
+  characters: { name: string; image: string }[];
 };
 
-const Catalogue = ({ addVideos, projectsData }: { addVideos: VideoData[], projectsData: ProjectData[] }) => {
+const Catalogue = ({
+  addVideos,
+  projectsData,
+}: {
+  addVideos: VideoData[];
+  projectsData: ProjectData[];
+}) => {
   const catalogueLeftSwiperRef = useRef<any>(null);
   const catalogueRightSwiperRef = useRef<any>(null);
   const lastSlideIndexRef = useRef(0);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
+  const activeVideo = addVideos[activeSlideIndex];
+  const activeProject = activeVideo
+    ? projectsData.find((project) => project._id === activeVideo.projectId)
+    : projectsData[activeSlideIndex];
+  const activeCharacters = activeProject?.characters ?? [];
 
   const handleNext = () => {
     setSlideDirection(1);
@@ -98,9 +110,9 @@ const Catalogue = ({ addVideos, projectsData }: { addVideos: VideoData[], projec
               gap: 1.5,
             }}
           >
-            {projectsData.map((project, index) => (
+            {activeCharacters.map((character, index) => (
               <Box
-                key={`character-${index}`}
+                key={`${character.name}-${index}`}
                 component={motion.div}
                 animate={{
                   y: [0, index % 2 === 0 ? -10 : -8, 0],
@@ -132,8 +144,8 @@ const Catalogue = ({ addVideos, projectsData }: { addVideos: VideoData[], projec
                 }}
               >
                 <Image
-                  src={project.thumbnail}
-                  alt={project.title}
+                  src={character.image}
+                  alt={character.name}
                   fill
                   style={{ objectFit: "contain" }}
                 />
@@ -164,7 +176,10 @@ const Catalogue = ({ addVideos, projectsData }: { addVideos: VideoData[], projec
           onSlideChange={(swiper) => {
             const nextIndex = swiper.realIndex;
             const prevIndex = lastSlideIndexRef.current;
-            const totalSlides = projectsData.length;
+            const totalSlides = addVideos.length;
+            if (totalSlides === 0) {
+              return;
+            }
             const movedNext = nextIndex === (prevIndex + 1) % totalSlides;
 
             setSlideDirection(movedNext ? 1 : -1);
@@ -196,12 +211,12 @@ const Catalogue = ({ addVideos, projectsData }: { addVideos: VideoData[], projec
                     backdropFilter: "blur(6px)",
                   }}
                 >
-                 <Image
-                  src={video.thumbnail}
-                  alt={video.title}
-                  fill
-                  style={{ objectFit: "contain" }}
-                 />
+                  <Image
+                    src={video.thumbnail}
+                    alt={video.title}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
                 </Box>
               </Stack>
             </SwiperSlide>
@@ -260,7 +275,11 @@ const Catalogue = ({ addVideos, projectsData }: { addVideos: VideoData[], projec
                         textTransform: "uppercase",
                       }}
                     >
-                      {projectsData.find((project) => project._id === slide.projectId)?.title}
+                      {
+                        projectsData.find(
+                          (project) => project._id === slide.projectId
+                        )?.title
+                      }
                     </Typography>
                     <Typography
                       sx={{

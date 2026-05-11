@@ -41,8 +41,6 @@ const FollowUs = ({
           url: "#",
         }));
 
-  console.log(socialMediaLinks.map((item) => item));
-
   return (
     <Stack
       sx={{ width: "100%", justifyContent: "center", alignItems: "center" }}
@@ -78,7 +76,11 @@ const FollowUs = ({
             Follow Us
           </Typography>
           <Typography
-            sx={{ fontSize: 24, color: "success.main", fontFamily: "Namecat" }}
+            sx={{
+              fontSize: 24,
+              color: "success.main",
+              fontFamily: "Namecat",
+            }}
           >
             you can follow our projects on social networks youtube, X, instagram
             and Facebook
@@ -91,7 +93,12 @@ const FollowUs = ({
                 href={icon.url}
                 target="_blank"
                 rel="noreferrer"
-                sx={{ width: 40, height: 32, position: "relative", cursor: "pointer" }}
+                sx={{
+                  width: 40,
+                  height: 32,
+                  position: "relative",
+                  cursor: "pointer",
+                }}
               >
                 <Image
                   src={icon.icon}

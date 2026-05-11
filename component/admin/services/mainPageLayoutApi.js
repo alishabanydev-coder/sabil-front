@@ -47,6 +47,29 @@ function normalizeSectionItem(section, item) {
     return {
       ...item,
       thumbnail: normalizeAssetUrl(item.thumbnail),
+      ...(section === "projects"
+        ? {
+            characters: Array.isArray(item.characters)
+              ? item.characters
+                  .map((character) => {
+                    const baseCharacter =
+                      character &&
+                      typeof character === "object" &&
+                      !Array.isArray(character)
+                        ? character
+                        : {};
+
+                    return {
+                      ...baseCharacter,
+                      name:
+                        typeof character?.name === "string" ? character.name : "",
+                      image: normalizeAssetUrl(character?.image),
+                    };
+                  })
+                  .filter((character) => character.name && character.image)
+              : [],
+          }
+        : {}),
     };
   }
 
