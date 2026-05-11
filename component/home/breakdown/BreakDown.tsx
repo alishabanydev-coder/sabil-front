@@ -37,6 +37,7 @@ const cardStyle = {
   },
   ".breakdown-card": {
     position: "relative",
+    cursor: "default",
     direction: "ltr",
     width: "100%",
     maxWidth: 220,

@@ -1,5 +1,6 @@
 import {
   alpha,
+  Box,
   Button,
   CircularProgress,
   MenuItem,
@@ -8,7 +9,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import { useEffect, useRef, useState } from "react";
 import {
   createBreakdown,
   deleteBreakdown,
@@ -30,15 +32,19 @@ type BreakdownRecord = {
   projectId: string;
   title: string;
   content: string;
+  thumbnail: string;
   videoUrl?: string;
 };
 
 const Breakdown = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
+  const [thumbnailPreview, setThumbnailPreview] = useState("");
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [breakdowns, setBreakdowns] = useState<BreakdownRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -57,6 +63,8 @@ const Breakdown = () => {
     setTitle("");
     setContent("");
     setVideoUrl("");
+    setThumbnailPreview("");
+    setThumbnailFile(null);
     setSubmitErrorMsg("");
     setOpen(true);
   };
@@ -69,6 +77,23 @@ const Breakdown = () => {
     setTitle(breakdown.title);
     setContent(breakdown.content);
     setVideoUrl(breakdown.videoUrl || "");
+    setThumbnailPreview(breakdown.thumbnail || "");
+    setThumbnailFile(null);
+  };
+
+  const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setThumbnailFile(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setThumbnailPreview(typeof reader.result === "string" ? reader.result : "");
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleDelete = async () => {
@@ -112,7 +137,14 @@ const Breakdown = () => {
         title: title.trim(),
         content: content.trim(),
         videoUrl: videoUrl.trim(),
+        ...(thumbnailFile ? { thumbnail: thumbnailFile } : {}),
       };
+
+      if (!isEditing && !thumbnailFile) {
+        setSubmitErrorMsg("Breakdown thumbnail is required.");
+        return;
+      }
+
       const result =
         isEditing && editingBreakdownId
           ? await updateBreakdown(editingBreakdownId, payload)
@@ -157,6 +189,8 @@ const Breakdown = () => {
     setTitle("");
     setContent("");
     setVideoUrl("");
+    setThumbnailPreview("");
+    setThumbnailFile(null);
     setSubmitErrorMsg("");
   };
 
@@ -289,7 +323,7 @@ const Breakdown = () => {
               No breakdowns yet.
             </Typography>
           ) : (
-            <Stack direction="row" sx={{ gap: 1.5 }}>
+            <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
               {breakdowns.map((breakdown) => (
                 <Stack
                   key={breakdown._id}
@@ -308,6 +342,24 @@ const Breakdown = () => {
                     },
                   }}
                 >
+                  {breakdown.thumbnail ? (
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: 140,
+                        borderRadius: 1.5,
+                        overflow: "hidden",
+                        bgcolor: "grey.200",
+                      }}
+                    >
+                      <img
+                        
+                        src={breakdown.thumbnail}
+                        alt={breakdown.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    </Box>
+                  ) : null}
                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                     {breakdown.title}
                   </Typography>
@@ -335,6 +387,7 @@ const Breakdown = () => {
       <Modal open={open} onClose={handleCancel}>
         <Stack
           sx={{
+            direction: "ltr",
             width: 400,
             position: "absolute",
             top: "50%",
@@ -343,7 +396,9 @@ const Breakdown = () => {
             bgcolor: "background.paper",
             borderRadius: 2,
             boxShadow: 24,
-            p: 3,
+            overflow: "auto",
+            maxHeight: "94vh",
+            p: 2,
             gap: 2,
           }}
         >
@@ -383,6 +438,45 @@ const Breakdown = () => {
               fullWidth
             />
 
+            <Stack sx={{ width: "100%", gap: 1, alignItems: "center" }}>
+              <Box
+                sx={{
+                  width: "100%",
+                  // maxWidth: 280,
+                  height: 160,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  bgcolor: "grey.200",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                {thumbnailPreview ? (
+                  <img
+                    src={thumbnailPreview}
+                    alt="Breakdown thumbnail"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <ImageOutlinedIcon sx={{ fontSize: 48, color: "grey.600" }} />
+                )}
+              </Box>
+              <input
+                ref={fileInputRef}
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailChange}
+              />
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {thumbnailPreview ? "Change Thumbnail" : "Upload Thumbnail"}
+              </Button>
+            </Stack>
+
             <TextField
               label="Breakdwon URL"
               variant="standard"
@@ -406,7 +500,11 @@ const Breakdown = () => {
                 sx={{ width: "100%" }}
                 onClick={handleSubmit}
                 disabled={
-                  isSubmitting || !projectId || !title.trim() || !content.trim()
+                  isSubmitting ||
+                  !projectId ||
+                  !title.trim() ||
+                  !content.trim() ||
+                  (!isEditing && !thumbnailFile)
                 }
               >
                 {isSubmitting
