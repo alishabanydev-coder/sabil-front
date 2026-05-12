@@ -229,7 +229,9 @@ const Catalogue = ({
           width: "40%",
           height: "100%",
           position: "absolute",
-          top: 0,
+          justifyContent: "center",
+          alignItems: "center",
+          // top: '30%',
           right: 0,
           clipPath:
             "polygon(100% 8.8%, 100% 81.56%, 6.2% 72%, 2.2% 56%,  11.4% 17%, 12.7% 15%, 13.5% 14%, 14.3% 13.5%, 15% 13.2%, 16% 12.8%)",
