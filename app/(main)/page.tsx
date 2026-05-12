@@ -52,7 +52,7 @@ export default async function Home() {
     <Stack sx={{ width: "100%" }}>
       <Banner bannerData={publicSectionData[0]} />
       <OnSubscribtion projects={publicSectionData[1]} />
-      <Catalogue addVideos={watchUsVideos} projectsData={publicSectionData[1]}/>
+      <Catalogue addVideos={watchUsVideos} projectsData={publicSectionData[1]} />
       <BreakDown projectBreakDowns={publicSectionData[2]} />
       <WatchUs videoData={publicSectionData[3]} />
       <PeopleOpinion commentData={publicSectionData[4]} />

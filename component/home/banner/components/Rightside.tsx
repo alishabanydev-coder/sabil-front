@@ -47,7 +47,7 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
         }}
       >
         <Swiper
-          // modules={[Autoplay]}
+          modules={[Autoplay]}
           onSwiper={onSwiperInit}
           pagination={{ clickable: true }}
           autoplay={{ delay: 3500, disableOnInteraction: false }}

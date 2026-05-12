@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "./ThemeContext";
 import MUIThemeProvider from "./MUIThemeProvider";
 import ClientLayoutWrapper from "@/component/layoutWrapper/ClientLayoutWrapper";
+import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
+
+const SITE_URL = "https://sabilkids.com";
 
 export const metadata: Metadata = {
   title: "Sabil Kids | Joyful Islamic Streaming for Children",
@@ -34,21 +37,53 @@ export const metadata: Metadata = {
     title: "Sabil Kids | Joyful Islamic Streaming for Children",
     description:
       "Watch Sabil Group animations, read blogs and behind-the-scenes breakdowns, and help children learn Islamic values through joyful and meaningful stories.",
-    url: "https://sabilkids.com",
+    url: SITE_URL,
     siteName: "Sabil Kids",
     locale: "en_US",
     type: "website",
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  let socialMediaLinks = [];
+  try {
+    const socialMediaResult = await fetchPublicSocialMediaLinks();
+    socialMediaLinks = socialMediaResult.ok ? socialMediaResult.socialMediaLinks : [];
+  } catch {
+    socialMediaLinks = [];
+  }
+
+  const sameAs = socialMediaLinks
+    .map((item) => (typeof item?.url === "string" ? item.url.trim() : ""))
+    .filter((url) => /^https?:\/\//i.test(url));
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        name: "Sabil Kids",
+        url: SITE_URL,
+        sameAs,
+      },
+      {
+        "@type": "WebSite",
+        name: "Sabil Kids",
+        url: SITE_URL,
+      },
+    ],
+  };
+
   return (
     <html lang="fa" dir="rtl">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <ThemeProvider>
           <MUIThemeProvider>
             <ClientLayoutWrapper>{children}</ClientLayoutWrapper>

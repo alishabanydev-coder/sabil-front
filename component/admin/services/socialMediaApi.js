@@ -75,6 +75,7 @@ export async function fetchSocialMediaLinks({ signal } = {}) {
 export async function fetchPublicSocialMediaLinks({ signal } = {}) {
   const response = await fetch(`${API_BASE}/api/admin/public/social-media`, {
     method: "GET",
+    cache: "force-cache",
     signal,
   });
   const data = await readJson(response);

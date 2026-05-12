@@ -1,5 +1,40 @@
 import Footer from "@/component/layout/Footer";
 import Navbar from "@/component/layout/Navbar";
+import type { Metadata } from "next";
+
+const SITE_URL = "https://sabilkids.com";
+
+export const metadata: Metadata = {
+  title: "Sabil Kids | Islamic Kids Streaming and Learning",
+  description:
+    "Sabil Kids offers safe and joyful Islamic content for children, including videos, stories, projects, and family-focused educational updates.",
+  keywords: [
+    "Sabil Kids",
+    "Islamic kids content",
+    "kids streaming",
+    "children learning",
+    "family-friendly videos",
+  ],
+  openGraph: {
+    title: "Sabil Kids | Islamic Kids Streaming and Learning",
+    description:
+      "Safe and joyful Islamic entertainment for children with videos, projects, and educational stories.",
+    url: SITE_URL,
+    siteName: "Sabil Kids",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sabil Kids | Islamic Kids Streaming and Learning",
+    description:
+      "Explore family-friendly Islamic videos, projects, and educational stories for children.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function MainLayout({
   children,

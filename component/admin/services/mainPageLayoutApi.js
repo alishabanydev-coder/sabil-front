@@ -23,6 +23,16 @@ async function readJson(response) {
   }
 }
 
+async function revalidateHomePage() {
+  try {
+    await fetch("/api/revalidate-home", {
+      method: "POST",
+    });
+  } catch {
+    // Keep admin updates successful even if cache invalidation fails.
+  }
+}
+
 function normalizeAssetUrl(value) {
   if (typeof value !== "string" || !value.startsWith("/")) {
     return typeof value === "string" && value.startsWith("data:") ? "" : value;
@@ -124,6 +134,7 @@ export async function fetchMainPageLayoutItems(section, { signal } = {}) {
 export async function fetchPublicMainPageLayoutItems(section) {
   const response = await fetch(`${API_BASE}/api/admin/public/main-page-layout/${section}`, {
     method: "GET",
+    cache: 'force-cache',
   });
   const data = await response.json();
   const rawItems = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
@@ -133,6 +144,7 @@ export async function fetchPublicMainPageLayoutItems(section) {
 export async function fetchPublicAllVideos() {
   const response = await fetch(`${API_BASE}/api/admin/public/videos`, {
     method: "GET",
+    cache: 'force-cache',
   });
   const data = await readJson(response);
 
@@ -164,6 +176,8 @@ export async function updateMainPageLayoutItem(section, id, body, { signal } = {
       status: response.status,
     };
   }
+
+  await revalidateHomePage();
 
   return {
     ok: true,
