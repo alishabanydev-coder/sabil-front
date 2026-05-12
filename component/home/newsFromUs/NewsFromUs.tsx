@@ -11,6 +11,7 @@ import EastRoundedIcon from "@mui/icons-material/EastRounded";
 import news1 from "@/public/news1.png";
 import news2 from "@/public/news2.png";
 import Pagination from "../banner/components/Pagination";
+import SeactionHeader from "@/component/ui/SectionHeader";
 
 type Slide = {
   id: number | string;
@@ -94,16 +95,7 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
         pt: 10,
       }}
     >
-      <Typography
-        sx={{
-          fontSize: 36,
-          fontWeight: "bold",
-          color: "primary.main",
-          textTransform: "uppercase",
-        }}
-      >
-        news from us
-      </Typography>
+      <SeactionHeader text="news from us" />
 
       <Typography
         sx={{

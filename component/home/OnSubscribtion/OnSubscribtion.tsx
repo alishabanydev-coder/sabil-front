@@ -1,5 +1,6 @@
 "use client";
 
+import SeactionHeader from "@/component/ui/SectionHeader";
 import { Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
@@ -28,11 +29,7 @@ const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
         pt: 8,
       }}
     >
-      <Typography
-        sx={{ fontSize: 36, fontWeight: "bold", color: "primary.main" }}
-      >
-        ON SUBSCRIBTION
-      </Typography>
+      <SeactionHeader text="ON SUBSCRIBTION" />
       <Typography
         sx={{
           color: "secondary.main",

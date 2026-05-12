@@ -40,13 +40,6 @@ const WatchUsModal = ({
     <Modal open={open} onClose={onClose}>
       <Stack sx={style}>
         <Stack>
-          <Typography
-            sx={{ fontSize: 24, fontWeight: 700, color: "primary.main" }}
-          >
-            Watch Us
-          </Typography>
-        </Stack>
-        <Stack>
           <Stack
             sx={{
               width: "100%",

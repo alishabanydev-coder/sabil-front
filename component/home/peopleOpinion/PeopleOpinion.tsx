@@ -8,6 +8,7 @@ import avatar1 from "@/public/avatar1.png";
 import avatar2 from "@/public/avatar2.png";
 import avatar3 from "@/public/avatar3.png";
 import virgol from "@/public/virgol.png";
+import SeactionHeader from "@/component/ui/SectionHeader";
 
 const slides = [
   {
@@ -96,16 +97,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
         pt: 5,
       }}
     >
-      <Typography
-        sx={{
-          fontSize: 36,
-          fontWeight: "bold",
-          color: "primary.main",
-          textTransform: "uppercase",
-        }}
-      >
-        People Opinions
-      </Typography>
+      <SeactionHeader text="People Opinions" />
 
       <Typography
         sx={{

@@ -6,6 +6,7 @@ import xIcon from "@/public/x-icon.png";
 import instagramIcon from "@/public/insta-icon.png";
 import facebookIcon from "@/public/facebook-icon.png";
 import kidsGroup from "@/public/follow-us-image.png";
+import SeactionHeader from "@/component/ui/SectionHeader";
 
 const fallbackIcons = [
   { id: 1, name: "youtube", icon: youtubeIcon },
@@ -72,16 +73,9 @@ const FollowUs = ({
             width: "40%",
           }}
         >
-          <Typography sx={{ fontSize: 52, color: "primary.main" }}>
-            Follow Us
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: 24,
-              color: "success.main",
-              fontFamily: "Namecat",
-            }}
-          >
+          <SeactionHeader text="Follow Us"  sx={{textAlign: "start"}}/>
+        
+          <Typography sx={{ fontSize: 24, color: "success.main", fontFamily: "Namecat" }}>
             you can follow our projects on social networks youtube, X, instagram
             and Facebook
           </Typography>

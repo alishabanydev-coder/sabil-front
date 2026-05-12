@@ -8,6 +8,7 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { PrimaryButton } from "@/component/ui/PrimaryButton";
 import BreakdownModal from "./component/BreakdownModal";
 import { useState } from "react";
+import SeactionHeader from "@/component/ui/SectionHeader";
 
 type ProjectBreakDown = {
   _id: string;
@@ -137,18 +138,8 @@ const BreakDown = ({
           pt: 8,
         }}
       >
-        <Typography
-          sx={{
-            fontSize: 36,
-            fontWeight: "bold",
-            color: "primary.main",
-            textTransform: "uppercase",
-            whiteSpace: "pre-line",
-            textAlign: "center",
-          }}
-        >
-          {`Project BreakDown \n for kids`}
-        </Typography>
+        <SeactionHeader text={`Project BreakDown \n for kids`} />
+  
         <Stack direction="row" sx={cardStyle}>
           <Swiper
             modules={[Autoplay]}
@@ -160,7 +151,7 @@ const BreakDown = ({
             style={{
               width: "100%",
               height: "100%",
-              paddingTop: 8,
+              paddingTop: 20,
               paddingBottom: 80,
             }}
           >
@@ -207,6 +198,7 @@ const BreakDown = ({
                       sx={{
                         fontSize: { xs: 12, md: 16 },
                         color: "secondary.main",
+                        fontFamily: "Namecat",
                         lineHeight: 1.1,
                         display: "-webkit-box",
                         WebkitLineClamp: 3,

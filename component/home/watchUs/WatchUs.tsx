@@ -8,6 +8,7 @@ import { Autoplay } from "swiper/modules";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import WatchUsModal from "./component/WatchUsModal";
 import { useState } from "react";
+import SeactionHeader from "@/component/ui/SectionHeader";
 
 type VideoData = {
   _id: string;
@@ -105,11 +106,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           pt: 14,
         }}
       >
-        <Typography
-          sx={{ fontSize: 36, fontWeight: "bold", color: "primary.main" }}
-        >
-          Watch Us
-        </Typography>
+        <SeactionHeader text="Watch Us" />
 
         <Stack
           sx={{

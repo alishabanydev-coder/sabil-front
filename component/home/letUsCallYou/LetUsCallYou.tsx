@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Stack, TextField, Typography } from "@mui/material";
 import Image from "next/image";
@@ -7,6 +7,7 @@ import { ScondaryButton } from "@/component/ui/ScondaryButton";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import FollowUsModal from "./component/LetUsCallModal";
 import { useState } from "react";
+import SeactionHeader from "@/component/ui/SectionHeader";
 
 const whiteTextFieldStyles = {
   "& .MuiInputLabel-root": {
@@ -135,9 +136,11 @@ const LetUsCallYou = () => {
           </Stack>
 
           <Stack sx={{ direction: "ltr", width: "45%", gap: 2, pl: 5, pr: 4 }}>
-            <Typography sx={{ fontSize: 36, color: "#fff" }}>
-              Let Us Call You
-            </Typography>
+            <SeactionHeader
+              text="Let Us Call You"
+              sx={{ textAlign: "start", color: "#fff" }}
+            />
+
             <Typography
               sx={{
                 fontSize: 18,

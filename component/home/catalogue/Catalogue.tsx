@@ -67,6 +67,8 @@ const Catalogue = ({
         fill
         style={{ objectFit: "fill" }}
       />
+
+      {/* characters swiper */}
       <Stack
         sx={{
           position: "absolute",
@@ -155,6 +157,7 @@ const Catalogue = ({
         </AnimatePresence>
       </Stack>
 
+      {/* Poseter Swiper */}
       <Box
         sx={{
           width: "74%",
@@ -199,16 +202,16 @@ const Catalogue = ({
                   width: "100%",
                   height: "100%",
                   position: "relative",
+                  alignItems: "end",
+                  justifyContent: "center",
                 }}
               >
                 <Box
                   sx={{
-                    width: "95%",
-                    aspectRatio: "16 / 9",
+                    width: "85%",
+                    aspectRatio: "16 / 9.8",
                     borderRadius: 4,
-                    p: { xs: 2, md: 4 },
-                    // bgcolor: "rgba(255,255,255,0.16)",
-                    backdropFilter: "blur(6px)",
+                    position: "relative",
                   }}
                 >
                   <Image
@@ -224,14 +227,13 @@ const Catalogue = ({
         </Swiper>
       </Box>
 
+      {/* Text Swiper */}
       <Box
         sx={{
           width: "40%",
-          height: "100%",
+          height: "65%",
           position: "absolute",
-          justifyContent: "center",
-          alignItems: "center",
-          // top: '30%',
+          top: "15%",
           right: 0,
           clipPath:
             "polygon(100% 8.8%, 100% 81.56%, 6.2% 72%, 2.2% 56%,  11.4% 17%, 12.7% 15%, 13.5% 14%, 14.3% 13.5%, 15% 13.2%, 16% 12.8%)",
@@ -250,7 +252,7 @@ const Catalogue = ({
             <SwiperSlide key={slide._id}>
               <Stack
                 sx={{
-                  width: "100%",
+                  width: "80%",
                   height: "100%",
                   justifyContent: "center",
                   alignItems: "center",
@@ -275,6 +277,7 @@ const Catalogue = ({
                         color: "primary.main",
                         lineHeight: 1,
                         textTransform: "uppercase",
+                        fontFamily: "Bhel Puri",
                       }}
                     >
                       {
@@ -294,7 +297,7 @@ const Catalogue = ({
                         mb: { xs: 1.5, md: 2.2 },
                       }}
                     >
-                      {slide.description}
+                      {slide.title}
                     </Typography>
                   </Stack>
 

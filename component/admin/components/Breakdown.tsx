@@ -442,7 +442,6 @@ const Breakdown = () => {
               <Box
                 sx={{
                   width: "100%",
-                  // maxWidth: 280,
                   height: 160,
                   borderRadius: 2,
                   overflow: "hidden",

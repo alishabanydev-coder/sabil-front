@@ -40,13 +40,6 @@ const BreakdownModal = ({
     <Modal open={open} onClose={onClose}>
       <Stack sx={style}>
         <Stack>
-          <Typography
-            sx={{ fontSize: 24, fontWeight: 700, color: "primary.main" }}
-          >
-            Project Breakdown
-          </Typography>
-        </Stack>
-        <Stack>
           <Stack
             sx={{
               width: "100%",

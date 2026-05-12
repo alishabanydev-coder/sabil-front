@@ -47,7 +47,7 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
         }}
       >
         <Swiper
-          modules={[Autoplay]}
+          // modules={[Autoplay]}
           onSwiper={onSwiperInit}
           pagination={{ clickable: true }}
           autoplay={{ delay: 3500, disableOnInteraction: false }}
@@ -62,7 +62,6 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
                   height: "100%",
                   justifyContent: "center",
                   alignItems: "center",
-                  px: { xs: 3, md: 6 },
                   textAlign: "center",
                 }}
               >
@@ -70,6 +69,7 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
                   sx={{
                     width: "100%",
                     height: "100%",
+                    position: "relative",
                   }}
                 >
                   <Image

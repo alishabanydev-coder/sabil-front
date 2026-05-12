@@ -42,6 +42,7 @@ const Leftside = () => {
             sx={{
               fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
               textAlign: "end",
+              fontFamily: 'Bhel Puri'
             }}
           >
             A
@@ -52,6 +53,7 @@ const Leftside = () => {
             sx={{
               fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
               textAlign: "end",
+              fontFamily: 'Bhel Puri'
             }}
           >
             GATEWAY
@@ -61,6 +63,7 @@ const Leftside = () => {
             sx={{
               fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
               textAlign: "end",
+              fontFamily: 'Bhel Puri'
             }}
           >
             TO THE
@@ -70,6 +73,7 @@ const Leftside = () => {
             sx={{
               fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
               textAlign: "end",
+              fontFamily: 'Bhel Puri'
             }}
           >
             FUTURE
