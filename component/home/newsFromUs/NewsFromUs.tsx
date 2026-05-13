@@ -31,43 +31,6 @@ type NewsFromUsProps = {
   blogData?: BlogDataItem[];
 };
 
-const fallbackSlides: Slide[] = [
-  {
-    id: 1,
-    title: "I really can't believe this animation was made by an Iranian team!",
-    image: news1,
-    link: "/news/news1",
-  },
-  {
-    id: 2,
-    title:
-      "Sabeel Kids is taking part in the 1st International Animation Festival",
-    image: news2,
-    link: "/news/news2",
-  },
-  {
-    id: 3,
-    title:
-      "Flying to Rome, Italy to take part in the 1st International Animation Festival",
-    image: news1,
-    link: "/news/news3",
-  },
-  {
-    id: 4,
-    title:
-      "The first international animation festival in Iran will be held in the city of Tehran",
-    image: news2,
-    link: "/news/news4",
-  },
-  {
-    id: 5,
-    title:
-      "The first international animation festival in Iran will be held in the city of Tehran in 2026",
-    image: news1,
-    link: "/news/news5",
-  },
-];
-
 export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
   const newsSwiperRef = useRef<any>(null);
   const slides: Slide[] =
@@ -76,11 +39,14 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
           .map((item) => ({
             id: item._id,
             title: item.title || "Untitled blog",
-            image: item.images || (Array.isArray(item.image) ? item.image[0] : "") || news1,
+            image:
+              item.images ||
+              (Array.isArray(item.image) ? item.image[0] : "") ||
+              news1,
             link: `/news/${item._id}`,
           }))
           .filter((slide) => Boolean(slide.image))
-      : fallbackSlides;
+      : [];
 
   const handleNext = () => newsSwiperRef.current?.slideNext();
   const handlePrev = () => newsSwiperRef.current?.slidePrev();
@@ -91,8 +57,8 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
-        gap: 4,
-        pt: 10,
+        gap: { xs: 1, sm: 4 },
+        mt: { xs: 3, sm: 8 },
       }}
     >
       <SeactionHeader text="news from us" />
@@ -100,7 +66,7 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
       <Typography
         sx={{
           width: "60%",
-          fontSize: 16,
+          fontSize: { xs: 9, sm: 16 },
           color: "success.main",
           fontFamily: "Namecat",
           textTransform: "uppercase",
@@ -127,12 +93,22 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
         <Swiper
           modules={[Autoplay]}
           onSwiper={(swiper) => (newsSwiperRef.current = swiper)}
-          slidesPerView={1.3}
           loop
-          spaceBetween={60}
           slidesOffsetBefore={80}
           autoplay={{ delay: 3500, disableOnInteraction: false }}
           style={{ width: "100%", height: "100%", direction: "ltr" }}
+          breakpoints={{
+            320: {
+              slidesPerView: 1,
+              spaceBetween: 20,
+              slidesOffsetBefore: 0,
+            },
+            610: {
+              slidesPerView: 1.3,
+              spaceBetween: 70,
+              slidesOffsetBefore: 80,
+            },
+          }}
         >
           {slides.map((slide) => (
             <SwiperSlide key={slide.id}>
@@ -146,7 +122,7 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                 <Stack
                   sx={{
                     position: "relative",
-                    width: "50%",
+                    width: { xs: "60%", sm: "50%" },
                     aspectRatio: "16 / 9",
                     ".news-from-us-image": {
                       objectFit: "cover",
@@ -178,12 +154,25 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                     alignItems: "center",
                     textAlign: "center",
                     gap: 5,
+                    py: 1,
+                    "& a": {
+                      fontSize: { xs: 8, sm: 12 },
+                      fontFamily: "Namecat",
+                      textTransform: "uppercase",
+                      letterSpacing: 1.2,
+                      textAlign: "center",
+                      textDecoration: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      color: "primary.main",
+                    },
                   }}
                 >
                   <Typography
                     sx={{
                       width: "100%",
-                      fontSize: 16,
+                      fontSize: { xs: 10, sm: 16 },
                       fontFamily: "Namecat",
                       textTransform: "uppercase",
                       letterSpacing: 1.2,
@@ -193,31 +182,17 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                   >
                     {slide.title}
                   </Typography>
-                  <Link
-                    href={slide.link}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      fontSize: 12,
-                      fontFamily: "Namecat",
-                      textTransform: "uppercase",
-                      letterSpacing: 1.2,
-                      textAlign: "center",
-                      textDecoration: "none",
-                      color: "#000",
-                    }}
-                  >
+                  <Link href={slide.link}>
                     Read More
-                    <EastRoundedIcon sx={{ fontSize: 22 }} />
+                    <EastRoundedIcon sx={{ fontSize: { xs: 18, sm: 22 } }} />
                   </Link>
                 </Stack>
               </Stack>
             </SwiperSlide>
           ))}
         </Swiper>
-        <Stack sx={{ position: "absolute", bottom: -70, right: "7%" }}>
-          <Pagination onNext={handleNext} onPrev={handlePrev} />
+        <Stack sx={{ position: "absolute", bottom: {xs: -50, sm: -70}, right: {xs: '36%',sm: "7%"} }}>
+          <Pagination onNext={handlePrev} onPrev={handleNext} />
         </Stack>
       </Stack>
     </Stack>

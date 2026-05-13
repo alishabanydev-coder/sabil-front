@@ -60,7 +60,14 @@ const Catalogue = ({
   };
 
   return (
-    <Stack sx={{ width: "100%", aspectRatio: "16 / 8", position: "relative" }}>
+    <Stack
+      sx={{
+        width: "100%",
+        aspectRatio: { xs: "16 / 9", sm: "16 / 8" },
+        position: "relative",
+        mt: 5,
+      }}
+    >
       <Image
         src={catalogue}
         alt="catalogue"
@@ -72,7 +79,7 @@ const Catalogue = ({
       <Stack
         sx={{
           position: "absolute",
-          top: { xs: "5%", sm: "-3%", md: "-5%", lg: "5%" },
+          top: { xs: "-31%", sm: "-10%", md: "-5%", lg: "0%" },
           right: "3%",
           width: "42%",
           height: 170,
@@ -139,8 +146,8 @@ const Catalogue = ({
                 }}
                 sx={{
                   position: "relative",
-                  width: "32%",
-                  height: "100%",
+                  width: "33%",
+                  aspectRatio: "1 / 1",
                   cursor: "pointer",
                   transformOrigin: "center bottom",
                 }}
@@ -236,7 +243,7 @@ const Catalogue = ({
           top: "15%",
           right: 0,
           clipPath:
-            "polygon(100% 8.8%, 100% 81.56%, 6.2% 72%, 2.2% 56%,  11.4% 17%, 12.7% 15%, 13.5% 14%, 14.3% 13.5%, 15% 13.2%, 16% 12.8%)",
+            "polygon(100% 0%, 100% 100%, 7.5% 95%, 2.3% 62%, 11.3% 5%, 12.7% 1%, 19.5% -2%, 25.3% -3%, 30% -4%)",
         }}
       >
         <Swiper
@@ -256,23 +263,23 @@ const Catalogue = ({
                   height: "100%",
                   justifyContent: "center",
                   alignItems: "center",
-                  px: { xs: 2, md: 3 },
+                  px: { xs: 0, md: 3 },
                 }}
               >
                 <Stack
                   sx={{
                     width: "100%",
-                    gap: 0.5,
+                    gap: { xs: 0, sm: 0.5 },
                     maxWidth: 360,
                     ml: "auto",
                     mr: { xs: 1.2, md: 0, lg: 8 },
                     textAlign: "left",
                   }}
                 >
-                  <Stack sx={{ gap: 1.5 }}>
+                  <Stack sx={{ gap: { xs: 0.5, sm: 1.5 } }}>
                     <Typography
                       sx={{
-                        fontSize: { xs: 14, sm: 18, md: 28 },
+                        fontSize: { xs: 10, sm: 18, md: 28 },
                         fontWeight: 700,
                         color: "primary.main",
                         lineHeight: 1,
@@ -288,7 +295,7 @@ const Catalogue = ({
                     </Typography>
                     <Typography
                       sx={{
-                        fontSize: { xs: 12, sm: 16, md: 16 },
+                        fontSize: { xs: 9, sm: 16, md: 16 },
                         fontFamily: "Namecat",
                         fontWeight: 400,
                         color: "#ff3f7a",
@@ -303,12 +310,12 @@ const Catalogue = ({
 
                   <Typography
                     sx={{
-                      fontSize: { xs: 10, sm: 12, md: 14 },
+                      fontSize: { xs: 7, sm: 12, md: 14 },
                       fontFamily: "Namecat",
                       letterSpacing: 2,
                       fontWeight: 400,
                       color: "#fff",
-                      lineHeight: 1.55,
+                      lineHeight: 1.4,
                       textTransform: "uppercase",
                       whiteSpace: "pre-line",
                     }}
@@ -325,17 +332,25 @@ const Catalogue = ({
       <PrimaryButton
         sx={{
           fontFamily: "Namecat",
-          fontSize: 20,
+          fontSize: { xs: 9, md: 20 },
+          px: { xs: 0.7, md: 2 },
+          py: { xs: 0.4, md: 1 },
           letterSpacing: 2,
           position: "absolute",
-          bottom: "15%",
-          right: "10%",
+          bottom: { xs: "10%", sm: "15%" },
+          right: { xs: "5%", sm: "10%" },
         }}
       >
         LEARN MORE
       </PrimaryButton>
 
-      <Stack sx={{ position: "absolute", bottom: "8%", right: "40%" }}>
+      <Stack
+        sx={{
+          position: "absolute",
+          bottom: { xs: "-5%", sm: "8%" },
+          right: "40%",
+        }}
+      >
         <Pagination onNext={handleNext} onPrev={handlePrev} />
       </Stack>
     </Stack>

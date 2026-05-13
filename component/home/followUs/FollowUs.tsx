@@ -50,8 +50,8 @@ const FollowUs = ({
         sx={{
           position: "relative",
           width: "95%",
-          aspectRatio: "16 / 8",
-          mt: 15,
+          aspectRatio: { xs: "16 / 13", sm: "16 / 8" },
+          mt: { xs: 8, sm: 15 },
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -66,16 +66,22 @@ const FollowUs = ({
         <Stack
           sx={{
             position: "absolute",
-            top: "30%",
+            top: { xs: "24%", sm: "30%" },
             left: "11%",
             direction: "ltr",
-            gap: 3,
+            gap: { xs: 1.8, sm: 3 },
             width: "40%",
           }}
         >
-          <SeactionHeader text="Follow Us"  sx={{textAlign: "start"}}/>
-        
-          <Typography sx={{ fontSize: 24, color: "success.main", fontFamily: "Namecat" }}>
+          <SeactionHeader text="Follow Us" sx={{ textAlign: "start", fontSize: { xs: 15, sm: 24 } }} />
+
+          <Typography
+            sx={{
+              fontSize: { xs: 10, sm: 24 },
+              color: "success.main",
+              fontFamily: "Namecat",
+            }}
+          >
             you can follow our projects on social networks youtube, X, instagram
             and Facebook
           </Typography>
@@ -88,8 +94,8 @@ const FollowUs = ({
                 target="_blank"
                 rel="noreferrer"
                 sx={{
-                  width: 40,
-                  height: 32,
+                  width: { xs: 30, sm: 40 },
+                  height: { xs: 20, sm: 32 },
                   position: "relative",
                   cursor: "pointer",
                 }}
@@ -108,7 +114,7 @@ const FollowUs = ({
         <Stack
           sx={{
             position: "absolute",
-            top: "10% ",
+            top: { xs: "25%", sm: "10%" },
             right: "5%",
             width: "44%",
             aspectRatio: "5 / 4",

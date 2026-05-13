@@ -33,10 +33,12 @@ const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
       <Typography
         sx={{
           color: "secondary.main",
-          fontSize: 14,
+          fontSize: { xs: 9, sm: 14 },
           fontFamily: "Namecat",
           letterSpacing: 1.2,
           textdecoreation: "uppercase",
+          width: "80%",
+          textAlign: "center",
         }}
       >
         A WHOLE WORLD OF AN AMAZING FEATURE AND BENEFITS FOR YOUR FAMILY
@@ -44,7 +46,8 @@ const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
       <Stack
         direction="row"
         sx={{
-          gap: 6,
+          width: { xs: "95%", sm: "80%" },
+          gap: { xs: 2, sm: 6 },
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -54,7 +57,7 @@ const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
             key={item._id}
             sx={{
               position: "relative",
-              width: "15vw",
+              width: "100%",
               aspectRatio: "16 / 9",
               cursor: "pointer",
               filter: selectedProject === item._id ? "none" : "grayscale(100%)",

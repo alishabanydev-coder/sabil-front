@@ -9,12 +9,12 @@ type PaginationProps = {
 
 const Pagination = ({ onNext, onPrev }: PaginationProps) => {
   return (
-    <Stack direction="row" sx={{ gap: 1 }}>
+    <Stack direction="row" sx={{ gap: { xs: 0.5, md: 1 } }}>
       <IconButton
         onClick={onNext}
         sx={{
-          width: 72,
-          height: 40,
+          width: { xs: 50, sm: 72 },
+          height: { xs: 28, sm: 40 },
           borderRadius: 5,
           bgcolor: "secondary.main",
           display: "flex",
@@ -45,16 +45,17 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
         >
           <NavigateNextIcon
             sx={{
-              fontSize: 40,
+              fontSize: { xs: 24, sm: 40 },
               color: "warning.main",
               position: "absolute",
-              right: -2.5,
+              right: { xs: "5px", sm: -2.5 },
+              top: { xs: "7%", sm: "0%" },
             }}
           />
           <Box
             sx={{
-              width: 32,
-              height: 4,
+              width: { xs: 20, sm: 32 },
+              height: { xs: 2, sm: 4 },
               borderRadius: 999,
               bgcolor: "warning.main",
               position: "absolute",
@@ -65,12 +66,12 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
           />
           <Box
             sx={{
-              width: 5,
-              height: 4,
+              width: { xs: 4, sm: 5 },
+              height: { xs: 2, sm: 4 },
               borderRadius: 999,
               bgcolor: "warning.main",
               position: "absolute",
-              right: 52,
+              right: { xs: 38, sm: 52 },
               top: "50%",
               transform: "translateY(-50%)",
             }}
@@ -80,8 +81,8 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
       <IconButton
         onClick={onPrev}
         sx={{
-          width: 40,
-          height: 40,
+          width: { xs: 28, sm: 40 },
+          height: { xs: 28, sm: 40 },
           borderRadius: "50%",
           bgcolor: "secondary.main",
           position: "relative",
@@ -111,7 +112,11 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
           }}
         >
           <NavigateBeforeIcon
-            sx={{ color: "warning.main", fontSize: 40, pr: 0.4 }}
+            sx={{
+              color: "warning.main",
+              fontSize: { xs: 24, sm: 40 },
+              pr: 0.4,
+            }}
           />
         </Box>
       </IconButton>

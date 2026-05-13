@@ -11,11 +11,15 @@ export const ScondaryButton = styled(
 )(({ theme }) => ({
   background: theme.palette.warning.main,
   borderRadius: 50,
-  border: `5px solid #5e92fc`, //new color
+  border: `3px solid #5e92fc`,
   color: theme.palette.primary.main,
   paddingRight: 25,
   paddingLeft: 25,
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.9)",
+
+  [theme.breakpoints.up("sm")]: {
+    border: `5px solid #5e92fc`,
+  },
 
   "&:hover": {
     transform: "translateY(-1px)",

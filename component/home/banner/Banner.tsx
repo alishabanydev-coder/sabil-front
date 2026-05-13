@@ -29,7 +29,7 @@ const Banner = ({ bannerData }: { bannerData: BannerData[] }) => {
 
   return (
     <Stack
-      sx={{ position: "relative", width: "100%", aspectRatio: "16 / 6.5" }}
+      sx={{ position: "relative", width: "100%", aspectRatio: {xs: "16 / 8", sm: "16 / 6.5"} }}
     >
       <Image src={banner} alt="some image" fill style={{ objectFit: "fill" }} />
       <Leftside />
@@ -37,7 +37,7 @@ const Banner = ({ bannerData }: { bannerData: BannerData[] }) => {
         onSwiperInit={(swiper) => (bannerSwiperRef.current = swiper)}
         bannerData={bannerData || []}
       />
-      <Stack sx={{ position: "absolute", bottom: 0, right: "47%" }}>
+      <Stack sx={{ position: "absolute", bottom: {xs: "-12%", md: 0}, right: { xs: "30%", md: "47%" } }}>
         <Pagination onNext={handleNext} onPrev={handlePrev} />
       </Stack>
     </Stack>

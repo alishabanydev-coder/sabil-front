@@ -101,7 +101,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
 
       <Typography
         sx={{
-          fontSize: 16,
+          fontSize: { xs: 9, sm: 14 },
           color: "secondary.main",
           fontFamily: "Namecat",
           textDecoration: "uppercase",
@@ -180,7 +180,16 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
           loop
           centeredSlides
           autoplay={{ delay: 3500, disableOnInteraction: false }}
-          spaceBetween={70}
+          breakpoints={{
+            320: {
+              slidesPerView: 1.2,
+              spaceBetween: 20,
+            },
+            610: {
+              slidesPerView: 3,
+              spaceBetween: 70,
+            },
+          }}
           style={{
             width: "100%",
             paddingTop: 36,
@@ -197,6 +206,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   position: "relative",
                   overflow: "hidden",
                   bgcolor: "secondary.main",
+                  minHeight: { xs: 100, sm: 140 },
                   p: 3,
                   borderRadius: "38px",
                 }}
@@ -205,12 +215,12 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   direction="row"
                   sx={{ justifyContent: "end", alignItems: "center", gap: 2 }}
                 >
-                  <Stack sx={{ alignItems: "end" }}>
+                  <Stack sx={{ alignItems: "end", gap: 0.5 }}>
                     <Typography
                       sx={{
-                        fontSize: 16,
+                        fontSize: { xs: 10, sm: 14 },
                         color: "#000",
-                        fontFamily: "Namecat",
+                        fontFamily: "Bhel Puri",
                         letterSpacing: 1,
                       }}
                     >
@@ -218,7 +228,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                     </Typography>
                     <Typography
                       sx={{
-                        fontSize: 12,
+                        fontSize: { xs: 9, sm: 12 },
                         color: "#fff",
                         fontFamily: "Namecat",
                         letterSpacing: 2,
@@ -233,12 +243,22 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                       objectFit: "cover",
                       bgcolor: "secondary.light",
                       borderRadius: "50%",
-                      width: 55,
-                      height: 55,
+                      width: { xs: 42, sm: 55 },
+                      height: { xs: 42, sm: 55 },
                     }}
                   />
                 </Stack>
-                <Stack sx={{ position: "relative", px: 6, pt: 2 }}>
+                <Stack
+                  sx={{
+                    position: "relative",
+                    px: 6,
+                    pt: 2,
+                    "& img": {
+                      width: { xs: 22, sm: 32 },
+                      height: { xs: 22, sm: 32 },
+                    },
+                  }}
+                >
                   <Typography
                     sx={{
                       position: "relative",
@@ -247,8 +267,13 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                       direction: "ltr",
                       textAlign: "justify",
                       textAlignLast: "left",
-                      whiteSpace: "pre-line",
-                      fontSize: 14,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: { xs: 6, sm: 5 },
+                      whiteSpace: "normal",
+                      fontSize: { xs: 9, sm: 14 },
                       color: "#fff",
                       fontFamily: "Namecat",
                       letterSpacing: 1,
@@ -256,6 +281,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   >
                     {comment.text}
                   </Typography>
+
                   <Image
                     src={virgol}
                     alt="virgol"
@@ -270,6 +296,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                       transformOrigin: "center",
                     }}
                   />
+
                   <Image
                     src={virgol}
                     alt="virgol"

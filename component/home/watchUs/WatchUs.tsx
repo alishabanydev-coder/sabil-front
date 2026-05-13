@@ -25,7 +25,7 @@ type VideoData = {
 
 const cardStyle = {
   position: "absolute",
-  top: "30%",
+  top: { xs: "18%", sm: "25%" },
   left: 0,
   width: "100%",
   height: "auto",
@@ -45,14 +45,14 @@ const cardStyle = {
     transition: "all 360ms ease, opacity 300ms ease",
     ".play-button-wrap": {
       position: "absolute",
-      bottom: -28,
-      right: "20%",
-      width: 85,
-      height: 85,
+      bottom: {xs: -28, sm: -28},
+      right: {xs: "15%", sm: "20%"},
+      width: {xs: 65, sm: 85},
+      height: {xs: 65, sm: 85},
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      transition: "transform 0.3s ease",
+      // transition: "transform 0.3s ease",
       "& .MuiIconButton-root": {
         color: "secondary.main",
       },
@@ -61,10 +61,10 @@ const cardStyle = {
       position: "absolute",
       top: "50%",
       left: "50%",
-      width: 76,
-      height: 76,
-      marginTop: "-38px",
-      marginLeft: "-38px",
+      width: { xs: 56, sm: 76 },
+      height: { xs: 56, sm: 76 },
+      marginTop: { xs: "-28px", sm: "-38px" },
+      marginLeft: { xs: "-28px", sm: "-38px" },
       borderRadius: "50%",
       bgcolor: "rgba(255, 255, 255, 0.48)",
       zIndex: 0,
@@ -74,8 +74,8 @@ const cardStyle = {
     ".play-button": {
       position: "relative",
       zIndex: 1,
-      width: 60,
-      height: 60,
+      width: { xs: 40, sm: 60 },
+      height: { xs: 40, sm: 60 },
       padding: 0,
       bgcolor: "#fff",
       borderRadius: "50%",
@@ -106,14 +106,14 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           pt: 14,
         }}
       >
-        <SeactionHeader text="Watch Us" />
+        <SeactionHeader text="Watch Us" sx={{ zIndex: 100 }} />
 
         <Stack
           sx={{
             position: "relative",
             width: "100%",
-            aspectRatio: "16 / 7",
-            mt: -8,
+            aspectRatio: { xs: "16 / 14", sm: "16 / 7" },
+            mt: { xs: -8, sm: -5 },
           }}
         >
           <Image
@@ -130,6 +130,14 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
               centeredSlides
               autoplay={{ delay: 3500, disableOnInteraction: false }}
               spaceBetween={5}
+              breakpoints={{
+                320: {
+                  slidesPerView: 1.8,
+                },
+                610: {
+                  slidesPerView: 3.5,
+                },
+              }}
               style={{
                 width: "100%",
                 height: "100%",
@@ -159,7 +167,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
                         className="play-button"
                         onClick={onOpenWatchUsModal}
                       >
-                        <PlayArrowRoundedIcon sx={{ fontSize: 54 }} />
+                        <PlayArrowRoundedIcon sx={{ fontSize: { xs: 36, sm: 54 } }} />
                       </IconButton>
                     </Box>
                   </Stack>

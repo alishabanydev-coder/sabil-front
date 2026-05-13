@@ -42,7 +42,7 @@ const cardStyle = {
     direction: "ltr",
     width: "100%",
     maxWidth: 220,
-    height: 230,
+    maxHeight: 230,
     borderRadius: "30px",
     bgcolor: "#ececec",
     p: 2,
@@ -139,7 +139,7 @@ const BreakDown = ({
         }}
       >
         <SeactionHeader text={`Project BreakDown \n for kids`} />
-  
+
         <Stack direction="row" sx={cardStyle}>
           <Swiper
             modules={[Autoplay]}
@@ -148,6 +148,14 @@ const BreakDown = ({
             autoplay={{ delay: 3500, disableOnInteraction: false }}
             loop
             speed={700}
+            breakpoints={{
+              320: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 3,
+              },
+            }}
             style={{
               width: "100%",
               height: "100%",
@@ -179,7 +187,7 @@ const BreakDown = ({
                     <Typography
                       component="p"
                       sx={{
-                        fontSize: { xs: 20, md: 22 },
+                        fontSize: { xs: 12, md: 22 },
                         fontWeight: "bold",
                         color: "primary.main",
                         textTransform: "uppercase",
@@ -196,7 +204,7 @@ const BreakDown = ({
                     <Typography
                       component="span"
                       sx={{
-                        fontSize: { xs: 12, md: 16 },
+                        fontSize: { xs: 10, md: 16 },
                         color: "secondary.main",
                         fontFamily: "Namecat",
                         lineHeight: 1.1,
@@ -231,7 +239,7 @@ const BreakDown = ({
         <Stack
           sx={{
             position: "absolute",
-            bottom: "-8%",
+            bottom: {xs: "-5%", md: "-8%"},
             width: "100%",
             justifyContent: "center",
             alignItems: "center",
@@ -240,9 +248,11 @@ const BreakDown = ({
           <PrimaryButton
             sx={{
               fontFamily: "Namecat",
-              fontSize: 22,
               letterSpacing: 2,
-              width: 280,
+              width: {xs: 'auto', md: 280},
+              fontSize: { xs: 9, md: 20 },
+              px: { xs: 1.2, md: 2 },
+              py: { xs: 0.8, md: 1 },
             }}
           >
             Donate here

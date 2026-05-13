@@ -1,10 +1,15 @@
 import { PrimaryButton } from "@/component/ui/PrimaryButton";
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Image from "next/image";
 import logo from "@/public/icon-192.png";
 
+const textMd = `A\nGATEWAY\nTO THE\nFUTURE`;
+const textXs = `A GATEWAY TO \n THE FUTURE`;
 
 const Leftside = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Stack
       sx={{
@@ -15,24 +20,43 @@ const Leftside = () => {
         left: "6%",
       }}
     >
-      <Stack sx={{ position: "relative", width: "100%", height: "100%" }}>
-        <Image
-          src={logo}
-          alt={"logo"}
-          width={130}
-          style={{
-            marginRight: "auto",
-            marginLeft: "auto",
-            position: "absolute",
-            top: "0%",
-            left: "16%",
+      <Stack
+        sx={{
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Stack
+          sx={{
+            width: "30%",
+            position: "relative",
+            aspectRatio: "1 / 1",
+            justifyContent: "center",
+            alignItems: "center",
+            top: { xs: "-25%", sm: "-35%" },
+            left: "-24%",
           }}
-        />
+        >
+          <Image
+            src={logo}
+            alt={"logo"}
+            fill
+            style={{
+              width: "100%",
+              height: "100%",
+              marginRight: "auto",
+              marginLeft: "auto",
+            }}
+          />
+        </Stack>
 
         <Stack
           sx={{
             position: "absolute",
-            top: "25%",
+            top: { xs: "38%", sm: "25%" },
             left: "10%",
             flexDirection: "column",
           }}
@@ -40,54 +64,26 @@ const Leftside = () => {
           <Typography
             color="primary"
             sx={{
-              fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
+              fontSize: { xs: 10, sm: 14, md: 24, lg: 32, xl: 36 },
               textAlign: "end",
-              fontFamily: 'Bhel Puri'
+              fontFamily: "Bhel Puri",
+              whiteSpace: "pre-line",
             }}
           >
-            A
-          </Typography>
-
-          <Typography
-            color="primary"
-            sx={{
-              fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
-              textAlign: "end",
-              fontFamily: 'Bhel Puri'
-            }}
-          >
-            GATEWAY
-          </Typography>
-          <Typography
-            color="primary"
-            sx={{
-              fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
-              textAlign: "end",
-              fontFamily: 'Bhel Puri'
-            }}
-          >
-            TO THE
-          </Typography>
-          <Typography
-            color="primary"
-            sx={{
-              fontSize: { xs: 12, sm: 14, md: 24, lg: 32, xl: 36 },
-              textAlign: "end",
-              fontFamily: 'Bhel Puri'
-            }}
-          >
-            FUTURE
+            {isMobile ? textXs : textMd}
           </Typography>
         </Stack>
 
         <PrimaryButton
           sx={{
             fontFamily: "Namecat",
-            fontSize: 20,
+            fontSize: { xs: 9, md: 20 },
+            px: { xs: 0.7, md: 2 },
+            py: { xs: 0.3, md: 1 },
             letterSpacing: 2,
             position: "absolute",
-            bottom: "14%",
-            right: "-5%",
+            bottom: { xs: "10%", md: "14%" },
+            right: { xs: "0%", md: "-5%" },
           }}
         >
           subscirbe

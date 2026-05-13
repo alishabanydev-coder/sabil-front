@@ -35,7 +35,7 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
         width: "72%",
         height: "100%",
         overflow: "hidden",
-        borderRadius: "0px 0px 0px 1000px",
+        // borderRadius: "0px 0px 0px 1000px",
       }}
     >
       <Stack
@@ -43,7 +43,8 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
           width: "100%",
           height: "100%",
           justifyContent: "center",
-          clipPath: "polygon(0% 0%, 100% 0%, 100% 98%, 25.5% 89%)",
+          clipPath:
+            "polygon(0% 0%, 100% 0%, 100% 98%, 31% 90%, 29% 89%, 27% 87%, 25% 85%, 23.0% 82%)",
         }}
       >
         <Swiper

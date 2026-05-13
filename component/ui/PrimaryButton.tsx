@@ -11,11 +11,16 @@ export const PrimaryButton = styled(
 )(({ theme }) => ({
   background: theme.palette.primary.main,
   borderRadius: 50,
-  border: `5px solid ${theme.palette.secondary.main}`,
+  border: `3px solid ${theme.palette.secondary.main}`,
   color: theme.palette.warning.main,
   paddingRight: 25,
   paddingLeft: 25,
   boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.9)",
+
+  [theme.breakpoints.up("md")]: {
+    border: `5px solid ${theme.palette.secondary.main}`,
+  },
+  
 
   "&:hover": {
     transform: "translateY(-1px)",
