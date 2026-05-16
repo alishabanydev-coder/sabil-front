@@ -18,6 +18,7 @@ const Leftside = () => {
         position: "absolute",
         top: "8%",
         left: "6%",
+        zIndex: 100,
       }}
     >
       <Stack

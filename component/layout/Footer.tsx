@@ -60,7 +60,7 @@ export default function Footer() {
         sx={{
           position: "absolute",
           top: { xs: "-1%", sm: "5%", md: "-5%" },
-          left: { xs: "20%", sm: "24%", md: "30%" },
+          left: { xs: "22%", sm: "24%", md: "25%" },
         }}
       >
         <Stack
@@ -158,8 +158,8 @@ export default function Footer() {
         <Stack
           sx={{
             position: "relative",
-            width: { xs: 40, md: 111 },
-            height: { xs: 38, md: 80 },
+            width: { xs: 30, md: 111 },
+            height: { xs: 28, md: 80 },
             "&.cursor-pointer": {
               objectFit: "cover",
               cursor: "pointer",

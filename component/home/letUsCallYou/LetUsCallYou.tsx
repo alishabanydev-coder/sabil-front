@@ -13,11 +13,14 @@ const whiteTextFieldStyles = {
   "& .MuiInputLabel-root": {
     color: "#fff",
     fontFamily: "Namecat",
-    fontSize: { xs: 9, sm: 11, md: 13, lg: 14 },
+    fontSize: { xs: 8, sm: 11, md: 13, lg: 14 },
     letterSpacing: 1.2,
   },
   "& .MuiInputLabel-standard": {
-    transform: {"xs": "translate(0, 32px) scale(1)", "sm": "translate(0, 24px) scale(1)"},
+    transform: {
+      xs: "translate(0, 32px) scale(1)",
+      sm: "translate(0, 24px) scale(1)",
+    },
   },
   "& .MuiInputLabel-standard.MuiInputLabel-shrink": {
     transform: "translate(0, -2px) scale(0.75)",
@@ -66,14 +69,16 @@ const LetUsCallYou = () => {
         }}
       >
         <Stack
-          sx={{ position: "relative", width: "100%", aspectRatio: {xs: "16 / 12", sm: "16 / 9" }}}
+          sx={{
+            position: "relative",
+            width: "100%",
+            aspectRatio: { xs: "16 / 11", sm: "16 / 9" },
+            "& img": {
+              objectFit: { xs: "fill", md: "contain" },
+            },
+          }}
         >
-          <Image
-            src={backgroundImage}
-            alt="logo"
-            fill
-            style={{ objectFit: "fill" }}
-          />
+          <Image src={backgroundImage} alt="logo" fill />
         </Stack>
         <Stack
           direction="row"
@@ -90,7 +95,7 @@ const LetUsCallYou = () => {
             sx={{
               width: "55%",
               direction: "ltr",
-              alignItems: "end",
+              alignItems: "center",
               gap: 2,
               pb: 2,
             }}
@@ -120,13 +125,13 @@ const LetUsCallYou = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 1,
-                px: { xs: 0.7, sm: 2 },
-                py: { xs: 0.4, sm: 1 },
+                px: { xs: 0.7, sm: 2.4 },
+                py: { xs: 0.3, sm: 1 },
               }}
             >
               <Typography
                 sx={{
-                  fontSize: { xs: 11, md: 16, lg: 18 },
+                  fontSize: { xs: 10, md: 16, lg: 18 },
                   fontFamily: "Namecat",
                   letterSpacing: 2,
                   mt: 0.5,
@@ -138,10 +143,12 @@ const LetUsCallYou = () => {
                 sx={{
                   bgcolor: "secondary.main",
                   borderRadius: "50%",
-                  p: 0.2,
+                  p: 0.1,
                 }}
               >
-                <PlayArrowRoundedIcon sx={{ color: "primary.main", fontSize: { xs: 15, sm: 20 } }} />
+                <PlayArrowRoundedIcon
+                  sx={{ color: "primary.main", fontSize: { xs: 15, sm: 20 } }}
+                />
               </Stack>
             </ScondaryButton>
           </Stack>
@@ -150,7 +157,7 @@ const LetUsCallYou = () => {
             sx={{
               direction: "ltr",
               width: "45%",
-              gap: {xs: 1, sm: 2},
+              gap: { xs: 1, sm: 2 },
               pl: { xs: 0, sm: 5 },
               pr: { xs: 0, sm: 4 },
             }}
@@ -160,13 +167,13 @@ const LetUsCallYou = () => {
               sx={{
                 textAlign: "start",
                 color: "#fff",
-                fontSize: { xs: 11, sm: 24 },
+                fontSize: { xs: 11, sm: 16, md: 24 },
               }}
             />
 
             <Typography
               sx={{
-                fontSize: { xs: 8, sm: 18 },
+                fontSize: { xs: 8, sm: 12, md: 18 },
                 color: "secondary.main",
                 fontFamily: "Namecat",
               }}

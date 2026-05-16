@@ -73,11 +73,11 @@ const FollowUs = ({
             width: "40%",
           }}
         >
-          <SeactionHeader text="Follow Us" sx={{ textAlign: "start", fontSize: { xs: 15, sm: 24 } }} />
+          <SeactionHeader text="Follow Us" sx={{ textAlign: "start", fontSize: { xs: 15, sm: 16, md: 24 } }} />
 
           <Typography
             sx={{
-              fontSize: { xs: 10, sm: 24 },
+              fontSize: { xs: 10, sm: 12, md: 24 },
               color: "success.main",
               fontFamily: "Namecat",
             }}

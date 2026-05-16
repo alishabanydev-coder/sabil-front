@@ -447,7 +447,8 @@ const MainPageLayout = () => {
                                   border: (theme) =>
                                     `1px solid ${theme.palette.divider}`,
                                   borderRadius: 1,
-                                  p: 0.1,
+                                  px: 1,
+                                  py: 0.5,
                                   width: 220,
                                   height: 130,
                                   overflow: "hidden",

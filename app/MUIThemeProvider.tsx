@@ -61,6 +61,28 @@ const appTheme = createTheme(
           body: {
             fontFamily: fontStack,
           },
+          "@keyframes modalParticleDrift": {
+            "0%": {
+              backgroundPosition: "0 0, 0 0, 0 0",
+            },
+            "100%": {
+              backgroundPosition: "180px -180px, -220px 220px, 260px -260px",
+            },
+          },
+        },
+      },
+      MuiModal: {
+        styleOverrides: {
+          root: {
+            "& .MuiBackdrop-root": {
+              backgroundColor: "rgba(8, 12, 24, 0.76)",
+              backdropFilter: "blur(4px)",
+              backgroundImage:
+                "radial-gradient(circle, rgba(255,255,255,0.16) 1px, transparent 2px), radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 2px), radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 2px)",
+              backgroundSize: "160px 160px, 220px 220px, 280px 280px",
+              animation: "modalParticleDrift 20s linear infinite",
+            },
+          },
         },
       },
     },

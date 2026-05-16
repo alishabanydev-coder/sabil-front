@@ -225,10 +225,12 @@ export default function Navbar() {
           onClose={closeMenu}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
-          sx={{"& .MuiList-root-MuiMenu-list" :{
-            px: 1,
-            py: .5,
-          }}}
+          sx={{
+            "& .MuiList-root-MuiMenu-list": {
+              px: 1,
+              py: 0.5,
+            },
+          }}
         >
           {navItems.map((item) => (
             <MenuItem
@@ -237,12 +239,22 @@ export default function Navbar() {
               href={item.href}
               onClick={() => handleNavClick(item.href, true)}
               sx={{
-                mt: .3,
-                fontSize: 14,
+                mt: 0.4,
+                mx: 1,
+                py: 0.3,
+                fontSize: 12,
+                minHeight: 30,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                lineHeight: 0.3,
                 fontFamily: "Namecat",
                 letterSpacing: 2,
                 borderRadius: 1,
-                backgroundColor: theme => alpha(theme.palette.primary.light, .1),
+                backgroundColor: (theme) =>
+                  isActiveLink(item.href)
+                    ? alpha(theme.palette.primary.light, 0.3)
+                    : alpha(theme.palette.primary.light, 0.1),
                 color: isActiveLink(item.href)
                   ? "primary.main"
                   : "text.primary",
