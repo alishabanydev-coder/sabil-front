@@ -29,6 +29,7 @@ import Comment from "./components/Comment";
 import Users from "./components/Users";
 import MainPageLayout from "./components/MainPageLayout";
 import AboutUs from "./components/AboutUs";
+import Donation from "./components/Donation";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -109,6 +110,13 @@ const allTabs = [
   },
   {
     id: 10,
+    label: "Donation",
+    title: "Donation",
+    permissionKey: "donation",
+    component: <Donation />,
+  },
+  {
+    id: 11,
     label: "Admins",
     title: "Admins",
     permissionKey: "admins",

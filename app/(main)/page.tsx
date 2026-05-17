@@ -13,6 +13,8 @@ import {
   fetchPublicMainPageLayoutItems,
 } from "@/component/admin/services/mainPageLayoutApi";
 import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
+import { fetchPublicAboutUs } from "@/component/admin/services/aboutUsApi";
+import { fetchPublicDonation } from "@/component/admin/services/donationApi";
 
 const sections = [
   { name: "banner", title: "Banner", header: "poster", text: "name" },
@@ -41,6 +43,8 @@ const fetchPublicSectionData = async () => {
 };
 
 export default async function Home() {
+  const aboutUsResult = await fetchPublicAboutUs();
+  const donationResult = await fetchPublicDonation();
   const publicSectionData = await fetchPublicSectionData();
   const publicAllVideos = await fetchPublicAllVideos();
   const socialMediaResult = await fetchPublicSocialMediaLinks();
@@ -48,13 +52,22 @@ export default async function Home() {
     publicSectionData[3].length > 0 ? publicSectionData[3] : publicAllVideos;
   const catalogueVideos =
     publicAllVideos.length > 0 ? publicAllVideos : watchUsVideos;
-  const socialMediaLinks = socialMediaResult.ok ? socialMediaResult.socialMediaLinks : [];
+  const socialMediaLinks = socialMediaResult.ok
+    ? socialMediaResult.socialMediaLinks
+    : [];
 
   return (
     <Stack sx={{ width: "100%" }}>
-      <Banner bannerData={publicSectionData[0]} />
+      <Banner
+        bannerData={publicSectionData[0]}
+        aboutUs={aboutUsResult.ok ? aboutUsResult.aboutUs : null}
+        donation={donationResult.ok ? donationResult.donation : null}
+      />
       <OnSubscribtion projects={publicSectionData[1]} />
-      <Catalogue addVideos={catalogueVideos} projectsData={publicSectionData[1]} />
+      <Catalogue
+        addVideos={catalogueVideos}
+        projectsData={publicSectionData[1]}
+      />
       <BreakDown projectBreakDowns={publicSectionData[2]} />
       <WatchUs videoData={publicSectionData[3]} />
       <PeopleOpinion commentData={publicSectionData[4]} />
