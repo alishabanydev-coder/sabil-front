@@ -3,5 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   revalidatePath("/");
+  revalidatePath("/about");
   return NextResponse.json({ ok: true });
 }

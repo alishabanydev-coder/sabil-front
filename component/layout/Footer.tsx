@@ -12,7 +12,7 @@ const footerLinks = [
     { label: "Sabeel Kids", href: "/" },
     { label: "Sabeel Story", href: "/" },
     { label: "Yusuf Aur Maryam", href: "/" },
-    { label: "About", href: "/#about" },
+    { label: "About", href: "/about" },
   ],
   [
     // { label: "Ways To Watch", href: "/" },

@@ -28,6 +28,7 @@ import SocialMedia from "./components/SocialMedia";
 import Comment from "./components/Comment";
 import Users from "./components/Users";
 import MainPageLayout from "./components/MainPageLayout";
+import AboutUs from "./components/AboutUs";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -101,6 +102,13 @@ const allTabs = [
   },
   {
     id: 9,
+    label: "About Us",
+    title: "About Us",
+    permissionKey: "aboutUs",
+    component: <AboutUs />,
+  },
+  {
+    id: 10,
     label: "Admins",
     title: "Admins",
     permissionKey: "admins",

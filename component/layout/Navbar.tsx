@@ -17,7 +17,7 @@ import { ScondaryButton } from "../ui/ScondaryButton";
 
 const navItems = [
   { label: "Contact", href: "/#contact" },
-  { label: "About", href: "/#about" },
+  { label: "About", href: "/about" },
   { label: "Programs", href: "/#programs" },
   { label: "Project", href: "/#projects" },
   { label: "Home", href: "/" },
