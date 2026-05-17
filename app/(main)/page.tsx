@@ -45,14 +45,16 @@ export default async function Home() {
   const publicAllVideos = await fetchPublicAllVideos();
   const socialMediaResult = await fetchPublicSocialMediaLinks();
   const watchUsVideos =
-    publicAllVideos.length > 0 ? publicAllVideos : publicSectionData[3];
+    publicSectionData[3].length > 0 ? publicSectionData[3] : publicAllVideos;
+  const catalogueVideos =
+    publicAllVideos.length > 0 ? publicAllVideos : watchUsVideos;
   const socialMediaLinks = socialMediaResult.ok ? socialMediaResult.socialMediaLinks : [];
 
   return (
     <Stack sx={{ width: "100%" }}>
       <Banner bannerData={publicSectionData[0]} />
       <OnSubscribtion projects={publicSectionData[1]} />
-      <Catalogue addVideos={watchUsVideos} projectsData={publicSectionData[1]} />
+      <Catalogue addVideos={catalogueVideos} projectsData={publicSectionData[1]} />
       <BreakDown projectBreakDowns={publicSectionData[2]} />
       <WatchUs videoData={publicSectionData[3]} />
       <PeopleOpinion commentData={publicSectionData[4]} />

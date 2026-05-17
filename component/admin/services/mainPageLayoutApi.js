@@ -25,12 +25,29 @@ async function readJson(response) {
 
 async function revalidateHomePage() {
   try {
-    await fetch("/api/revalidate-home", {
+    const response = await fetch("/api/revalidate-home", {
       method: "POST",
     });
+    if (!response.ok) {
+      console.error("Failed to revalidate home page cache.", response.status);
+    }
   } catch {
-    // Keep admin updates successful even if cache invalidation fails.
+    console.error("Failed to revalidate home page cache.");
   }
+}
+
+function sortByHomepageOrder(items) {
+  return [...items].sort((firstItem, secondItem) => {
+    const firstOrder =
+      Number.isInteger(firstItem?.homepageOrder) && firstItem.homepageOrder > 0
+        ? firstItem.homepageOrder
+        : Number.MAX_SAFE_INTEGER;
+    const secondOrder =
+      Number.isInteger(secondItem?.homepageOrder) && secondItem.homepageOrder > 0
+        ? secondItem.homepageOrder
+        : Number.MAX_SAFE_INTEGER;
+    return firstOrder - secondOrder;
+  });
 }
 
 function normalizeAssetUrl(value) {
@@ -138,7 +155,12 @@ export async function fetchPublicMainPageLayoutItems(section) {
   });
   const data = await response.json();
   const rawItems = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
-  return rawItems.map((item) => normalizeSectionItem(section, item)).filter(Boolean);
+  const normalizedItems = rawItems
+    .map((item) => normalizeSectionItem(section, item))
+    .filter(Boolean)
+    .filter((item) => item.showInHomepage === true);
+
+  return sortByHomepageOrder(normalizedItems);
 }
 
 export async function fetchPublicAllVideos() {
@@ -182,6 +204,41 @@ export async function updateMainPageLayoutItem(section, id, body, { signal } = {
   return {
     ok: true,
     item: normalizeSectionItem(section, data?.item),
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function updateMainPageLayoutSection(section, orderedIds, { signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/main-page-layout/${section}`, {
+    method: "PUT",
+    headers: getAuthHeaders(true),
+    body: JSON.stringify({
+      orderedIds: Array.isArray(orderedIds) ? orderedIds : [],
+    }),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+    return {
+      ok: false,
+      items: [],
+      message: data?.message || "Failed to update main page layout section.",
+      status: response.status,
+    };
+  }
+
+  await revalidateHomePage();
+
+  const rawItems = Array.isArray(data?.items) ? data.items : [];
+
+  return {
+    ok: true,
+    items: rawItems
+      .map((item) => normalizeSectionItem(section, item))
+      .filter(Boolean),
     message: "",
     status: response.status,
   };

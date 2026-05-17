@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   fetchMainPageLayoutItems,
+  updateMainPageLayoutSection,
   updateMainPageLayoutItem,
 } from "../services/mainPageLayoutApi";
 import { Navigation, Pagination } from "swiper/modules";
@@ -294,50 +295,20 @@ const MainPageLayout = () => {
 
     try {
       const sectionName = openedSection.name;
-      const currentSectionItems = sectionItems[sectionName] || [];
-      const updatesToSend = currentSectionItems
-        .filter((item) => {
-          const selectedIndex = selectedItemIds.indexOf(item._id);
-          if (selectedIndex === -1) {
-            return false;
-          }
+      const saveResult = await updateMainPageLayoutSection(
+        sectionName,
+        selectedItemIds
+      );
 
-          const nextOrder = selectedIndex + 1;
-          return (
-            !Boolean(item.showInHomepage) ||
-            (item.homepageOrder ?? null) !== nextOrder
-          );
-        })
-        .map((item) => ({
-          _id: item._id,
-          showInHomepage: true,
-          homepageOrder: selectedItemIds.indexOf(item._id) + 1,
-        }));
-
-      if (updatesToSend.length > 0) {
-        const results = await Promise.all(
-          updatesToSend.map((item) =>
-            updateMainPageLayoutItem(sectionName, item._id, {
-              showInHomepage: item.showInHomepage,
-              homepageOrder: item.homepageOrder,
-            })
-          )
-        );
-
-        const failedResult = results.find((result) => !result.ok);
-        if (failedResult) {
-          setSaveErrorMsg(failedResult.message || "Failed to save selection.");
-          return;
-        }
-      }
-
-      const refreshedResult = await fetchSectionData(sectionName);
-      if (!refreshedResult.ok) {
-        setSaveErrorMsg(
-          refreshedResult.message || "Failed to refresh section."
-        );
+      if (!saveResult.ok) {
+        setSaveErrorMsg(saveResult.message || "Failed to save selection.");
         return;
       }
+
+      setSectionItems((current) => ({
+        ...current,
+        [sectionName]: saveResult.items,
+      }));
 
       handleClose();
     } catch (error) {

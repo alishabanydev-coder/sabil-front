@@ -361,7 +361,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             borderBottomColor: "primary.light",
             borderBottomStyle: "solid",
             borderBottomWidth: 1,
-            overflow: "visible",
+            overflow: "hidden",
           }}
         >
           <Tabs
@@ -369,13 +369,15 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             onChange={handleChange}
             aria-label="admin tabs"
             sx={{
-              overflow: "visible",
               px: 3,
               "& .MuiTabs-scroller": {
-                overflow: "visible !important",
+                overflow: "hidden !important",
               },
-              "& .MuiTabs-flexContainer": {
-                overflow: "visible",
+              "& .MuiTabs-scrollButtons": {
+                color: "primary.main",
+              },
+              "& .MuiTabs-scrollButtons.Mui-disabled": {
+                opacity: 0.35,
               },
               "& .MuiTabs-indicator": {
                 overflow: "visible",
@@ -396,6 +398,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             }}
             variant="scrollable"
             scrollButtons="auto"
+            allowScrollButtonsMobile
           >
             {visibleTabs.map((tab) => (
               <Tab
