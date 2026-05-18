@@ -312,7 +312,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
               className="admin-header-wave"
               d="M 0,700 L 0,105 C 55.96507584165741,107.7513133555309 111.93015168331482,110.5026267110618 160,99 C 208.06984831668518,87.4973732889382 248.2444691083981,61.74080651128375 304,65 C 359.7555308916019,68.25919348871625 431.0919718830928,100.53414724380319 491,114 C 550.9080281169072,127.46585275619681 599.3876433592303,122.1226045135035 650,118 C 700.6123566407697,113.8773954864965 753.3574546799853,110.97543470218277 807,98 C 860.6425453200147,85.02456529781723 915.1825379208287,61.97565667776543 968,69 C 1020.8174620791713,76.02434332223457 1071.9123936367,113.12193858675548 1117,132 C 1162.0876063633,150.87806141324452 1201.1678875323714,151.5365889752127 1254,144 C 1306.8321124676286,136.4634110247873 1373.4160562338143,120.73170551239365 1440,105 L 1440,700 L 0,700 Z"
               fill="url(#admin-header-gradient)"
-              fillOpacity={0.26}
+              fillOpacity={0.3}
             />
           </svg>
         </Box>
@@ -377,7 +377,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             borderBottomColor: "primary.light",
             borderBottomStyle: "solid",
             borderBottomWidth: 1,
-            overflow: "hidden",
+            overflow: "visible",
           }}
         >
           <Tabs
@@ -385,15 +385,13 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             onChange={handleChange}
             aria-label="admin tabs"
             sx={{
+              overflow: "visible",
               px: 3,
               "& .MuiTabs-scroller": {
-                overflow: "hidden !important",
+                overflow: "visible !important",
               },
-              "& .MuiTabs-scrollButtons": {
-                color: "primary.main",
-              },
-              "& .MuiTabs-scrollButtons.Mui-disabled": {
-                opacity: 0.35,
+              "& .MuiTabs-flexContainer": {
+                overflow: "visible",
               },
               "& .MuiTabs-indicator": {
                 overflow: "visible",
@@ -414,7 +412,6 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             }}
             variant="scrollable"
             scrollButtons="auto"
-            allowScrollButtonsMobile
           >
             {visibleTabs.map((tab) => (
               <Tab
