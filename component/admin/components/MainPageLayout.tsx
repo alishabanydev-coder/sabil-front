@@ -119,9 +119,16 @@ const MainPageLayout = () => {
     menuElRef.current = event.currentTarget;
   };
 
-  const handleProjectSelect = (project: ProjectRecord) => {
+  const handleProjectSelect = (project: ProjectRecord | null) => {
     setSelectedProject(project);
-    setProjectId(project._id ?? "");
+    setProjectId(project?._id ?? "");
+    if (openedSection?.name === "catalogues") {
+      const catalogueItems = sectionItems.catalogues || [];
+      const selectedIds = sortHomepageItems(
+        catalogueItems.filter((item) => item.projectId === project?._id)
+      ).map((item) => item._id);
+      setSelectedItemIds(selectedIds);
+    }
     handleProjectMenuClose();
   };
 
@@ -180,12 +187,29 @@ const MainPageLayout = () => {
     setOpen(true);
     setOpenedSection(section);
     const sectionData = sectionItems[section.name] || [];
-    setSelectedItemIds(sortHomepageItems(sectionData).map((item) => item._id));
+    if (section.name === "catalogues" && selectedProject?._id) {
+      setSelectedItemIds(
+        sortHomepageItems(
+          sectionData.filter((item) => item.projectId === selectedProject._id)
+        ).map((item) => item._id)
+      );
+    } else {
+      setSelectedItemIds(
+        sortHomepageItems(sectionData).map((item) => item._id)
+      );
+    }
     setSaveErrorMsg("");
   };
 
   const handleDelete = async (sectionName: string, itemId: string) => {
     setSaveErrorMsg("");
+
+    const currentSectionItems = sectionItems[sectionName] || [];
+    const deletedItem = currentSectionItems.find((item) => item._id === itemId);
+    if (!deletedItem) {
+      setSaveErrorMsg("Item not found.");
+      return;
+    }
 
     const removeResult = await updateMainPageLayoutItem(sectionName, itemId, {
       showInHomepage: false,
@@ -199,7 +223,40 @@ const MainPageLayout = () => {
       return;
     }
 
-    const currentSectionItems = sectionItems[sectionName] || [];
+    if (sectionName === "catalogues") {
+      const projectScopedSelectedIds = sortHomepageItems(
+        currentSectionItems.filter(
+          (item) =>
+            item._id !== itemId &&
+            item.projectId === deletedItem.projectId &&
+            item.showInHomepage
+        )
+      ).map((item) => item._id);
+
+      const reorderResult = await updateMainPageLayoutSection(
+        sectionName,
+        projectScopedSelectedIds,
+        {
+          projectId: deletedItem.projectId,
+        }
+      );
+      if (!reorderResult.ok) {
+        setSaveErrorMsg(
+          reorderResult.message || "Failed to reorder catalogue items."
+        );
+        return;
+      }
+
+      setSectionItems((current) => ({
+        ...current,
+        [sectionName]: reorderResult.items,
+      }));
+      setSelectedItemIds((currentIds) =>
+        currentIds.filter((id) => id !== itemId)
+      );
+      return;
+    }
+
     const sectionAfterRemoval = currentSectionItems.map((item) =>
       item._id === itemId
         ? {
@@ -283,9 +340,14 @@ const MainPageLayout = () => {
 
     try {
       const sectionName = openedSection.name;
+      if (sectionName === "catalogues" && !selectedProject?._id) {
+        setSaveErrorMsg("Select a project to manage catalogue order.");
+        return;
+      }
       const saveResult = await updateMainPageLayoutSection(
         sectionName,
-        selectedItemIds
+        selectedItemIds,
+        sectionName === "catalogues" ? { projectId: selectedProject?._id } : {}
       );
 
       if (!saveResult.ok) {
@@ -485,7 +547,7 @@ const MainPageLayout = () => {
                   let sectionPreviewData = sortHomepageItems(
                     sectionItems[section.name] || []
                   );
-                  if (section.name === "catalogues") {
+                  if (section.name === "catalogues" && selectedProject?._id) {
                     sectionPreviewData = sectionPreviewData.filter(
                       (item) => item.projectId === selectedProject?._id
                     );
@@ -785,6 +847,26 @@ const MainPageLayout = () => {
         open={openProjectMenu}
         onClose={handleProjectMenuClose}
       >
+        <MenuItem
+          value={null}
+          selected={selectedProject?._id === null}
+          onClick={() => handleProjectSelect(null)}
+          sx={{
+            mx: 0.5,
+            mb: 0.5,
+            borderRadius: 2,
+            "&:hover": {
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.2),
+            },
+            "&.Mui-selected": {
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
+            },
+          }}
+        >
+          <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
+            All Projects
+          </Stack>
+        </MenuItem>
         {projects.map((project) => (
           <MenuItem
             key={project._id}

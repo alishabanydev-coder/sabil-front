@@ -216,12 +216,19 @@ export async function updateMainPageLayoutItem(section, id, body, { signal } = {
   };
 }
 
-export async function updateMainPageLayoutSection(section, orderedIds, { signal } = {}) {
+export async function updateMainPageLayoutSection(
+  section,
+  orderedIds,
+  { signal, projectId } = {}
+) {
   const response = await fetch(`${API_BASE}/api/admin/main-page-layout/${section}`, {
     method: "PUT",
     headers: getAuthHeaders(true),
     body: JSON.stringify({
       orderedIds: Array.isArray(orderedIds) ? orderedIds : [],
+      ...(typeof projectId === "string" && projectId.trim()
+        ? { projectId: projectId.trim() }
+        : {}),
     }),
     signal,
   });
