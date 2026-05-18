@@ -81,7 +81,9 @@ const Breakdown = () => {
     setThumbnailFile(null);
   };
 
-  const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -91,7 +93,9 @@ const Breakdown = () => {
     setThumbnailFile(file);
     const reader = new FileReader();
     reader.onload = () => {
-      setThumbnailPreview(typeof reader.result === "string" ? reader.result : "");
+      setThumbnailPreview(
+        typeof reader.result === "string" ? reader.result : ""
+      );
     };
     reader.readAsDataURL(file);
   };
@@ -353,10 +357,13 @@ const Breakdown = () => {
                       }}
                     >
                       <img
-                        
                         src={breakdown.thumbnail}
                         alt={breakdown.title}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
                       />
                     </Box>
                   ) : null}
@@ -454,7 +461,11 @@ const Breakdown = () => {
                   <img
                     src={thumbnailPreview}
                     alt="Breakdown thumbnail"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 ) : (
                   <ImageOutlinedIcon sx={{ fontSize: 48, color: "grey.600" }} />

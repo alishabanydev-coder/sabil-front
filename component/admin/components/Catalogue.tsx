@@ -60,7 +60,7 @@ const Catalogue = () => {
     null
   );
 
-  console.log(projectId)
+  console.log(projectId);
 
   const menuElRef = useRef<HTMLButtonElement>(null);
 

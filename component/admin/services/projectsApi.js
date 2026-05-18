@@ -1,8 +1,7 @@
 import { handleExpiredAdminSession } from "./adminSession";
 
 const API_BASE =
-  (typeof process !== "undefined" &&
-    process.env?.NEXT_PUBLIC_ADMIN_API_URL) ||
+  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_ADMIN_API_URL) ||
   "http://localhost:5000";
 
 function normalizeAssetUrl(value) {
@@ -55,7 +54,9 @@ function buildProjectFormData(body = {}) {
   }
 
   if (Object.prototype.hasOwnProperty.call(body, "characters")) {
-    const characterInput = Array.isArray(body.characters) ? body.characters : [];
+    const characterInput = Array.isArray(body.characters)
+      ? body.characters
+      : [];
     const characterPayload = [];
     let uploadedCharacterIndex = 0;
 
@@ -233,7 +234,8 @@ function normalizeCatalogueRecord(catalogue) {
   const normalizedImage = normalizeAssetUrl(catalogue.image);
   const normalizedHeader =
     typeof catalogue.header === "string" ? catalogue.header : "";
-  const normalizedBody = typeof catalogue.body === "string" ? catalogue.body : "";
+  const normalizedBody =
+    typeof catalogue.body === "string" ? catalogue.body : "";
 
   return {
     ...catalogue,
@@ -285,7 +287,9 @@ export async function fetchChannelCatalogues(projectId, { signal } = {}) {
     return {
       ok: true,
       catalogues: Array.isArray(data?.catalogues)
-        ? data.catalogues.map((catalogue) => normalizeCatalogueRecord(catalogue))
+        ? data.catalogues.map((catalogue) =>
+            normalizeCatalogueRecord(catalogue)
+          )
         : [],
       message: "",
       status: response.status,
@@ -332,7 +336,9 @@ export async function fetchChannelCatalogues(projectId, { signal } = {}) {
         status: response.status,
         message: data?.message || "Failed to load channel catalogues.",
         catalogues: Array.isArray(data?.catalogues)
-          ? data.catalogues.map((catalogue) => normalizeCatalogueRecord(catalogue))
+          ? data.catalogues.map((catalogue) =>
+              normalizeCatalogueRecord(catalogue)
+            )
           : [],
       };
     })
@@ -389,7 +395,9 @@ export async function createChannelCatalogue(projectId, body, { signal } = {}) {
 
   return {
     ok: true,
-    catalogue: data?.catalogue ? normalizeCatalogueRecord(data.catalogue) : null,
+    catalogue: data?.catalogue
+      ? normalizeCatalogueRecord(data.catalogue)
+      : null,
     message: "",
     status: response.status,
   };
@@ -432,7 +440,9 @@ export async function updateChannelCatalogue(
 
   return {
     ok: true,
-    catalogue: data?.catalogue ? normalizeCatalogueRecord(data.catalogue) : null,
+    catalogue: data?.catalogue
+      ? normalizeCatalogueRecord(data.catalogue)
+      : null,
     message: "",
     status: response.status,
   };
