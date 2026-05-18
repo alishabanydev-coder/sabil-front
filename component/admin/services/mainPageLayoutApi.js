@@ -100,6 +100,13 @@ function normalizeSectionItem(section, item) {
     };
   }
 
+  if (section === "catalogues") {
+    return {
+      ...item,
+      image: normalizeAssetUrl(item.image),
+    };
+  }
+
   if (section === "blog") {
     const firstImage =
       Array.isArray(item.image) && item.image.length > 0

@@ -30,6 +30,7 @@ import Users from "./components/Users";
 import MainPageLayout from "./components/MainPageLayout";
 import AboutUs from "./components/AboutUs";
 import Donation from "./components/Donation";
+import Catalogue from "./components/Catalogue";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -82,41 +83,48 @@ const allTabs = [
   },
   {
     id: 6,
+    label: "Catalogue",
+    title: "Catalogue",
+    permissionKey: "catalogue",
+    component: <Catalogue />,
+  },
+  {
+    id: 7,
     label: "Channels",
     title: "Channels",
     permissionKey: "channels",
     component: <Channels />,
   },
   {
-    id: 7,
+    id: 8,
     label: "Users (Supporters)",
     title: "Users / Supporters",
     permissionKey: "users",
     component: <Users />,
   },
   {
-    id: 8,
+    id: 9,
     label: "Social Media",
     title: "Social Media",
     permissionKey: "socialMedia",
     component: <SocialMedia />,
   },
   {
-    id: 9,
+    id: 10,
     label: "About Us",
     title: "About Us",
     permissionKey: "aboutUs",
     component: <AboutUs />,
   },
   {
-    id: 10,
+    id: 11,
     label: "Donation",
     title: "Donation",
     permissionKey: "donation",
     component: <Donation />,
   },
   {
-    id: 11,
+    id: 12,
     label: "Admins",
     title: "Admins",
     permissionKey: "admins",

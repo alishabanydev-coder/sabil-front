@@ -225,6 +225,251 @@ export async function fetchChannelBreakdowns(projectId, { signal } = {}) {
   };
 }
 
+function normalizeCatalogueRecord(catalogue) {
+  if (!catalogue || typeof catalogue !== "object") {
+    return catalogue;
+  }
+
+  const normalizedImage = normalizeAssetUrl(catalogue.image);
+  const normalizedHeader =
+    typeof catalogue.header === "string" ? catalogue.header : "";
+  const normalizedBody = typeof catalogue.body === "string" ? catalogue.body : "";
+
+  return {
+    ...catalogue,
+    image: normalizedImage,
+    header: normalizedHeader,
+    body: normalizedBody,
+    // Keep compatibility with any existing UI expecting old keys.
+    thumbnail: normalizedImage,
+    title: normalizedHeader,
+    content: normalizedBody,
+  };
+}
+
+export async function fetchChannelCatalogues(projectId, { signal } = {}) {
+  if (
+    projectId &&
+    typeof projectId === "object" &&
+    !Array.isArray(projectId) &&
+    Object.prototype.hasOwnProperty.call(projectId, "signal")
+  ) {
+    return fetchChannelCatalogues(undefined, projectId);
+  }
+
+  const normalizedProjectId =
+    typeof projectId === "string" ? projectId.trim() : "";
+
+  if (normalizedProjectId) {
+    const response = await fetch(
+      `${API_BASE}/api/admin/channels/projects/${normalizedProjectId}/catalogues`,
+      {
+        method: "GET",
+        headers: getAuthHeaders(),
+        signal,
+      }
+    );
+    const data = await readJson(response);
+
+    if (!response.ok) {
+      handleExpiredAdminSession(response.status);
+
+      return {
+        ok: false,
+        catalogues: [],
+        message: data?.message || "Failed to load channel catalogues.",
+        status: response.status,
+      };
+    }
+
+    return {
+      ok: true,
+      catalogues: Array.isArray(data?.catalogues)
+        ? data.catalogues.map((catalogue) => normalizeCatalogueRecord(catalogue))
+        : [],
+      message: "",
+      status: response.status,
+    };
+  }
+
+  const projectsResult = await fetchChannelProjects({ signal });
+  if (!projectsResult.ok) {
+    return {
+      ok: false,
+      catalogues: [],
+      message: projectsResult.message || "Failed to load channel catalogues.",
+      status: projectsResult.status,
+    };
+  }
+
+  const projectIds = projectsResult.projects
+    .map((project) => project?._id || project?.id)
+    .filter(Boolean);
+
+  if (projectIds.length === 0) {
+    return {
+      ok: true,
+      catalogues: [],
+      message: "",
+      status: 200,
+    };
+  }
+
+  const projectResponses = await Promise.all(
+    projectIds.map(async (id) => {
+      const response = await fetch(
+        `${API_BASE}/api/admin/channels/projects/${id}/catalogues`,
+        {
+          method: "GET",
+          headers: getAuthHeaders(),
+          signal,
+        }
+      );
+      const data = await readJson(response);
+
+      return {
+        ok: response.ok,
+        status: response.status,
+        message: data?.message || "Failed to load channel catalogues.",
+        catalogues: Array.isArray(data?.catalogues)
+          ? data.catalogues.map((catalogue) => normalizeCatalogueRecord(catalogue))
+          : [],
+      };
+    })
+  );
+
+  const failedRequest = projectResponses.find((item) => !item.ok);
+  if (failedRequest) {
+    handleExpiredAdminSession(failedRequest.status);
+    return {
+      ok: false,
+      catalogues: [],
+      message: failedRequest.message,
+      status: failedRequest.status,
+    };
+  }
+
+  return {
+    ok: true,
+    catalogues: projectResponses.flatMap((item) => item.catalogues),
+    message: "",
+    status: 200,
+  };
+}
+
+export async function createChannelCatalogue(projectId, body, { signal } = {}) {
+  const formData = new FormData();
+  Object.entries(body || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/projects/${projectId}/catalogues`,
+    {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: formData,
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      catalogue: null,
+      message: data?.message || "Failed to create catalogue.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    catalogue: data?.catalogue ? normalizeCatalogueRecord(data.catalogue) : null,
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function updateChannelCatalogue(
+  projectId,
+  catalogueId,
+  body,
+  { signal } = {}
+) {
+  const formData = new FormData();
+  Object.entries(body || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/projects/${projectId}/catalogues/${catalogueId}`,
+    {
+      method: "PATCH",
+      headers: getAuthHeaders(),
+      body: formData,
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      catalogue: null,
+      message: data?.message || "Failed to update catalogue.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    catalogue: data?.catalogue ? normalizeCatalogueRecord(data.catalogue) : null,
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function deleteChannelCatalogue(
+  projectId,
+  catalogueId,
+  { signal } = {}
+) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/projects/${projectId}/catalogues/${catalogueId}`,
+    {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      message: data?.message || "Failed to delete catalogue.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    message: data?.message || "Catalogue deleted.",
+    status: response.status,
+  };
+}
+
 export async function createChannelVideo(projectId, body, { signal } = {}) {
   const formData = new FormData();
 

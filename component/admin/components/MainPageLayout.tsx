@@ -1,17 +1,21 @@
-'use client'
+"use client";
 
 import {
+  alpha,
   Button,
   Checkbox,
   CircularProgress,
   Divider,
   IconButton,
+  Menu,
+  MenuItem,
   Modal,
   Stack,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import AddIcon from "@mui/icons-material/Add";
 import {
   fetchMainPageLayoutItems,
   updateMainPageLayoutSection,
@@ -19,6 +23,7 @@ import {
 } from "../services/mainPageLayoutApi";
 import { Navigation, Pagination } from "swiper/modules";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import { fetchProjects } from "../services/projectsApi";
 
 const style = {
   direction: "ltr",
@@ -45,6 +50,12 @@ const sections = [
     text: "title",
   },
   {
+    name: "catalogues",
+    title: "Catalogues",
+    header: "image",
+    text: "header",
+  },
+  {
     name: "breakdown",
     title: "Project Breakdowns",
     header: "thumbnail",
@@ -69,6 +80,14 @@ type LayoutItem = {
   [key: string]: any;
 };
 
+type ProjectRecord = {
+  _id?: string;
+  id?: string;
+  name?: string;
+  thumbnail?: string;
+  description?: string;
+};
+
 const MainPageLayout = () => {
   const [open, setOpen] = useState(false);
   const [openedSection, setOpenedSection] = useState<Section | null>(null);
@@ -80,6 +99,31 @@ const MainPageLayout = () => {
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [saveErrorMsg, setSaveErrorMsg] = useState("");
+  const [projects, setProjects] = useState<ProjectRecord[]>([]);
+  const [projectId, setProjectId] = useState("");
+  const [openProjectMenu, setOpenProjectMenu] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<ProjectRecord | null>(
+    null
+  );
+
+  const menuElRef = useRef<HTMLButtonElement>(null);
+
+  const handleProjectMenuClose = () => {
+    setOpenProjectMenu(false);
+  };
+
+  const handleProjectMenuClick = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    setOpenProjectMenu(true);
+    menuElRef.current = event.currentTarget;
+  };
+
+  const handleProjectSelect = (project: ProjectRecord) => {
+    setSelectedProject(project);
+    setProjectId(project._id ?? "");
+    handleProjectMenuClose();
+  };
 
   const sortHomepageItems = (items: LayoutItem[]) =>
     items
@@ -221,8 +265,82 @@ const MainPageLayout = () => {
     );
   };
 
+  const toggleItemSelection = (itemId: string) => {
+    setSelectedItemIds((currentIds) =>
+      currentIds.includes(itemId)
+        ? currentIds.filter((id) => id !== itemId)
+        : [...currentIds, itemId]
+    );
+  };
+
+  const handleSave = async () => {
+    if (!openedSection) {
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveErrorMsg("");
+
+    try {
+      const sectionName = openedSection.name;
+      const saveResult = await updateMainPageLayoutSection(
+        sectionName,
+        selectedItemIds
+      );
+
+      if (!saveResult.ok) {
+        setSaveErrorMsg(saveResult.message || "Failed to save selection.");
+        return;
+      }
+
+      setSectionItems((current) => ({
+        ...current,
+        [sectionName]: saveResult.items,
+      }));
+
+      handleClose();
+    } catch (error) {
+      setSaveErrorMsg(
+        error instanceof Error ? error.message : "Failed to save item."
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
+
+    async function loadProjects() {
+      setLoading(true);
+      setErrorMsg("");
+
+      try {
+        const result = await fetchProjects({ signal: controller.signal });
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setLoading(false);
+
+        if (!result.ok) {
+          setErrorMsg(result.message);
+          return;
+        }
+
+        setProjects(result.projects);
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setLoading(false);
+        setErrorMsg(
+          error instanceof Error ? error.message : "Failed to load Projects."
+        );
+      }
+    }
 
     async function fetchAllSections() {
       try {
@@ -272,57 +390,22 @@ const MainPageLayout = () => {
       }
     }
 
+    loadProjects();
     fetchAllSections();
 
     return () => controller.abort("Main page layout unmounted");
   }, []);
 
-  const toggleItemSelection = (itemId: string) => {
-    setSelectedItemIds((currentIds) =>
-      currentIds.includes(itemId)
-        ? currentIds.filter((id) => id !== itemId)
-        : [...currentIds, itemId]
-    );
-  };
+  let modalItems: LayoutItem[] = [];
 
-  const handleSave = async () => {
-    if (!openedSection) {
-      return;
-    }
-
-    setIsSaving(true);
-    setSaveErrorMsg("");
-
-    try {
-      const sectionName = openedSection.name;
-      const saveResult = await updateMainPageLayoutSection(
-        sectionName,
-        selectedItemIds
-      );
-
-      if (!saveResult.ok) {
-        setSaveErrorMsg(saveResult.message || "Failed to save selection.");
-        return;
-      }
-
-      setSectionItems((current) => ({
-        ...current,
-        [sectionName]: saveResult.items,
-      }));
-
-      handleClose();
-    } catch (error) {
-      setSaveErrorMsg(
-        error instanceof Error ? error.message : "Failed to save item."
-      );
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const modalItems = openedSection
-    ? sectionItems[openedSection.name] || []
-    : [];
+  if (openedSection?.name === "catalogues") {
+    const catalogueItems = sectionItems[openedSection.name] || [];
+    modalItems = selectedProject?._id
+      ? catalogueItems.filter((item) => item.projectId === selectedProject._id)
+      : catalogueItems;
+  } else {
+    modalItems = openedSection ? sectionItems[openedSection.name] || [] : [];
+  }
 
   return (
     <Stack
@@ -338,13 +421,38 @@ const MainPageLayout = () => {
         {sections.map((section) => (
           <Stack key={section.name}>
             <Divider flexItem key={section.name}>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => handleOpen(section)}
-              >
-                Add {section.title}
-              </Button>
+              <Stack direction="row" sx={{ alignItems: "center", gap: 1 }}>
+                {section.name === "catalogues" ? (
+                  <Button variant="outlined" onClick={handleProjectMenuClick}>
+                    <Stack
+                      direction="row"
+                      sx={{ gap: 1, alignItems: "center" }}
+                    >
+                      {selectedProject ? selectedProject.name : "All Projects"}
+                      {selectedProject ? (
+                        <img
+                          src={selectedProject.thumbnail}
+                          alt={selectedProject.name}
+                          style={{
+                            width: 24,
+                            height: 24,
+                            objectFit: "contain",
+                          }}
+                        />
+                      ) : (
+                        <AddIcon />
+                      )}
+                    </Stack>
+                  </Button>
+                ) : null}
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => handleOpen(section)}
+                >
+                  Add {section.title}
+                </Button>
+              </Stack>
             </Divider>
 
             <Stack
@@ -374,10 +482,14 @@ const MainPageLayout = () => {
                 </Stack>
               ) : (
                 (() => {
-                  const sectionPreviewData = sortHomepageItems(
+                  let sectionPreviewData = sortHomepageItems(
                     sectionItems[section.name] || []
                   );
-                  console.log(sectionPreviewData);
+                  if (section.name === "catalogues") {
+                    sectionPreviewData = sectionPreviewData.filter(
+                      (item) => item.projectId === selectedProject?._id
+                    );
+                  }
                   if (sectionPreviewData.length === 0) {
                     return (
                       <Typography
@@ -494,7 +606,55 @@ const MainPageLayout = () => {
 
       <Modal open={open} onClose={handleClose}>
         <Stack sx={style}>
-          <Typography variant="h6">Add {openedSection?.title}</Typography>
+          <Stack direction="row" sx={{ alignItems: "baseline", gap: 2 }}>
+            <Typography variant="h6">Add {openedSection?.title}</Typography>
+            {openedSection?.title === "Catalogues" ? (
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleProjectMenuClick}
+              >
+                {selectedProject ? selectedProject.name : "Select Project"}
+              </Button>
+            ) : null}
+
+            <Menu
+              anchorEl={menuElRef.current}
+              open={openProjectMenu}
+              onClose={handleProjectMenuClose}
+            >
+              {projects.map((project) => (
+                <MenuItem
+                  key={project._id}
+                  value={project._id}
+                  selected={selectedProject?._id === project._id}
+                  onClick={() => handleProjectSelect(project)}
+                  sx={{
+                    mx: 0.5,
+                    mb: 0.5,
+                    borderRadius: 2,
+                    "&:hover": {
+                      bgcolor: (theme) =>
+                        alpha(theme.palette.primary.main, 0.2),
+                    },
+                    "&.Mui-selected": {
+                      border: (theme) =>
+                        `1px solid ${theme.palette.primary.main}`,
+                    },
+                  }}
+                >
+                  <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
+                    <img
+                      src={project.thumbnail}
+                      alt={project.name}
+                      style={{ width: 20, height: 20, objectFit: "contain" }}
+                    />
+                    {project.name}
+                  </Stack>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Stack>
           {loading ? (
             <Stack sx={{ width: "100%", alignItems: "center", py: 3 }}>
               <CircularProgress size={28} />
@@ -620,6 +780,40 @@ const MainPageLayout = () => {
           )}
         </Stack>
       </Modal>
+      <Menu
+        anchorEl={menuElRef.current}
+        open={openProjectMenu}
+        onClose={handleProjectMenuClose}
+      >
+        {projects.map((project) => (
+          <MenuItem
+            key={project._id}
+            value={project._id}
+            selected={selectedProject?._id === project._id}
+            onClick={() => handleProjectSelect(project)}
+            sx={{
+              mx: 0.5,
+              mb: 0.5,
+              borderRadius: 2,
+              "&:hover": {
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.2),
+              },
+              "&.Mui-selected": {
+                border: (theme) => `1px solid ${theme.palette.primary.main}`,
+              },
+            }}
+          >
+            <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
+              <img
+                src={project.thumbnail}
+                alt={project.name}
+                style={{ width: 20, height: 20, objectFit: "contain" }}
+              />
+              {project.name}
+            </Stack>
+          </MenuItem>
+        ))}
+      </Menu>
     </Stack>
   );
 };
