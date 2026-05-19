@@ -1,57 +1,46 @@
 import { Stack } from "@mui/material";
 import Banner from "@/component/home/banner/Banner";
 import BreakDown from "@/component/home/breakdown/BreakDown";
-import Catalogue from "@/component/home/catalogue/Catalogue";
-import OnSubscribtion from "@/component/home/OnSubscribtion/OnSubscribtion";
 import WatchUs from "@/component/home/watchUs/WatchUs";
 import PeopleOpinion from "@/component/home/peopleOpinion/PeopleOpinion";
 import NewsFromUs from "@/component/home/newsFromUs/NewsFromUs";
 import FollowUs from "@/component/home/followUs/FollowUs";
 import LetUsCallYou from "@/component/home/letUsCallYou/LetUsCallYou";
-import {
-  fetchPublicAllVideos,
-  fetchPublicMainPageLayoutItems,
-} from "@/component/admin/services/mainPageLayoutApi";
+import { fetchPublicMainPageLayoutItems } from "@/component/admin/services/mainPageLayoutApi";
 import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
 import { fetchPublicAboutUs } from "@/component/admin/services/aboutUsApi";
 import { fetchPublicDonation } from "@/component/admin/services/donationApi";
+import ProjectCatalogue from "@/component/home/projectCatalogue/ProjectCatalogue";
 
 const sections = [
-  { name: "banner", title: "Banner", header: "poster", text: "name" },
-  {
-    name: "projects",
-    title: "Subscribtion",
-    header: "thumbnail",
-    text: "title",
-  },
-  {
-    name: "breakdown",
-    title: "Project Breakdowns",
-    header: "thumbnail",
-    text: "title",
-  },
-  { name: "video", title: "Watch Us", header: "thumbnail", text: "title" },
-  { name: "comment", title: "People Opinion", header: "", text: "username" },
-  { name: "blog", title: "Blog", header: "images", text: "title" },
-];
+  "banner",
+  "projects",
+  "catalogues",
+  "breakdown",
+  "video",
+  "comment",
+  "blog",
+] as const;
+
+type MainSectionName = (typeof sections)[number];
+type SectionDataMap = Record<MainSectionName, any[]>;
 
 const fetchPublicSectionData = async () => {
   const results = await Promise.all(
-    sections.map((section) => fetchPublicMainPageLayoutItems(section.name))
+    sections.map((section) => fetchPublicMainPageLayoutItems(section))
   );
-  return results;
+  return sections.reduce((accumulator, sectionName, index) => {
+    accumulator[sectionName] = results[index];
+    return accumulator;
+  }, {} as SectionDataMap);
 };
 
 export default async function Home() {
   const aboutUsResult = await fetchPublicAboutUs();
   const donationResult = await fetchPublicDonation();
   const publicSectionData = await fetchPublicSectionData();
-  const publicAllVideos = await fetchPublicAllVideos();
   const socialMediaResult = await fetchPublicSocialMediaLinks();
-  const watchUsVideos =
-    publicSectionData[3].length > 0 ? publicSectionData[3] : publicAllVideos;
-  const catalogueVideos =
-    publicAllVideos.length > 0 ? publicAllVideos : watchUsVideos;
+
   const socialMediaLinks = socialMediaResult.ok
     ? socialMediaResult.socialMediaLinks
     : [];
@@ -59,19 +48,15 @@ export default async function Home() {
   return (
     <Stack sx={{ width: "100%" }}>
       <Banner
-        bannerData={publicSectionData[0]}
+        bannerData={publicSectionData.banner}
         aboutUs={aboutUsResult.ok ? aboutUsResult.aboutUs : null}
         donation={donationResult.ok ? donationResult.donation : null}
       />
-      <OnSubscribtion projects={publicSectionData[1]} />
-      <Catalogue
-        addVideos={catalogueVideos}
-        projectsData={publicSectionData[1]}
-      />
-      <BreakDown projectBreakDowns={publicSectionData[2]} />
-      <WatchUs videoData={publicSectionData[3]} />
-      <PeopleOpinion commentData={publicSectionData[4]} />
-      <NewsFromUs blogData={publicSectionData[5]} />
+      <ProjectCatalogue publicSectionData={publicSectionData} />
+      <BreakDown projectBreakDowns={publicSectionData.breakdown} />
+      <WatchUs videoData={publicSectionData.video} />
+      <PeopleOpinion commentData={publicSectionData.comment} />
+      <NewsFromUs blogData={publicSectionData.blog} />
       <FollowUs socialMediaLinks={socialMediaLinks} />
       <LetUsCallYou />
     </Stack>

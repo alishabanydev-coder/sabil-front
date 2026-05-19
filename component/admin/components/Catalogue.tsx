@@ -60,8 +60,6 @@ const Catalogue = () => {
     null
   );
 
-  console.log(projectId);
-
   const menuElRef = useRef<HTMLButtonElement>(null);
 
   const handleProjectMenuClose = () => {
@@ -302,6 +300,8 @@ const Catalogue = () => {
 
     return () => controller.abort("Catalogues tab unmounted");
   }, []);
+
+  console.log(visibleCatalogues);
 
   return (
     <Stack sx={{ width: "100%", height: "100%", position: "relative" }}>

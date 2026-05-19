@@ -3,7 +3,6 @@
 import SeactionHeader from "@/component/ui/SectionHeader";
 import { Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import { useState } from "react";
 
 type ProjectData = {
   _id: string;
@@ -15,10 +14,17 @@ type ProjectData = {
   homepageOrder: number;
 };
 
-const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
-  const [selectedProject, setSelectedProject] = useState<string>(
-    projects[0]._id
-  );
+const OnSubscribtion = ({
+  projects,
+  availableProjectIds,
+  selectedProject,
+  setSelectedProject,
+}: {
+  projects: ProjectData[];
+  availableProjectIds: Set<string>;
+  selectedProject: string;
+  setSelectedProject: (project: string) => void;
+}) => {
   return (
     <Stack
       sx={{
@@ -52,27 +58,38 @@ const OnSubscribtion = ({ projects }: { projects: ProjectData[] }) => {
           alignItems: "center",
         }}
       >
-        {projects.map((item) => (
-          <Stack
-            key={item._id}
-            sx={{
-              position: "relative",
-              width: "100%",
-              aspectRatio: "16 / 9",
-              cursor: "pointer",
-              filter: selectedProject === item._id ? "none" : "grayscale(100%)",
-              transition: "all 0.3s ease",
-            }}
-            onClick={() => setSelectedProject(item._id)}
-          >
-            <Image
-              src={item.thumbnail}
-              alt={item.name}
-              fill
-              style={{ objectFit: "contain" }}
-            />
-          </Stack>
-        ))}
+        {projects.map((item) => {
+          const hasCatalogue = availableProjectIds.has(item._id);
+          const isSelected = selectedProject === item._id;
+
+          return (
+            <Stack
+              key={item._id}
+              sx={{
+                position: "relative",
+                width: "100%",
+                aspectRatio: "16 / 9",
+                cursor: hasCatalogue ? "pointer" : "not-allowed",
+                opacity: hasCatalogue ? 1 : 0.45,
+                filter: isSelected ? "none" : "grayscale(100%)",
+                transition: "all 0.3s ease",
+              }}
+              onClick={() => {
+                if (!hasCatalogue) {
+                  return;
+                }
+                setSelectedProject(item._id);
+              }}
+            >
+              <Image
+                src={item.thumbnail}
+                alt={item.name}
+                fill
+                style={{ objectFit: "contain" }}
+              />
+            </Stack>
+          );
+        })}
       </Stack>
     </Stack>
   );

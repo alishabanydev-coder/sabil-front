@@ -10,15 +10,12 @@ import { PrimaryButton } from "@/component/ui/PrimaryButton";
 import Pagination from "../banner/components/Pagination";
 import { AnimatePresence, motion } from "framer-motion";
 
-type VideoData = {
+type CatalogueData = {
   _id: string;
-  title: string;
-  description: string;
-  url: string;
-  thumbnail: string;
   projectId: string;
-  season: number;
-  episode: number;
+  header: string;
+  body: string;
+  image: string;
 };
 
 type ProjectData = {
@@ -30,22 +27,17 @@ type ProjectData = {
 };
 
 const Catalogue = ({
-  addVideos,
-  projectsData,
+  catalogues,
+  selectedProject,
 }: {
-  addVideos: VideoData[];
-  projectsData: ProjectData[];
+  catalogues: CatalogueData[];
+  selectedProject: ProjectData;
 }) => {
   const catalogueLeftSwiperRef = useRef<any>(null);
   const catalogueRightSwiperRef = useRef<any>(null);
   const lastSlideIndexRef = useRef(0);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
-  const activeVideo = addVideos[activeSlideIndex];
-  const activeProject = activeVideo
-    ? projectsData.find((project) => project._id === activeVideo.projectId)
-    : projectsData[activeSlideIndex];
-  const activeCharacters = activeProject?.characters ?? [];
 
   const handleNext = () => {
     setSlideDirection(1);
@@ -119,7 +111,7 @@ const Catalogue = ({
               gap: 1.5,
             }}
           >
-            {activeCharacters.map((character, index) => (
+            {selectedProject?.characters.map((character, index) => (
               <Box
                 key={`${character.name}-${index}`}
                 component={motion.div}
@@ -186,7 +178,7 @@ const Catalogue = ({
           onSlideChange={(swiper) => {
             const nextIndex = swiper.realIndex;
             const prevIndex = lastSlideIndexRef.current;
-            const totalSlides = addVideos.length;
+            const totalSlides = catalogues.length;
             if (totalSlides === 0) {
               return;
             }
@@ -202,8 +194,8 @@ const Catalogue = ({
           loop
           style={{ width: "100%", height: "100%" }}
         >
-          {addVideos.map((video) => (
-            <SwiperSlide key={video._id}>
+          {catalogues.map((catalogue) => (
+            <SwiperSlide key={catalogue._id}>
               <Stack
                 sx={{
                   width: "100%",
@@ -222,8 +214,8 @@ const Catalogue = ({
                   }}
                 >
                   <Image
-                    src={video.thumbnail}
-                    alt={video.title}
+                    src={catalogue.image}
+                    alt={catalogue._id}
                     fill
                     style={{ objectFit: "contain" }}
                   />
@@ -255,8 +247,8 @@ const Catalogue = ({
           loop
           style={{ width: "100%", height: "100%" }}
         >
-          {addVideos.map((slide) => (
-            <SwiperSlide key={slide._id}>
+          {catalogues.map((catalogue) => (
+            <SwiperSlide key={catalogue._id}>
               <Stack
                 sx={{
                   width: "80%",
@@ -287,30 +279,30 @@ const Catalogue = ({
                         fontFamily: "Bhel Puri",
                       }}
                     >
-                      {
-                        projectsData.find(
-                          (project) => project._id === slide.projectId
-                        )?.title
-                      }
+                      {selectedProject?.title}
                     </Typography>
                     <Typography
                       sx={{
-                        fontSize: { xs: 9, sm: 16, md: 16 },
+                        direction: "ltr",
+                        fontSize: { xs: 8, sm: 16, md: 16 },
                         fontFamily: "Namecat",
                         fontWeight: 400,
+                        width: "100%",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                         color: "#ff3f7a",
                         lineHeight: 1.1,
                         textTransform: "uppercase",
                         mb: { xs: 1.5, md: 2.2 },
                       }}
                     >
-                      {slide.title}
+                      {catalogue.header}
                     </Typography>
                   </Stack>
 
                   <Typography
                     sx={{
-                      fontSize: { xs: 7, sm: 12, md: 14 },
+                      fontSize: { xs: 6, sm: 12, md: 14 },
                       fontFamily: "Namecat",
                       letterSpacing: 2,
                       fontWeight: 400,
@@ -318,9 +310,14 @@ const Catalogue = ({
                       lineHeight: 1.4,
                       textTransform: "uppercase",
                       whiteSpace: "pre-line",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 7,
                     }}
                   >
-                    {slide.description}
+                    {catalogue.body}
                   </Typography>
                 </Stack>
               </Stack>

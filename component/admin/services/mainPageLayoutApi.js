@@ -1,8 +1,7 @@
 import { handleExpiredAdminSession } from "./adminSession";
 
 const API_BASE =
-  (typeof process !== "undefined" &&
-    process.env?.NEXT_PUBLIC_ADMIN_API_URL) ||
+  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_ADMIN_API_URL) ||
   "http://localhost:5000";
 
 function getAuthHeaders(json = false) {
@@ -43,7 +42,8 @@ function sortByHomepageOrder(items) {
         ? firstItem.homepageOrder
         : Number.MAX_SAFE_INTEGER;
     const secondOrder =
-      Number.isInteger(secondItem?.homepageOrder) && secondItem.homepageOrder > 0
+      Number.isInteger(secondItem?.homepageOrder) &&
+      secondItem.homepageOrder > 0
         ? secondItem.homepageOrder
         : Number.MAX_SAFE_INTEGER;
     return firstOrder - secondOrder;
@@ -70,7 +70,11 @@ function normalizeSectionItem(section, item) {
     };
   }
 
-  if (section === "projects" || section === "breakdown" || section === "video") {
+  if (
+    section === "projects" ||
+    section === "breakdown" ||
+    section === "video"
+  ) {
     return {
       ...item,
       thumbnail: normalizeAssetUrl(item.thumbnail),
@@ -89,7 +93,9 @@ function normalizeSectionItem(section, item) {
                     return {
                       ...baseCharacter,
                       name:
-                        typeof character?.name === "string" ? character.name : "",
+                        typeof character?.name === "string"
+                          ? character.name
+                          : "",
                       image: normalizeAssetUrl(character?.image),
                     };
                   })
@@ -116,7 +122,9 @@ function normalizeSectionItem(section, item) {
     return {
       ...item,
       image: Array.isArray(item.image)
-        ? item.image.map((imageItem) => normalizeAssetUrl(imageItem)).filter(Boolean)
+        ? item.image
+            .map((imageItem) => normalizeAssetUrl(imageItem))
+            .filter(Boolean)
         : [],
       images: firstImage,
     };
@@ -126,11 +134,14 @@ function normalizeSectionItem(section, item) {
 }
 
 export async function fetchMainPageLayoutItems(section, { signal } = {}) {
-  const response = await fetch(`${API_BASE}/api/admin/main-page-layout/${section}`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-    signal,
-  });
+  const response = await fetch(
+    `${API_BASE}/api/admin/main-page-layout/${section}`,
+    {
+      method: "GET",
+      headers: getAuthHeaders(),
+      signal,
+    }
+  );
   const data = await readJson(response);
 
   if (!response.ok) {
@@ -143,7 +154,11 @@ export async function fetchMainPageLayoutItems(section, { signal } = {}) {
     };
   }
 
-  const rawItems = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
+  const rawItems = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.items)
+      ? data.items
+      : [];
 
   return {
     ok: true,
@@ -156,12 +171,19 @@ export async function fetchMainPageLayoutItems(section, { signal } = {}) {
 }
 
 export async function fetchPublicMainPageLayoutItems(section) {
-  const response = await fetch(`${API_BASE}/api/admin/public/main-page-layout/${section}`, {
-    method: "GET",
-    cache: 'force-cache',
-  });
+  const response = await fetch(
+    `${API_BASE}/api/admin/public/main-page-layout/${section}`,
+    {
+      method: "GET",
+      cache: "force-cache",
+    }
+  );
   const data = await response.json();
-  const rawItems = Array.isArray(data) ? data : Array.isArray(data?.items) ? data.items : [];
+  const rawItems = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.items)
+      ? data.items
+      : [];
   const normalizedItems = rawItems
     .map((item) => normalizeSectionItem(section, item))
     .filter(Boolean)
@@ -173,7 +195,7 @@ export async function fetchPublicMainPageLayoutItems(section) {
 export async function fetchPublicAllVideos() {
   const response = await fetch(`${API_BASE}/api/admin/public/videos`, {
     method: "GET",
-    cache: 'force-cache',
+    cache: "force-cache",
   });
   const data = await readJson(response);
 
@@ -184,7 +206,12 @@ export async function fetchPublicAllVideos() {
   }));
 }
 
-export async function updateMainPageLayoutItem(section, id, body, { signal } = {}) {
+export async function updateMainPageLayoutItem(
+  section,
+  id,
+  body,
+  { signal } = {}
+) {
   const response = await fetch(
     `${API_BASE}/api/admin/main-page-layout/${section}/${id}`,
     {
@@ -221,17 +248,20 @@ export async function updateMainPageLayoutSection(
   orderedIds,
   { signal, projectId } = {}
 ) {
-  const response = await fetch(`${API_BASE}/api/admin/main-page-layout/${section}`, {
-    method: "PUT",
-    headers: getAuthHeaders(true),
-    body: JSON.stringify({
-      orderedIds: Array.isArray(orderedIds) ? orderedIds : [],
-      ...(typeof projectId === "string" && projectId.trim()
-        ? { projectId: projectId.trim() }
-        : {}),
-    }),
-    signal,
-  });
+  const response = await fetch(
+    `${API_BASE}/api/admin/main-page-layout/${section}`,
+    {
+      method: "PUT",
+      headers: getAuthHeaders(true),
+      body: JSON.stringify({
+        orderedIds: Array.isArray(orderedIds) ? orderedIds : [],
+        ...(typeof projectId === "string" && projectId.trim()
+          ? { projectId: projectId.trim() }
+          : {}),
+      }),
+      signal,
+    }
+  );
   const data = await readJson(response);
 
   if (!response.ok) {
