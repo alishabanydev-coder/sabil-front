@@ -33,6 +33,7 @@ const ProjectCatalogue = ({
 }: {
   publicSectionData: PublicSectionData;
 }) => {
+  const catalogueSectionId = "home-catalogue-section";
   const [selectedProject, setSelectedProject] = useState<string>("");
   const availableProjectIds = new Set(
     publicSectionData.catalogues.map((catalogue) => catalogue.projectId)
@@ -64,13 +65,16 @@ const ProjectCatalogue = ({
         availableProjectIds={availableProjectIds}
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
+        catalogueSectionId={catalogueSectionId}
       />
-      <Catalogue
-        catalogues={publicSectionData.catalogues.filter(
-          (catalogue) => catalogue.projectId === selectedProject
-        )}
-        selectedProject={selectedProjectData}
-      />
+      <div id={catalogueSectionId}>
+        <Catalogue
+          catalogues={publicSectionData.catalogues.filter(
+            (catalogue) => catalogue.projectId === selectedProject
+          )}
+          selectedProject={selectedProjectData}
+        />
+      </div>
     </>
   );
 };

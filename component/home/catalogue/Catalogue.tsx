@@ -36,7 +36,6 @@ const Catalogue = ({
   const catalogueLeftSwiperRef = useRef<any>(null);
   const catalogueRightSwiperRef = useRef<any>(null);
   const lastSlideIndexRef = useRef(0);
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
 
   const handleNext = () => {
@@ -71,10 +70,9 @@ const Catalogue = ({
       <Stack
         sx={{
           position: "absolute",
-          top: { xs: "-31%", sm: "-10%", md: "-5%", lg: "0%" },
+          top: { xs: "3%", sm: "0%", md: "0%", lg: "3%" },
           right: "3%",
           width: "42%",
-          height: 170,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
@@ -84,7 +82,7 @@ const Catalogue = ({
       >
         <AnimatePresence mode="wait" initial={false}>
           <Stack
-            key={`characters-${activeSlideIndex}`}
+            key={`characters-${selectedProject?._id ?? "none"}`}
             component={motion.div}
             custom={slideDirection}
             variants={{
@@ -138,7 +136,7 @@ const Catalogue = ({
                 }}
                 sx={{
                   position: "relative",
-                  width: "33%",
+                  width: "28%",
                   aspectRatio: "1 / 1",
                   cursor: "pointer",
                   transformOrigin: "center bottom",
@@ -173,7 +171,6 @@ const Catalogue = ({
           onSwiper={(swiper) => {
             catalogueLeftSwiperRef.current = swiper;
             lastSlideIndexRef.current = swiper.realIndex ?? 0;
-            setActiveSlideIndex(swiper.realIndex ?? 0);
           }}
           onSlideChange={(swiper) => {
             const nextIndex = swiper.realIndex;
@@ -186,7 +183,6 @@ const Catalogue = ({
 
             setSlideDirection(movedNext ? 1 : -1);
             lastSlideIndexRef.current = nextIndex;
-            setActiveSlideIndex(nextIndex);
           }}
           pagination={{ clickable: true }}
           autoplay={{ delay: 3500, disableOnInteraction: false }}
@@ -217,7 +213,7 @@ const Catalogue = ({
                     src={catalogue.image}
                     alt={catalogue._id}
                     fill
-                    style={{ objectFit: "contain" }}
+                    style={{ objectFit: "cover" }}
                   />
                 </Box>
               </Stack>
@@ -271,7 +267,7 @@ const Catalogue = ({
                   <Stack sx={{ gap: { xs: 0.5, sm: 1.5 } }}>
                     <Typography
                       sx={{
-                        fontSize: { xs: 10, sm: 18, md: 28 },
+                        fontSize: { xs: 10, sm: 18, md: 22, lg: 28 },
                         fontWeight: 700,
                         color: "primary.main",
                         lineHeight: 1,
@@ -284,7 +280,7 @@ const Catalogue = ({
                     <Typography
                       sx={{
                         direction: "ltr",
-                        fontSize: { xs: 8, sm: 16, md: 16 },
+                        fontSize: { xs: 8, sm: 12, md: 14, lg: 16 },
                         fontFamily: "Namecat",
                         fontWeight: 400,
                         width: "100%",
@@ -302,7 +298,7 @@ const Catalogue = ({
 
                   <Typography
                     sx={{
-                      fontSize: { xs: 6, sm: 12, md: 14 },
+                      fontSize: { xs: 6, sm: 12, md: 16 },
                       fontFamily: "Namecat",
                       letterSpacing: 2,
                       fontWeight: 400,
@@ -329,13 +325,13 @@ const Catalogue = ({
       <PrimaryButton
         sx={{
           fontFamily: "Namecat",
-          fontSize: { xs: 9, md: 20 },
+          fontSize: { xs: 7, sm: 10, md: 20 },
           px: { xs: 0.7, md: 2 },
           py: { xs: 0.4, md: 1 },
           letterSpacing: 2,
           position: "absolute",
-          bottom: { xs: "10%", sm: "15%" },
-          right: { xs: "5%", sm: "10%" },
+          bottom: { xs: "12%", sm: "15%" },
+          right: { xs: "7%", sm: "10%" },
         }}
       >
         LEARN MORE

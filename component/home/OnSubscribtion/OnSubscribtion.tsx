@@ -19,11 +19,13 @@ const OnSubscribtion = ({
   availableProjectIds,
   selectedProject,
   setSelectedProject,
+  catalogueSectionId,
 }: {
   projects: ProjectData[];
   availableProjectIds: Set<string>;
   selectedProject: string;
   setSelectedProject: (project: string) => void;
+  catalogueSectionId?: string;
 }) => {
   return (
     <Stack
@@ -79,6 +81,15 @@ const OnSubscribtion = ({
                   return;
                 }
                 setSelectedProject(item._id);
+                if (!catalogueSectionId) {
+                  return;
+                }
+                const catalogueSection =
+                  document.getElementById(catalogueSectionId);
+                catalogueSection?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
               }}
             >
               <Image
