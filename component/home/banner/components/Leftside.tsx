@@ -32,7 +32,6 @@ const Leftside = ({
         position: "absolute",
         top: "8%",
         left: "6%",
-        zIndex: 100,
       }}
     >
       <Stack
@@ -92,10 +91,11 @@ const Leftside = ({
         <Stack
           direction="row"
           sx={{
-            gap: 2,
+            gap: { xs: 1, sm: 2 },
             position: "absolute",
             bottom: { xs: "14%", md: "14%" },
             right: { xs: "-20%", md: "-5%" },
+            zIndex: 100,
           }}
         >
           <PrimaryButton
@@ -115,7 +115,7 @@ const Leftside = ({
             sx={{
               fontFamily: "Namecat",
               height: { xs: 25, sm: 30, md: "auto" },
-              fontSize: { xs: 6, sm: 12, md: 20 },
+              fontSize: { xs: 7, sm: 12, md: 20 },
               px: { xs: 0.7, sm: 1.2, md: 2 },
               py: { xs: 0.3, sm: 0.3, md: 1 },
               letterSpacing: 2,

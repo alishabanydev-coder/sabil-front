@@ -86,6 +86,8 @@ export default function Footer() {
           zIndex: 1,
           alignItems: "center",
           justifyContent: "center",
+          width: "80%",
+          mx: "auto",
           gap: 3,
           mt: { xs: 4, md: 10 },
         }}
@@ -125,7 +127,7 @@ export default function Footer() {
                     sx={{
                       color: "#fff",
                       fontFamily: "Namecat",
-                      fontSize: { xs: 8, md: 24 },
+                      fontSize: { xs: 8, sm: 10, md: 14, lg: 20 },
                       fontWeight: 700,
                       letterSpacing: 1.2,
                       textTransform: "uppercase",
@@ -158,8 +160,8 @@ export default function Footer() {
         <Stack
           sx={{
             position: "relative",
-            width: { xs: 30, md: 111 },
-            height: { xs: 28, md: 80 },
+            width: { xs: 30, sm: 50, md: 80, lg: 111 },
+            height: { xs: 28, sm: 40, md: 55, lg: 80 },
             "&.cursor-pointer": {
               objectFit: "cover",
               cursor: "pointer",
@@ -176,7 +178,8 @@ export default function Footer() {
         <Typography
           sx={{
             color: "#fff",
-            fontSize: { xs: 7, md: 11 },
+            opacity: 0.7,
+            fontSize: { xs: 7, sm: 8, md: 9, lg: 11 },
             fontFamily: "Namecat",
             textTransform: "uppercase",
             width: { xs: "60%", md: "100%" },

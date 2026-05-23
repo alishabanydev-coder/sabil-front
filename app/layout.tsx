@@ -9,6 +9,7 @@ const SITE_URL = "https://sabilkids.com";
 
 export const metadata: Metadata = {
   title: "Sabil Kids | Joyful Islamic Streaming for Children",
+  manifest: "/manifest.webmanifest",
   description:
     "Sabil Kids is a streaming platform for children featuring Sabil Group animations, blogs, and project breakdowns. We create high-quality content in an Islamic atmosphere to teach values through joyful entertainment.",
   keywords: [
@@ -29,6 +30,11 @@ export const metadata: Metadata = {
       { url: "/logo16.png", sizes: "16x16", type: "image/png" },
     ],
     apple: "/icon-192.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Sabil Kids",
+    statusBarStyle: "default",
   },
   authors: [{ name: "Sabil Group", url: "https://sabilkids.com" }],
   creator: "Sabil Group",

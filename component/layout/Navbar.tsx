@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ScondaryButton } from "../ui/ScondaryButton";
 
 const navItems = [
-  { label: "Catalogue", href: "/app" },
+  { label: "App", href: "/app" },
   { label: "Contact", href: "/#contact" },
   { label: "About", href: "/about" },
   { label: "Programs", href: "/#programs" },
@@ -26,6 +26,7 @@ const navItems = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [activeHref, setActiveHref] = useState("/");
   const isMenuOpen = Boolean(menuAnchor);
@@ -93,6 +94,72 @@ export default function Navbar() {
     if (shouldCloseMenu) {
       closeMenu();
     }
+  };
+
+  const isAndroidHandheld = () => {
+    if (typeof navigator === "undefined") {
+      return false;
+    }
+
+    const userAgent = navigator.userAgent || "";
+    const isAndroid = /Android/i.test(userAgent);
+    const isTouchDevice = navigator.maxTouchPoints > 1;
+    return isAndroid && isTouchDevice;
+  };
+
+  const tryFullscreenLandscape = async () => {
+    if (typeof document === "undefined" || typeof window === "undefined") {
+      return;
+    }
+
+    const fullscreenTarget = document.documentElement as HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void> | void;
+    };
+
+    try {
+      if (!document.fullscreenElement) {
+        if (typeof fullscreenTarget.requestFullscreen === "function") {
+          await fullscreenTarget.requestFullscreen();
+        } else if (
+          typeof fullscreenTarget.webkitRequestFullscreen === "function"
+        ) {
+          await fullscreenTarget.webkitRequestFullscreen();
+        }
+      }
+    } catch {
+      console.log("Fullscreen failed");
+    }
+
+    try {
+      const orientationApi = window.screen.orientation as
+        | (ScreenOrientation & {
+            lock?: (orientation: string) => Promise<void>;
+          })
+        | undefined;
+      if (typeof orientationApi?.lock === "function") {
+        await orientationApi.lock("landscape");
+      }
+    } catch {
+      console.log("Orientation lock failed");
+    }
+  };
+
+  const handleCatalogueClick = async (
+    event: React.MouseEvent<HTMLElement>,
+    shouldCloseMenu = false
+  ) => {
+    setActiveHref("/app");
+    if (shouldCloseMenu) {
+      closeMenu();
+    }
+
+    if (!isAndroidHandheld()) {
+      return;
+    }
+
+    event.preventDefault();
+    await tryFullscreenLandscape();
+    router.push("/app");
   };
 
   return (
@@ -175,7 +242,11 @@ export default function Navbar() {
               key={item.href}
               component={Link}
               href={item.href}
-              onClick={() => handleNavClick(item.href)}
+              onClick={(event) =>
+                item.href === "/app"
+                  ? handleCatalogueClick(event)
+                  : handleNavClick(item.href)
+              }
               sx={{
                 color: isActiveLink(item.href) ? "primary.main" : "#fff",
                 fontSize: { xs: 12, md: 14, lg: 16 },
@@ -198,7 +269,7 @@ export default function Navbar() {
           display: { xs: "flex", sm: "none" },
           justifyContent: { xs: "end", md: "center" },
         }}
-      >
+        >
         <IconButton
           aria-label="open navigation menu"
           aria-controls={isMenuOpen ? "navbar-mobile-menu" : undefined}
@@ -208,6 +279,7 @@ export default function Navbar() {
           size="small"
           color="primary"
           sx={{
+            zIndex: 99999,
             borderRadius: 2,
             bgcolor: "rgba(255, 255, 255, 0.28)",
             backdropFilter: "blur(2px)",
@@ -238,7 +310,11 @@ export default function Navbar() {
               key={item.href}
               component={Link}
               href={item.href}
-              onClick={() => handleNavClick(item.href, true)}
+              onClick={(event) =>
+                item.href === "/app"
+                  ? handleCatalogueClick(event, true)
+                  : handleNavClick(item.href, true)
+              }
               sx={{
                 mt: 0.4,
                 mx: 1,

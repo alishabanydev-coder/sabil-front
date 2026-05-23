@@ -54,6 +54,11 @@ type AppCataloguePageProps = {
   videos: VideoData[];
 };
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
+
 function isMobileOrTabletDevice() {
   if (typeof window === "undefined" || typeof navigator === "undefined") {
     return false;
@@ -73,6 +78,52 @@ function isAndroidDevice() {
   }
 
   return /Android/i.test(navigator.userAgent || "");
+}
+
+function detectStandaloneMode() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const displayModeStandalone = window.matchMedia?.(
+    "(display-mode: standalone)"
+  )?.matches;
+  const iosStandalone =
+    typeof (window.navigator as Navigator & { standalone?: boolean })
+      .standalone === "boolean" &&
+    Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone);
+
+  return Boolean(displayModeStandalone || iosStandalone);
+}
+
+async function requestAppFullscreen() {
+  if (typeof document === "undefined") {
+    return false;
+  }
+
+  if (document.fullscreenElement) {
+    return true;
+  }
+
+  const fullscreenTarget = document.documentElement as HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void> | void;
+  };
+
+  try {
+    if (typeof fullscreenTarget.requestFullscreen === "function") {
+      await fullscreenTarget.requestFullscreen();
+      return true;
+    }
+
+    if (typeof fullscreenTarget.webkitRequestFullscreen === "function") {
+      await fullscreenTarget.webkitRequestFullscreen();
+      return true;
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
 }
 
 async function tryLockLandscape() {
@@ -105,7 +156,12 @@ export default function AppCataloguePage({
   const theme = useTheme();
   const [isHandheldDevice, setIsHandheldDevice] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
+  const [isFullscreenActive, setIsFullscreenActive] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
   const [autoLockAttempted, setAutoLockAttempted] = useState(false);
+  const [canInstallPwa, setCanInstallPwa] = useState(false);
+  const [deferredInstallPrompt, setDeferredInstallPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [orientationMessage, setOrientationMessage] = useState(
     "Rotate to landscape for best experience."
   );
@@ -113,7 +169,77 @@ export default function AppCataloguePage({
   useEffect(() => {
     setIsHandheldDevice(isMobileOrTabletDevice());
     setIsAndroid(isAndroidDevice());
+    setIsStandalone(detectStandaloneMode());
+    setIsFullscreenActive(Boolean(document.fullscreenElement));
+
+    const onDisplayModeChange = () => {
+      setIsStandalone(detectStandaloneMode());
+    };
+
+    window.matchMedia("(display-mode: standalone)")?.addEventListener?.(
+      "change",
+      onDisplayModeChange
+    );
+
+    return () => {
+      window.matchMedia("(display-mode: standalone)")?.removeEventListener?.(
+        "change",
+        onDisplayModeChange
+      );
+    };
   }, []);
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const syncFullscreenState = () => {
+      setIsFullscreenActive(Boolean(document.fullscreenElement));
+    };
+
+    document.addEventListener("fullscreenchange", syncFullscreenState);
+    document.addEventListener("webkitfullscreenchange", syncFullscreenState as EventListener);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", syncFullscreenState);
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        syncFullscreenState as EventListener
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isHandheldDevice) {
+      setCanInstallPwa(false);
+      setDeferredInstallPrompt(null);
+      return;
+    }
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setDeferredInstallPrompt(event as BeforeInstallPromptEvent);
+      setCanInstallPwa(true);
+    };
+
+    const handleAppInstalled = () => {
+      setCanInstallPwa(false);
+      setDeferredInstallPrompt(null);
+      setIsStandalone(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, [isHandheldDevice]);
 
   useEffect(() => {
     const shouldAutoLock = isHandheldDevice && isAndroid;
@@ -123,11 +249,14 @@ export default function AppCataloguePage({
     }
 
     const run = async () => {
+      const enteredFullscreen = await requestAppFullscreen();
       const success = await tryLockLandscape();
       setOrientationMessage(
         success
           ? "Landscape mode enabled."
-          : "Could not lock orientation automatically. Rotate device to landscape."
+          : enteredFullscreen
+            ? "Could not lock orientation automatically. Tap LANDSCAPE or rotate manually."
+            : "Automatic landscape needs a user gesture on this browser. Tap LANDSCAPE."
       );
       setAutoLockAttempted(true);
     };
@@ -176,13 +305,29 @@ export default function AppCataloguePage({
       return;
     }
 
+    await requestAppFullscreen();
     const success = await tryLockLandscape();
     setOrientationMessage(
       success
         ? "Landscape mode enabled."
-        : "Landscape lock is not supported here. Please rotate manually."
+        : "Fullscreen/orientation lock is restricted by this browser. Please rotate manually."
     );
     setAutoLockAttempted(true);
+  };
+
+  const handleInstallApp = async () => {
+    if (!deferredInstallPrompt) {
+      setOrientationMessage(
+        "Install prompt is not available in this browser right now."
+      );
+      setAutoLockAttempted(true);
+      return;
+    }
+
+    await deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    setDeferredInstallPrompt(null);
+    setCanInstallPwa(false);
   };
 
   return (
@@ -228,7 +373,18 @@ export default function AppCataloguePage({
           >
             HOME
           </Button>
-          {isHandheldDevice && (
+          {isHandheldDevice && canInstallPwa && !isStandalone && (
+            <Button
+              onClick={handleInstallApp}
+              variant="contained"
+              color="warning"
+              size="small"
+              sx={{ fontFamily: "Namecat", letterSpacing: 1.2 }}
+            >
+              INSTALL
+            </Button>
+          )}
+          {isHandheldDevice && !isFullscreenActive && (
             <Button
               onClick={handleManualLandscape}
               variant="outlined"
@@ -376,6 +532,7 @@ export default function AppCataloguePage({
           ))
         )}
       </Stack>
+
     </Stack>
   );
 }
