@@ -16,6 +16,7 @@ import { usePathname } from "next/navigation";
 import { ScondaryButton } from "../ui/ScondaryButton";
 
 const navItems = [
+  { label: "Catalogue", href: "/app" },
   { label: "Contact", href: "/#contact" },
   { label: "About", href: "/about" },
   { label: "Programs", href: "/#programs" },

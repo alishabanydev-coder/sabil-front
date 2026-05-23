@@ -204,7 +204,7 @@ const Catalogue = ({
                 <Box
                   sx={{
                     width: "85%",
-                    aspectRatio: "16 / 9.8",
+                    aspectRatio: { xs: "16 / 11.2", sm: "16 / 9.8" },
                     borderRadius: 4,
                     position: "relative",
                   }}
