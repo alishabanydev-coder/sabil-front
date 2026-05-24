@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ScondaryButton } from "../ui/ScondaryButton";
 
 const navItems = [
@@ -26,7 +26,6 @@ const navItems = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [activeHref, setActiveHref] = useState("/");
   const isMenuOpen = Boolean(menuAnchor);
@@ -96,70 +95,14 @@ export default function Navbar() {
     }
   };
 
-  const isAndroidHandheld = () => {
-    if (typeof navigator === "undefined") {
-      return false;
+  const handleCatalogueClick = (shouldCloseMenu = false) => {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("appLoaderStartAt", String(Date.now()));
     }
-
-    const userAgent = navigator.userAgent || "";
-    const isAndroid = /Android/i.test(userAgent);
-    const isTouchDevice = navigator.maxTouchPoints > 1;
-    return isAndroid && isTouchDevice;
-  };
-
-  const tryFullscreenLandscape = async () => {
-    if (typeof document === "undefined" || typeof window === "undefined") {
-      return;
-    }
-
-    const fullscreenTarget = document.documentElement as HTMLElement & {
-      webkitRequestFullscreen?: () => Promise<void> | void;
-    };
-
-    try {
-      if (!document.fullscreenElement) {
-        if (typeof fullscreenTarget.requestFullscreen === "function") {
-          await fullscreenTarget.requestFullscreen();
-        } else if (
-          typeof fullscreenTarget.webkitRequestFullscreen === "function"
-        ) {
-          await fullscreenTarget.webkitRequestFullscreen();
-        }
-      }
-    } catch {
-      console.log("Fullscreen failed");
-    }
-
-    try {
-      const orientationApi = window.screen.orientation as
-        | (ScreenOrientation & {
-            lock?: (orientation: string) => Promise<void>;
-          })
-        | undefined;
-      if (typeof orientationApi?.lock === "function") {
-        await orientationApi.lock("landscape");
-      }
-    } catch {
-      console.log("Orientation lock failed");
-    }
-  };
-
-  const handleCatalogueClick = async (
-    event: React.MouseEvent<HTMLElement>,
-    shouldCloseMenu = false
-  ) => {
     setActiveHref("/app");
     if (shouldCloseMenu) {
       closeMenu();
     }
-
-    if (!isAndroidHandheld()) {
-      return;
-    }
-
-    event.preventDefault();
-    await tryFullscreenLandscape();
-    router.push("/app");
   };
 
   return (
@@ -242,9 +185,10 @@ export default function Navbar() {
               key={item.href}
               component={Link}
               href={item.href}
-              onClick={(event) =>
+              prefetch={item.href === "/app" ? false : undefined}
+              onClick={() =>
                 item.href === "/app"
-                  ? handleCatalogueClick(event)
+                  ? handleCatalogueClick()
                   : handleNavClick(item.href)
               }
               sx={{
@@ -310,9 +254,10 @@ export default function Navbar() {
               key={item.href}
               component={Link}
               href={item.href}
-              onClick={(event) =>
+              prefetch={item.href === "/app" ? false : undefined}
+              onClick={() =>
                 item.href === "/app"
-                  ? handleCatalogueClick(event, true)
+                  ? handleCatalogueClick(true)
                   : handleNavClick(item.href, true)
               }
               sx={{
