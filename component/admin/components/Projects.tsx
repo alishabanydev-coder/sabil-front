@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   IconButton,
+  Modal,
   Paper,
   Stack,
   TextField,
@@ -44,7 +45,24 @@ const createCharacterDraft = (): CharacterFormRecord => ({
   imageFile: null,
 });
 
+const style = {
+  direction: "ltr",
+  height: "auto",
+  maxHeight: "80vh",
+  position: "absolute",
+  flexDirection: "column",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 3,
+  gap: 2,
+};
+
 const Projects = () => {
+  const [open, setOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [projectImage, setProjectImage] = useState("");
   const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
@@ -76,6 +94,7 @@ const Projects = () => {
   }, [loadProjects]);
 
   const resetForm = () => {
+    setOpen(false);
     setProjectImage("");
     setProjectImageFile(null);
     setProjectName("");
@@ -83,6 +102,14 @@ const Projects = () => {
     setCharacters([]);
     setEditingProjectId("");
     setFormError("");
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    resetForm()
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,6 +190,7 @@ const Projects = () => {
   };
 
   const handleEditProject = (project: ProjectRecord) => {
+    setOpen(true);
     setFormError("");
     setFormSuccess("");
     setEditingProjectId(project._id || project.id || "");
@@ -254,259 +282,45 @@ const Projects = () => {
   //FIXME: fix this Charecter Image in a good way and send it and get it in the main page layout
   return (
     <Stack direction="row" sx={{ gap: 3, height: "100%" }}>
-      <Stack sx={{ gap: 0.5, width: "60%", height: "100%" }}>
-        <Stack sx={{ gap: 0.5 }}>
-          <Typography component="h2" sx={{ fontSize: 22, fontWeight: 700 }}>
-            Projects
-          </Typography>
-        </Stack>
-
+      <Stack
+        sx={{
+          gap: 2,
+          width: "100%",
+          height: "calc(100vh - 60px)",
+          mt: 3,
+          position: "relative",
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          borderRadius: 2,
+          p: 2,
+        }}
+      >
         <Stack
-          direction={"row"}
           sx={{
-            gap: 2,
-            border: (theme) => `1px solid ${theme.palette.primary.dark}`,
-            borderRadius: 2,
-            p: 1.5,
             height: "100%",
+            position: "absolute",
+            top: -20,
+            right: 0,
+            width: "100%",
+            alignItems: "center",
           }}
         >
-          <Stack sx={{ alignItems: "center", gap: 1 }}>
-            <Box
-              sx={{
-                width: 200,
-                height: 200,
-                bgcolor: "#bbb",
-                borderRadius: 3,
-                overflow: "hidden",
-                display: "grid",
-                placeItems: "center",
-              }}
-            >
-              {projectImage ? (
-                <img
-                  src={projectImage}
-                  alt="project"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              ) : (
-                <ImageOutlinedIcon sx={{ fontSize: 60, color: "grey.600" }} />
-              )}
-            </Box>
-            <input
-              ref={fileInputRef}
-              hidden
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {projectImage ? "Change Image" : "Upload Image"}
-            </Button>
-          </Stack>
-
-          <Stack sx={{ width: "100%", gap: 1, overflow: "auto"}}>
-            <Stack sx={{ gap: 3, height: "100%" }}>
-              <TextField
-                variant="standard"
-                label="Project Name"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                sx={{ width: 400 }}
-              />
-              <TextField
-                label="Project Description"
-                multiline
-                rows={4}
-                fullWidth
-                value={projectDescription}
-                onChange={(e) => setProjectDescription(e.target.value)}
-              />
-
-              <Stack
-                sx={{
-                  gap: 1.5,
-                  height: "100%",
-                  width: "100%",
-                  border: (theme) => `1px solid ${theme.palette.divider}`,
-                  borderRadius: 2,
-                  p: 1,
-                  pb: 0
-                }}
-              >
-                <Stack
-                  direction="row"
-                  sx={{ justifyContent: "space-between", alignItems: "center" }}
-                >
-                  <Typography component="h3" sx={{ fontWeight: 700 }}>
-                    Characters
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() =>
-                      setCharacters((prevCharacters) => [
-                        ...prevCharacters,
-                        createCharacterDraft(),
-                      ])
-                    }
-                  >
-                    Add Character
-                  </Button>
-                </Stack>
-                {characters.length === 0 ? (
-                  <Typography component="p" sx={{ color: "text.secondary" }}>
-                    No characters added yet.
-                  </Typography>
-                ) : (
-                  <Stack
-                    sx={{ gap: 1.5, maxHeight: 145, overflow: "auto", pr: 1 }}
-                  >
-                    {characters.map((character) => (
-                      <Paper
-                        key={character.key}
-                        elevation={0}
-                        sx={{
-                          border: 1,
-                          borderColor: "divider",
-                          borderRadius: 2,
-                          p: 1,
-                        }}
-                      >
-                        <Stack
-                          direction="row"
-                          sx={{ gap: 1.5, alignItems: "center", width: "100%" }}
-                        >
-                          <Box
-                            sx={{
-                              width: 80,
-                              height: 80,
-                              borderRadius: 1.5,
-                              overflow: "hidden",
-                              bgcolor: "#bbb",
-                              display: "grid",
-                              placeItems: "center",
-                              flexShrink: 0,
-                            }}
-                          >
-                            {character.image ? (
-                              <img
-                                src={character.image}
-                                alt={character.name || "character"}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            ) : (
-                              <ImageOutlinedIcon sx={{ color: "grey.600" }} />
-                            )}
-                          </Box>
-                          <Stack sx={{ flex: 1, minWidth: 0, gap: 1 }}>
-                            <TextField
-                              size="small"
-                              label="Character Name"
-                              value={character.name}
-                              onChange={(event) =>
-                                handleCharacterNameChange(
-                                  character.key,
-                                  event.target.value
-                                )
-                              }
-                            />
-                            <Button
-                              component="label"
-                              variant="outlined"
-                              size="small"
-                            >
-                              {character.image
-                                ? "Change Image"
-                                : "Upload Image"}
-                              <input
-                                hidden
-                                type="file"
-                                accept="image/*"
-                                onChange={(event) =>
-                                  handleCharacterImageChange(
-                                    character.key,
-                                    event
-                                  )
-                                }
-                              />
-                            </Button>
-                          </Stack>
-                          <IconButton
-                            color="error"
-                            aria-label="Remove character"
-                            onClick={() => handleRemoveCharacter(character.key)}
-                          >
-                            <DeleteOutlineOutlinedIcon />
-                          </IconButton>
-                        </Stack>
-                      </Paper>
-                    ))}
-                  </Stack>
-                )}
-              </Stack>
-            </Stack>
-
-            {(formError || formSuccess) && (
-              <Typography
-                component="p"
-                sx={{
-                  color: formError ? "error.main" : "success.main",
-                  fontSize: 14,
-                }}
-              >
-                {formError || formSuccess}
-              </Typography>
-            )}
-
-            <Stack
-              direction={"row"}
-              sx={{
-                width: "100%",
-                justifyContent: "end",
-                alignItems: "center",
-                gap: 2,
-              }}
-            >
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting
-                  ? "Saving..."
-                  : editingProjectId
-                    ? "Update Project"
-                    : "Upload Project"}
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={resetForm}
-                disabled={submitting}
-              >
-                Cancel
-              </Button>
-            </Stack>
-          </Stack>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpen}
+            sx={{
+              width: 200,
+              boxShadow: (theme) =>
+                `0px 2px 12px 1px ${theme.palette.primary.main}`,
+              "&:disabled": {
+                backgroundColor: "grey.500",
+                color: "white",
+              },
+            }}
+          >
+            Add Project
+          </Button>
         </Stack>
-      </Stack>
-      <Stack sx={{ gap: 2, width: "40%", height: "100%", overflow: "auto" }}>
-        <Typography component="h3" sx={{ fontSize: 18, fontWeight: 700 }}>
-          Uploaded Projects
-        </Typography>
 
         {loadingProjects && (
           <Typography component="p" sx={{ color: "text.secondary" }}>
@@ -520,7 +334,7 @@ const Projects = () => {
           </Typography>
         )}
 
-        <Stack sx={{ gap: 3.5, width: "100%" }}>
+        <Stack sx={{ gap: 3.5, width: "100%", overflow: "auto" }}>
           {projects.map((project) => {
             const id = project._id || project.id || project.name || "";
 
@@ -610,6 +424,261 @@ const Projects = () => {
           })}
         </Stack>
       </Stack>
+
+      <Modal open={open} onClose={handleClose}>
+        <Stack sx={style}>
+          <Stack
+            direction={"row"}
+            sx={{
+              gap: 2,
+              border: (theme) => `1px solid ${theme.palette.primary.dark}`,
+              borderRadius: 2,
+              p: 1.5,
+              height: "100%",
+            }}
+          >
+            <Stack sx={{ alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  width: 200,
+                  height: 200,
+                  bgcolor: "#bbb",
+                  borderRadius: 3,
+                  overflow: "hidden",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                {projectImage ? (
+                  <img
+                    src={projectImage}
+                    alt="project"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <ImageOutlinedIcon sx={{ fontSize: 60, color: "grey.600" }} />
+                )}
+              </Box>
+              <input
+                ref={fileInputRef}
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {projectImage ? "Change Image" : "Upload Image"}
+              </Button>
+            </Stack>
+
+            <Stack sx={{ width: "100%", gap: 1, overflow: "auto" }}>
+              <Stack sx={{ gap: 3, height: "100%" }}>
+                <TextField
+                  variant="standard"
+                  label="Project Name"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  sx={{ width: 400 }}
+                />
+                <TextField
+                  label="Project Description"
+                  multiline
+                  rows={4}
+                  fullWidth
+                  value={projectDescription}
+                  onChange={(e) => setProjectDescription(e.target.value)}
+                />
+
+                <Stack
+                  sx={{
+                    gap: 1.5,
+                    height: "100%",
+                    width: "100%",
+                    border: (theme) => `1px solid ${theme.palette.divider}`,
+                    borderRadius: 2,
+                    p: 1,
+                    pb: 0,
+                  }}
+                >
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography component="h3" sx={{ fontWeight: 700 }}>
+                      Characters
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() =>
+                        setCharacters((prevCharacters) => [
+                          ...prevCharacters,
+                          createCharacterDraft(),
+                        ])
+                      }
+                    >
+                      Add Character
+                    </Button>
+                  </Stack>
+                  {characters.length === 0 ? (
+                    <Typography component="p" sx={{ color: "text.secondary" }}>
+                      No characters added yet.
+                    </Typography>
+                  ) : (
+                    <Stack
+                      sx={{ gap: 1.5, maxHeight: 145, overflow: "auto", pr: 1 }}
+                    >
+                      {characters.map((character) => (
+                        <Paper
+                          key={character.key}
+                          elevation={0}
+                          sx={{
+                            border: 1,
+                            borderColor: "divider",
+                            borderRadius: 2,
+                            p: 1,
+                          }}
+                        >
+                          <Stack
+                            direction="row"
+                            sx={{
+                              gap: 1.5,
+                              alignItems: "center",
+                              width: "100%",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: 80,
+                                height: 80,
+                                borderRadius: 1.5,
+                                overflow: "hidden",
+                                bgcolor: "#bbb",
+                                display: "grid",
+                                placeItems: "center",
+                                flexShrink: 0,
+                              }}
+                            >
+                              {character.image ? (
+                                <img
+                                  src={character.image}
+                                  alt={character.name || "character"}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              ) : (
+                                <ImageOutlinedIcon sx={{ color: "grey.600" }} />
+                              )}
+                            </Box>
+                            <Stack sx={{ flex: 1, minWidth: 0, gap: 1 }}>
+                              <TextField
+                                size="small"
+                                label="Character Name"
+                                value={character.name}
+                                onChange={(event) =>
+                                  handleCharacterNameChange(
+                                    character.key,
+                                    event.target.value
+                                  )
+                                }
+                              />
+                              <Button
+                                component="label"
+                                variant="outlined"
+                                size="small"
+                              >
+                                {character.image
+                                  ? "Change Image"
+                                  : "Upload Image"}
+                                <input
+                                  hidden
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(event) =>
+                                    handleCharacterImageChange(
+                                      character.key,
+                                      event
+                                    )
+                                  }
+                                />
+                              </Button>
+                            </Stack>
+                            <IconButton
+                              color="error"
+                              aria-label="Remove character"
+                              onClick={() =>
+                                handleRemoveCharacter(character.key)
+                              }
+                            >
+                              <DeleteOutlineOutlinedIcon />
+                            </IconButton>
+                          </Stack>
+                        </Paper>
+                      ))}
+                    </Stack>
+                  )}
+                </Stack>
+              </Stack>
+
+              {(formError || formSuccess) && (
+                <Typography
+                  component="p"
+                  sx={{
+                    color: formError ? "error.main" : "success.main",
+                    fontSize: 14,
+                  }}
+                >
+                  {formError || formSuccess}
+                </Typography>
+              )}
+
+              <Stack
+                direction={"row"}
+                sx={{
+                  width: "100%",
+                  justifyContent: "end",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                >
+                  {submitting
+                    ? "Saving..."
+                    : editingProjectId
+                      ? "Update Project"
+                      : "Upload Project"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={resetForm}
+                  disabled={submitting}
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Modal>
     </Stack>
   );
 };

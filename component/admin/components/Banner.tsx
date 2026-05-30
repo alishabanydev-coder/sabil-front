@@ -185,11 +185,11 @@ const Banner = () => {
       <Stack
         sx={{
           position: "relative",
+          height: "calc(100vh - 60px)",
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
           borderRadius: 2,
           mt: 3,
           p: 2,
-          height: "100%",
         }}
       >
         <Stack

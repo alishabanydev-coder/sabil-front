@@ -121,7 +121,7 @@ const AboutUs = () => {
     <Stack
       sx={{
         width: "100%",
-        height: "100%",
+        height: "calc(100vh - 32px)",
         border: (theme) => `1px solid ${theme.palette.primary.main}`,
         borderRadius: 2,
         overflow: "auto",

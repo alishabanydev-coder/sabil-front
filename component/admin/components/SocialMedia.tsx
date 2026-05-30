@@ -2,6 +2,7 @@ import {
   alpha,
   Button,
   CircularProgress,
+  Modal,
   Stack,
   TextField,
   Typography,
@@ -21,7 +22,25 @@ type SocialMediaRecord = {
   icon: string;
 };
 
+const style = {
+  direction: "ltr",
+  height: "auto",
+  maxHeight: "80vh",
+  width: 380,
+  position: "absolute",
+  flexDirection: "column",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 3,
+  gap: 2,
+};
+
 const SocialMedia = () => {
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [socialMedias, setSocialMedias] = useState<SocialMediaRecord[]>([]);
@@ -35,6 +54,7 @@ const SocialMedia = () => {
     useState<SocialMediaRecord | null>(null);
 
   const resetForm = () => {
+    setOpen(false);
     setEditingSocialMedia(null);
     setName("");
     setUrl("");
@@ -42,7 +62,16 @@ const SocialMedia = () => {
     setSubmitErrorMsg("");
   };
 
+  const handleClose = () => {
+    resetForm();
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   const handleSelectForEdit = (socialMedia: SocialMediaRecord) => {
+    setOpen(true);
     setEditingSocialMedia(socialMedia);
     setName(socialMedia.name);
     setUrl(socialMedia.url);
@@ -70,6 +99,7 @@ const SocialMedia = () => {
 
     setSubmitErrorMsg("");
     setIsSubmitting(true);
+    setOpen(false);
 
     try {
       const result = editingSocialMedia
@@ -93,11 +123,16 @@ const SocialMedia = () => {
         if (editingSocialMedia) {
           setSocialMedias((currentItems) =>
             currentItems.map((item) =>
-              item._id === editingSocialMedia._id ? result.socialMediaLink : item
+              item._id === editingSocialMedia._id
+                ? result.socialMediaLink
+                : item
             )
           );
         } else {
-          setSocialMedias((currentItems) => [result.socialMediaLink, ...currentItems]);
+          setSocialMedias((currentItems) => [
+            result.socialMediaLink,
+            ...currentItems,
+          ]);
         }
       }
 
@@ -107,8 +142,8 @@ const SocialMedia = () => {
         error instanceof Error
           ? error.message
           : editingSocialMedia
-          ? "Failed to update social media link."
-          : "Failed to create social media link."
+            ? "Failed to update social media link."
+            : "Failed to create social media link."
       );
     } finally {
       setIsSubmitting(false);
@@ -160,7 +195,9 @@ const SocialMedia = () => {
       setErrorMsg("");
 
       try {
-        const result = await fetchSocialMediaLinks({ signal: controller.signal });
+        const result = await fetchSocialMediaLinks({
+          signal: controller.signal,
+        });
 
         if (controller.signal.aborted) {
           return;
@@ -217,129 +254,52 @@ const SocialMedia = () => {
     >
       <Stack
         sx={{
-          width: "50%",
+          position: "relative",
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
           borderRadius: 2,
           p: 2,
-          py: 1,
-          height: "100%",
-          overflow: "hidden",
-          overflowY: "auto",
+          mt: 3,
+          width: "100%",
+          height: "calc(100vh - 60px)",
         }}
       >
-        <Stack sx={{ gap: 1 }}>
-          <Stack
+        <Stack
+          sx={{
+            height: "100%",
+            position: "absolute",
+            top: -20,
+            right: 0,
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpen}
             sx={{
-              width: "95%",
-              mx: "auto",
-              aspectRatio: "16 / 9",
-              overflow: "hidden",
-              textAlign: "center",
-              justifyContent: "center",
-              alignItems: "center",
-              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
-              borderRadius: 1,
+              width: 200,
+              boxShadow: (theme) =>
+                `0px 2px 12px 1px ${theme.palette.primary.main}`,
+              "&:disabled": {
+                backgroundColor: "grey.500",
+                color: "white",
+              },
             }}
           >
-            {displayedLogoUrl ? (
-              <img
-                src={displayedLogoUrl}
-                alt="logo"
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
-              />
-            ) : (
-              <Typography color="text.secondary" variant="body2">
-                No logo selected
-              </Typography>
-            )}
-          </Stack>
-          <Stack>
-            <Button
-              component="label"
-              variant="contained"
-              color="primary"
-              fullWidth
-            >
-              <input
-                hidden
-                type="file"
-                accept="image/*"
-                onChange={(event) => setLogo(event.target.files?.[0] ?? null)}
-              />
-              {editingSocialMedia ? "Replace Logo" : "Add Logo"}
-            </Button>
-          </Stack>
+            Add Social Media +
+          </Button>
         </Stack>
-        <Stack sx={{ gap: 2 }}>
-          <TextField
-            label="Name"
-            variant="standard"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="URL"
-            variant="standard"
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            fullWidth
-          />
-          <Stack direction={"row"} sx={{ gap: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-              fullWidth
-              disabled={isSubmitting || !name.trim() || !url.trim()}
-            >
-              {isSubmitting
-                ? "Saving..."
-                : editingSocialMedia
-                ? "Save Changes"
-                : "Add"}
-            </Button>
-            {editingSocialMedia && (
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={handleDeleteSocialMedia}
-                disabled={isSubmitting}
-              >
-                Delete
-              </Button>
-            )}
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleCancel}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-          </Stack>
-          {submitErrorMsg ? (
-            <Typography color="error" variant="body2">
-              {submitErrorMsg}
-            </Typography>
-          ) : null}
-        </Stack>
-      </Stack>
 
-      <Stack
-        sx={{
-          border: (theme) => `1px solid ${theme.palette.primary.main}`,
-          borderRadius: 2,
-          p: 2,
-          width: "50%",
-          height: "100%",
-          overflow: "hidden",
-          overflowY: "auto",
-        }}
-      >
-        <Stack>
+        <Stack sx={{ height: "100%", overflow: "auto" }}>
           {loading ? (
-            <Stack sx={{ width: "100%", alignItems: "center", py: 4 }}>
+            <Stack
+              sx={{
+                width: "100%",
+                alignItems: "center",
+                py: 4,
+              }}
+            >
               <CircularProgress size={28} />
             </Stack>
           ) : errorMsg ? (
@@ -362,6 +322,7 @@ const SocialMedia = () => {
                     sx={{
                       p: 1.25,
                       borderRadius: 1.5,
+                      zIndex: 1000,
                       border: (theme) =>
                         `1px solid ${
                           isSelected
@@ -374,24 +335,35 @@ const SocialMedia = () => {
                           : "transparent",
                       cursor: "pointer",
                       gap: 0.75,
+                      "&:hover": {
+                        bgcolor: (theme) =>
+                          alpha(theme.palette.primary.main, 0.08),
+                        border: (theme) =>
+                          `1px solid ${theme.palette.primary.main}`,
+                      },
                     }}
                   >
-                    <Stack direction="row" sx={{ alignItems: "center", gap: 1.5 }}>
+                    <Stack
+                      direction="row"
+                      sx={{ alignItems: "center", gap: 1.5 }}
+                    >
                       <Stack
                         sx={{
                           width: 48,
                           height: 48,
                           borderRadius: 1,
                           overflow: "hidden",
-                          border: (theme) =>
-                            `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
                           flexShrink: 0,
                         }}
                       >
                         <img
                           src={socialMedia.icon}
                           alt={socialMedia.name}
-                          style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
+                          }}
                         />
                       </Stack>
                       <Stack sx={{ minWidth: 0 }}>
@@ -425,6 +397,117 @@ const SocialMedia = () => {
           )}
         </Stack>
       </Stack>
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Stack sx={style}>
+          <Stack sx={{ gap: 1 }}>
+            <Stack
+              sx={{
+                width: "95%",
+                mx: "auto",
+                aspectRatio: "16 / 9",
+                overflow: "hidden",
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                borderRadius: 1,
+              }}
+            >
+              {displayedLogoUrl ? (
+                <img
+                  src={displayedLogoUrl}
+                  alt="logo"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                <Typography color="text.secondary" variant="body2">
+                  No logo selected
+                </Typography>
+              )}
+            </Stack>
+            <Stack>
+              <Button
+                component="label"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => setLogo(event.target.files?.[0] ?? null)}
+                />
+                {editingSocialMedia ? "Replace Logo" : "Add Logo"}
+              </Button>
+            </Stack>
+          </Stack>
+          <Stack sx={{ gap: 2 }}>
+            <TextField
+              label="Name"
+              variant="standard"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="URL"
+              variant="standard"
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+              fullWidth
+            />
+            <Stack direction={"row"} sx={{ gap: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+                fullWidth
+                disabled={isSubmitting || !name.trim() || !url.trim()}
+              >
+                {isSubmitting
+                  ? "Saving..."
+                  : editingSocialMedia
+                    ? "Save Changes"
+                    : "Add"}
+              </Button>
+              {editingSocialMedia && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleDeleteSocialMedia}
+                  disabled={isSubmitting}
+                >
+                  Delete
+                </Button>
+              )}
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleCancel}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+            </Stack>
+            {submitErrorMsg ? (
+              <Typography color="error" variant="body2">
+                {submitErrorMsg}
+              </Typography>
+            ) : null}
+          </Stack>
+        </Stack>
+      </Modal>
     </Stack>
   );
 };

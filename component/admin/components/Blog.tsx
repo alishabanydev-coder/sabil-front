@@ -8,7 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { createBlog, deleteBlog, fetchBlogs, updateBlog } from "../services/blogApi";
+import {
+  createBlog,
+  deleteBlog,
+  fetchBlogs,
+  updateBlog,
+} from "../services/blogApi";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -143,8 +148,8 @@ const Blog = () => {
         error instanceof Error
           ? error.message
           : editingBlog
-          ? "Failed to update blog."
-          : "Failed to create blog."
+            ? "Failed to update blog."
+            : "Failed to create blog."
       );
     } finally {
       setIsSubmitting(false);
@@ -208,7 +213,9 @@ const Blog = () => {
         currentBlogs.filter((blogItem) => blogItem._id !== blog._id)
       );
     } catch (error) {
-      setErrorMsg(error instanceof Error ? error.message : "Failed to delete blog.");
+      setErrorMsg(
+        error instanceof Error ? error.message : "Failed to delete blog."
+      );
     }
   };
 
@@ -297,12 +304,13 @@ const Blog = () => {
   const modalImageUrls = [...existingImageUrls, ...imagePreviewUrls];
 
   return (
-    <Stack sx={{ width: "100%", height: "100%", position: "relative" }}>
+    <Stack sx={{ width: "100%", height: "100%" }}>
       <Stack
         sx={{
+          position: "relative",
           width: "100%",
-          height: "100%",
-          mt: 2,
+          height: "calc(100vh - 60px)",
+          mt: 3,
           borderRadius: 2,
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
         }}
@@ -313,7 +321,7 @@ const Blog = () => {
             justifyContent: "center",
             alignItems: "center",
             position: "absolute",
-            top: -5,
+            top: -20,
             right: 0,
           }}
         >
@@ -611,8 +619,8 @@ const Blog = () => {
                 {isSubmitting
                   ? "Saving..."
                   : editingBlog
-                  ? "Save Changes"
-                  : "Add Blog"}
+                    ? "Save Changes"
+                    : "Add Blog"}
               </Button>
               <Button variant="outlined" color="primary" onClick={handleClose}>
                 Cancel

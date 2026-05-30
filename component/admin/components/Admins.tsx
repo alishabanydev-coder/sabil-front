@@ -8,6 +8,7 @@ import {
   IconButton,
   ListItemText,
   MenuItem,
+  Modal,
   Stack,
   TextField,
   Typography,
@@ -69,6 +70,23 @@ type ProjectRecord = {
   name?: string;
 };
 
+const style = {
+  direction: "ltr",
+  height: "auto",
+  maxHeight: "80vh",
+  width: 380,
+  position: "absolute",
+  flexDirection: "column",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 3,
+  gap: 2,
+};
+
 function getRecordId(record: { _id?: string; id?: string } | string) {
   return typeof record === "string" ? record : record._id || record.id || "";
 }
@@ -99,6 +117,13 @@ const Admins = () => {
   const [admins, setAdmins] = useState<AdminRecord[]>([]);
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [loadingAdmins, setLoadingAdmins] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+    setIsFormOpen(false);
+    reset();
+  };
 
   const loadAdmins = useCallback(async () => {
     setLoadingAdmins(true);
@@ -140,6 +165,7 @@ const Admins = () => {
   };
 
   const handleAddAdmin = () => {
+    setOpen(true);
     setFormSuccess("");
     setFormError("");
     reset();
@@ -148,6 +174,7 @@ const Admins = () => {
   };
 
   const handleCancel = () => {
+    setOpen(false);
     setIsFormOpen(false);
     reset();
   };
@@ -171,6 +198,7 @@ const Admins = () => {
         .filter((projectId) => projectId && hasProject(projects, projectId)) ||
       [];
 
+    setOpen(true);
     setFormError("");
     setFormSuccess("");
     setEditingAdminId(admin._id || admin.id || "");
@@ -257,6 +285,7 @@ const Admins = () => {
       isEditing ? "Updated successfully." : "Created successfully."
     );
     setIsFormOpen(false);
+    setOpen(false);
     reset();
     // await loadAdmins();
   };
@@ -303,43 +332,193 @@ const Admins = () => {
   const disabled = !isFormOpen;
 
   return (
-    <Stack direction="row" sx={{ gap: 2 }}>
-      <Stack sx={{ height: "100%", width: "40%", gap: 2 }}>
-        <Typography component="h2" sx={{ fontSize: 22, fontWeight: 700 }}>
-          Admins
-        </Typography>
-        <Typography component="p" sx={{ color: "text.secondary", mt: 1 }}>
-          This section you see admins and their permissions
-        </Typography>
-
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={isFormOpen}
-          onClick={handleAddAdmin}
-        >
-          Add Admin
-        </Button>
-
-        {formError ? (
-          <Typography color="error" variant="body2" sx={{ mt: 0.5 }}>
-            {formError}
-          </Typography>
-        ) : null}
-        {formSuccess ? (
-          <Typography color="success.main" variant="body2" sx={{ mt: 0.5 }}>
-            {formSuccess}
-          </Typography>
-        ) : null}
-
+    <Stack direction="row" sx={{ gap: 2, height: "100%" }}>
+      <Stack
+        sx={{
+          position: "relative",
+          height: "calc(100vh - 60px)",
+          width: "100%",
+          gap: 1,
+          px: 2,
+          border: (theme) => `1px solid ${theme.palette.primary.main}`,
+          borderRadius: 2,
+          p: 2,
+          mt: 3,
+        }}
+      >
         <Stack
           sx={{
-            border: (theme) => `1px solid ${theme.palette.primary.dark}`,
-            borderRadius: 2,
-            p: 2,
-            gap: 2,
+            height: "100%",
+            position: "absolute",
+            top: -20,
+            right: 0,
+            width: "100%",
+            alignItems: "center",
           }}
         >
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={isFormOpen}
+            onClick={handleAddAdmin}
+            sx={{
+              width: 200,
+              boxShadow: (theme) =>
+                `0px 2px 12px 1px ${theme.palette.primary.main}`,
+              "&:disabled": {
+                backgroundColor: "grey.500",
+                color: "white",
+              },
+            }}
+          >
+            Add Admin
+          </Button>
+        </Stack>
+
+        <Stack sx={{ height: "100%", overflow: "auto" }}>
+          {loadingAdmins ? (
+            <Typography color="text.secondary">Loading admins...</Typography>
+          ) : admins.length === 0 ? (
+            <Typography color="text.secondary">
+              No admins loaded yet.
+            </Typography>
+          ) : (
+            admins.map((admin) => (
+              <Stack
+                key={admin._id || admin.id || admin.userName}
+                sx={{
+                  width: "100%",
+                  textAlign: "left",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  p: 1.5,
+                  borderRadius: 4,
+                  zIndex: 1000,
+                  "&:hover": {
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                  },
+                }}
+              >
+                <Stack sx={{ width: "100%", gap: 1 }}>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        maxWidth: 200,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        textTransform: "none",
+                        color: "text.primary",
+                      }}
+                    >
+                      {admin.name || admin.userName}
+                    </Typography>
+
+                    <Stack direction="row" sx={{ gap: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDeleteAdmin(admin)}
+                        sx={{
+                          color: "error.main",
+                          bgcolor: (theme) =>
+                            alpha(theme.palette.error.main, 0.2),
+                          "&:hover": {
+                            bgcolor: (theme) =>
+                              alpha(theme.palette.error.main, 0.3),
+                          },
+                        }}
+                      >
+                        <DeleteOutlineOutlinedIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditAdmin(admin)}
+                        sx={{
+                          color: "info.main",
+                          bgcolor: (theme) =>
+                            alpha(theme.palette.info.main, 0.2),
+                          "&:hover": {
+                            bgcolor: (theme) =>
+                              alpha(theme.palette.info.main, 0.3),
+                          },
+                        }}
+                      >
+                        <ModeEditOutlineOutlinedIcon />
+                      </IconButton>
+                      <Chip
+                        label={admin.role}
+                        variant="filled"
+                        sx={{
+                          color: "#fff",
+                          bgcolor: (theme) =>
+                            alpha(theme.palette.primary.main, 0.3),
+                        }}
+                      />
+                    </Stack>
+                  </Stack>
+                  <Stack
+                    direction="row"
+                    sx={{ gap: 0.75, flexWrap: "wrap", mt: 0.5 }}
+                  >
+                    {(admin.permissions || []).filter(
+                      (permission) => permission.tab
+                    ).length === 0 ? (
+                      <Chip
+                        size="small"
+                        label="Full access"
+                        variant="outlined"
+                      />
+                    ) : (
+                      (admin.permissions || [])
+                        .filter((permission) => permission.tab)
+                        .map((permission) => {
+                          const tab = permission.tab as PermissionTabKey;
+                          const projectNames = (permission.projectIds || [])
+                            .map(getRecordId)
+                            .filter(Boolean)
+                            .map((projectId) =>
+                              getProjectName(projects, projectId)
+                            )
+                            .filter(Boolean);
+                          const label =
+                            tab === "channels" && projectNames.length > 0
+                              ? `Channels: ${projectNames.join(", ")}`
+                              : PERMISSION_TAB_LABELS[tab] || permission.tab;
+
+                          return (
+                            <Chip
+                              key={`${admin._id || admin.id || admin.userName}-${permission.tab}`}
+                              size="small"
+                              label={label}
+                              variant="outlined"
+                              color="primary"
+                            />
+                          );
+                        })
+                    )}
+                  </Stack>
+                </Stack>
+              </Stack>
+            ))
+          )}
+        </Stack>
+      </Stack>
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Stack sx={style}>
           <Stack
             direction="row"
             sx={{ justifyContent: "space-between", alignItems: "center" }}
@@ -516,147 +695,7 @@ const Admins = () => {
             </Stack>
           )}
         </Stack>
-      </Stack>
-
-      <Stack
-        sx={{
-          height: "100%",
-          width: "60%",
-          gap: 1,
-          px: 2,
-          border: (theme) => `1px solid ${theme.palette.primary.main}`,
-          borderRadius: 2,
-          p: 2,
-        }}
-      >
-        {loadingAdmins ? (
-          <Typography color="text.secondary">Loading admins...</Typography>
-        ) : admins.length === 0 ? (
-          <Typography color="text.secondary">No admins loaded yet.</Typography>
-        ) : (
-          admins.map((admin) => (
-            <Stack
-              key={admin._id || admin.id || admin.userName}
-              sx={{
-                width: "100%",
-                textAlign: "left",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                p: 1.5,
-                borderRadius: 4,
-                "&:hover": {
-                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.3),
-                },
-              }}
-            >
-              <Stack sx={{ width: "100%" }}>
-                <Stack
-                  direction="row"
-                  sx={{
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                      maxWidth: 200,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      textTransform: "none",
-                      color: "text.primary",
-                    }}
-                  >
-                    {admin.name || admin.userName}
-                  </Typography>
-
-                  <Stack direction="row" sx={{ gap: 1 }}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDeleteAdmin(admin)}
-                      sx={{
-                        color: "error.main",
-                        bgcolor: (theme) =>
-                          alpha(theme.palette.error.main, 0.3),
-                        "&:hover": {
-                          bgcolor: (theme) =>
-                            alpha(theme.palette.error.main, 0.4),
-                        },
-                      }}
-                    >
-                      <DeleteOutlineOutlinedIcon />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEditAdmin(admin)}
-                      sx={{
-                        color: "secondary.main",
-                        bgcolor: (theme) =>
-                          alpha(theme.palette.secondary.main, 0.4),
-                        "&:hover": {
-                          bgcolor: (theme) =>
-                            alpha(theme.palette.secondary.main, 0.5),
-                        },
-                      }}
-                    >
-                      <ModeEditOutlineOutlinedIcon />
-                    </IconButton>
-                    <Chip
-                      label={admin.role}
-                      variant="filled"
-                      sx={{
-                        color: "#fff",
-                        bgcolor: (theme) =>
-                          alpha(theme.palette.primary.main, 0.5),
-                      }}
-                    />
-                  </Stack>
-                </Stack>
-                <Stack
-                  direction="row"
-                  sx={{ gap: 0.75, flexWrap: "wrap", mt: 0.5 }}
-                >
-                  {(admin.permissions || []).filter(
-                    (permission) => permission.tab
-                  ).length === 0 ? (
-                    <Chip size="small" label="Full access" variant="outlined" />
-                  ) : (
-                    (admin.permissions || [])
-                      .filter((permission) => permission.tab)
-                      .map((permission) => {
-                        const tab = permission.tab as PermissionTabKey;
-                        const projectNames = (permission.projectIds || [])
-                          .map(getRecordId)
-                          .filter(Boolean)
-                          .map((projectId) =>
-                            getProjectName(projects, projectId)
-                          )
-                          .filter(Boolean);
-                        const label =
-                          tab === "channels" && projectNames.length > 0
-                            ? `Channels: ${projectNames.join(", ")}`
-                            : PERMISSION_TAB_LABELS[tab] || permission.tab;
-
-                        return (
-                          <Chip
-                            key={`${admin._id || admin.id || admin.userName}-${permission.tab}`}
-                            size="small"
-                            label={label}
-                            variant="outlined"
-                            color="primary"
-                          />
-                        );
-                      })
-                  )}
-                </Stack>
-              </Stack>
-              <Stack></Stack>
-            </Stack>
-          ))
-        )}
-      </Stack>
+      </Modal>
     </Stack>
   );
 };

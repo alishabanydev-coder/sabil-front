@@ -301,15 +301,14 @@ const Catalogue = () => {
     return () => controller.abort("Catalogues tab unmounted");
   }, []);
 
-  console.log(visibleCatalogues);
-
   return (
-    <Stack sx={{ width: "100%", height: "100%", position: "relative" }}>
+    <Stack sx={{ width: "100%", height: "100%" }}>
       <Stack
         sx={{
+          position: "relative",
           width: "100%",
-          height: "100%",
-          mt: 2,
+          height: "calc(100vh - 60px)",
+          mt: 3,
           borderRadius: 2,
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
         }}
@@ -322,7 +321,7 @@ const Catalogue = () => {
             alignItems: "center",
             position: "absolute",
             gap: 2,
-            top: -5,
+            top: -20,
             right: 0,
           }}
         >

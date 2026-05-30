@@ -3,26 +3,26 @@
 import {
   alpha,
   Box,
+  Button,
   IconButton,
   Paper,
   Stack,
-  Tab,
-  Tabs,
   Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useMemo, useState } from "react";
-import Admins from "./components/Admins";
-import Projects from "./components/Projects";
 import {
   ADMIN_SESSION_EXPIRED_EVENT,
   clearAdminSession,
 } from "./services/adminSession";
-import Channels from "./components/Channels";
+import Admins from "./components/Admins";
+import AppManagement from "./components/AppManagement";
 import Banner from "./components/Banner";
 import Breakdown from "./components/Breakdown";
+import Projects from "./components/Projects";
+import Channels from "./components/Channels";
 import Blog from "./components/Blog";
 import SocialMedia from "./components/SocialMedia";
 import Comment from "./components/Comment";
@@ -38,6 +38,10 @@ interface TabPanelProps {
   value: number;
 }
 
+type AdminPanelProps = {
+  onLogout: () => void;
+};
+
 const allTabs = [
   {
     id: 0,
@@ -48,83 +52,90 @@ const allTabs = [
   },
   {
     id: 1,
+    label: "App Management",
+    title: "App Management",
+    permissionKey: "appManagement",
+    component: <AppManagement />,
+  },
+  {
+    id: 2,
     label: "Banner",
     title: "Banner",
     permissionKey: "banner",
     component: <Banner />,
   },
   {
-    id: 2,
+    id: 3,
     label: "Breakdowns",
     title: "Breakdowns",
     permissionKey: "breakdowns",
     component: <Breakdown />,
   },
   {
-    id: 3,
+    id: 4,
     label: "Blog",
     title: "Blog",
     permissionKey: "blog",
     component: <Blog />,
   },
   {
-    id: 4,
+    id: 5,
     label: "Comments",
     title: "Comments",
     permissionKey: "comments",
     component: <Comment />,
   },
   {
-    id: 5,
+    id: 6,
     label: "Projects",
     title: "Projects",
     permissionKey: "projects",
     component: <Projects />,
   },
   {
-    id: 6,
+    id: 7,
     label: "Catalogue",
     title: "Catalogue",
     permissionKey: "catalogue",
     component: <Catalogue />,
   },
   {
-    id: 7,
+    id: 8,
     label: "Channels",
     title: "Channels",
     permissionKey: "channels",
     component: <Channels />,
   },
   {
-    id: 8,
+    id: 9,
     label: "Users (Supporters)",
     title: "Users / Supporters",
     permissionKey: "users",
     component: <Users />,
   },
   {
-    id: 9,
+    id: 10,
     label: "Social Media",
     title: "Social Media",
     permissionKey: "socialMedia",
     component: <SocialMedia />,
   },
   {
-    id: 10,
+    id: 11,
     label: "About Us",
     title: "About Us",
     permissionKey: "aboutUs",
     component: <AboutUs />,
   },
   {
-    id: 11,
+    id: 12,
     label: "Donation",
     title: "Donation",
     permissionKey: "donation",
     component: <Donation />,
   },
   {
-    id: 12,
+    id: 13,
     label: "Admins",
     title: "Admins",
     permissionKey: "admins",
@@ -144,17 +155,11 @@ function CustomTabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ px: 3, py: 2, height: "calc(100vh - 180px)" }}>
-          {children}
-        </Box>
+        <Box sx={{ px: 2, py: 2, height: "100vh" }}>{children}</Box>
       )}
     </div>
   );
 }
-
-type AdminPanelProps = {
-  onLogout: () => void;
-};
 
 const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   const theme = useTheme();
@@ -220,8 +225,8 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
       );
   }, [adminRole, permissions]);
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleListItemClick = (tabId: number) => {
+    setValue(tabId);
   };
 
   const handleLogout = () => {
@@ -236,6 +241,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   return (
     <Stack
       sx={{
+        flexDirection: "row",
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
@@ -243,42 +249,50 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
       }}
     >
       <Stack
-        direction="row"
         sx={{
-          minHeight: 120,
-          maxHeight: 120,
-          position: "relative",
-          width: "100%",
-          px: 5,
-          py: 2,
-          gap: 2,
-          alignItems: "center",
-          justifyContent: "space-between",
-          overflow: "hidden",
+          width: 250,
+          height: "100vh",
+          overflowY: "auto",
+          borderRight: (theme) => `1px solid ${theme.palette.divider}`,
         }}
       >
-        <Box
-          component="div"
+        <Stack
           sx={{
-            left: 0,
-            pointerEvents: "none",
-            position: "absolute",
-            right: 0,
-            top: 5,
-            zIndex: 0,
-            height: "100%",
-            bottom: 0,
+            minHeight: 120,
+            maxHeight: 120,
+            position: "relative",
+            width: "100%",
+            px: 1,
+            py: 2,
+            gap: 2,
+            alignItems: "center",
+            justifyContent: "space-between",
+            overflow: "hidden",
+            borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
           }}
         >
-          <svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 1440 180"
-            preserveAspectRatio="xMidYMax slice"
-            xmlns="http://www.w3.org/2000/svg"
+          <Box
+            component="div"
+            sx={{
+              left: 0,
+              pointerEvents: "none",
+              position: "absolute",
+              right: 0,
+              top: 5,
+              zIndex: 0,
+              height: "100%",
+              bottom: 0,
+            }}
           >
-            <style>
-              {`
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 800 300"
+              preserveAspectRatio="xMidYMax slice"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <style>
+                {`
                 .admin-header-wave {
                   animation: adminHeaderWaveKf 5s linear infinite;
                 }
@@ -300,142 +314,129 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
                   }
                 }
               `}
-            </style>
-            <defs>
-              <linearGradient
-                id="admin-header-gradient"
-                x1="0%"
-                y1="50%"
-                x2="100%"
-                y2="50%"
-              >
-                <stop offset="100%" stopColor={theme.palette.primary.main} />
-                <stop
-                  offset="95%"
-                  stopColor={alpha(theme.palette.secondary.main, 0.6)}
-                />
-              </linearGradient>
-            </defs>
-            <path
-              className="admin-header-wave"
-              d="M 0,700 L 0,105 C 55.96507584165741,107.7513133555309 111.93015168331482,110.5026267110618 160,99 C 208.06984831668518,87.4973732889382 248.2444691083981,61.74080651128375 304,65 C 359.7555308916019,68.25919348871625 431.0919718830928,100.53414724380319 491,114 C 550.9080281169072,127.46585275619681 599.3876433592303,122.1226045135035 650,118 C 700.6123566407697,113.8773954864965 753.3574546799853,110.97543470218277 807,98 C 860.6425453200147,85.02456529781723 915.1825379208287,61.97565667776543 968,69 C 1020.8174620791713,76.02434332223457 1071.9123936367,113.12193858675548 1117,132 C 1162.0876063633,150.87806141324452 1201.1678875323714,151.5365889752127 1254,144 C 1306.8321124676286,136.4634110247873 1373.4160562338143,120.73170551239365 1440,105 L 1440,700 L 0,700 Z"
-              fill="url(#admin-header-gradient)"
-              fillOpacity={0.3}
-            />
-          </svg>
-        </Box>
+              </style>
+              <defs>
+                <linearGradient
+                  id="admin-header-gradient"
+                  x1="0%"
+                  y1="50%"
+                  x2="100%"
+                  y2="50%"
+                >
+                  <stop offset="100%" stopColor={theme.palette.primary.main} />
+                  <stop
+                    offset="95%"
+                    stopColor={alpha(theme.palette.secondary.main, 0.6)}
+                  />
+                </linearGradient>
+              </defs>
+              <path
+                className="admin-header-wave"
+                d="M 0,700 L 0,105 C 55.96507584165741,107.7513133555309 111.93015168331482,110.5026267110618 160,99 C 208.06984831668518,87.4973732889382 248.2444691083981,61.74080651128375 304,65 C 359.7555308916019,68.25919348871625 431.0919718830928,100.53414724380319 491,114 C 550.9080281169072,127.46585275619681 599.3876433592303,122.1226045135035 650,118 C 700.6123566407697,113.8773954864965 753.3574546799853,110.97543470218277 807,98 C 860.6425453200147,85.02456529781723 915.1825379208287,61.97565667776543 968,69 C 1020.8174620791713,76.02434332223457 1071.9123936367,113.12193858675548 1117,132 C 1162.0876063633,150.87806141324452 1201.1678875323714,151.5365889752127 1254,144 C 1306.8321124676286,136.4634110247873 1373.4160562338143,120.73170551239365 1440,105 L 1440,700 L 0,700 Z"
+                fill="url(#admin-header-gradient)"
+                fillOpacity={0.3}
+              />
+            </svg>
+          </Box>
 
-        <Stack sx={{ position: "relative", zIndex: 1 }}>
-          <Typography
-            component="h1"
-            sx={{ fontSize: 25, color: "primary.main" }}
-          >
-            Admin Panel
-          </Typography>
-        </Stack>
+          <Stack sx={{ position: "relative", zIndex: 1 }}>
+            <Typography
+              component="h1"
+              sx={{
+                fontSize: 18,
+                color: "primary.main",
+                fontFamily: "Namecat",
+              }}
+            >
+              Admin Panel
+            </Typography>
+          </Stack>
 
-        <Stack
-          direction="row"
-          sx={{
-            gap: 1,
-            alignItems: "center",
-            direction: "ltr",
-            borderRadius: 3,
-            px: 2,
-            py: 1,
-            bgcolor: (theme) => alpha(theme.palette.primary.light, 0.3),
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          <Typography
-            component="h2"
-            sx={{ fontSize: 16, fontFamily: "Namecat" }}
-          >
-            Admin Name:
-          </Typography>
-          <Typography
-            component="h2"
+          <Stack
+            direction="row"
             sx={{
-              fontSize: 18,
-              fontFamily: "Namecat",
-              color: "secondary.main",
+              width: "95%",
+              alignItems: "center",
+              justifyContent: "space-between",
+              direction: "ltr",
+              borderRadius: 3,
+              px: 1,
+              py: 0.5,
+              bgcolor: (theme) => alpha(theme.palette.primary.light, 0.3),
+              position: "relative",
+              zIndex: 1,
             }}
           >
-            {adminName}
-          </Typography>
-          <Tooltip title="Log out">
-            <IconButton
-              type="button"
-              size="small"
-              onClick={handleLogout}
-              aria-label="Log out"
-              sx={{ ml: 0.5, color: "text.secondary" }}
+            <Typography
+              component="h2"
+              sx={{ fontSize: 12, fontFamily: "Namecat" }}
             >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+              Admin Name:
+            </Typography>
+            <Typography
+              component="h2"
+              sx={{
+                width: 90,
+                fontSize: 12,
+                fontFamily: "Namecat",
+                color: "secondary.main",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+              }}
+            >
+              {adminName}
+            </Typography>
+            <Tooltip title="Log out">
+              <IconButton
+                type="button"
+                size="small"
+                onClick={handleLogout}
+                aria-label="Log out"
+                sx={{
+                  color: "text.secondary",
+                  "& .MuiSvgIcon-root": { fontSize: 15 },
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        </Stack>
+        <Stack sx={{ gap: 1, px: 1, py: 1 }}>
+          {visibleTabs.map((tab) => (
+            <Button
+              key={tab.id}
+              variant="text"
+              fullWidth
+              onClick={() => handleListItemClick(tab.id)}
+              color="primary"
+              sx={{
+                justifyContent: "flex-start",
+                textAlign: "left",
+                textTransform: "none",
+                fontSize: 18,
+                fontWeight: 700,
+                border: (theme) =>
+                  selectedTabValue === tab.id
+                    ? `1px solid ${theme.palette.primary.main}`
+                    : `1px solid ${theme.palette.background.default}`,
+                borderRadius: 3,
+                bgcolor:
+                  selectedTabValue === tab.id
+                    ? (theme) => alpha(theme.palette.primary.main, 0.1)
+                    : "transparent",
+              }}
+            >
+              <Typography component="h2" sx={{ fontSize: 18, fontWeight: 700 }}>
+                {tab.label}
+              </Typography>
+            </Button>
+          ))}
         </Stack>
       </Stack>
 
-      <Stack>
-        <Box
-          sx={{
-            borderBottom: 1,
-            borderBottomColor: "primary.light",
-            borderBottomStyle: "solid",
-            borderBottomWidth: 1,
-            overflow: "visible",
-          }}
-        >
-          <Tabs
-            value={selectedTabValue}
-            onChange={handleChange}
-            aria-label="admin tabs"
-            sx={{
-              overflow: "visible",
-              px: 3,
-              "& .MuiTabs-scroller": {
-                overflow: "visible !important",
-              },
-              "& .MuiTabs-flexContainer": {
-                overflow: "visible",
-              },
-              "& .MuiTabs-indicator": {
-                overflow: "visible",
-                "&::after": {
-                  borderLeft: "10px solid transparent",
-                  borderRight: "10px solid transparent",
-                  borderTop: "9px solid",
-                  borderTopColor: "primary.main",
-                  bottom: -8,
-                  content: '""',
-                  height: 0,
-                  left: "50%",
-                  position: "absolute",
-                  transform: "translateX(-50%)",
-                  width: 0,
-                },
-              },
-            }}
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            {visibleTabs.map((tab) => (
-              <Tab
-                key={tab.id}
-                label={tab.label}
-                value={tab.id}
-                sx={{
-                  fontSize: 16,
-                  minHeight: 56,
-                  textTransform: "none",
-                }}
-              />
-            ))}
-          </Tabs>
-        </Box>
-
+      <Stack sx={{ width: "calc(100vw - 250px)", height: "100vh" }}>
         {visibleTabs.map((tab) => (
           <CustomTabPanel key={tab.id} value={selectedTabValue} index={tab.id}>
             {tab.component}
