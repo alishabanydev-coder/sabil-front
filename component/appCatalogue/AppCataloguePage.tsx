@@ -5,20 +5,12 @@ import { useMemo, useState } from "react";
 import Navbar from "./component/Navbar";
 import Image from "next/image";
 
-type ProjectData = {
-  _id: string;
-  name: string;
+type NavigationButtonData = {
+  id: string;
+  type: "home" | "project";
   title: string;
-  thumbnail: string;
-  description: string;
-};
-
-type CatalogueData = {
-  _id: string;
-  projectId: string;
-  header: string;
-  body: string;
   image: string;
+  projectId?: string;
 };
 
 type VideoData = {
@@ -30,22 +22,52 @@ type VideoData = {
   episode?: number;
 };
 
+type ProjectPreviewData = {
+  _id?: string;
+  id?: string;
+  title: string;
+  name?: string;
+  image: string;
+};
+
 type AppCataloguePageProps = {
-  projects: ProjectData[];
-  catalogues: CatalogueData[];
-  videos: VideoData[];
+  navigationButtons: NavigationButtonData[];
+  homeVideos: VideoData[];
+  allVideos: VideoData[];
 };
 
 export default function AppCataloguePage({
-  projects,
-  videos,
+  navigationButtons,
+  homeVideos,
+  allVideos,
 }: AppCataloguePageProps) {
-  const [selectedProject, setSelectedProject] = useState<string>("");
+  const [selectedNav, setSelectedNav] = useState<string>("home");
 
-  const projectById = useMemo(
-    () => new Map(projects.map((project) => [project._id, project])),
-    [projects]
-  );
+  const selectedVideos = useMemo(() => {
+    if (selectedNav === "home") {
+      return homeVideos;
+    }
+
+    return allVideos.filter((video) => video.projectId === selectedNav);
+  }, [allVideos, homeVideos, selectedNav]);
+
+  const projectById = useMemo(() => {
+    const projectMap = new Map<string, ProjectPreviewData>();
+    navigationButtons
+      .filter(
+        (button): button is NavigationButtonData & { projectId: string } =>
+          button.type === "project" && typeof button.projectId === "string"
+      )
+      .forEach((button) => {
+        projectMap.set(button.projectId, {
+          _id: button.projectId,
+          title: button.title,
+          name: button.title,
+          image: button.image,
+        });
+      });
+    return projectMap;
+  }, [navigationButtons]);
 
   return (
     <Stack
@@ -91,12 +113,14 @@ export default function AppCataloguePage({
           },
         }}
       >
-        {!!projects.length
-          ? projects.map((item) => {
-              const isSelected = selectedProject === item._id;
+        {!!navigationButtons.length
+          ? navigationButtons.map((item) => {
+              const buttonId =
+                item.type === "project" && item.projectId ? item.projectId : "home";
+              const isSelected = selectedNav === buttonId;
               return (
                 <Stack
-                  key={item._id}
+                  key={item.id}
                   sx={{
                     flexDirection: "row",
                     alignItems: "center",
@@ -107,12 +131,12 @@ export default function AppCataloguePage({
                     transition: "all 0.3s ease",
                   }}
                   onClick={() => {
-                    setSelectedProject(item._id);
+                    setSelectedNav(buttonId);
                   }}
                 >
                   <Image
-                    src={item.thumbnail}
-                    alt={item.name}
+                    src={item.image}
+                    alt={item.title}
                     width={110}
                     height={110}
                     style={{ objectFit: "contain" }}
@@ -139,9 +163,9 @@ export default function AppCataloguePage({
           justifyContent: "center",
         }}
       >
-        {videos.map((item) => {
+        {selectedVideos.map((item) => {
           const project = projectById.get(item.projectId);
-          const projectLogo = project?.thumbnail || item.thumbnail;
+          const projectLogo = project?.image || item.thumbnail;
           const projectName = project?.title || project?.name || "Project";
 
           return (

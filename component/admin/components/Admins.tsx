@@ -26,6 +26,7 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 
 const PERMISSION_TAB_KEYS = [
   "mainPageLayout",
+  "appManagement",
   "banner",
   "breakdowns",
   "blog",
@@ -41,6 +42,7 @@ type PermissionTabKey = (typeof PERMISSION_TAB_KEYS)[number];
 
 const PERMISSION_TAB_LABELS: Record<PermissionTabKey, string> = {
   mainPageLayout: "Main Page Layout",
+  appManagement: "App Management",
   banner: "Banner",
   breakdowns: "Breakdowns",
   blog: "Blog",

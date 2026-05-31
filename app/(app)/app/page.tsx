@@ -1,21 +1,9 @@
 import AppCataloguePage from "@/component/appCatalogue/AppCataloguePage";
-import { fetchPublicMainPageLayoutItems } from "@/component/admin/services/mainPageLayoutApi";
-
-type ProjectData = {
-  _id: string;
-  name: string;
-  title: string;
-  thumbnail: string;
-  description: string;
-};
-
-type CatalogueData = {
-  _id: string;
-  projectId: string;
-  header: string;
-  body: string;
-  image: string;
-};
+import { fetchPublicAllVideos } from "@/component/admin/services/mainPageLayoutApi";
+import {
+  fetchPublicAppCatalogueHomeVideos,
+  fetchPublicAppCatalogueNavigationButtons,
+} from "@/component/admin/services/appManagementApi";
 
 type VideoData = {
   _id: string;
@@ -27,19 +15,25 @@ type VideoData = {
 };
 
 export default async function AppPage() {
-  const [projectsRaw, cataloguesRaw, videosRaw] = await Promise.all([
-    fetchPublicMainPageLayoutItems("projects"),
-    fetchPublicMainPageLayoutItems("catalogues"),
-    fetchPublicMainPageLayoutItems("video"),
+  const [navigationButtonsRaw, homeVideosResult, allVideosRaw] = await Promise.all([
+    fetchPublicAppCatalogueNavigationButtons(),
+    fetchPublicAppCatalogueHomeVideos(),
+    fetchPublicAllVideos(),
   ]);
 
-  const projects = (Array.isArray(projectsRaw) ? projectsRaw : []) as ProjectData[];
-  const catalogues = (Array.isArray(cataloguesRaw)
-    ? cataloguesRaw
-    : []) as CatalogueData[];
-  const videos = (Array.isArray(videosRaw) ? videosRaw : []) as VideoData[];
+  const navigationButtons = Array.isArray(navigationButtonsRaw)
+    ? navigationButtonsRaw
+    : [];
+  const homeVideos = (Array.isArray(homeVideosResult?.videos)
+    ? homeVideosResult.videos
+    : []) as VideoData[];
+  const allVideos = (Array.isArray(allVideosRaw) ? allVideosRaw : []) as VideoData[];
 
   return (
-    <AppCataloguePage projects={projects} catalogues={catalogues} videos={videos} />
+    <AppCataloguePage
+      navigationButtons={navigationButtons}
+      homeVideos={homeVideos}
+      allVideos={allVideos}
+    />
   );
 }
