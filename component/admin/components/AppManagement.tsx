@@ -1,33 +1,19 @@
+import AddIcon from "@mui/icons-material/Add";
 import {
   Alert,
   Button,
   Checkbox,
   CircularProgress,
+  Divider,
   FormControlLabel,
   Modal,
   Skeleton,
+  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { useEffect, useMemo, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
-import {
-  fetchAdminAppCatalogueHomeVideos,
-  fetchAdminAppCatalogueNavigationButtons,
-  updateAdminAppCatalogueHomeVideos,
-  updateAdminAppCatalogueNavigationButtons,
-} from "../services/appManagementApi";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-
-const sections = [
-  { name: "navBtn", title: "Navigation Buttons", url: "" },
-  { name: "homeVideo", title: "Home Videos", url: "" },
-  // { name: "banner", title: "Banners", url: "" },
-];
+import Image from "next/image";
+import { useAppManagement } from "../hooks/useAppManagement";
 
 const style = {
   direction: "ltr",
@@ -47,286 +33,58 @@ const style = {
   gap: 2,
 };
 
-type Section = {
-  name: string;
-  title: string;
-  url: string;
-};
-
-type ProjectRecord = {
-  _id: string;
-  name: string;
-  thumbnail: string;
-};
-
-type VideoRecord = {
-  _id: string;
-  title: string;
-  thumbnail: string;
-  projectId: string;
-};
-
 const AppManagement = () => {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-  const [isRandomVideosSelected, setIsRandomVideosSelected] = useState(true);
-  const [homeImage, setHomeImage] = useState("/home.png");
-  const [homeImageRaw, setHomeImageRaw] = useState("/home.png");
-  const [homeImageFile, setHomeImageFile] = useState<File | null>(null);
-  const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([]);
-  const [availableProjects, setAvailableProjects] = useState<ProjectRecord[]>(
-    []
-  );
-  const [availableVideos, setAvailableVideos] = useState<VideoRecord[]>([]);
-  const [manualVideoIds, setManualVideoIds] = useState<string[]>([]);
-  const [selectedSection, setSelectedSection] = useState<Section | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const loadData = async () => {
-      setLoading(true);
-      setErrorMsg("");
-      try {
-        const [navResult, homeVideosResult] = await Promise.all([
-          fetchAdminAppCatalogueNavigationButtons({
-            signal: controller.signal,
-          }),
-          fetchAdminAppCatalogueHomeVideos({ signal: controller.signal }),
-        ]);
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        if (!navResult.ok) {
-          setErrorMsg(
-            navResult.message || "Failed to load navigation settings."
-          );
-        } else {
-          setHomeImage(navResult.homeImage || "/home.png");
-          setHomeImageRaw(navResult.homeImageRaw || "/home.png");
-          setSelectedProjectIds(
-            Array.isArray(navResult.selectedProjectIds)
-              ? navResult.selectedProjectIds
-              : []
-          );
-          setAvailableProjects(
-            Array.isArray(navResult.availableProjects)
-              ? navResult.availableProjects
-              : []
-          );
-        }
-
-        if (!homeVideosResult.ok) {
-          setErrorMsg(
-            homeVideosResult.message || "Failed to load home videos settings."
-          );
-        } else {
-          setIsRandomVideosSelected(homeVideosResult.mode !== "manual");
-          setManualVideoIds(
-            Array.isArray(homeVideosResult.manualVideoIds)
-              ? homeVideosResult.manualVideoIds
-              : []
-          );
-          setAvailableVideos(
-            Array.isArray(homeVideosResult.availableVideos)
-              ? homeVideosResult.availableVideos
-              : []
-          );
-        }
-      } catch (error) {
-        const isAbortError =
-          error instanceof DOMException
-            ? error.name === "AbortError"
-            : (error as { name?: string })?.name === "AbortError";
-
-        if (!isAbortError && !controller.signal.aborted) {
-          setErrorMsg("Failed to load app management settings.");
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadData();
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
-
-  const selectedProjects = useMemo(() => {
-    const projectMap = new Map(
-      availableProjects.map((project) => [project._id, project])
-    );
-    return selectedProjectIds
-      .map((id) => projectMap.get(id))
-      .filter((project): project is ProjectRecord => Boolean(project));
-  }, [availableProjects, selectedProjectIds]);
-
-  const modalItems = useMemo(() => {
-    if (selectedSection?.name === "navBtn") {
-      return availableProjects.map((item) => ({
-        id: item._id,
-        title: item.name,
-        image: item.thumbnail,
-      }));
-    }
-
-    if (selectedSection?.name === "homeVideo") {
-      return availableVideos.map((item) => ({
-        id: item._id,
-        title: item.title,
-        image: item.thumbnail,
-      }));
-    }
-
-    return [];
-  }, [availableProjects, availableVideos, selectedSection?.name]);
-
-  const modalSelectedIds = useMemo(
-    () =>
-      selectedSection?.name === "navBtn"
-        ? selectedProjectIds
-        : selectedSection?.name === "homeVideo"
-          ? manualVideoIds
-          : [],
-    [manualVideoIds, selectedProjectIds, selectedSection?.name]
-  );
-
-  const previewVideos = useMemo(() => {
-    if (isRandomVideosSelected) {
-      return availableVideos.slice(0, 8);
-    }
-
-    const videosMap = new Map(
-      availableVideos.map((video) => [video._id, video])
-    );
-    return manualVideoIds
-      .map((id) => videosMap.get(id))
-      .filter((video): video is VideoRecord => Boolean(video));
-  }, [availableVideos, isRandomVideosSelected, manualVideoIds]);
-
-  const reset = () => {
-    setOpen(false);
-    setSuccessMsg("");
-  };
-
-  const handleOpen = (section: Section) => {
-    setOpen(true);
-    setSelectedSection(section);
-    setSuccessMsg("");
-    setErrorMsg("");
-  };
-
-  const handleProjectToggle = (projectId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedProjectIds((current) =>
-        current.includes(projectId) ? current : [...current, projectId]
-      );
-      return;
-    }
-    setSelectedProjectIds((current) =>
-      current.filter((id) => id !== projectId)
-    );
-  };
-
-  const handleManualVideoToggle = (videoId: string, checked: boolean) => {
-    if (checked) {
-      setManualVideoIds((current) =>
-        current.includes(videoId) ? current : [...current, videoId]
-      );
-      return;
-    }
-    setManualVideoIds((current) => current.filter((id) => id !== videoId));
-  };
-
-  const toggleModalSelection = (id: string) => {
-    const isSelected = modalSelectedIds.includes(id);
-    if (selectedSection?.name === "navBtn") {
-      handleProjectToggle(id, !isSelected);
-      return;
-    }
-
-    if (selectedSection?.name === "homeVideo") {
-      handleManualVideoToggle(id, !isSelected);
-    }
-  };
-
-  const handleSaveNavigation = async () => {
-    setSaving(true);
-    setErrorMsg("");
-    setSuccessMsg("");
-    const result = await updateAdminAppCatalogueNavigationButtons({
-      projectIds: selectedProjectIds,
-      homeImage: homeImageRaw,
-      imageFile: homeImageFile,
-    });
-    setSaving(false);
-
-    if (!result.ok) {
-      setErrorMsg(result.message || "Failed to save navigation settings.");
-      return;
-    }
-
-    setHomeImage(result.homeImage || "/home.png");
-    setHomeImageRaw(result.homeImageRaw || "/home.png");
-    setHomeImageFile(null);
-    setSelectedProjectIds(
-      Array.isArray(result.selectedProjectIds) ? result.selectedProjectIds : []
-    );
-    setSuccessMsg("Navigation settings saved.");
-  };
-
-  const handleSaveHomeVideos = async () => {
-    setSaving(true);
-    setErrorMsg("");
-    setSuccessMsg("");
-    const result = await updateAdminAppCatalogueHomeVideos({
-      mode: isRandomVideosSelected ? "random" : "manual",
-      manualVideoIds,
-    });
-    setSaving(false);
-
-    if (!result.ok) {
-      setErrorMsg(result.message || "Failed to save home videos settings.");
-      return;
-    }
-
-    setIsRandomVideosSelected(result.mode !== "manual");
-    setManualVideoIds(
-      Array.isArray(result.manualVideoIds) ? result.manualVideoIds : []
-    );
-    setSuccessMsg("Home videos settings saved.");
-  };
-
-  const handleRandomModeChange = async (checked: boolean) => {
-    setIsRandomVideosSelected(checked);
-    setSaving(true);
-    setErrorMsg("");
-    const result = await updateAdminAppCatalogueHomeVideos({
-      mode: checked ? "random" : "manual",
-      manualVideoIds,
-    });
-    setSaving(false);
-
-    if (!result.ok) {
-      setIsRandomVideosSelected(!checked);
-      setErrorMsg(result.message || "Failed to update random mode.");
-      return;
-    }
-    setSuccessMsg("Home videos mode updated.");
-  };
+  const {
+    activeNavId,
+    activeProject,
+    displayVideos,
+    errorMsg,
+    handleCloseModal,
+    handleErrorSnackbarClose,
+    handleHomeImageFileChange,
+    handleRandomModeChange,
+    handleSuccessSnackbarClose,
+    homeImage,
+    isRandomVideosSelected,
+    loading,
+    modalItems,
+    modalSelectedIds,
+    open,
+    openHomeVideosModal,
+    openNavigationModal,
+    projectById,
+    saveModalChanges,
+    saving,
+    selectedProjects,
+    selectedSection,
+    setActiveNavId,
+    successMsg,
+    toggleModalSelection,
+  } = useAppManagement();
 
   return (
     <Stack>
-      {errorMsg ? <Alert severity="error">{errorMsg}</Alert> : null}
-      {successMsg ? <Alert severity="success">{successMsg}</Alert> : null}
+      <Snackbar
+        open={Boolean(errorMsg)}
+        autoHideDuration={5000}
+        onClose={handleErrorSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity="error" onClose={handleErrorSnackbarClose}>
+          {errorMsg}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={Boolean(successMsg)}
+        autoHideDuration={3000}
+        onClose={handleSuccessSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity="success" onClose={handleSuccessSnackbarClose}>
+          {successMsg}
+        </Alert>
+      </Snackbar>
+
       <Stack
         sx={{
           position: "relative",
@@ -335,7 +93,6 @@ const AppManagement = () => {
           gap: 1,
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
           borderRadius: 2,
-          py: 2,
           px: 0,
           mt: 3,
         }}
@@ -346,14 +103,14 @@ const AppManagement = () => {
           </Stack>
         ) : null}
 
-        <Stack sx={{ width: "100%", gap: 2, pt: 2, height: "100%" }}>
+        <Stack sx={{ width: "100%", height: "100%", gap: 2 }}>
           <Stack
             sx={{
               flexDirection: "row",
               gap: 2,
               width: "100%",
               height: 120,
-              pb: 2,
+              py: 2,
               justifyContent: "center",
               alignItems: "center",
               position: "relative",
@@ -373,23 +130,57 @@ const AppManagement = () => {
               },
             }}
           >
-            <img
-              src={homeImage || "/home.png"}
-              alt="home"
-              style={{ width: 75, height: 75 }}
-            />
-            {selectedProjects.map((project) => (
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => setActiveNavId("home")}
+              sx={{
+                p: 0.5,
+                borderRadius: 1.2,
+                minWidth: 0,
+                border: (theme) =>
+                  `2px solid ${
+                    activeNavId === "home"
+                      ? theme.palette.primary.main
+                      : theme.palette.divider
+                  }`,
+              }}
+            >
               <img
-                key={project._id}
-                src={project.thumbnail}
-                alt={project.name}
+                src={homeImage || "/home.png"}
+                alt="home"
                 style={{ width: 75, height: 75 }}
               />
+            </Button>
+            {selectedProjects.map((project) => (
+              <Button
+                key={project._id}
+                variant="text"
+                color="primary"
+                onClick={() => setActiveNavId(project._id)}
+                sx={{
+                  p: 0.5,
+                  borderRadius: 1.2,
+                  minWidth: 0,
+                  border: (theme) =>
+                    `2px solid ${
+                      activeNavId === project._id
+                        ? theme.palette.primary.main
+                        : theme.palette.divider
+                    }`,
+                }}
+              >
+                <img
+                  src={project.thumbnail}
+                  alt={project.name}
+                  style={{ width: 75, height: 75 }}
+                />
+              </Button>
             ))}
             <Button
               variant="text"
               color="primary"
-              onClick={() => handleOpen(sections[0])}
+              onClick={openNavigationModal}
               sx={{
                 position: "relative",
                 p: 0,
@@ -407,75 +198,81 @@ const AppManagement = () => {
               />
             </Button>
           </Stack>
-          <Stack
-            sx={{
-              width: "100%",
-              height: "100%",
-              gap: 1,
-              "& .swiper-pagination-bullet": {
-                bgcolor: "grey.800",
-                opacity: 1,
-              },
-              "& .swiper-pagination-bullet-active": {
-                bgcolor: "primary.main",
-                width: "10px",
-                height: "10px",
-              },
-              "& .swiper-button-prev, & .swiper-button-next": {
-                color: "primary.main",
-              },
-              "& .swiper-button-prev::after, & .swiper-button-next::after": {
-                fontSize: "20px",
-                fontWeight: 700,
-              },
-            }}
-          >
-            <Stack
-              direction="row"
-              sx={{ gap: 2, justifyContent: "center", alignItems: "center" }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleOpen(sections[1])}
-                disabled={isRandomVideosSelected}
+
+          <Stack sx={{ width: "100%", flex: 1, minHeight: 0, gap: 1 }}>
+            {activeNavId === "home" ? (
+              <Stack
+                direction="row"
+                sx={{ gap: 2, justifyContent: "center", alignItems: "center" }}
               >
-                Manage Home Videos
-              </Button>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isRandomVideosSelected}
-                    disabled={saving}
-                    onChange={(event) =>
-                      handleRandomModeChange(event.target.checked)
-                    }
-                  />
-                }
-                label="Random Videos from Database"
-              />
-            </Stack>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={openHomeVideosModal}
+                  disabled={isRandomVideosSelected}
+                >
+                  Manage Home Videos
+                </Button>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isRandomVideosSelected}
+                      disabled={saving}
+                      onChange={(event) =>
+                        handleRandomModeChange(event.target.checked)
+                      }
+                    />
+                  }
+                  label="Random Videos from Database"
+                />
+              </Stack>
+            ) : (
+              <Stack
+                direction="row"
+                sx={{ justifyContent: "center", alignItems: "center" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  {activeProject?.name || "Project"} Videos
+                </Typography>
+              </Stack>
+            )}
+
             <Stack
               direction="row"
               sx={{
                 gap: 2,
                 width: "100%",
-                height: "calc(100% - 143px)",
+                flex: 1,
+                minHeight: 0,
                 flexWrap: "wrap",
+                alignItems: "flex-start",
+                alignContent: "flex-start",
                 overflow: "hidden",
                 overflowY: "auto",
                 borderTop: (theme) => `1px solid ${theme.palette.divider}`,
                 px: 1,
-                py: 1
+                py: 1,
               }}
             >
-              {previewVideos.length > 0
-                ? previewVideos.map((video) => (
+              {displayVideos.length > 0 ? (
+                displayVideos.map((video) => {
+                  const project = projectById.get(video.projectId);
+                  const projectLogo = project?.image || video.thumbnail;
+                  const projectName =
+                    project?.title || project?.name || "Project";
+                  return (
                     <Stack
                       key={video._id}
                       sx={{
+                        opacity:
+                          activeNavId === "home" && isRandomVideosSelected
+                            ? 0.5
+                            : 1,
+                        cursor:
+                          activeNavId === "home" && isRandomVideosSelected
+                            ? "not-allowed"
+                            : "pointer",
                         width: 240,
-                        aspectRatio: "16 / 9",
                         borderRadius: 1,
                         overflow: "hidden",
                         border: (theme) =>
@@ -487,26 +284,96 @@ const AppManagement = () => {
                         alt={video.title}
                         style={{
                           width: "100%",
-                          height: "100%",
+                          aspectRatio: "16 / 9",
                           objectFit: "contain",
                         }}
                       />
+                      <Divider flexItem />
+                      <Stack
+                        direction="row"
+                        sx={{
+                          pl: 0.8,
+                          gap: 1,
+                          alignItems: "center",
+                          "& img": {
+                            objectFit: "contain",
+                            border: "1px solid",
+                            borderColor: "primary.main",
+                            borderRadius: "50%",
+                          },
+                        }}
+                      >
+                        <Image
+                          src={projectLogo}
+                          alt={projectName}
+                          width={36}
+                          height={36}
+                          style={{ objectFit: "contain" }}
+                        />
+                        <Stack sx={{ width: "100%", overflow: "hidden" }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              width: "100%",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              color: "text.primary",
+                              fontWeight: 700,
+                              fontSize: 18,
+                            }}
+                          >
+                            {video.title}
+                          </Typography>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              width: "100%",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              color: "text.secondary",
+                              fontWeight: 300,
+                              fontFamily: "Namecat",
+                              letterSpacing: 2,
+                              fontSize: 11,
+                            }}
+                          >
+                            {projectName}
+                          </Typography>
+                        </Stack>
+                      </Stack>
                     </Stack>
-                  ))
-                : Array.from({ length: 5 }).map((_, index) => (
-                    <Skeleton
-                      key={index}
-                      variant="rectangular"
-                      sx={{ width: "100%", height: "100%" }}
-                    />
-                  ))}
+                  );
+                })
+              ) : activeNavId === "home" ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rectangular"
+                    sx={{ width: "100%", height: "100%" }}
+                  />
+                ))
+              ) : (
+                <Stack
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography color="text.secondary">
+                    No videos found for this project.
+                  </Typography>
+                </Stack>
+              )}
             </Stack>
           </Stack>
-          <Stack></Stack>
         </Stack>
       </Stack>
 
-      <Modal open={open} onClose={reset}>
+      <Modal open={open} onClose={handleCloseModal}>
         <Stack sx={style}>
           <Stack direction="row" sx={{ alignItems: "baseline", gap: 2 }}>
             <Typography variant="h6">
@@ -519,14 +386,7 @@ const AppManagement = () => {
                   type="file"
                   hidden
                   accept="image/*"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (!file) {
-                      return;
-                    }
-                    setHomeImageFile(file);
-                    setHomeImage(URL.createObjectURL(file));
-                  }}
+                  onChange={handleHomeImageFileChange}
                 />
               </Button>
             ) : null}
@@ -545,6 +405,7 @@ const AppManagement = () => {
               direction="row"
               sx={{
                 border: (theme) => `1px solid ${theme.palette.divider}`,
+                justifyContent: "center",
                 borderRadius: 1,
                 width: "100%",
                 minHeight: 320,
@@ -556,6 +417,12 @@ const AppManagement = () => {
               }}
             >
               {modalItems.map((item) => {
+                const project =
+                  selectedSection?.name === "homeVideo" && item.projectId
+                    ? projectById.get(item.projectId)
+                    : undefined;
+                const projectLogo = project?.image || item.image;
+                const projectName = project?.name || "Project";
                 const isSelected = modalSelectedIds.includes(item.id);
                 const selectedOrder = isSelected
                   ? modalSelectedIds.indexOf(item.id) + 1
@@ -568,7 +435,6 @@ const AppManagement = () => {
                     sx={{
                       width: 250,
                       height: 180,
-                      p: 1,
                       border: (theme) =>
                         `1px solid ${
                           isSelected
@@ -595,14 +461,26 @@ const AppManagement = () => {
                       sx={{
                         justifyContent: "start",
                         alignItems: "center",
-                        gap: 1,
                       }}
                     >
                       <Checkbox
+                        size="small"
                         checked={isSelected}
                         onClick={(event) => event.stopPropagation()}
                         onChange={() => toggleModalSelection(item.id)}
                         disabled={saving}
+                      />
+                      <Image
+                        src={projectLogo}
+                        alt={projectName}
+                        width={32}
+                        height={32}
+                        style={{
+                          objectFit: "contain",
+                          border: "1px solid #aaa",
+                          borderRadius: "50%",
+                          marginRight: 3,
+                        }}
                       />
                       <Typography
                         sx={{
@@ -636,16 +514,16 @@ const AppManagement = () => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={
-                  selectedSection?.name === "navBtn"
-                    ? handleSaveNavigation
-                    : handleSaveHomeVideos
-                }
+                onClick={saveModalChanges}
                 disabled={saving}
               >
                 {saving ? "Saving..." : "Save"}
               </Button>
-              <Button variant="outlined" color="primary" onClick={reset}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleCloseModal}
+              >
                 Cancel
               </Button>
             </Stack>

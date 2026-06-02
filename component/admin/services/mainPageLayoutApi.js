@@ -196,6 +196,7 @@ export async function fetchPublicAllVideos() {
   const response = await fetch(`${API_BASE}/api/admin/public/videos`, {
     method: "GET",
     cache: "force-cache",
+    next: { tags: ["app-catalogue-all-videos"] },
   });
   const data = await readJson(response);
 

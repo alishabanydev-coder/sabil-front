@@ -15,19 +15,22 @@ type VideoData = {
 };
 
 export default async function AppPage() {
-  const [navigationButtonsRaw, homeVideosResult, allVideosRaw] = await Promise.all([
-    fetchPublicAppCatalogueNavigationButtons(),
-    fetchPublicAppCatalogueHomeVideos(),
-    fetchPublicAllVideos(),
-  ]);
+  const [navigationButtonsRaw, homeVideosResult, allVideosRaw] =
+    await Promise.all([
+      fetchPublicAppCatalogueNavigationButtons(),
+      fetchPublicAppCatalogueHomeVideos(),
+      fetchPublicAllVideos(),
+    ]);
 
   const navigationButtons = Array.isArray(navigationButtonsRaw)
     ? navigationButtonsRaw
     : [];
-  const homeVideos = (Array.isArray(homeVideosResult?.videos)
-    ? homeVideosResult.videos
-    : []) as VideoData[];
-  const allVideos = (Array.isArray(allVideosRaw) ? allVideosRaw : []) as VideoData[];
+  const homeVideos = (
+    Array.isArray(homeVideosResult?.videos) ? homeVideosResult.videos : []
+  ) as VideoData[];
+  const allVideos = (
+    Array.isArray(allVideosRaw) ? allVideosRaw : []
+  ) as VideoData[];
 
   return (
     <AppCataloguePage

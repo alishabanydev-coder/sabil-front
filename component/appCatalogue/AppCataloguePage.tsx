@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton, Stack, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "./component/Navbar";
 import Image from "next/image";
 
@@ -116,7 +116,9 @@ export default function AppCataloguePage({
         {!!navigationButtons.length
           ? navigationButtons.map((item) => {
               const buttonId =
-                item.type === "project" && item.projectId ? item.projectId : "home";
+                item.type === "project" && item.projectId
+                  ? item.projectId
+                  : "home";
               const isSelected = selectedNav === buttonId;
               return (
                 <Stack

@@ -481,7 +481,7 @@ const Channels = () => {
                 No videos uploaded for this project.
               </Typography>
             ) : (
-              <Stack sx={{ width: "100%", gap: 3, overflow: "auto", pt: 1 }}>
+              <Stack sx={{ width: "100%", gap: 3, overflow: "auto", pt: 1, pb: 2 }}>
                 {seasons.map((season) => (
                   <Stack
                     key={season}
@@ -553,7 +553,7 @@ const Channels = () => {
                             gap: 2,
                             flexWrap: "wrap",
                             justifyContent: "center",
-                            overflow: "hidden",
+                            overflow: "visible",
                             py: 1,
                           }}
                         >

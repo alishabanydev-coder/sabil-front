@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button, IconButton, Stack, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 const Navbar = ({ isApp: _isApp }: { isApp: boolean }) => {
+  const router = useRouter();
   const [showFloatingLogout, setShowFloatingLogout] = useState(false);
+
+  const handleLogout = () => {
+    router.push("/"); // or router.replace("/login")
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -29,7 +35,12 @@ const Navbar = ({ isApp: _isApp }: { isApp: boolean }) => {
         }}
       >
         <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
-          <Image src="/icon-512.png" alt="Project Title" width={56} height={56} />
+          <Image
+            src="/icon-512.png"
+            alt="Project Title"
+            width={56}
+            height={56}
+          />
           <Typography
             sx={{
               fontSize: { xs: 24, md: 32 },
@@ -42,7 +53,12 @@ const Navbar = ({ isApp: _isApp }: { isApp: boolean }) => {
             Sabeel Kids
           </Typography>
         </Stack>
-        <Button variant="contained" color="primary" startIcon={<LogoutIcon />}>
+        <Button
+          onClick={handleLogout}
+          variant="contained"
+          color="primary"
+          startIcon={<LogoutIcon />}
+        >
           Logout
         </Button>
       </Stack>
@@ -57,6 +73,7 @@ const Navbar = ({ isApp: _isApp }: { isApp: boolean }) => {
           }}
         >
           <IconButton
+            onClick={handleLogout}
             color="primary"
             sx={{
               border: "1px solid",

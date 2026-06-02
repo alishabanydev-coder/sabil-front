@@ -246,6 +246,7 @@ export async function fetchPublicAppCatalogueNavigationButtons() {
   const response = await fetch(`${API_BASE}/api/admin/public/app-catalogue/navigation-buttons`, {
     method: 'GET',
     cache: 'force-cache',
+    next: { tags: ['app-catalogue-navigation'] },
   });
   const data = await readJson(response);
 
@@ -257,7 +258,8 @@ export async function fetchPublicAppCatalogueNavigationButtons() {
 export async function fetchPublicAppCatalogueHomeVideos() {
   const response = await fetch(`${API_BASE}/api/admin/public/app-catalogue/home-videos`, {
     method: 'GET',
-    cache: 'no-store',
+    cache: 'force-cache',
+    next: { tags: ['app-catalogue-home-videos'] },
   });
   const data = await readJson(response);
 
