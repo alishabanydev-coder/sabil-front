@@ -245,8 +245,7 @@ export async function updateAdminAppCatalogueHomeVideos(
 export async function fetchPublicAppCatalogueNavigationButtons() {
   const response = await fetch(`${API_BASE}/api/admin/public/app-catalogue/navigation-buttons`, {
     method: 'GET',
-    cache: 'force-cache',
-    next: { tags: ['app-catalogue-navigation'] },
+    cache: 'no-store',
   });
   const data = await readJson(response);
 
@@ -258,8 +257,7 @@ export async function fetchPublicAppCatalogueNavigationButtons() {
 export async function fetchPublicAppCatalogueHomeVideos() {
   const response = await fetch(`${API_BASE}/api/admin/public/app-catalogue/home-videos`, {
     method: 'GET',
-    cache: 'force-cache',
-    next: { tags: ['app-catalogue-home-videos'] },
+    cache: 'no-store',
   });
   const data = await readJson(response);
 

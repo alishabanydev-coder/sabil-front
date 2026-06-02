@@ -6,12 +6,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-const Navbar = ({ isApp: _isApp }: { isApp: boolean }) => {
+const Navbar = () => {
   const router = useRouter();
   const [showFloatingLogout, setShowFloatingLogout] = useState(false);
 
   const handleLogout = () => {
-    router.push("/"); // or router.replace("/login")
+    router.push("/");
   };
 
   useEffect(() => {

@@ -1,9 +1,10 @@
 "use client";
 
 import { Skeleton, Stack, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Navbar from "./component/Navbar";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type NavigationButtonData = {
   id: string;
@@ -41,6 +42,7 @@ export default function AppCataloguePage({
   homeVideos,
   allVideos,
 }: AppCataloguePageProps) {
+  const router = useRouter();
   const [selectedNav, setSelectedNav] = useState<string>("home");
 
   const selectedVideos = useMemo(() => {
@@ -72,18 +74,10 @@ export default function AppCataloguePage({
   return (
     <Stack
       sx={{
-        direction: "ltr",
-        minHeight: "100dvh",
-        width: "100%",
-        px: { xs: 2, md: 0 },
-        py: { xs: 2, md: 2 },
         gap: 2,
         color: "#fff",
       }}
     >
-      {/* Navbar */}
-      <Navbar isApp={true} />
-
       {/* NavigationButtons */}
       <Stack
         sx={{
@@ -173,9 +167,21 @@ export default function AppCataloguePage({
           return (
             <Stack
               key={item._id}
+              onClick={() => {
+                console.log("clicked", item._id);
+                router.push(`/app/watch/${item._id}`);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  router.push(`/app/watch/${item._id}`);
+                }
+              }}
+              tabIndex={0}
+              role="button"
               sx={{
                 width: 320,
-                height: 235,
+                pb: 0.5,
                 border: (theme) => "1px solid #aaa",
                 borderRadius: 2,
                 cursor: "pointer",
