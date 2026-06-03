@@ -1,4 +1,5 @@
 import AppCataloguePage from "@/component/appCatalogue/AppCataloguePage";
+import Navbar from "@/component/appCatalogue/component/Navbar";
 import { fetchPublicAllVideos } from "@/component/admin/services/mainPageLayoutApi";
 import {
   fetchPublicAppCatalogueHomeVideos,
@@ -33,10 +34,13 @@ export default async function AppPage() {
   ) as VideoData[];
 
   return (
-    <AppCataloguePage
-      navigationButtons={navigationButtons}
-      homeVideos={homeVideos}
-      allVideos={allVideos}
-    />
+    <>
+      <Navbar />
+      <AppCataloguePage
+        navigationButtons={navigationButtons}
+        homeVideos={homeVideos}
+        allVideos={allVideos}
+      />
+    </>
   );
 }

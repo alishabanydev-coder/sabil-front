@@ -1,4 +1,3 @@
-import Navbar from "@/component/appCatalogue/component/Navbar";
 import { Stack } from "@mui/material";
 import type { Metadata } from "next";
 
@@ -23,7 +22,6 @@ export default function AppShellLayout({
         py: { xs: 1, md: 2 },
       }}
     >
-      <Navbar />
       {children}
     </Stack>
   );
