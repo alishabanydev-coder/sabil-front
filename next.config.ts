@@ -4,7 +4,7 @@ const imageDomain = process.env.NEXT_PUBLIC_IMAGE_DOMAIN || "localhost:5000";
 const [imageHostname, imagePort] = imageDomain.split(":");
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["172.22.108.47"],
+  allowedDevOrigins: ["100.127.255.253"],
   images: {
     dangerouslyAllowLocalIP: true,
     remotePatterns: [
