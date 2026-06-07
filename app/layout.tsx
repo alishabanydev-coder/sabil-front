@@ -66,6 +66,7 @@ export default async function RootLayout({
   const sameAs = socialMediaLinks
     .map((item) => (typeof item?.url === "string" ? item.url.trim() : ""))
     .filter((url) => /^https?:\/\//i.test(url));
+    
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [

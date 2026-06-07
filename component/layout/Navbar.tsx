@@ -12,73 +12,55 @@ import {
 } from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ScondaryButton } from "../ui/ScondaryButton";
+
+const HOME_SCROLL_TARGET_KEY = "homeScrollTarget";
+const NAVBAR_SCROLL_OFFSET = 80;
 
 const navItems = [
   { label: "App", href: "/app" },
-  { label: "Contact", href: "/#contact" },
-  { label: "About", href: "/about" },
-  { label: "Programs", href: "/#programs" },
-  { label: "Project", href: "/#projects" },
-  { label: "Home", href: "/" },
-];
+  { label: "news", sectionId: "contact" },
+  { label: "People Opinions", sectionId: "about" },
+  { label: "Watch Us", sectionId: "programs" },
+  { label: "BreakDown", sectionId: "projects" },
+  { label: "SUBSCRIBTION", sectionId: "subscription" },
+] as const;
+
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(sectionId);
+  if (!element) {
+    return;
+  }
+
+  const top =
+    element.getBoundingClientRect().top +
+    window.scrollY -
+    NAVBAR_SCROLL_OFFSET;
+  window.scrollTo({ top, behavior: "smooth" });
+};
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-  const [activeHref, setActiveHref] = useState("/");
   const isMenuOpen = Boolean(menuAnchor);
 
   useEffect(() => {
     if (pathname !== "/") {
-      setActiveHref(pathname);
       return;
     }
 
-    const hashHref = window.location.hash ? `/${window.location.hash}` : "/";
-    setActiveHref(hashHref);
-
-    const sectionHrefs = navItems
-      .map((item) => item.href)
-      .filter((href) => href.startsWith("/#"));
-    const sections = sectionHrefs
-      .map((href) => ({
-        href,
-        element: document.getElementById(href.slice(2)),
-      }))
-      .filter((entry) => entry.element);
-
-    if (!sections.length) {
+    const sectionId = window.sessionStorage.getItem(HOME_SCROLL_TARGET_KEY);
+    if (!sectionId) {
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    window.sessionStorage.removeItem(HOME_SCROLL_TARGET_KEY);
+    const timeoutId = window.setTimeout(() => scrollToSection(sectionId), 100);
 
-        if (visibleEntries.length > 0) {
-          const activeId = visibleEntries[0].target.id;
-          setActiveHref(`/#${activeId}`);
-        }
-      },
-      {
-        threshold: [0.25, 0.5, 0.75],
-      }
-    );
-
-    sections.forEach((section) => observer.observe(section.element));
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => window.clearTimeout(timeoutId);
   }, [pathname]);
-
-  const isActiveLink = (href: string) => {
-    return activeHref === href;
-  };
 
   const openMenu = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchor(event.currentTarget);
@@ -88,8 +70,20 @@ export default function Navbar() {
     setMenuAnchor(null);
   };
 
-  const handleNavClick = (href: string, shouldCloseMenu = false) => {
-    setActiveHref(href);
+  const handleSectionClick = (
+    event: React.MouseEvent<HTMLElement>,
+    sectionId: string,
+    shouldCloseMenu = false
+  ) => {
+    event.preventDefault();
+
+    if (pathname === "/") {
+      scrollToSection(sectionId);
+    } else {
+      window.sessionStorage.setItem(HOME_SCROLL_TARGET_KEY, sectionId);
+      router.push("/");
+    }
+
     if (shouldCloseMenu) {
       closeMenu();
     }
@@ -99,7 +93,6 @@ export default function Navbar() {
     if (typeof window !== "undefined") {
       window.sessionStorage.setItem("appLoaderStartAt", String(Date.now()));
     }
-    setActiveHref("/app");
     if (shouldCloseMenu) {
       closeMenu();
     }
@@ -179,32 +172,53 @@ export default function Navbar() {
           },
         }}
       >
-        <Stack direction="row" sx={{ gap: { xs: 1, md: 4 } }}>
-          {navItems.map((item) => (
-            <Typography
-              key={item.href}
-              component={Link}
-              href={item.href}
-              prefetch={item.href === "/app" ? false : undefined}
-              onClick={() =>
-                item.href === "/app"
-                  ? handleCatalogueClick()
-                  : handleNavClick(item.href)
-              }
-              sx={{
-                color: isActiveLink(item.href) ? "primary.main" : "#fff",
-                fontSize: { xs: 12, md: 14, lg: 16 },
-                fontFamily: "Namecat",
-                letterSpacing: 2,
-                textDecoration: "none",
-                "&:hover": {
-                  color: "primary.light",
-                },
-              }}
-            >
-              {item.label}
-            </Typography>
-          ))}
+        <Stack direction="row" sx={{ gap: { xs: 1, md: 3 } }}>
+          {navItems.map((item) =>
+            "href" in item ? (
+              <Typography
+                key={item.label}
+                component={Link}
+                href={item.href}
+                prefetch={false}
+                onClick={() => handleCatalogueClick()}
+                sx={{
+                  color: "#fff",
+                  fontSize: { xs: 12, md: 14, lg: 16 },
+                  fontFamily: "Namecat",
+                  letterSpacing: 2,
+                  textDecoration: "none",
+                  "&:hover": {
+                    color: "primary.light",
+                  },
+                }}
+              >
+                {item.label}
+              </Typography>
+            ) : (
+              <Typography
+                key={item.label}
+                component="button"
+                type="button"
+                onClick={(event) => handleSectionClick(event, item.sectionId)}
+                sx={{
+                  color: "#fff",
+                  fontSize: { xs: 12, md: 14, lg: 16 },
+                  fontFamily: "Namecat",
+                  letterSpacing: 2,
+                  textDecoration: "none",
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "primary.light",
+                  },
+                }}
+              >
+                {item.label}
+              </Typography>
+            )
+          )}
         </Stack>
       </Stack>
 
@@ -213,7 +227,7 @@ export default function Navbar() {
           display: { xs: "flex", sm: "none" },
           justifyContent: { xs: "end", md: "center" },
         }}
-        >
+      >
         <IconButton
           aria-label="open navigation menu"
           aria-controls={isMenuOpen ? "navbar-mobile-menu" : undefined}
@@ -249,43 +263,64 @@ export default function Navbar() {
             },
           }}
         >
-          {navItems.map((item) => (
-            <MenuItem
-              key={item.href}
-              component={Link}
-              href={item.href}
-              prefetch={item.href === "/app" ? false : undefined}
-              onClick={() =>
-                item.href === "/app"
-                  ? handleCatalogueClick(true)
-                  : handleNavClick(item.href, true)
-              }
-              sx={{
-                mt: 0.4,
-                mx: 1,
-                py: 0.3,
-                fontSize: 12,
-                minHeight: 30,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                lineHeight: 0.3,
-                fontFamily: "Namecat",
-                letterSpacing: 2,
-                borderRadius: 1,
-                backgroundColor: (theme) =>
-                  isActiveLink(item.href)
-                    ? alpha(theme.palette.primary.light, 0.3)
-                    : alpha(theme.palette.primary.light, 0.1),
-                color: isActiveLink(item.href)
-                  ? "primary.main"
-                  : "text.primary",
-                fontWeight: isActiveLink(item.href) ? 700 : 400,
-              }}
-            >
-              {item.label}
-            </MenuItem>
-          ))}
+          {navItems.map((item) =>
+            "href" in item ? (
+              <MenuItem
+                key={item.label}
+                component={Link}
+                href={item.href}
+                prefetch={false}
+                onClick={() => handleCatalogueClick(true)}
+                sx={{
+                  mt: 0.4,
+                  mx: 1,
+                  py: 0.3,
+                  fontSize: 12,
+                  minHeight: 30,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  lineHeight: 0.3,
+                  fontFamily: "Namecat",
+                  letterSpacing: 2,
+                  borderRadius: 1,
+                  backgroundColor: (theme) =>
+                    alpha(theme.palette.primary.light, 0.1),
+                  color: "text.primary",
+                  fontWeight: 400,
+                }}
+              >
+                {item.label}
+              </MenuItem>
+            ) : (
+              <MenuItem
+                key={item.label}
+                onClick={(event) =>
+                  handleSectionClick(event, item.sectionId, true)
+                }
+                sx={{
+                  mt: 0.4,
+                  mx: 1,
+                  py: 0.3,
+                  fontSize: 12,
+                  minHeight: 30,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  lineHeight: 0.3,
+                  fontFamily: "Namecat",
+                  letterSpacing: 2,
+                  borderRadius: 1,
+                  backgroundColor: (theme) =>
+                    alpha(theme.palette.primary.light, 0.1),
+                  color: "text.primary",
+                  fontWeight: 400,
+                }}
+              >
+                {item.label}
+              </MenuItem>
+            )
+          )}
         </Menu>
       </Box>
     </Box>

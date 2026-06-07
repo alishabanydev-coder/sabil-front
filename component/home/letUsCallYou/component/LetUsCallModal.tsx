@@ -136,7 +136,7 @@ const FollowUsModal = ({
           />
           <TextField
             label="Message"
-            variant="standard"
+            variant="outlined"
             fullWidth
             value={message}
             onChange={(event) => setMessage(event.target.value)}

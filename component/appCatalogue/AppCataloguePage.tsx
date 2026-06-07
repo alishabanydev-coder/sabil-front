@@ -263,7 +263,7 @@ export default function AppCataloguePage({
                   sx={{
                     width: { xs: 180, md: 320 },
                     pb: 0.5,
-                    border: (theme) => "1px solid #aaa",
+                    border: "1px solid #aaa",
                     borderRadius: 2,
                     cursor: "pointer",
                     overflow: "hidden",

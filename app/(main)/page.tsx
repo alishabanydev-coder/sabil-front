@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Banner from "@/component/home/banner/Banner";
 import BreakDown from "@/component/home/breakdown/BreakDown";
 import WatchUs from "@/component/home/watchUs/WatchUs";
@@ -45,18 +45,34 @@ export default async function Home() {
     ? socialMediaResult.socialMediaLinks
     : [];
 
+  const sectionAnchorSx = {
+    scrollMarginTop: { xs: "72px", md: "88px" },
+  };
+
   return (
     <Stack sx={{ width: "100%" }}>
-      <Banner
-        bannerData={publicSectionData.banner}
-        aboutUs={aboutUsResult.ok ? aboutUsResult.aboutUs : null}
-        donation={donationResult.ok ? donationResult.donation : null}
-      />
-      <ProjectCatalogue publicSectionData={publicSectionData} />
-      <BreakDown projectBreakDowns={publicSectionData.breakdown} />
-      <WatchUs videoData={publicSectionData.video} />
-      <PeopleOpinion commentData={publicSectionData.comment} />
-      <NewsFromUs blogData={publicSectionData.blog} />
+      <Box id="home" sx={sectionAnchorSx}>
+        <Banner
+          bannerData={publicSectionData.banner}
+          aboutUs={aboutUsResult.ok ? aboutUsResult.aboutUs : null}
+          donation={donationResult.ok ? donationResult.donation : null}
+        />
+      </Box>
+      <Box id="subscription" sx={sectionAnchorSx}>
+        <ProjectCatalogue publicSectionData={publicSectionData} />
+      </Box>
+      <Box id="projects" sx={sectionAnchorSx}>
+        <BreakDown projectBreakDowns={publicSectionData.breakdown} />
+      </Box>
+      <Box id="programs" sx={sectionAnchorSx}>
+        <WatchUs videoData={publicSectionData.video} />
+      </Box>
+      <Box id="about" sx={sectionAnchorSx}>
+        <PeopleOpinion commentData={publicSectionData.comment} />
+      </Box>
+      <Box id="contact" sx={sectionAnchorSx}>
+        <NewsFromUs blogData={publicSectionData.blog} />
+      </Box>
       <FollowUs socialMediaLinks={socialMediaLinks} />
       <LetUsCallYou />
     </Stack>
