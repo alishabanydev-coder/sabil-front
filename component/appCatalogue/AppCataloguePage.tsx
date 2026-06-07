@@ -36,6 +36,9 @@ type AppCataloguePageProps = {
   allVideos: VideoData[];
 };
 
+const NAV_SKELETON_COUNT = 4;
+const CARD_SKELETON_COUNT = 6;
+
 export default function AppCataloguePage({
   navigationButtons,
   homeVideos,
@@ -70,11 +73,17 @@ export default function AppCataloguePage({
     return projectMap;
   }, [navigationButtons]);
 
+  const isCatalogueLoading =
+    navigationButtons.length === 0 &&
+    homeVideos.length === 0 &&
+    allVideos.length === 0;
+
   return (
     <Stack
       sx={{
         gap: 2,
         color: "#fff",
+        py: 1,
       }}
     >
       {/* NavigationButtons */}
@@ -106,169 +115,244 @@ export default function AppCataloguePage({
           },
         }}
       >
-        {!!navigationButtons.length
-          ? navigationButtons.map((item) => {
-              const buttonId =
-                item.type === "project" && item.projectId
-                  ? item.projectId
-                  : "home";
-              const isSelected = selectedNav === buttonId;
-              return (
-                <Stack
-                  key={item.id}
+        <Stack
+          sx={{
+            width: { xs: "80%", sm: "60%" },
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {navigationButtons.length > 0
+            ? navigationButtons.map((item) => {
+                const buttonId =
+                  item.type === "project" && item.projectId
+                    ? item.projectId
+                    : "home";
+                const isSelected = selectedNav === buttonId;
+                return (
+                  <Stack
+                    key={item.id}
+                    sx={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      opacity: 1,
+                      filter: isSelected ? "none" : "grayscale(100%)",
+                      transition: "all 0.3s ease",
+                      "& img": {
+                        width: { xs: 35, sm: 42, md: 64, lg: 110 },
+                        height: { xs: 35, sm: 42, md: 64, lg: 110 },
+                      },
+                    }}
+                    onClick={() => {
+                      setSelectedNav(buttonId);
+                    }}
+                  >
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      width={110}
+                      height={110}
+                      style={{ objectFit: "contain" }}
+                    />
+                  </Stack>
+                );
+              })
+            : Array.from({ length: NAV_SKELETON_COUNT }, (_, index) => (
+                <Skeleton
+                  key={`nav-skeleton-${index}`}
+                  variant="circular"
+                  animation="wave"
                   sx={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    opacity: 1,
-                    filter: isSelected ? "none" : "grayscale(100%)",
-                    transition: "all 0.3s ease",
+                    width: { xs: 35, sm: 42, md: 64, lg: 110 },
+                    height: { xs: 35, sm: 42, md: 64, lg: 110 },
                   }}
-                  onClick={() => {
-                    setSelectedNav(buttonId);
-                  }}
-                >
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    width={110}
-                    height={110}
-                    style={{ objectFit: "contain" }}
-                  />
-                </Stack>
-              );
-            })
-          : Array(4).map((item, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width={100}
-                height={100}
-              />
-            ))}
+                />
+              ))}
+        </Stack>
       </Stack>
 
       {/* cards */}
       <Stack
         sx={{
           display: "grid",
-          gap: 3,
-          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 320px))",
+          gap: { xs: 1, md: 3 },
+          gridTemplateColumns: {
+            xs: "repeat(auto-fill, minmax(180px, 180px))",
+            md: "repeat(auto-fill, minmax(320px, 320px))",
+          },
+
           justifyContent: "center",
         }}
       >
-        {selectedVideos.map((item) => {
-          const project = projectById.get(item.projectId);
-          const projectLogo = project?.image || item.thumbnail;
-          const projectName = project?.title || project?.name || "Project";
-
-          return (
-            <Stack
-              key={item._id}
-              onClick={() => {
-                console.log("clicked", item._id);
-                router.push(`/app/watch/${item._id}`);
-              }}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  router.push(`/app/watch/${item._id}`);
-                }
-              }}
-              tabIndex={0}
-              role="button"
-              sx={{
-                width: 320,
-                pb: 0.5,
-                border: (theme) => "1px solid #aaa",
-                borderRadius: 2,
-                cursor: "pointer",
-                overflow: "hidden",
-                "&:hover": {
-                  boxShadow: (theme) =>
-                    `0px 2px 10px 1px ${theme.palette.primary.main}`,
-                  "& .app-catalogue-page-image": {
-                    transition: "all 0.3s ease",
-                    transform: "scale(1.1) rotate(3deg)",
-                  },
-                },
-                transition: "all 0.3s ease",
-              }}
-            >
+        {isCatalogueLoading
+          ? Array.from({ length: CARD_SKELETON_COUNT }, (_, index) => (
               <Stack
+                key={`card-skeleton-${index}`}
                 sx={{
-                  position: "relative",
-                  width: "100%",
-                  height: 182,
+                  width: { xs: 180, md: 320 },
+                  pb: 0.5,
+                  border: "1px solid #aaa",
+                  borderRadius: 2,
                   overflow: "hidden",
                 }}
               >
-                <Image
-                  className="app-catalogue-page-image"
-                  src={item.thumbnail}
-                  alt={item.title}
-                  fill
-                  style={{ objectFit: "contain" }}
+                <Skeleton
+                  variant="rectangular"
+                  animation="wave"
+                  sx={{ width: "100%", height: { xs: 101, md: 182 } }}
                 />
-              </Stack>
-              <Stack
-                direction="row"
-                sx={{
-                  pl: 0.8,
-                  gap: 1,
-                  alignItems: "center",
-                  "& img": {
-                    objectFit: "contain",
-                    border: "1px solid",
-                    borderColor: "primary.main",
-                    borderRadius: "50%",
-                  },
-                }}
-              >
-                <Image
-                  src={projectLogo}
-                  alt={projectName}
-                  width={46}
-                  height={46}
-                  style={{ objectFit: "contain" }}
-                />
-                <Stack sx={{ width: "100%", overflow: "hidden" }}>
-                  <Typography
-                    variant="h6"
+                <Stack
+                  direction="row"
+                  sx={{ pl: 0.8, gap: 1, alignItems: "center", pt: 0.5 }}
+                >
+                  <Skeleton
+                    variant="circular"
+                    animation="wave"
                     sx={{
-                      width: "100%",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      color: "text.primary",
-                      fontWeight: 700,
-                      fontSize: 18,
+                      width: { xs: 30, md: 46 },
+                      height: { xs: 30, md: 46 },
+                      flexShrink: 0,
                     }}
-                  >
-                    {item.title}
-                  </Typography>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      width: "100%",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      color: "text.secondary",
-                      fontWeight: 300,
-                      fontFamily: "Namecat",
-                      letterSpacing: 2,
-                      fontSize: 12,
-                    }}
-                  >
-                    {projectName}
-                  </Typography>
+                  />
+                  <Stack sx={{ width: "100%", gap: 0.75 }}>
+                    <Skeleton
+                      variant="rectangular"
+                      animation="wave"
+                      sx={{
+                        width: "80%",
+                        height: { xs: 12, md: 18 },
+                        borderRadius: 1,
+                      }}
+                    />
+                    <Skeleton
+                      variant="rectangular"
+                      animation="wave"
+                      sx={{
+                        width: "55%",
+                        height: { xs: 10, md: 12 },
+                        borderRadius: 1,
+                      }}
+                    />
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          );
-        })}
+            ))
+          : selectedVideos.map((item) => {
+              const project = projectById.get(item.projectId);
+              const projectLogo = project?.image || item.thumbnail;
+              const projectName = project?.title || project?.name || "Project";
+
+              return (
+                <Stack
+                  key={item._id}
+                  onClick={() => {
+                    console.log("clicked", item._id);
+                    router.push(`/app/watch/${item._id}`);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      router.push(`/app/watch/${item._id}`);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  sx={{
+                    width: { xs: 180, md: 320 },
+                    pb: 0.5,
+                    border: (theme) => "1px solid #aaa",
+                    borderRadius: 2,
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    "&:hover": {
+                      boxShadow: (theme) =>
+                        `0px 2px 10px 1px ${theme.palette.primary.main}`,
+                      "& .app-catalogue-page-image": {
+                        transition: "all 0.3s ease",
+                        transform: "scale(1.1) rotate(3deg)",
+                      },
+                    },
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  <Stack
+                    sx={{
+                      position: "relative",
+                      width: "100%",
+                      height: { xs: 101, md: 182 },
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Image
+                      className="app-catalogue-page-image"
+                      src={item.thumbnail}
+                      alt={item.title}
+                      fill
+                      style={{ objectFit: "contain" }}
+                    />
+                  </Stack>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      pl: 0.8,
+                      gap: 1,
+                      alignItems: "center",
+                      "& img": {
+                        width: { xs: 30, md: 46 },
+                        height: { xs: 30, md: 46 },
+                        objectFit: "contain",
+                        border: "1px solid",
+                        borderColor: "primary.main",
+                        borderRadius: "50%",
+                      },
+                    }}
+                  >
+                    <Image
+                      src={projectLogo}
+                      alt={projectName}
+                      width={46}
+                      height={46}
+                      style={{ objectFit: "contain" }}
+                    />
+                    <Stack sx={{ width: "100%", overflow: "hidden" }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          width: "100%",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          color: "text.primary",
+                          fontWeight: 700,
+                          fontSize: { xs: 12, md: 18 },
+                        }}
+                      >
+                        {item.title}
+                      </Typography>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          width: "100%",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          color: "text.secondary",
+                          fontWeight: 300,
+                          fontFamily: "Namecat",
+                          letterSpacing: 2,
+                          fontSize: { xs: 10, md: 12 },
+                        }}
+                      >
+                        {projectName}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Stack>
+              );
+            })}
       </Stack>
     </Stack>
   );

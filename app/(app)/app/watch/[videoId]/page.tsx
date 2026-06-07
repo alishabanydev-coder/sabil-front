@@ -14,13 +14,8 @@ import {
   type ProjectPreviewMap,
 } from "@/component/appCatalogue/watch/enrichWatchRelatedVideos";
 import WatchRelatedRail from "@/component/appCatalogue/watch/WatchRelatedRail";
-import {
-  CircularProgress,
-  Divider,
-  Skeleton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
+import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -169,28 +164,37 @@ const WatchPage = () => {
   return (
     <Stack
       sx={{
-        height: "calc(100dvh - 35px)",
+        height: {
+          xs: "calc(100dvh - 70px)",
+          sm: "calc(100dvh - 70px)",
+          md: "calc(100dvh - 35px)",
+        },
+        mt: { xs: "60px", md: 0 },
+        justifyContent: { xs: "flex-start", sm: "end" },
+        alignItems: { xs: "stretch", sm: "end" },
         flexDirection: "column",
-        gap: 2,
+        gap: { xs: 0, md: 2 },
         overflow: "hidden",
       }}
     >
       <Stack
         sx={{
-          flex: `${PLAYER_FLEX} 1 0`,
-          minHeight: 0,
+          flex: { xs: "0 0 auto", sm: `${PLAYER_FLEX} 1 0` },
+          minHeight: { xs: "auto", sm: 0 },
           width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: 1,
           pb: 1,
+          overflow: { xs: "visible", sm: "hidden" },
+          px: { xs: 2, md: 0 },
         }}
       >
         <Stack
           sx={{
-            flex: 1,
-            minHeight: 0,
+            flex: { xs: "0 0 auto", sm: 1 },
+            minHeight: { xs: "auto", sm: 0 },
             width: "100%",
             display: "flex",
             alignItems: "center",
@@ -202,8 +206,9 @@ const WatchPage = () => {
               display: "inline-flex",
               flexDirection: "column",
               alignItems: "stretch",
-              height: "100%",
-              maxHeight: "100%",
+              width: { xs: "100%", sm: "auto" },
+              height: { xs: "auto", sm: "100%" },
+              maxHeight: { xs: "none", sm: "100%" },
               maxWidth: { xs: "100%", md: "80%" },
               gap: 1,
             }}
@@ -211,95 +216,102 @@ const WatchPage = () => {
             <Stack
               sx={{
                 position: "relative",
-                flex: 1,
-                minHeight: 0,
-                height: "100%",
-                maxHeight: "100%",
+                flex: { xs: "0 0 auto", sm: 1 },
+                minHeight: { xs: "auto", sm: 0 },
+                width: "100%",
+                height: { xs: "auto", sm: "100%" },
+                maxHeight: { xs: "none", sm: "100%" },
                 maxWidth: "100%",
                 aspectRatio: "16 / 9",
                 borderRadius: 4,
                 overflow: "hidden",
               }}
             >
-            {status === "loading" ? (
-              <>
-                <Skeleton
-                  animation="wave"
-                  variant="rectangular"
-                  sx={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: 4,
-                  }}
-                />
+              {status === "loading" ? (
+                <>
+                  <Skeleton
+                    animation="wave"
+                    variant="rectangular"
+                    sx={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: 4,
+                    }}
+                  />
+                  <Stack
+                    sx={{
+                      position: "absolute",
+                      inset: 0,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <CircularProgress
+                      size={100}
+                      sx={{ color: "primary.light" }}
+                    />
+                  </Stack>
+                </>
+              ) : hasVideoUrl ? (
                 <Stack
                   sx={{
-                    position: "absolute",
-                    inset: 0,
-                    alignItems: "center",
-                    justifyContent: "center",
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                    bgcolor: "#eee",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 4,
+                    "& .react-player__preview": {
+                      position: "relative",
+                    },
                   }}
                 >
-                  <CircularProgress
-                    size={100}
-                    sx={{ color: "primary.light" }}
+                  <ReactPlayer
+                    src={videoUrl}
+                    light={
+                      videoThumbnail ? (
+                        <img
+                          src={videoThumbnail}
+                          alt={video?.title || "Video"}
+                          style={{
+                            width: "100%",
+                            aspectRatio: "16 / 9",
+                            objectFit: "contain",
+                          }}
+                        />
+                      ) : (
+                        true
+                      )
+                    }
+                    playIcon={<WatchPlayerPlayIcon />}
+                    previewAriaLabel={`Play ${video?.title || "video"}`}
+                    controls
+                    width="100%"
+                    height="100%"
+                    playing
                   />
                 </Stack>
-              </>
-            ) : hasVideoUrl ? (
-              <Stack
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  bgcolor: "#eee",
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 4,
-                }}
-              >
-                <ReactPlayer
-                  src={videoUrl}
-                  light={
-                    videoThumbnail ? (
-                      <img
-                        src={videoThumbnail}
-                        alt={video?.title || "Video"}
-                        style={{
-                          width: "100%",
-                          aspectRatio: "16 / 9",
-                          objectFit: "contain",
-                        }}
-                      />
-                    ) : (
-                      true
-                    )
-                  }
-                  controls
-                  width="100%"
-                  height="100%"
-                  playing
-                />
-              </Stack>
-            ) : (
-              <Stack
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  bgcolor: "black",
-                  px: 2,
-                }}
-              >
-                <Typography sx={{ color: "white", textAlign: "center" }}>
-                  {status === "error"
-                    ? errorMessage
-                    : "No video URL was provided for this breakdown."}
-                </Typography>
-              </Stack>
-            )}
+              ) : (
+                <Stack
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    bgcolor: "black",
+                    px: 2,
+                  }}
+                >
+                  <Typography sx={{ color: "white", textAlign: "center" }}>
+                    {status === "error"
+                      ? errorMessage
+                      : "No video URL was provided for this breakdown."}
+                  </Typography>
+                </Stack>
+              )}
             </Stack>
 
             <Stack
@@ -311,74 +323,95 @@ const WatchPage = () => {
                 alignItems: "center",
                 width: "100%",
                 "& img": {
-              objectFit: "contain",
-              borderRadius: "50%",
-              border: "1px solid",
-              borderColor: "primary.light",
-              width: { xs: 32, sm: 36, md: 40, lg: 44 },
-              height: { xs: 32, sm: 36, md: 40, lg: 44 },
-            },
-          }}
-        >
-          {status === "ready" ? (
-            <>
-              {projectLogo ? (
-                <Image
-                  src={projectLogo}
-                  alt={projectName || "Project"}
-                  width={36}
-                  height={36}
-                />
-              ) : null}
-              <Typography
-                sx={{
-                  fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
-                  fontWeight: 700,
-                  color: "#777",
-                }}
-              >
-                {`S${video?.season}-E${video?.episode}`}
-              </Typography>
-              {"|"}
-              <Typography
-                sx={{
-                  fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
-                  fontWeight: 700,
-                  color: "primary.light",
-                }}
-              >
-                {video?.title || "Video"}
-              </Typography>
-            </>
-          ) : (
-            <>
-              <Skeleton
-                animation="wave"
-                variant="circular"
-                sx={{
+                  objectFit: "contain",
+                  borderRadius: "50%",
+                  border: "1px solid",
+                  borderColor: "primary.light",
                   width: { xs: 32, sm: 36, md: 40, lg: 44 },
                   height: { xs: 32, sm: 36, md: 40, lg: 44 },
-                }}
-              />
-              <Skeleton
-                animation="wave"
-                variant="rectangular"
-                sx={{ width: "100%", height: "100%", borderRadius: 2 }}
-              />
-            </>
-          )}
+                },
+              }}
+            >
+              {status === "ready" ? (
+                <>
+                  {projectLogo ? (
+                    <Image
+                      src={projectLogo}
+                      alt={projectName || "Project"}
+                      width={36}
+                      height={36}
+                    />
+                  ) : null}
+                  <Typography
+                    sx={{
+                      fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
+                      fontWeight: 700,
+                      color: "#777",
+                    }}
+                  >
+                    {`S${video?.season}-E${video?.episode} |`}
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
+                      fontWeight: 700,
+                      color: "primary.light",
+                    }}
+                  >
+                    {video?.title || "Video"}
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    sx={{
+                      width: { xs: 32, sm: 36, md: 40, lg: 44 },
+                      height: { xs: 32, sm: 36, md: 40, lg: 44 },
+                    }}
+                  />
+                  <Skeleton
+                    animation="wave"
+                    variant="rectangular"
+                    sx={{ width: "100%", height: "100%", borderRadius: 2 }}
+                  />
+                </>
+              )}
             </Stack>
           </Stack>
         </Stack>
       </Stack>
 
-      <Divider flexItem />
+      <Stack
+        sx={{
+          position: "relative",
+          flexShrink: 0,
+          width: "100%",
+          zIndex: 2,
+          borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: -12,
+            height: 12,
+            pointerEvents: "none",
+            width: "100%",
+            background: (theme) =>
+              `linear-gradient(to bottom, ${theme.palette.primary.main}44, transparent)`,
+          },
+        }}
+      />
 
       <Stack
         sx={{
-          flex: `${RAIL_FLEX} 1 0`,
-          minHeight: 0,
+          flex: { xs: "1 1 0", sm: `${RAIL_FLEX} 1 0` },
+          minHeight: { xs: 0, sm: 0 },
           width: "100%",
+          overflow: "hidden",
         }}
       >
         <WatchRelatedRail

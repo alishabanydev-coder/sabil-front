@@ -21,7 +21,10 @@ const WatchNabar = () => {
         px: { xs: 2, md: 4 },
       }}
     >
-      <Stack>
+      <Stack sx={{ '& img':{
+        width: { xs: 52, md: 80 },
+        height: { xs: 52, md: 80 },
+      }}}>
         <Image src="/icon-512.png" alt="logo" width={80} height={80} />
       </Stack>
       <Stack>

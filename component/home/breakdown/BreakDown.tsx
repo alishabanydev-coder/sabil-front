@@ -239,7 +239,7 @@ const BreakDown = ({
         <Stack
           sx={{
             position: "absolute",
-            bottom: {xs: "-5%", md: "-8%"},
+            bottom: { xs: "-5%", md: "-8%" },
             width: "100%",
             justifyContent: "center",
             alignItems: "center",
@@ -249,7 +249,7 @@ const BreakDown = ({
             sx={{
               fontFamily: "Namecat",
               letterSpacing: 2,
-              width: {xs: 'auto', md: 280},
+              width: { xs: "auto", md: 280 },
               fontSize: { xs: 9, md: 20 },
               px: { xs: 1.2, md: 2 },
               py: { xs: 0.8, md: 1 },
@@ -262,9 +262,7 @@ const BreakDown = ({
       <BreakdownModal
         open={openBreakdownModal}
         onClose={onCloseBreakdownModal}
-        videoUrl={activeBreakdown?.videoUrl}
-        title={activeBreakdown?.title}
-        description={activeBreakdown?.content}
+        selectedBreakdown={activeBreakdown}
       />
     </>
   );

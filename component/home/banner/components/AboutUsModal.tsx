@@ -1,3 +1,4 @@
+import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import { Modal, Stack, Typography } from "@mui/material";
 import ReactPlayer from "react-player";
 
@@ -49,6 +50,8 @@ const AboutUsModal = ({
         >
           <ReactPlayer
             src={aboutUs?.videoUrl}
+            playIcon={<WatchPlayerPlayIcon />}
+            previewAriaLabel={`Play ${aboutUs?.title || "about us video"}`}
             controls
             width="100%"
             height="100%"

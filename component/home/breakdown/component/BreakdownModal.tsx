@@ -1,5 +1,6 @@
 "use client";
 
+import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import { Modal, Stack, Typography } from "@mui/material";
 import ReactPlayer from "react-player";
 
@@ -20,21 +21,27 @@ const style = {
   overflowY: "auto",
 };
 
+type ProjectBreakDown = {
+  _id: string;
+  projectId: string;
+  title: string;
+  content: string;
+  videoUrl?: string;
+  thumbnail: string;
+};
+
 const BreakdownModal = ({
   open,
   onClose,
-  videoUrl,
-  title,
-  description,
+  selectedBreakdown,
 }: {
   open: boolean;
   onClose: () => void;
-  videoUrl?: string;
-  title?: string;
-  description?: string;
+  selectedBreakdown: ProjectBreakDown | null;
 }) => {
   const hasVideoUrl =
-    typeof videoUrl === "string" && videoUrl.trim().length > 0;
+    typeof selectedBreakdown?.videoUrl === "string" &&
+    selectedBreakdown?.videoUrl?.trim().length > 0;
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -51,7 +58,24 @@ const BreakdownModal = ({
           >
             {hasVideoUrl ? (
               <ReactPlayer
-                src={videoUrl}
+                src={selectedBreakdown.videoUrl}
+                light={
+                  selectedBreakdown.thumbnail ? (
+                    <img
+                      src={selectedBreakdown.thumbnail}
+                      alt={selectedBreakdown.title || "Video"}
+                      style={{
+                        width: "100%",
+                        aspectRatio: "16 / 9",
+                        objectFit: "contain",
+                      }}
+                    />
+                  ) : (
+                    true
+                  )
+                }
+                playIcon={<WatchPlayerPlayIcon />}
+                previewAriaLabel={`Play ${selectedBreakdown?.title || "video"}`}
                 controls
                 width="100%"
                 height="100%"
@@ -77,10 +101,10 @@ const BreakdownModal = ({
             <Typography
               sx={{ fontSize: 20, fontWeight: 700, color: "primary.main" }}
             >
-              {title || "Project Breakdown Title"}
+              {selectedBreakdown?.title || "Project Breakdown Title"}
             </Typography>
             <Typography sx={{ color: "text.secondary" }}>
-              {description || "Project description"}
+              {selectedBreakdown?.content || "Project description"}
             </Typography>
           </Stack>
         </Stack>

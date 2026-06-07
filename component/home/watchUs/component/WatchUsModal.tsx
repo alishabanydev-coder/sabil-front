@@ -1,5 +1,6 @@
 "use client";
 
+import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import { Modal, Stack, Typography } from "@mui/material";
 import ReactPlayer from "react-player";
 
@@ -20,21 +21,27 @@ const style = {
   overflowY: "auto",
 };
 
+type VideoData = {
+  _id: string;
+  title: string;
+  description: string;
+  url: string;
+  thumbnail: string;
+  projectId: string;
+};
+
 const WatchUsModal = ({
   open,
   onClose,
-  videoUrl,
-  title,
-  description,
+  selectedVideo,
 }: {
   open: boolean;
   onClose: () => void;
-  videoUrl?: string;
-  title?: string;
-  description?: string;
+  selectedVideo: VideoData | null;
 }) => {
   const hasVideoUrl =
-    typeof videoUrl === "string" && videoUrl.trim().length > 0;
+    typeof selectedVideo?.url === "string" &&
+    selectedVideo?.url.trim().length > 0;
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -51,7 +58,24 @@ const WatchUsModal = ({
           >
             {hasVideoUrl ? (
               <ReactPlayer
-                src={videoUrl}
+                src={selectedVideo?.url}
+                light={
+                  selectedVideo?.thumbnail ? (
+                    <img
+                      src={selectedVideo?.thumbnail}
+                      alt={selectedVideo?.title || "Video"}
+                      style={{
+                        width: "100%",
+                        aspectRatio: "16 / 9",
+                        objectFit: "contain",
+                      }}
+                    />
+                  ) : (
+                    true
+                  )
+                }
+                playIcon={<WatchPlayerPlayIcon />}
+                previewAriaLabel={`Play ${selectedVideo?.title || "video"}`}
                 controls
                 width="100%"
                 height="100%"
@@ -77,10 +101,10 @@ const WatchUsModal = ({
             <Typography
               sx={{ fontSize: 20, fontWeight: 700, color: "primary.main" }}
             >
-              {title || "Watch Us Title"}
+              {selectedVideo?.title || "Watch Us Title"}
             </Typography>
             <Typography sx={{ color: "text.secondary" }}>
-              {description || "Watch Us description"}
+              {selectedVideo?.description || "Watch Us description"}
             </Typography>
           </Stack>
         </Stack>

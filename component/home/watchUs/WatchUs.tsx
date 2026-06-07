@@ -45,10 +45,10 @@ const cardStyle = {
     transition: "all 360ms ease, opacity 300ms ease",
     ".play-button-wrap": {
       position: "absolute",
-      bottom: {xs: -28, sm: -28},
-      right: {xs: "15%", sm: "20%"},
-      width: {xs: 65, sm: 85},
-      height: {xs: 65, sm: 85},
+      bottom: { xs: -28, sm: -28 },
+      right: { xs: "15%", sm: "20%" },
+      width: { xs: 65, sm: 85 },
+      height: { xs: 65, sm: 85 },
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -92,8 +92,15 @@ const cardStyle = {
 
 const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
   const [openWatchUsModal, setOpenWatchUsModal] = useState(false);
-  const onCloseWatchUsModal = () => setOpenWatchUsModal(false);
-  const onOpenWatchUsModal = () => setOpenWatchUsModal(true);
+  const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
+  const onCloseWatchUsModal = () => {
+    setOpenWatchUsModal(false);
+    setSelectedVideo(null);
+  };
+  const onOpenWatchUsModal = (video: VideoData) => {
+    setOpenWatchUsModal(true);
+    setSelectedVideo(video);
+  };
 
   return (
     <>
@@ -165,9 +172,11 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
                       <Box className="play-button-ring" />
                       <IconButton
                         className="play-button"
-                        onClick={onOpenWatchUsModal}
+                        onClick={() => onOpenWatchUsModal(slide)}
                       >
-                        <PlayArrowRoundedIcon sx={{ fontSize: { xs: 36, sm: 54 } }} />
+                        <PlayArrowRoundedIcon
+                          sx={{ fontSize: { xs: 36, sm: 54 } }}
+                        />
                       </IconButton>
                     </Box>
                   </Stack>
@@ -178,7 +187,11 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
         </Stack>
       </Stack>
 
-      <WatchUsModal open={openWatchUsModal} onClose={onCloseWatchUsModal} />
+      <WatchUsModal
+        open={openWatchUsModal}
+        onClose={onCloseWatchUsModal}
+        selectedVideo={selectedVideo}
+      />
     </>
   );
 };

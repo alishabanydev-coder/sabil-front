@@ -43,7 +43,8 @@ const Navbar = () => {
           />
           <Typography
             sx={{
-              fontSize: { xs: 24, md: 32 },
+              display: { xs: "none", sm: "block" },
+              fontSize: { xs: 20, sm: 22, md: 32, lg: 36 },
               fontWeight: 700,
               fontFamily: "Bhel Puri",
               textTransform: "uppercase",
@@ -58,6 +59,9 @@ const Navbar = () => {
           variant="contained"
           color="primary"
           startIcon={<LogoutIcon />}
+          sx={{
+            fontSize: { xs: 12, sm: 14, md: 16, lg: 18 },
+          }}
         >
           Logout
         </Button>
@@ -67,7 +71,7 @@ const Navbar = () => {
         <Stack
           sx={{
             position: "fixed",
-            top: { xs: 38, md: 48 },
+            top: { xs: 35, md: 48 },
             right: { xs: 12, md: 24 },
             zIndex: 60,
           }}
@@ -76,6 +80,8 @@ const Navbar = () => {
             onClick={handleLogout}
             color="primary"
             sx={{
+              width: { xs: 30, md: 46 },
+              height: { xs: 30, md: 46 },
               border: "1px solid",
               borderColor: "primary.main",
               bgcolor: "background.paper",
@@ -91,7 +97,7 @@ const Navbar = () => {
             }}
             aria-label="logout"
           >
-            <LogoutIcon />
+            <LogoutIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
           </IconButton>
         </Stack>
       )}

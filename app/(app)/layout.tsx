@@ -18,8 +18,8 @@ export default function AppShellLayout({
         minHeight: "100vh",
         width: "100%",
         direction: "ltr",
-        px: { xs: 2, md: 0 },
-        py: { xs: 1, md: 2 },
+        px: 0,
+        pt: { xs: 1, md: 2 },
       }}
     >
       {children}
