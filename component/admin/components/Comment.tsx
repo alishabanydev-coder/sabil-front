@@ -27,13 +27,13 @@ type CommentRecord = {
   text: string;
   username: string;
   targetType: string;
-  targetId: string;
+  targetId: string | null;
   parentCommentId: string | null;
   createdAt: string;
   updatedAt: string;
 };
 
-type TargetType = "video" | "blog" | "breakdown";
+type TargetType = "video" | "blog" | "breakdown" | "general" | "project";
 
 type TargetOption = {
   _id: string;
@@ -104,7 +104,7 @@ const Comment = () => {
     setText(comment.text);
     setUsername(comment.username);
     setTargetType(comment.targetType);
-    setTargetId(comment.targetId);
+    setTargetId(comment.targetId || "");
     setParentCommentId(comment.parentCommentId || "");
   };
 
@@ -115,7 +115,7 @@ const Comment = () => {
     setText("");
     setUsername("");
     setTargetType(comment.targetType);
-    setTargetId(comment.targetId);
+    setTargetId(comment.targetId || "");
     setParentCommentId(comment._id);
   };
 
@@ -173,6 +173,14 @@ const Comment = () => {
     }
 
     if (projectsResult.ok) {
+      projectsResult.projects.forEach((project) => {
+        nextOptions.push({
+          _id: project._id,
+          targetType: "project",
+          label: project.name || project._id,
+        });
+      });
+
       const targetsPerProject = await Promise.all(
         projectsResult.projects.map(async (project) => {
           const [videosResult, breakdownsResult] = await Promise.all([
@@ -268,6 +276,11 @@ const Comment = () => {
   const shouldRestrictToProjectTypes =
     adminRole !== "super_admin" && hasProjectScopedChannelAccess;
   const showBlogTargetOption = !shouldRestrictToProjectTypes;
+  const showGeneralTargetOption = !shouldRestrictToProjectTypes;
+  const hasProjectTargetOption = targetOptions.some(
+    (item) => item.targetType === "project"
+  );
+  const targetIdRequired = targetType !== "general";
 
   useEffect(() => {
     if (showBlogTargetOption) {
@@ -291,15 +304,13 @@ const Comment = () => {
     const normalizedTargetId = targetId.trim();
     const normalizedParentCommentId = parentCommentId.trim();
 
-    if (
-      !normalizedText ||
-      !normalizedUsername ||
-      !normalizedTargetType ||
-      !normalizedTargetId
-    ) {
-      setSubmitErrorMsg(
-        "Text, username, target type, and target ID are required."
-      );
+    if (!normalizedText || !normalizedUsername || !normalizedTargetType) {
+      setSubmitErrorMsg("Text, username, and target type are required.");
+      return;
+    }
+
+    if (normalizedTargetType !== "general" && !normalizedTargetId) {
+      setSubmitErrorMsg("Target ID is required for this target type.");
       return;
     }
 
@@ -315,7 +326,7 @@ const Comment = () => {
       text: normalizedText,
       username: normalizedUsername,
       targetType: normalizedTargetType,
-      targetId: normalizedTargetId,
+      targetId: normalizedTargetType === "general" ? null : normalizedTargetId,
       parentCommentId: normalizedParentCommentId || null,
     };
 
@@ -508,6 +519,20 @@ const Comment = () => {
                 breakdown (not allowed)
               </MenuItem>
             )}
+            {hasProjectTargetOption ? (
+              <MenuItem value="project">project</MenuItem>
+            ) : (
+              <MenuItem value="project" disabled>
+                project (not allowed)
+              </MenuItem>
+            )}
+            {showGeneralTargetOption ? (
+              <MenuItem value="general">general</MenuItem>
+            ) : (
+              <MenuItem value="general" disabled>
+                general (not allowed)
+              </MenuItem>
+            )}
           </TextField>
           <Button variant="contained" onClick={handleOpen}>
             Add Comment
@@ -586,25 +611,41 @@ const Comment = () => {
                   breakdown (not allowed)
                 </MenuItem>
               )}
-            </TextField>
-            <TextField
-              label="Target ID"
-              select
-              variant="standard"
-              value={targetId}
-              onChange={(event) => setTargetId(event.target.value)}
-              fullWidth
-              disabled={!targetType || targetOptionsLoading}
-            >
-              <MenuItem value="">
-                {targetType ? "Select target item" : "Select target type first"}
-              </MenuItem>
-              {availableTargetIdOptions.map((item) => (
-                <MenuItem key={item._id} value={item._id}>
-                  {item.label}
+              {hasProjectTargetOption ? (
+                <MenuItem value="project">project</MenuItem>
+              ) : (
+                <MenuItem value="project" disabled>
+                  project (not allowed)
                 </MenuItem>
-              ))}
+              )}
+              {showGeneralTargetOption ? (
+                <MenuItem value="general">general</MenuItem>
+              ) : (
+                <MenuItem value="general" disabled>
+                  general (not allowed)
+                </MenuItem>
+              )}
             </TextField>
+            {targetIdRequired ? (
+              <TextField
+                label="Target ID"
+                select
+                variant="standard"
+                value={targetId}
+                onChange={(event) => setTargetId(event.target.value)}
+                fullWidth
+                disabled={!targetType || targetOptionsLoading}
+              >
+                <MenuItem value="">
+                  {targetType ? "Select target item" : "Select target type first"}
+                </MenuItem>
+                {availableTargetIdOptions.map((item) => (
+                  <MenuItem key={`${item.targetType}-${item._id}`} value={item._id}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            ) : null}
             <TextField
               label="Parent Comment ID"
               variant="standard"
@@ -627,7 +668,7 @@ const Comment = () => {
                   !text.trim() ||
                   !username.trim() ||
                   !targetType.trim() ||
-                  !targetId.trim() ||
+                  (targetIdRequired && !targetId.trim()) ||
                   isSubmitting
                 }
                 variant="contained"

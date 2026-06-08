@@ -81,8 +81,11 @@ type CommentData = {
   text: string;
   username: string;
   targetType: string;
-  targetId: string;
+  targetId: string | null;
 };
+
+const shouldShowTargetSubtitle = (targetType: string) =>
+  !["general", "project"].includes(targetType);
 
 const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
   return (
@@ -226,16 +229,18 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                     >
                       {comment.username}
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: { xs: 9, sm: 12 },
-                        color: "#fff",
-                        fontFamily: "Namecat",
-                        letterSpacing: 2,
-                      }}
-                    >
-                      {comment.targetType}
-                    </Typography>
+                    {shouldShowTargetSubtitle(comment.targetType) ? (
+                      <Typography
+                        sx={{
+                          fontSize: { xs: 9, sm: 12 },
+                          color: "#fff",
+                          fontFamily: "Namecat",
+                          letterSpacing: 2,
+                        }}
+                      >
+                        {comment.targetType}
+                      </Typography>
+                    ) : null}
                   </Stack>
                   <Avatar
                     alt={comment.username}
