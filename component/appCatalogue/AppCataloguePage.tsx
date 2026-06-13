@@ -4,6 +4,7 @@ import { Skeleton, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
 type NavigationButtonData = {
   id: string;
@@ -45,6 +46,7 @@ export default function AppCataloguePage({
   allVideos,
 }: AppCataloguePageProps) {
   const router = useRouter();
+  const isNative = useNativeApp();
   const [selectedNav, setSelectedNav] = useState<string>("home");
 
   const selectedVideos = useMemo(() => {
@@ -95,7 +97,7 @@ export default function AppCataloguePage({
           alignItems: "center",
           gap: 3,
           position: "sticky",
-          top: 0,
+          top: isNative ? "-8px" : 0,
           zIndex: 30,
           py: 1,
           bgcolor: "background.default",

@@ -1,4 +1,5 @@
-import { Stack } from "@mui/material";
+import AppShellStack from "@/component/capacitor/AppShellStack";
+import CapacitorShell from "@/component/capacitor/CapacitorShell";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,16 +14,8 @@ export default function AppShellLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Stack
-      sx={{
-        minHeight: "100vh",
-        width: "100%",
-        direction: "ltr",
-        px: 0,
-        pt: { xs: 1, md: 2 },
-      }}
-    >
-      {children}
-    </Stack>
+    <AppShellStack>
+      <CapacitorShell>{children}</CapacitorShell>
+    </AppShellStack>
   );
 }

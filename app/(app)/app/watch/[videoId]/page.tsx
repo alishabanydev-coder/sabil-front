@@ -20,6 +20,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
+import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
 const PLAYER_FLEX = 7;
 const RAIL_FLEX = 3;
@@ -44,6 +45,7 @@ type ProjectDetails = {
 
 const WatchPage = () => {
   const params = useParams();
+  const isNative = useNativeApp();
   const videoId = params.videoId as string;
   const [video, setVideo] = useState<VideoDetails | null>(null);
   const [project, setProject] = useState<ProjectDetails | null>(null);
@@ -161,15 +163,19 @@ const WatchPage = () => {
   const projectName = project?.title || project?.name;
   const projectLogo = project?.thumbnail;
 
+  const pageHeight = isNative
+    ? { xs: "calc(100dvh - 8px)", md: "calc(100dvh - 16px)" }
+    : {
+        xs: "calc(100dvh - 70px)",
+        sm: "calc(100dvh - 70px)",
+        md: "calc(100dvh - 35px)",
+      };
+
   return (
     <Stack
       sx={{
-        height: {
-          xs: "calc(100dvh - 70px)",
-          sm: "calc(100dvh - 70px)",
-          md: "calc(100dvh - 35px)",
-        },
-        mt: { xs: "60px", md: 0 },
+        height: pageHeight,
+        mt: { xs: isNative ? 0 : "60px", md: 0 },
         justifyContent: { xs: "flex-start", sm: "end" },
         alignItems: { xs: "stretch", sm: "end" },
         flexDirection: "column",
@@ -203,6 +209,9 @@ const WatchPage = () => {
         >
           <Stack
             sx={{
+              position: "relative",
+              borderRadius: { xs: 4, md: 0 },
+              overflow: { xs: "hidden", md: "visible" },
               display: "inline-flex",
               flexDirection: "column",
               alignItems: "stretch",
@@ -316,6 +325,16 @@ const WatchPage = () => {
 
             <Stack
               sx={{
+                // display: { xs: "none", md: "flex" },
+                position: { xs: "absolute", md: "relative" },
+                backgroundColor: {
+                  xs: "rgba(0, 0, 0, 0.3)",
+                  md: "transparent",
+                },
+                px: { xs: 1, md: 0 },
+                py: { xs: 2, md: 0 },
+                bottom: 0,
+                zIndex: 200,
                 flexDirection: "row",
                 gap: 1,
                 height: 40,
@@ -330,6 +349,16 @@ const WatchPage = () => {
                   width: { xs: 32, sm: 36, md: 40, lg: 44 },
                   height: { xs: 32, sm: 36, md: 40, lg: 44 },
                 },
+                "& .episode": {
+                  color: { xs: "white", md: "#777" },
+                  fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
+                  fontWeight: 500,
+                },
+                "& .title": {
+                  fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
+                  fontWeight: 700,
+                  color: { xs: "white", md: "primary.light" },
+                },
               }}
             >
               {status === "ready" ? (
@@ -342,23 +371,11 @@ const WatchPage = () => {
                       height={36}
                     />
                   ) : null}
-                  <Typography
-                    sx={{
-                      fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
-                      fontWeight: 700,
-                      color: "#777",
-                    }}
-                  >
+                  <Typography className="episode">
                     {`S${video?.season}-E${video?.episode} |`}
                   </Typography>
 
-                  <Typography
-                    sx={{
-                      fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
-                      fontWeight: 700,
-                      color: "primary.light",
-                    }}
-                  >
+                  <Typography className="title">
                     {video?.title || "Video"}
                   </Typography>
                 </>
@@ -409,12 +426,15 @@ const WatchPage = () => {
       <Stack
         sx={{
           flex: { xs: "1 1 0", sm: `${RAIL_FLEX} 1 0` },
-          minHeight: { xs: 0, sm: 0 },
+          minHeight: 0,
           width: "100%",
+          display: "flex",
+          flexDirection: "column",
           overflow: "hidden",
         }}
       >
         <WatchRelatedRail
+          isNative={isNative}
           videos={relatedVideos}
           isLoading={relatedLoading || status === "loading"}
         />

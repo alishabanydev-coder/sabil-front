@@ -1,5 +1,6 @@
 "use client";
 
+import { useNativeApp } from "@/lib/capacitor/nativeApp";
 import { ArrowBack } from "@mui/icons-material";
 import { IconButton, Stack } from "@mui/material";
 import Image from "next/image";
@@ -7,6 +8,8 @@ import { useRouter } from "next/navigation";
 
 const WatchNabar = () => {
   const router = useRouter();
+  const isNative = useNativeApp();
+
   return (
     <Stack
       sx={{
@@ -21,10 +24,14 @@ const WatchNabar = () => {
         px: { xs: 2, md: 4 },
       }}
     >
-      <Stack sx={{ '& img':{
-        width: { xs: 52, md: 80 },
-        height: { xs: 52, md: 80 },
-      }}}>
+      <Stack
+        sx={{
+          "& img": {
+            width: { xs: isNative ? 72 : 52, md: 80 },
+            height: { xs: isNative ? 72 : 52, md: 80 },
+          },
+        }}
+      >
         <Image src="/icon-512.png" alt="logo" width={80} height={80} />
       </Stack>
       <Stack>
@@ -46,7 +53,7 @@ const WatchNabar = () => {
             },
           }}
         >
-          <ArrowBack sx={{ fontSize: { xs: 24, md: 32 } }} />
+          <ArrowBack sx={{ fontSize: { xs: isNative ? 32 : 24, md: 32 } }} />
         </IconButton>
       </Stack>
     </Stack>

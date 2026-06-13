@@ -5,24 +5,44 @@ import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { App } from "@capacitor/app";
+import { isNativeApp, useNativeApp } from "@/lib/capacitor/nativeApp";
 
 const Navbar = () => {
   const router = useRouter();
+  const isNative = useNativeApp();
   const [showFloatingLogout, setShowFloatingLogout] = useState(false);
 
   const handleLogout = () => {
+    if (isNativeApp()) {
+      void App.exitApp();
+      return;
+    }
+
     router.push("/");
   };
 
   useEffect(() => {
+    const scrollRoot = isNative
+      ? document.querySelector<HTMLElement>(".app-shell")
+      : null;
+
+    const getScrollOffset = () =>
+      scrollRoot ? scrollRoot.scrollTop : window.scrollY;
+
     const onScroll = () => {
-      setShowFloatingLogout(window.scrollY > 80);
+      setShowFloatingLogout(getScrollOffset() > 80);
     };
 
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+
+    const target: HTMLElement | Window = scrollRoot ?? window;
+    target.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      target.removeEventListener("scroll", onScroll);
+    };
+  }, [isNative]);
 
   return (
     <>
@@ -71,17 +91,17 @@ const Navbar = () => {
         <Stack
           sx={{
             position: "fixed",
-            top: { xs: 35, md: 48 },
-            right: { xs: 12, md: 24 },
-            zIndex: 60,
+            top: { xs: isNative ? 30 : 37, md: 48 },
+            right: { xs: isNative ? 30 : 12, md: 24 },
+            zIndex: 1000,
           }}
         >
           <IconButton
             onClick={handleLogout}
             color="primary"
             sx={{
-              width: { xs: 30, md: 46 },
-              height: { xs: 30, md: 46 },
+              width: { xs: isNative ? 48 : 30, md: 46 },
+              height: { xs: isNative ? 48 : 30, md: 46 },
               border: "1px solid",
               borderColor: "primary.main",
               bgcolor: "background.paper",
@@ -97,7 +117,7 @@ const Navbar = () => {
             }}
             aria-label="logout"
           >
-            <LogoutIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+            <LogoutIcon sx={{ fontSize: { xs: isNative ? 25 : 20, md: 24 } }} />
           </IconButton>
         </Stack>
       )}

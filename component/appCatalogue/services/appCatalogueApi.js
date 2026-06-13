@@ -1,6 +1,6 @@
-const API_BASE =
-  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_ADMIN_API_URL) ||
-  "http://localhost:5000";
+import { getApiBase } from "@/lib/apiBase";
+
+const API_BASE = getApiBase();
 
 function normalizeAssetUrl(value) {
   if (typeof value !== "string" || !value.trim()) {
