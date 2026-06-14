@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { Modal, Stack } from "@mui/material";
 import Image from "next/image";
-import banner from "@/public/banner.png";
 import Leftside from "./components/Leftside";
 import Rightside from "./components/Rightside";
 import Pagination from "./components/Pagination";
@@ -58,7 +57,7 @@ const Banner = ({
         aspectRatio: { xs: "16 / 8", sm: "16 / 6.5" },
       }}
     >
-      <Image src={banner} alt="some image" fill style={{ objectFit: "fill" }} />
+      <Image src="/banner.png" alt="some image" fill style={{ objectFit: "fill" }} />
       <Leftside onOpenAboutUsModal={onOpenAboutUsModal} donation={donation} />
       <Rightside
         onSwiperInit={(swiper) => (bannerSwiperRef.current = swiper)}

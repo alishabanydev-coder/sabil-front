@@ -3,14 +3,14 @@
 import { useRef, useState } from "react";
 import { Button, Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import type { StaticImageData } from "next/image";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import EastRoundedIcon from "@mui/icons-material/EastRounded";
-import news1 from "@/public/news1.png";
+
+const DEFAULT_NEWS_IMAGE = "/news1.png";
 import Pagination from "../banner/components/Pagination";
 import SeactionHeader from "@/component/ui/SectionHeader";
 import NewsFromUsModal from "./component/NewsFromUsModal";
@@ -18,7 +18,7 @@ import NewsFromUsModal from "./component/NewsFromUsModal";
 type Slide = {
   id: number | string;
   title: string;
-  image: string | StaticImageData;
+  image: string;
   link: string;
   content?: string;
   blog: BlogDataItem;
@@ -60,7 +60,7 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
             image:
               item.images ||
               (Array.isArray(item.image) ? item.image[0] : "") ||
-              news1,
+              DEFAULT_NEWS_IMAGE,
             link: `/news/${item._id}`,
           }))
           .filter((slide) => Boolean(slide.image))

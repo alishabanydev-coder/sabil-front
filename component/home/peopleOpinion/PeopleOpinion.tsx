@@ -4,77 +4,7 @@ import { Avatar, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import avatar1 from "@/public/avatar1.png";
-import avatar2 from "@/public/avatar2.png";
-import avatar3 from "@/public/avatar3.png";
-import virgol from "@/public/virgol.png";
 import SeactionHeader from "@/component/ui/SectionHeader";
-
-const slides = [
-  {
-    id: 1,
-    name: "Dr. Amita bachan",
-    occupation: "Doctor",
-    avatar: avatar1,
-    description:
-      "i can't believe how much my child has improved in just a few months. The teachers are amazing and the curriculum is perfect for my child.",
-  },
-  {
-    id: 2,
-    name: "Salman Khan",
-    occupation: "Actor",
-    avatar: avatar2,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. some more text so this looks better",
-  },
-  {
-    id: 3,
-    name: "Anjali Kumari",
-    occupation: "Teacher",
-    avatar: avatar3,
-    description:
-      "i can't believe how much my child has improved in just a few months. The teachers are amazing and the curriculum is perfect for my child.",
-  },
-  {
-    id: 4,
-    name: "Aamir Khan",
-    occupation: "Actor",
-    avatar: avatar1,
-    description:
-      "this is the best service i've ever had. The staff is friendly and the results are amazing.",
-  },
-  {
-    id: 5,
-    name: "Akshay Kumar",
-    occupation: "Actor",
-    avatar: avatar3,
-    description:
-      "it was a great experience. The staff is friendly and the results are amazing. why this is too short i wanted a longer text!",
-  },
-  {
-    id: 6,
-    name: "John Doe",
-    occupation: "Teacher",
-    avatar: avatar1,
-    description:
-      "The best service I've ever had. The staff is friendly and the results are amazing.",
-  },
-  {
-    id: 7,
-    name: "Monika Sharma",
-    occupation: "Doctor",
-    avatar: avatar2,
-    description:
-      "i can't believe how much my child has improved in just a few months. The teachers are amazing and the curriculum is perfect for my child.",
-  },
-  {
-    id: 8,
-    name: "Rajesh Kumar",
-    occupation: "Teacher",
-    avatar: avatar1,
-    description: "how great the service is! i'm so happy with the results.",
-  },
-];
 
 type CommentData = {
   _id: string;
@@ -288,7 +218,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   </Typography>
 
                   <Image
-                    src={virgol}
+                    src="/virgol.png"
                     alt="virgol"
                     width={32}
                     height={32}
@@ -303,7 +233,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   />
 
                   <Image
-                    src={virgol}
+                    src="/virgol.png"
                     alt="virgol"
                     width={32}
                     height={32}

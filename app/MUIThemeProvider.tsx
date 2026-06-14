@@ -63,10 +63,20 @@ const appTheme = createTheme(
           },
           "@keyframes modalParticleDrift": {
             "0%": {
-              backgroundPosition: "0 0, 0 0, 0 0",
+              backgroundPosition:
+                "0 0, 17px 43px, -31px 12px, 8px -27px, -19px 38px, 41px -9px, -14px 22px",
             },
             "100%": {
-              backgroundPosition: "180px -180px, -220px 220px, 260px -260px",
+              backgroundPosition:
+                "0 0, 89px -53px, -67px 74px, 43px 91px, -103px -37px, 58px -81px, -76px 47px",
+            },
+          },
+          "@keyframes modalParticleDriftAlt": {
+            "0%": {
+              backgroundPosition: "-23px 31px, 14px -18px, -8px 44px, 27px -35px",
+            },
+            "100%": {
+              backgroundPosition: "-97px 62px, 83px -71px, -54px -88px, 71px 49px",
             },
           },
         },
@@ -74,13 +84,54 @@ const appTheme = createTheme(
       MuiModal: {
         styleOverrides: {
           root: {
-            "& .MuiBackdrop-root": {
-              backgroundColor: "rgba(8, 12, 24, 0.76)",
+            "&:not(.MuiPopover-root):not(.MuiMenu-root) .MuiBackdrop-root": {
+              backgroundColor: "rgba(8, 12, 24, 0.5)",
               backdropFilter: "blur(4px)",
               backgroundImage:
-                "radial-gradient(circle, rgba(255,255,255,0.16) 1px, transparent 2px), radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 2px), radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 2px)",
-              backgroundSize: "160px 160px, 220px 220px, 280px 280px",
-              animation: "modalParticleDrift 20s linear infinite",
+                "linear-gradient(rgba(8, 12, 24, 0.3), rgba(8, 12, 24, 0.3)), radial-gradient(circle at 18% 24%, rgba(255,255,255,0.22) 0.6px, transparent 1.8px), radial-gradient(circle at 72% 61%, rgba(210,190,255,0.18) 0.5px, transparent 1.5px), radial-gradient(circle at 44% 83%, rgba(255,255,255,0.14) 0.7px, transparent 2px), radial-gradient(circle at 91% 17%, rgba(180,220,255,0.12) 0.4px, transparent 1.2px), radial-gradient(circle at 33% 52%, rgba(255,255,255,0.17) 0.55px, transparent 1.6px), radial-gradient(circle at 67% 38%, rgba(255,255,255,0.10) 0.45px, transparent 1.4px)",
+              backgroundSize:
+                "100% 100%, 67px 73px, 89px 79px, 103px 97px, 127px 113px, 139px 131px, 151px 149px",
+              animation: "modalParticleDrift 28s linear infinite",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                backgroundImage:
+                  "radial-gradient(circle at 26% 71%, rgba(255,255,255,0.13) 0.5px, transparent 1.5px), radial-gradient(circle at 58% 14%, rgba(220,200,255,0.15) 0.65px, transparent 1.9px), radial-gradient(circle at 84% 46%, rgba(255,255,255,0.11) 0.4px, transparent 1.3px), radial-gradient(circle at 11% 58%, rgba(190,210,255,0.14) 0.55px, transparent 1.7px)",
+                backgroundSize: "83px 77px, 107px 101px, 131px 119px, 157px 143px",
+                animation: "modalParticleDriftAlt 37s linear infinite reverse",
+              },
+            },
+          },
+        },
+      },
+      MuiPopover: {
+        styleOverrides: {
+          root: {
+            "& .MuiBackdrop-root": {
+              backgroundColor: "transparent",
+              backdropFilter: "none",
+              backgroundImage: "none",
+              animation: "none",
+              "&::before": {
+                content: "none",
+              },
+            },
+          },
+        },
+      },
+      MuiMenu: {
+        styleOverrides: {
+          root: {
+            "& .MuiBackdrop-root": {
+              backgroundColor: "transparent",
+              backdropFilter: "none",
+              backgroundImage: "none",
+              animation: "none",
+              "&::before": {
+                content: "none",
+              },
             },
           },
         },

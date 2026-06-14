@@ -1,18 +1,12 @@
 import { IconButton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import followUsImage from "@/public/follow-us.png";
-import youtubeIcon from "@/public/youtube-icon.png";
-import xIcon from "@/public/x-icon.png";
-import instagramIcon from "@/public/insta-icon.png";
-import facebookIcon from "@/public/facebook-icon.png";
-import kidsGroup from "@/public/follow-us-image.png";
 import SeactionHeader from "@/component/ui/SectionHeader";
 
 const fallbackIcons = [
-  { id: 1, name: "youtube", icon: youtubeIcon },
-  { id: 4, name: "facebook", icon: facebookIcon },
-  { id: 3, name: "instagram", icon: instagramIcon },
-  { id: 2, name: "x", icon: xIcon },
+  { id: 1, name: "youtube", icon: "/youtube-icon.png" },
+  { id: 4, name: "facebook", icon: "/facebook-icon.png" },
+  { id: 3, name: "instagram", icon: "/insta-icon.png" },
+  { id: 2, name: "x", icon: "/x-icon.png" },
 ];
 
 type SocialMediaLink = {
@@ -57,7 +51,7 @@ const FollowUs = ({
         }}
       >
         <Image
-          src={followUsImage}
+          src="/follow-us.png"
           alt="follow us"
           fill
           style={{ objectFit: "fill" }}
@@ -121,7 +115,7 @@ const FollowUs = ({
           }}
         >
           <Image
-            src={kidsGroup}
+            src="/follow-us-image.png"
             alt="follow us"
             fill
             style={{ objectFit: "contain" }}

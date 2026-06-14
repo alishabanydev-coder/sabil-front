@@ -2,7 +2,6 @@
 
 import { Stack, TextField, Typography } from "@mui/material";
 import Image from "next/image";
-import backgroundImage from "@/public/let-us-call-you-background.png";
 import { ScondaryButton } from "@/component/ui/ScondaryButton";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import FollowUsModal from "./component/LetUsCallModal";
@@ -78,7 +77,7 @@ const LetUsCallYou = () => {
             },
           }}
         >
-          <Image src={backgroundImage} alt="logo" fill />
+          <Image src="/let-us-call-you-background.png" alt="logo" fill />
         </Stack>
         <Stack
           direction="row"

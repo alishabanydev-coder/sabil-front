@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import catalogue from "@/public/catalogue.png";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { PrimaryButton } from "@/component/ui/PrimaryButton";
@@ -60,7 +59,7 @@ const Catalogue = ({
       }}
     >
       <Image
-        src={catalogue}
+        src="/catalogue.png"
         alt="catalogue"
         fill
         style={{ objectFit: "fill" }}

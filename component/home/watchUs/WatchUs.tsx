@@ -2,7 +2,6 @@
 
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import MediaSectionImage from "@/public/Media section.png";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
@@ -124,7 +123,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           }}
         >
           <Image
-            src={MediaSectionImage}
+            src="/Media section.png"
             alt="watch us"
             fill
             style={{ objectFit: "cover" }}

@@ -1,7 +1,6 @@
 import { PrimaryButton } from "@/component/ui/PrimaryButton";
 import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Image from "next/image";
-import logo from "@/public/icon-192.png";
 
 const textMd = `A\nGATEWAY\nTO THE\nFUTURE`;
 const textXs = `A GATEWAY TO \n THE FUTURE`;
@@ -55,7 +54,7 @@ const Leftside = ({
           }}
         >
           <Image
-            src={logo}
+            src="/icon-192.png"
             alt={"logo"}
             fill
             style={{
