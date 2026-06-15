@@ -33,15 +33,17 @@ export default function Footer() {
       <Stack
         sx={{
           position: "absolute",
-          top: { xs: "-30%", sm: "-20%", md: "-40%" },
-          left: { xs: "1%", sm: "3%", md: "5%" },
+          top: { xs: "-30%", sm: "-20%",md: '-30%' ,lg: "-40%" },
+          left: { xs: "2%", sm: "3%",md: '4%' ,lg: "5%" },
         }}
       >
         <Stack
+          className="footer-kid-swing"
           sx={{
             position: "relative",
-            width: { xs: 80, sm: 110, md: 200 },
-            height: { xs: 100, sm: 200, md: 350 },
+            width: { xs: 80, sm: 110, md: 150, lg: 200 },
+            height: { xs: 100, sm: 200, md: 250, lg: 350 },
+            zIndex: 100,
           }}
         >
           <Image
@@ -57,13 +59,15 @@ export default function Footer() {
           position: "absolute",
           top: { xs: "-1%", sm: "5%", md: "-5%" },
           left: { xs: "22%", sm: "24%", md: "25%" },
+          zIndex: 100
         }}
       >
         <Stack
+          className="footer-ball-swing"
           sx={{
             position: "relative",
-            width: { xs: 30, sm: 50, md: 80 },
-            height: { xs: 30, sm: 50, md: 80 },
+            width: { xs: 30, sm: 50, md: 60, lg: 80 },
+            height: { xs: 30, sm: 50, md: 60, lg: 80 },
           }}
         >
           <Image

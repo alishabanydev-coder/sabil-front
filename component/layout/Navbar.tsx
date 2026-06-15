@@ -34,9 +34,7 @@ const scrollToSection = (sectionId: string) => {
   }
 
   const top =
-    element.getBoundingClientRect().top +
-    window.scrollY -
-    NAVBAR_SCROLL_OFFSET;
+    element.getBoundingClientRect().top + window.scrollY - NAVBAR_SCROLL_OFFSET;
   window.scrollTo({ top, behavior: "smooth" });
 };
 
@@ -143,7 +141,7 @@ export default function Navbar() {
           borderRadius: 999,
           position: "relative",
           overflow: "hidden",
-          bgcolor: "rgba(255, 255, 255, 0.28)",
+          bgcolor: (theme) => alpha(theme.palette.secondary.light, 0.45),
           boxShadow:
             "0 3px 0 rgba(248, 240, 240, 0.0) inset, 0 -6px 0 rgba(136, 18, 84, 0.2) inset, 0 16px 28px rgba(92, 12, 151, 0.3)",
           backdropFilter: "blur(10px)",

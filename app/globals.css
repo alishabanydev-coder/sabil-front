@@ -23,3 +23,34 @@
   font-style: normal;
   font-display: swap;
 }
+
+@keyframes footerKidSwing {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes footerBallSwing {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+.footer-kid-swing {
+  animation: footerKidSwing 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.footer-ball-swing {
+  animation: footerBallSwing 2.2s ease-in-out infinite;
+  animation-delay: 0.4s;
+  transform-origin: center center;
+}
