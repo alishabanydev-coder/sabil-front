@@ -189,7 +189,7 @@ export default function Footer() {
             textAlign: "start",
           }}
         >
-          {"&copy; 2026 Sabil Group. \n All rights & copyRights reserved."}
+          {"&copy; 2026 Sabeel Group. \n All rights & copyRights reserved."}
         </Typography>
       </Stack>
     </Stack>

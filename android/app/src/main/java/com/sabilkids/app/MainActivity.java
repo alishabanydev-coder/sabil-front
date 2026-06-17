@@ -1,4 +1,4 @@
-package com.sabilkids.app;
+package com.sabeellkids.app;
 
 import android.os.Build;
 import android.os.Bundle;

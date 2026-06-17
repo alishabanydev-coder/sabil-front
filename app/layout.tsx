@@ -4,17 +4,17 @@ import { ThemeProvider } from "./ThemeContext";
 import MUIThemeProvider from "./MUIThemeProvider";
 import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
 
-const SITE_URL = "https://sabilkids.com";
+const SITE_URL = "https://sabeellkids.com";
 
 export const metadata: Metadata = {
-  title: "Sabil Kids | Joyful Islamic Streaming for Children",
+  title: "Sabeel Kids | Joyful Islamic Streaming for Children",
   description:
-    "Sabil Kids is a streaming platform for children featuring Sabil Group animations, blogs, and project breakdowns. We create high-quality content in an Islamic atmosphere to teach values through joyful entertainment.",
+    "Sabeel Kids is a streaming platform for children featuring Sabeel Group animations, blogs, and project breakdowns. We create high-quality content in an Islamic atmosphere to teach values through joyful entertainment.",
   keywords: [
-    "Sabil Kids",
+    "Sabeel Kids",
     "kids streaming",
     "Islamic kids content",
-    "Sabil animations",
+    "Sabeel animations",
     "children series",
     "Islamic values",
     "kids entertainment",
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
     ],
     apple: "/icon-192.png",
   },
-  authors: [{ name: "Sabil Group", url: "https://sabilkids.com" }],
-  creator: "Sabil Group",
-  publisher: "Sabil Kids",
+    authors: [{ name: "Sabeel Group", url: "https://sabeellkids.com" }],
+  creator: "Sabeel Group",
+  publisher: "Sabeel Kids",
   openGraph: {
-    title: "Sabil Kids | Joyful Islamic Streaming for Children",
+    title: "Sabeel Kids | Joyful Islamic Streaming for Children",
     description:
-      "Watch Sabil Group animations, read blogs and behind-the-scenes breakdowns, and help children learn Islamic values through joyful and meaningful stories.",
+      "Watch Sabeel Group animations, read blogs and behind-the-scenes breakdowns, and help children learn Islamic values through joyful and meaningful stories.",
     url: SITE_URL,
-    siteName: "Sabil Kids",
+    siteName: "Sabeel Kids",
     locale: "en_US",
     type: "website",
   },
@@ -65,13 +65,13 @@ export default async function RootLayout({
     "@graph": [
       {
         "@type": "Organization",
-        name: "Sabil Kids",
+        name: "Sabeel Kids",
         url: SITE_URL,
         sameAs,
       },
       {
         "@type": "WebSite",
-        name: "Sabil Kids",
+        name: "Sabeel Kids",
         url: SITE_URL,
       },
     ],

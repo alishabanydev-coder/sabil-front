@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Sabil Kids</string>
-    <string name="title_activity_main">Sabil Kids</string>
-    <string name="package_name">com.sabilkids.app</string>
-    <string name="custom_url_scheme">com.sabilkids.app</string>
+    <string name="app_name">Sabeel Kids</string>
+    <string name="title_activity_main">Sabeel Kids</string>
+    <string name="package_name">com.sabeellkids.app</string>
+    <string name="custom_url_scheme">com.sabeellkids.app</string>
 </resources>

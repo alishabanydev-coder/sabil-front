@@ -15,7 +15,7 @@ import { useState } from "react";
 const faqs = [
   {
     id: "panel1",
-    question: "How can I donate to Sabil Kids?",
+    question: "How can I donate to Sabeel Kids?",
     answer:
       "You can donate directly through the Donate Now button on this page. We accept secure online payments, and you can choose a one-time gift or set up a recurring monthly contribution.",
   },
@@ -35,7 +35,7 @@ const faqs = [
     id: "panel4",
     question: "Is my donation tax deductible?",
     answer:
-      "Sabil Kids operates as a non-profit organization. Depending on your country and local tax laws, your donation may be tax deductible. Please consult your tax advisor for details specific to your situation.",
+      "Sabeel Kids operates as a non-profit organization. Depending on your country and local tax laws, your donation may be tax deductible. Please consult your tax advisor for details specific to your situation.",
   },
 ];
 

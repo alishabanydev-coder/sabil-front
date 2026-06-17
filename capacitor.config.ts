@@ -1,11 +1,11 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const serverUrl =
-  process.env.CAPACITOR_SERVER_URL || "https://sabilkids.com/app";
+  process.env.CAPACITOR_SERVER_URL || "https://sabeelkids.com/app";
 
 const config: CapacitorConfig = {
-  appId: "com.sabilkids.app",
-  appName: "Sabil Kids",
+  appId: "com.sabeellkids.app",
+  appName: "Sabeel Kids",
   webDir: "capacitor-www",
   server: {
     url: serverUrl,

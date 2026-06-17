@@ -146,7 +146,7 @@ const Banner = () => {
               letterSpacing: 2,
             }}
           >
-            this is none profitable organization
+            Sabeel is anone profitable organization
           </Typography>
         </Stack>
 

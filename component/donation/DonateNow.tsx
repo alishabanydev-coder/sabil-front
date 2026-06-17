@@ -1,13 +1,57 @@
 "use client";
 
-import { alpha, Stack, Typography } from "@mui/material";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { alpha, Avatar, IconButton, Stack, Typography } from "@mui/material";
 import { keyframes } from "@mui/system";
-import Diversity2Icon from "@mui/icons-material/Diversity2";
-import { PrimaryButton } from "../ui/PrimaryButton";
-import OdometerNumber from "./component/OdometerNumber";
+import { useRef, useState } from "react";
+import { Autoplay, EffectFade } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/effect-fade";
 import { useInView } from "@/component/donation/hooks/useInViewOnce";
+import OdometerNumber from "./component/OdometerNumber";
 
 const SQUARE_SIZE = 22;
+
+const supporters = [
+  {
+    id: 1,
+    name: "Sarah Ahmed",
+    image: "/avatar1.png",
+    comment:
+      "Sabeel Kids changed how my children learn about Islam. We donate every month.",
+  },
+  {
+    id: 2,
+    name: "Omar Hassan",
+    image: "/avatar2.png",
+    comment:
+      "Beautiful animation and meaningful stories. Proud to support this mission.",
+  },
+  {
+    id: 3,
+    name: "Fatima Ali",
+    image: "/avatar3.png",
+    comment:
+      "Our family loves Al-Furqan. Donating helps keep this content free for everyone.",
+  },
+  {
+    id: 4,
+    name: "Yusuf Khan",
+    image: "/avatar1.png",
+    comment:
+      "The quality of education and entertainment here is unmatched. Thank you, team!",
+  },
+  {
+    id: 5,
+    name: "Amina Noor",
+    image: "/avatar2.png",
+    comment:
+      "I donated in honor of my parents. May this work reach every child who needs it.",
+  },
+];
 
 const donateNowSquareDrift = keyframes`
   from {
@@ -29,9 +73,21 @@ const PATTERN_CENTER_MASK =
 
 const DonateNow = () => {
   const { ref, inView } = useInView();
+  const swiperRef = useRef<SwiperType | null>(null);
+  const [navState, setNavState] = useState({ isBeginning: true, isEnd: false });
+
+  const updateNavState = (swiper: SwiperType) => {
+    setNavState({
+      isBeginning: swiper.isBeginning,
+      isEnd: swiper.isEnd,
+    });
+  };
 
   return (
-    <Stack ref={ref} sx={{ width: "100%", position: "relative", mt: 5 }}>
+    <Stack
+      ref={ref}
+      sx={{ width: "100%", position: "relative", mt: 5, direction: "ltr" }}
+    >
       <Stack
         sx={{
           position: "relative",
@@ -51,21 +107,36 @@ const DonateNow = () => {
             content: '""',
             position: "absolute",
             inset: 0,
-            zIndex: 3,
+            zIndex: 5,
             backgroundImage: (theme) =>
               cornerFadeGradient(alpha(theme.palette.primary.main, 0.5)),
             pointerEvents: "none",
           },
-          "& img": {
+          "& .donate-now-bg": {
             width: "100%",
             height: "100%",
             objectFit: "cover",
             transform: "rotate(-10deg) scale(1.3)",
             filter: "brightness(0.7)",
           },
+          "& .swiper": {
+            position: "absolute",
+            inset: 0,
+            zIndex: 4,
+            width: "100%",
+            height: "100%",
+          },
+          "& .swiper-slide": {
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            pb: { xs: "5%", sm: "10%", md: "12%", lg: "14%" },
+            px: { xs: 3, sm: 6, md: 10 },
+            boxSizing: "border-box",
+          },
         }}
       >
-        <img src="/news2.png" alt="donate now" />
+        <img className="donate-now-bg" src="/news2.png" alt="" aria-hidden />
 
         <Stack
           aria-hidden
@@ -97,82 +168,186 @@ const DonateNow = () => {
             }}
           />
         </Stack>
+
+        <Swiper
+          modules={[EffectFade, Autoplay]}
+          effect="fade"
+          fadeEffect={{ crossFade: true }}
+          slidesPerView={1}
+          speed={700}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+            stopOnLastSlide: true,
+          }}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+            updateNavState(swiper);
+          }}
+          onSlideChange={updateNavState}
+        >
+          {supporters.map((supporter) => (
+            <SwiperSlide key={supporter.id}>
+              <Stack
+                sx={{
+                  width: "100%",
+                  maxWidth: 640,
+                  alignItems: "center",
+                  textAlign: "center",
+                  gap: 1.5,
+                }}
+              >
+                <Typography
+                  component="p"
+                  sx={{
+                    fontSize: { xs: 11, sm: 14, md: 18 },
+                    fontWeight: 500,
+                    fontFamily: "Namecat",
+                    color: "warning.main",
+                    letterSpacing: 1.2,
+                    lineHeight: 1.5,
+                    textShadow: "0 2px 12px rgba(0, 0, 0, 0.45)",
+                  }}
+                >
+                  &ldquo;{supporter.comment}&rdquo;
+                </Typography>
+                <Stack direction="row" sx={{ alignItems: "center", gap: 1 }}>
+                  <Avatar
+                    alt={supporter.name}
+                    src={supporter.image}
+                    sx={{ width: 32, height: 32 }}
+                  />
+                  <Typography
+                    component="p"
+                    sx={{
+                      fontSize: { xs: 9, sm: 12, md: 14 },
+                      fontWeight: 700,
+                      fontFamily: "Namecat",
+                      color: "common.white",
+                      letterSpacing: 2,
+                      textTransform: "uppercase",
+                      textShadow: "0 2px 8px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    {supporter.name}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        <Stack
+          direction="row"
+          sx={{
+            position: "absolute",
+            inset: 0,
+            alignItems: "center",
+            justifyContent: "space-between",
+            px: 1,
+            zIndex: 6,
+            pointerEvents: "none",
+          }}
+        >
+          <Stack sx={{ pointerEvents: "auto" }}>
+            {!navState.isBeginning ? (
+              <IconButton
+                aria-label="Previous supporter comment"
+                onClick={() => swiperRef.current?.slidePrev()}
+                sx={{
+                  bgcolor: "secondary.main",
+                  color: "warning.main",
+                  "&:hover": { bgcolor: "secondary.light" },
+                }}
+              >
+                <NavigateBeforeIcon />
+              </IconButton>
+            ) : null}
+          </Stack>
+
+          <Stack sx={{ pointerEvents: "auto" }}>
+            {!navState.isEnd ? (
+              <IconButton
+                aria-label="Next supporter comment"
+                onClick={() => swiperRef.current?.slideNext()}
+                sx={{
+                  bgcolor: "secondary.main",
+                  color: "warning.main",
+                  "&:hover": { bgcolor: "secondary.light" },
+                }}
+              >
+                <NavigateNextIcon />
+              </IconButton>
+            ) : null}
+          </Stack>
+        </Stack>
       </Stack>
 
       <Stack
         sx={{
           position: "absolute",
-          top: { xs: "15%", sm: "20%", md: "25%", lg: "30%" },
+          top: { xs: "7%", sm: "12%", md: "18%", lg: "22%" },
           width: "100%",
           mx: "auto",
           alignItems: "center",
           gap: { xs: 1, sm: 1.5, md: 2, lg: 3 },
           zIndex: 100,
+          pointerEvents: "none",
         }}
       >
-        <Diversity2Icon
+        <Stack
           sx={{
-            fontSize: { xs: 36, sm: 64, md: 82, lg: 96 },
-            color: "warning.main",
-          }}
-        />
-        <Typography
-          variant="h2"
-          component="h2"
-          sx={{
-            fontSize: { xs: 10, sm: 16, md: 26 },
-            fontWeight: 500,
-            fontFamily: "Namecat",
-            color: "warning.main",
-            letterSpacing: 3,
-            direction: "ltr",
+            flexWrap: "wrap",
+            width: "50%",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
           }}
         >
-          <OdometerNumber
-            value={200}
-            active={inView}
+          <Stack
+            direction="row"
             sx={{
-              fontSize: { xs: 10, sm: 16, md: 26 },
-              fontWeight: 700,
-              fontFamily: "Namecat",
-              letterSpacing: 2,
-              direction: "ltr",
-              color: "warning.main",
-            }}
-          />
-          +
-          {" "}
-          Donors
-        </Typography>
-        <Typography
-          variant="h2"
-          component="h2"
-          sx={{
-            fontSize: { xs: 9, sm: 18, md: 28 },
-            fontWeight: 700,
-            fontFamily: "Namecat",
-            color: "warning.main",
-            letterSpacing: 1.6,
-          }}
-        >
-          Join Our Comunity Donors
-        </Typography>
-        <PrimaryButton
-          sx={{
-            px: { xs: 1.2, sm: 1.5, md: 1.8, lg: 2 },
-            py: { xs: 0.5, sm: 1, md: 1, lg: 1.1 },
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: { xs: 9, sm: 14, md: 18 },
-              fontFamily: "Namecat",
-              letterSpacing: 2,
+              flexWrap: "wrap",
+              gap: 0.7,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            Donate Now
+            {supporters.map((sup) => (
+              <Avatar key={sup.id} alt={sup.name} src={sup.image} />
+            ))}
+          </Stack>
+
+          <Typography
+            variant="h2"
+            component="h2"
+            sx={{
+              fontSize: { xs: 10, sm: 16, md: 26 },
+              fontWeight: 500,
+              fontFamily: "Namecat",
+              color: "warning.main",
+              letterSpacing: 3,
+              direction: "ltr",
+              textAlign: "center",
+            }}
+          >
+            join our community donors
+            <OdometerNumber
+              value={200}
+              active={inView}
+              sx={{
+                fontSize: { xs: 10, sm: 16, md: 26 },
+                fontWeight: 700,
+                fontFamily: "Namecat",
+                letterSpacing: 2,
+                direction: "ltr",
+                color: "warning.main",
+              }}
+            />
+            +
           </Typography>
-        </PrimaryButton>
+        </Stack>
       </Stack>
     </Stack>
   );

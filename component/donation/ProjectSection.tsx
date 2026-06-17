@@ -1,6 +1,7 @@
 import { Stack } from "@mui/material";
 import ProjectSwiper from "./component/ProjectSwiper";
 import SectionHeader from "./component/SectionHeader";
+import ProjectCardSection from "./component/ProjectCardSection";
 
 const ProjectSection = () => {
   return (
@@ -15,7 +16,8 @@ const ProjectSection = () => {
       }}
     >
       <SectionHeader />
-      <ProjectSwiper />
+      {/* <ProjectSwiper /> */}
+      <ProjectCardSection />
     </Stack>
   );
 };

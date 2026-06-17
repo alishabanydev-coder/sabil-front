@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin | Sabil Kids",
+  title: "Admin | Sabeel Kids",
   description: "پنل مدیریت",
 };
 
