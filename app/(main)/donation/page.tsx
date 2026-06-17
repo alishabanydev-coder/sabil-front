@@ -11,7 +11,7 @@ const DonationPage = () => {
         direction: "rtl",
         width: "88%",
         minHeight: "100vh",
-        mx: 'auto',
+        mx: "auto",
         px: { xs: 2, md: 10 },
         pt: { xs: 14, md: 12 },
         pb: { xs: 6, md: 18 },
