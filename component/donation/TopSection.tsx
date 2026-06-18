@@ -1,5 +1,9 @@
+"use client";
+
+import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import { Divider, Stack, Typography } from "@mui/material";
 import Image from "next/image";
+import ReactPlayer from "react-player";
 
 type DonationProject = {
   _id: string;
@@ -9,11 +13,16 @@ type DonationProject = {
   shortDescription: string;
   goalAmount: number;
   raisedAmount: number;
+  videoUrl?: string | null;
 };
 
 const TopSection = ({ projectData }: { projectData: DonationProject }) => {
+  const hasVideoUrl =
+    typeof projectData.videoUrl === "string" &&
+    projectData.videoUrl.trim().length > 0;
+
   return (
-    <Stack sx={{ width: "88%", mx: "auto", gap: 3,  }}>
+    <Stack sx={{ width: "88%", mx: "auto", gap: 3 }}>
       <Stack>
         <Typography
           variant="h2"
@@ -38,9 +47,53 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
           alignItems: "start",
         }}
       >
-        <Stack sx={{ position: "relative", width: "60%", aspectRatio: "16/9" }}>
-          <Image src={"/news1.png"} alt={"project poster"} fill />
-          {/* <Image src={projectData.poster} alt={projectData.title} fill /> */}
+        <Stack
+          sx={{
+            position: "relative",
+            width: "60%",
+            aspectRatio: "16 / 9",
+            borderRadius: 2,
+            overflow: "hidden",
+            bgcolor: "black",
+            flexShrink: 0,
+            "& .react-player__preview": {
+              position: "relative",
+            },
+          }}
+        >
+          {hasVideoUrl ? (
+            <ReactPlayer
+              src={projectData.videoUrl}
+              light={
+                projectData.poster ? (
+                  <img
+                    src={projectData.poster}
+                    alt={projectData.title || "Project intro"}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  true
+                )
+              }
+              playIcon={<WatchPlayerPlayIcon />}
+              previewAriaLabel={`Play ${projectData.title || "video"}`}
+              controls
+              width="100%"
+              height="100%"
+            />
+          ) : (
+            <Image
+              src={projectData.poster}
+              alt={projectData.title}
+              fill
+              sizes="60vw"
+              style={{ objectFit: "cover" }}
+            />
+          )}
         </Stack>
 
         <Stack sx={{ width: "40%", height: "100%", px: 2, gap: 3, pt: 1 }}>
@@ -94,9 +147,8 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
                 textAlign: "left",
               }}
             >
-              {" "}
-              <b> $$ </b> Donators, Raised <b>{projectData.raisedAmount}</b>
-              of <b>{projectData.goalAmount}</b> to bring this project to life.{" "}
+              <b> $$ </b> Donators, Raised <b>{projectData.raisedAmount}</b> of{" "}
+              <b>{projectData.goalAmount}</b> to bring this project to life.
             </Typography>
           </Stack>
         </Stack>

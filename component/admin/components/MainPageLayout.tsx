@@ -87,6 +87,8 @@ type ProjectRecord = {
   thumbnail?: string;
   description?: string;
 };
+// FIXME: fix this Navigation and Pagination issues / show the active Spy navigation 
+
 
 const MainPageLayout = () => {
   const [open, setOpen] = useState(false);

@@ -2,22 +2,63 @@
 
 import { Stack, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
+import Documents from "./component/Documents";
 
-const TabsSection = () => {
+const TabLayout = ({
+  children,
+  value,
+  index,
+}: {
+  children: React.ReactNode;
+  value: number;
+  index: number;
+}) => {
+  return (
+    <Stack sx={{ width: "88%", mx: "auto" }}>
+      {value === index && <>{children}</>}
+    </Stack>
+  );
+};
+
+const TabsSection = ({ projectData }: { projectData: any }) => {
   const [value, setValue] = useState(0);
   return (
     <Stack
       sx={{
         width: "100%",
-        borderTop: "1px solid #e0e0e0",
-        borderBottom: "1px solid #e0e0e0",
+        position: "relative",
       }}
     >
-      <Tabs value={value} onChange={(event, newValue) => setValue(newValue)}>
-        <Tab label="Overview" />
-        <Tab label="Updates" />
-        <Tab label="Comments" />
-      </Tabs>
+      <Stack
+        sx={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+          bgcolor: "background.paper",
+          width: "100%",
+          borderTop: "1px solid #e0e0e0",
+          borderBottom: "1px solid #e0e0e0",
+        }}
+      >
+        <Tabs
+          value={value}
+          onChange={(event, newValue) => setValue(newValue)}
+          sx={{ width: "88%", mx: "auto" }}
+        >
+          <Tab label="Overview" />
+          <Tab label="Updates" />
+          <Tab label="Comments" />
+        </Tabs>
+      </Stack>
+      <TabLayout value={value} index={0}>
+        <Documents projectData={projectData} />
+      </TabLayout>
+      <TabLayout value={value} index={1}>
+        updates
+      </TabLayout>
+      <TabLayout value={value} index={2}>
+        comments
+      </TabLayout>
     </Stack>
   );
 };

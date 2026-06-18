@@ -14,12 +14,12 @@ const DonationProjectPage = () => {
         direction: "ltr",
         gap: 3,
         pt: 12,
-        pb: 25,
+        pb: 10,
       }}
     >
       <TopSection projectData={projectData} />
       <Stack sx={{ width: "100%", bgcolor: "background.paper" }}>
-        <TabsSection />
+        <TabsSection projectData={projectData} />
       </Stack>
     </Stack>
   );

@@ -3,6 +3,7 @@ export const dummyDonationProject = {
   title: "Al-Furqan — Season 1",
   slug: "al-furqan-season-1",
   poster: "/news2.png",
+  videoUrl: "https://www.youtube.com/watch?v=LXb3EKJoInQ",
   shortDescription:
     "An animated series following a young student of the Quran as he learns, grows, and helps his friends discover the beauty of Islam.",
 
