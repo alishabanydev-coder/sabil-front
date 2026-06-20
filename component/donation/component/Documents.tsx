@@ -1,11 +1,9 @@
 "use client";
 
 import { Button, Stack, Typography } from "@mui/material";
-import Image from "next/image";
 import { useMemo, useRef } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { useScrollSpy } from "@/component/donation/hooks/useScrollSpy";
+import ImageSlider from "./ImageSlider";
 
 type DocSection = {
   id: string;
@@ -35,69 +33,12 @@ const SectionImages = ({
 }: {
   images: string[];
   title: string;
-}) => {
-  if (images.length === 0) {
-    return null;
-  }
+}) => <ImageSlider images={images} title={title} />;
 
-  if (images.length === 1) {
-    return (
-      <Stack
-        sx={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "16/9",
-          borderRadius: 2,
-          overflow: "hidden",
-        }}
-      >
-        <Image
-          src={images[0]}
-          alt={title}
-          fill
-          sizes="(max-width: 900px) 100vw, 60vw"
-          style={{ objectFit: "cover" }}
-        />
-      </Stack>
-    );
-  }
-
-  return (
-    <Swiper
-      modules={[Navigation, Pagination, Autoplay]}
-      navigation
-      autoplay={{ delay: 2500, disableOnInteraction: false }}
-      pagination={{ clickable: true }}
-      slidesPerView={1}
-      style={{ width: "100%" }}
-    >
-      {images.map((img, index) => (
-        <SwiperSlide key={`${img}-${index}`}>
-          <Stack
-            sx={{
-              position: "relative",
-              width: "100%",
-              aspectRatio: "16/9",
-              borderRadius: 2,
-              overflow: "hidden",
-            }}
-          >
-            <Image
-              src={img}
-              alt={`${title} ${index + 1}`}
-              fill
-              sizes="(max-width: 900px) 100vw, 60vw"
-              style={{ objectFit: "cover" }}
-            />
-          </Stack>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  );
-};
+const SCROLL_SPY_OFFSET = 120;
 
 const Documents = ({ projectData }: DocumentsProps) => {
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const sections = useMemo(
     () =>
@@ -108,13 +49,16 @@ const Documents = ({ projectData }: DocumentsProps) => {
   );
 
   const navSections = useMemo(() => sections.filter(hasHeader), [sections]);
+  const navSectionIds = useMemo(
+    () => navSections.map((section) => section.id),
+    [navSections]
+  );
 
-  const scrollToSection = (sectionId: string) => {
-    sectionRefs.current[sectionId]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
+  const { activeId: activeSectionId, scrollToSection } = useScrollSpy(
+    navSectionIds,
+    sectionRefs,
+    { offset: SCROLL_SPY_OFFSET }
+  );
 
   if (sections.length === 0) {
     return null;
@@ -125,17 +69,17 @@ const Documents = ({ projectData }: DocumentsProps) => {
       sx={{
         flexDirection: "row",
         width: "100%",
-        // height: "calc(100dvh - 50px)",
       }}
     >
       <Stack
         sx={{
-          width: 220,
+          display: { xs: "none", sm: "flex" },
+          width: { xs: 0, sm: 180, md: 220 },
           flexShrink: 0,
           borderRight: "1px solid #e0e0e0",
           py: 2,
+          pr: 0.5,
           gap: 1,
-
           position: "sticky",
           top: 50,
           alignSelf: "flex-start",
@@ -143,68 +87,71 @@ const Documents = ({ projectData }: DocumentsProps) => {
           overflowY: "auto",
         }}
       >
-        {navSections.map((section) => (
-          <Button
-            key={section.id}
-            variant="text"
-            onClick={() => scrollToSection(section.id)}
-            sx={{ width: "100%", justifyContent: "start" }}
-          >
-            <Typography
-              variant="h6"
+        {navSections.map((section) => {
+          const isActive = activeSectionId === section.id;
+
+          return (
+            <Button
+              key={section.id}
+              variant="text"
+              onClick={() => scrollToSection(section.id)}
               sx={{
                 width: "100%",
-                fontWeight: 700,
-                fontFamily: "Namecat",
-                color: "primary.main",
-                letterSpacing: 2,
-                textTransform: "uppercase",
-                textAlign: "start",
-                fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+                justifyContent: "start",
+                borderRadius: 1,
+                px: 1.5,
+                bgcolor: isActive ? "action.selected" : "transparent",
+                borderLeft: "3px solid",
+                borderColor: isActive ? "primary.main" : "transparent",
+                "&:hover": {
+                  bgcolor: isActive ? "action.selected" : "action.hover",
+                },
               }}
             >
-              {section.header}
-            </Typography>
-          </Button>
-        ))}
+              <Typography
+                variant="h6"
+                sx={{
+                  width: "100%",
+                  fontWeight: isActive ? 800 : 700,
+                  fontFamily: "Namecat",
+                  color: isActive ? "primary.main" : "text.secondary",
+                  letterSpacing: 2,
+                  textTransform: "uppercase",
+                  textAlign: "start",
+                  fontSize: { xs: 10, sm: 10, md: 14, lg: 16, xl: 18 },
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {section.header}
+              </Typography>
+            </Button>
+          );
+        })}
       </Stack>
 
       <Stack
         sx={{
           flex: 1,
-          px: 3,
+          px: { xs: 0, sm: 1, md: 3 },
           py: 2,
           gap: 4,
-          overflow: "auto",
         }}
       >
         {sections.map((section) => (
           <Stack
             key={section.id}
-            id={section.id}
             ref={(node) => {
-              sectionRefs.current[section.id] = node;
+              if (hasHeader(section)) {
+                sectionRefs.current[section.id] = node;
+              }
             }}
+            id={section.id}
             sx={{
-              gap: 3,
-              scrollMarginTop: 8,
-              "& .swiper-button-prev, & .swiper-button-next": {
-                color: "primary.main",
-              },
-              "& .swiper-pagination-bullet": {
-                bgcolor: "grey.600",
-                opacity: 1,
-                width: 8,
-                height: 8,
-              },
-              "& .swiper-pagination-bullet-active": {
-                bgcolor: "primary.main",
-                width: 12,
-                height: 12,
-              },
+              gap: 2,
+              pb: { xs: 0, md: 5 },
+              scrollMarginTop: `${SCROLL_SPY_OFFSET}px`,
             }}
           >
             <SectionImages
@@ -214,6 +161,7 @@ const Documents = ({ projectData }: DocumentsProps) => {
 
             {hasHeader(section) ? (
               <Typography
+                component="h3"
                 sx={{
                   fontWeight: 700,
                   fontFamily: "Namecat",

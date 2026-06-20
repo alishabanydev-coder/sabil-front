@@ -43,11 +43,11 @@ const TabsSection = ({ projectData }: { projectData: any }) => {
         <Tabs
           value={value}
           onChange={(event, newValue) => setValue(newValue)}
-          sx={{ width: "88%", mx: "auto" }}
+          sx={{ width: {xs: "98%", md: "88%"}, mx: "auto" }}
         >
-          <Tab label="Overview" />
-          <Tab label="Updates" />
-          <Tab label="Comments" />
+          <Tab label="Overview" sx={{fontSize: {xs: 10, sm: 12, md: 14, lg: 16, xl: 18}}} />
+          <Tab label="Updates"  sx={{fontSize: {xs: 10, sm: 12, md: 14, lg: 16, xl: 18}}}/>
+          <Tab label="Comments" sx={{fontSize: {xs: 10, sm: 12, md: 14, lg: 16, xl: 18}}} />
         </Tabs>
       </Stack>
       <TabLayout value={value} index={0}>

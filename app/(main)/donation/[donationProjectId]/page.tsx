@@ -13,7 +13,7 @@ const DonationProjectPage = () => {
         mx: "auto",
         direction: "ltr",
         gap: 3,
-        pt: 12,
+        pt: { xs: 8, sm: 10, md: 12 },
         pb: 10,
       }}
     >

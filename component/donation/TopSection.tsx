@@ -31,7 +31,7 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
             fontWeight: 700,
             color: "primary.main",
             fontFamily: "Namecat",
-            fontSize: { xs: 12, sm: 16, md: 26, lg: 32, xl: 40 },
+            fontSize: { xs: 14, sm: 18, md: 26, lg: 32, xl: 40 },
             letterSpacing: 2,
             textTransform: "uppercase",
             textAlign: "center",
@@ -43,14 +43,14 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
 
       <Stack
         sx={{
-          flexDirection: "row",
+          flexDirection: { xs: "column", sm: "row" },
           alignItems: "start",
         }}
       >
         <Stack
           sx={{
             position: "relative",
-            width: "60%",
+            width: { xs: "100%", sm: "60%" },
             aspectRatio: "16 / 9",
             borderRadius: 2,
             overflow: "hidden",
@@ -96,7 +96,15 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
           )}
         </Stack>
 
-        <Stack sx={{ width: "40%", height: "100%", px: 2, gap: 3, pt: 1 }}>
+        <Stack
+          sx={{
+            width: { xs: "100%", sm: "40%" },
+            height: "100%",
+            px: { xs: 0, sm: 2 },
+            gap: 3,
+            pt: { xs: 2, sm: 1 },
+          }}
+        >
           <Stack>
             <Typography
               variant="h2"
