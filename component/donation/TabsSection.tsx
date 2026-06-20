@@ -3,6 +3,7 @@
 import { Stack, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import Documents from "./component/Documents";
+import Updates from "./component/Updates";
 
 const TabLayout = ({
   children,
@@ -43,18 +44,27 @@ const TabsSection = ({ projectData }: { projectData: any }) => {
         <Tabs
           value={value}
           onChange={(event, newValue) => setValue(newValue)}
-          sx={{ width: {xs: "98%", md: "88%"}, mx: "auto" }}
+          sx={{ width: { xs: "98%", md: "88%" }, mx: "auto" }}
         >
-          <Tab label="Overview" sx={{fontSize: {xs: 10, sm: 12, md: 14, lg: 16, xl: 18}}} />
-          <Tab label="Updates"  sx={{fontSize: {xs: 10, sm: 12, md: 14, lg: 16, xl: 18}}}/>
-          <Tab label="Comments" sx={{fontSize: {xs: 10, sm: 12, md: 14, lg: 16, xl: 18}}} />
+          <Tab
+            label="Overview"
+            sx={{ fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 } }}
+          />
+          <Tab
+            label="Updates"
+            sx={{ fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 } }}
+          />
+          <Tab
+            label="Comments"
+            sx={{ fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 } }}
+          />
         </Tabs>
       </Stack>
       <TabLayout value={value} index={0}>
         <Documents projectData={projectData} />
       </TabLayout>
       <TabLayout value={value} index={1}>
-        updates
+        <Updates projectData={projectData} />
       </TabLayout>
       <TabLayout value={value} index={2}>
         comments
