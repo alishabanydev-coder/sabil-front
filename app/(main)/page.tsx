@@ -9,7 +9,6 @@ import LetUsCallYou from "@/component/home/letUsCallYou/LetUsCallYou";
 import { fetchPublicMainPageLayoutItems } from "@/component/admin/services/mainPageLayoutApi";
 import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
 import { fetchPublicAboutUs } from "@/component/admin/services/aboutUsApi";
-import { fetchPublicDonation } from "@/component/admin/services/donationApi";
 import ProjectCatalogue from "@/component/home/projectCatalogue/ProjectCatalogue";
 
 const sections = [
@@ -37,7 +36,6 @@ const fetchPublicSectionData = async () => {
 
 export default async function Home() {
   const aboutUsResult = await fetchPublicAboutUs();
-  const donationResult = await fetchPublicDonation();
   const publicSectionData = await fetchPublicSectionData();
   const socialMediaResult = await fetchPublicSocialMediaLinks();
 
@@ -55,7 +53,6 @@ export default async function Home() {
         <Banner
           bannerData={publicSectionData.banner}
           aboutUs={aboutUsResult.ok ? aboutUsResult.aboutUs : null}
-          donation={donationResult.ok ? donationResult.donation : null}
         />
       </Box>
       <Box id="subscription" sx={sectionAnchorSx}>

@@ -35,7 +35,6 @@ const PERMISSION_TAB_KEYS = [
   "users",
   "socialMedia",
   "aboutUs",
-  "donation",
 ] as const;
 
 type PermissionTabKey = (typeof PERMISSION_TAB_KEYS)[number];
@@ -51,7 +50,6 @@ const PERMISSION_TAB_LABELS: Record<PermissionTabKey, string> = {
   users: "Users",
   socialMedia: "Social Media",
   aboutUs: "About Us",
-  donation: "Donation",
 };
 
 type AdminRecord = {

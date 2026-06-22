@@ -29,8 +29,8 @@ import Comment from "./components/Comment";
 import Users from "./components/Users";
 import MainPageLayout from "./components/MainPageLayout";
 import AboutUs from "./components/AboutUs";
-import Donation from "./components/Donation";
 import Catalogue from "./components/Catalogue";
+import Donation from "./components/Donation";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -236,7 +236,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
 
   const selectedTabValue = visibleTabs.some((tab) => tab.id === value)
     ? value
-    : (visibleTabs[0]?.id ?? 0);
+    : visibleTabs[0]?.id ?? 0;
 
   return (
     <Stack

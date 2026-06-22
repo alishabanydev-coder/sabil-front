@@ -7,21 +7,11 @@ const textXs = `A GATEWAY TO \n THE FUTURE`;
 
 const Leftside = ({
   onOpenAboutUsModal,
-  donation,
 }: {
   onOpenAboutUsModal: () => void;
-  donation: { name?: string; link?: string } | null;
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const donationName =
-    typeof donation?.name === "string" && donation.name.trim()
-      ? donation.name
-      : "Donate Here";
-  const donationLink =
-    typeof donation?.link === "string" && donation.link.trim()
-      ? donation.link
-      : "";
 
   return (
     <Stack
@@ -119,13 +109,9 @@ const Leftside = ({
               py: { xs: 0.3, sm: 0.3, md: 1 },
               letterSpacing: 2,
             }}
-            onClick={() => {
-              if (donationLink) {
-                window.open(donationLink, "_blank", "noopener,noreferrer");
-              }
-            }}
+            href={"/donation"}
           >
-            {donationName}
+            Donate Now
           </PrimaryButton>
         </Stack>
       </Stack>

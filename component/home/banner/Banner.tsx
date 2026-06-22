@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Modal, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import Image from "next/image";
 import Leftside from "./components/Leftside";
 import Rightside from "./components/Rightside";
@@ -27,19 +27,12 @@ type AboutUsPage = {
   videoUrl: string;
 };
 
-type DonationSettings = {
-  name: string;
-  link: string;
-};
-
 const Banner = ({
   bannerData,
   aboutUs,
-  donation,
 }: {
   bannerData: BannerData[];
   aboutUs: AboutUsPage | null;
-  donation: DonationSettings | null;
 }) => {
   const bannerSwiperRef = useRef<any>(null);
   const [openAboutUsModal, setOpenAboutUsModal] = useState(false);
@@ -57,8 +50,13 @@ const Banner = ({
         aspectRatio: { xs: "16 / 8", sm: "16 / 6.5" },
       }}
     >
-      <Image src="/banner.png" alt="some image" fill style={{ objectFit: "fill" }} />
-      <Leftside onOpenAboutUsModal={onOpenAboutUsModal} donation={donation} />
+      <Image
+        src="/banner.png"
+        alt="some image"
+        fill
+        style={{ objectFit: "fill" }}
+      />
+      <Leftside onOpenAboutUsModal={onOpenAboutUsModal} />
       <Rightside
         onSwiperInit={(swiper) => (bannerSwiperRef.current = swiper)}
         bannerData={bannerData || []}
