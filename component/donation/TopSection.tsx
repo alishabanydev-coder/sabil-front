@@ -1,7 +1,7 @@
 "use client";
 
 import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
-import { Divider, Stack, Typography } from "@mui/material";
+import { alpha, Divider, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import ReactPlayer from "react-player";
 
@@ -13,7 +13,14 @@ type DonationProject = {
   shortDescription: string;
   goalAmount: number;
   raisedAmount: number;
+  donorCount: number;
+  currency?: "USD" | "INR" | string;
   videoUrl?: string | null;
+};
+
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: "$",
+  INR: "₹",
 };
 
 const TopSection = ({ projectData }: { projectData: DonationProject }) => {
@@ -21,6 +28,8 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
     typeof projectData.videoUrl === "string" &&
     projectData.videoUrl.trim().length > 0;
 
+  const currencySymbol =
+    CURRENCY_SYMBOLS[projectData.currency ?? "USD"] ?? "$";
   return (
     <Stack sx={{ width: "88%", mx: "auto", gap: 3 }}>
       <Stack>
@@ -54,7 +63,7 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
             aspectRatio: "16 / 9",
             borderRadius: 2,
             overflow: "hidden",
-            bgcolor: "black",
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.3),
             flexShrink: 0,
             "& .react-player__preview": {
               position: "relative",
@@ -72,7 +81,7 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
                     style={{
                       width: "100%",
                       height: "100%",
-                      objectFit: "cover",
+                      objectFit: "contain",
                     }}
                   />
                 ) : (
@@ -91,7 +100,7 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
               alt={projectData.title}
               fill
               sizes="60vw"
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: "contain" }}
             />
           )}
         </Stack>
@@ -155,8 +164,17 @@ const TopSection = ({ projectData }: { projectData: DonationProject }) => {
                 textAlign: "left",
               }}
             >
-              <b> $$ </b> Donators, Raised <b>{projectData.raisedAmount}</b> of{" "}
-              <b>{projectData.goalAmount}</b> to bring this project to life.
+              <b>{projectData.donorCount}</b> Donators, Raised{" "}
+              <b>
+                {currencySymbol}
+                {projectData.raisedAmount}
+              </b>{" "}
+              of{" "}
+              <b>
+                {currencySymbol}
+                {projectData.goalAmount}
+              </b>{" "}
+              to bring this project to life.
             </Typography>
           </Stack>
         </Stack>

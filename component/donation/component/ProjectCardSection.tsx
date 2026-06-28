@@ -1,42 +1,9 @@
 "use client";
 
-import { LinearProgress, Stack, Typography } from "@mui/material";
+import { alpha, LinearProgress, Stack, Typography } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import { PrimaryButton } from "@/component/ui/PrimaryButton";
-
-const projects = [
-  {
-    id: 1,
-    name: "Project 1 - Al-Furqan",
-    description:
-      "This project is about the story of Al-Furqan, a young boy who is a student of the Quran. He is a good student and he is always willing to help his friends.",
-    image: "/news2.png",
-  },
-
-  {
-    id: 2,
-    name: "Project 2 - Al-Furqan",
-    description:
-      "This project is about the story of Al-Furqan, a young boy who is a student of the Quran. He is a good student and he is always willing to help his friends.",
-    image: "/news2.png",
-  },
-
-  {
-    id: 3,
-    name: "Project 3 - Al-Furqan",
-    description:
-      "This project is about the story of Al-Furqan, a young boy who is a student of the Quran. He is a good student and he is always willing to help his friends.",
-    image: "/news2.png",
-  },
-
-  {
-    id: 4,
-    name: "Project 4 - Al-Furqan",
-    description:
-      "This project is about the story of Al-Furqan, a young boy who is a student of the Quran. He is a good student and he is always willing to help his friends.",
-    image: "/news2.png",
-  },
-];
 
 const cardShellSx = {
   width: "100%",
@@ -55,30 +22,51 @@ const titleSx = {
   letterSpacing: 2,
 } as const;
 
-type Project = (typeof projects)[number];
+export type PublicDonationProjectCard = {
+  _id: string;
+  slug: string;
+  title: string;
+  shortDescription?: string;
+  poster: string;
+  goalAmount?: number;
+  raisedAmount?: number;
+};
+
+const getProgressValue = (project: PublicDonationProjectCard) => {
+  const goal = Number(project.goalAmount ?? 0);
+  const raised = Number(project.raisedAmount ?? 0);
+
+  if (!Number.isFinite(goal) || goal <= 0) {
+    return 0;
+  }
+
+  return Math.min(100, Math.round((raised / goal) * 100));
+};
 
 const ProjectCardContent = ({
   project,
   paddingSide,
 }: {
-  project: Project;
+  project: PublicDonationProjectCard;
   paddingSide: "pl" | "pr";
 }) => (
   <Stack
     sx={{
-      width: "35%",
+      width: "45%",
       alignItems: "start",
       justifyContent: "space-evenly",
       ...(paddingSide === "pl" ? { pl: 2 } : { pr: 2 }),
     }}
   >
     <Typography variant="h6" sx={titleSx}>
-      {project.name}
+      {project.title}
     </Typography>
-    <Typography variant="body1">{project.description}</Typography>
+    <Typography variant="body1">
+      {project.shortDescription?.trim() || "Support this project."}
+    </Typography>
     <LinearProgress
       aria-label="Donation progress"
-      value={50}
+      value={getProgressValue(project)}
       variant="determinate"
       sx={{ width: "100%", height: 12, borderRadius: 10 }}
     />
@@ -92,7 +80,7 @@ const ProjectCardImage = ({
   imageSizes,
   buttonSide,
 }: {
-  project: Project;
+  project: PublicDonationProjectCard;
   width: string;
   clipPath: string;
   imageSizes: string;
@@ -106,46 +94,56 @@ const ProjectCardImage = ({
       overflow: "hidden",
       clipPath,
       "& img": {
+        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.3),
         boxShadow: (theme) =>
           `-50px 13px 50px 20px ${theme.palette.primary.main}`,
       },
     }}
   >
     <Image
-      src={project.image}
-      alt={project.name}
+      src={project.poster || "/news2.png"}
+      alt={project.title}
       fill
       sizes={imageSizes}
-      style={{ objectFit: "cover" }}
+      style={{ objectFit: "contain" }}
     />
     <Stack
       sx={{
         position: "absolute",
-        bottom: "8%",
-        ...(buttonSide === "left" ? { left: "25%" } : { right: "25%" }),
+        bottom: "5%",
+        ...(buttonSide === "left" ? { left: "15%" } : { right: "15%" }),
       }}
     >
-      <PrimaryButton sx={{ px: 1, py: 0.8 }}>
-        <Typography
-          variant="body1"
-          sx={{
-            fontSize: { xs: 10, sm: 12, md: 14, lg: 16 },
-            fontFamily: "Namecat",
-            letterSpacing: 2,
-          }}
-        >
-          More Details
-        </Typography>
-      </PrimaryButton>
+      <Link
+        href={`/donation/${project.slug || project._id}`}
+        style={{ textDecoration: "none" }}
+      >
+        <PrimaryButton sx={{ px: 1, py: 0.8 }}>
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: 10, sm: 12, md: 14, lg: 16 },
+              fontFamily: "Namecat",
+              letterSpacing: 2,
+            }}
+          >
+            More Details
+          </Typography>
+        </PrimaryButton>
+      </Link>
     </Stack>
   </Stack>
 );
 
-const EvenProjectCard = ({ project }: { project: Project }) => (
+const EvenProjectCard = ({
+  project,
+}: {
+  project: PublicDonationProjectCard;
+}) => (
   <>
     <ProjectCardImage
       project={project}
-      width="65%"
+      width="55%"
       clipPath="polygon(0 0, 75% 0, 100% 100%, 0 100%)"
       imageSizes="65vw"
       buttonSide="left"
@@ -154,12 +152,16 @@ const EvenProjectCard = ({ project }: { project: Project }) => (
   </>
 );
 
-const OddProjectCard = ({ project }: { project: Project }) => (
+const OddProjectCard = ({
+  project,
+}: {
+  project: PublicDonationProjectCard;
+}) => (
   <>
     <ProjectCardContent project={project} paddingSide="pl" />
     <ProjectCardImage
       project={project}
-      width="65%"
+      width="55%"
       clipPath="polygon(0 0, 100% 0, 100% 100%, 25% 100%)"
       imageSizes="65vw"
       buttonSide="right"
@@ -167,11 +169,23 @@ const OddProjectCard = ({ project }: { project: Project }) => (
   </>
 );
 
-const ProjectCardSection = () => {
+const ProjectCardSection = ({
+  projects,
+}: {
+  projects: PublicDonationProjectCard[];
+}) => {
+  if (projects.length === 0) {
+    return (
+      <Typography variant="body2" sx={{ color: "text.secondary", py: 2 }}>
+        No donation projects available right now.
+      </Typography>
+    );
+  }
+
   return (
     <Stack sx={{ width: "100%", gap: 2 }}>
       {projects.map((project, index) => (
-        <Stack key={project.id} sx={cardShellSx}>
+        <Stack key={project._id} sx={cardShellSx}>
           {index % 2 === 0 ? (
             <EvenProjectCard project={project} />
           ) : (

@@ -1,26 +1,107 @@
-import { Button, Stack } from "@mui/material";
-import { useState } from "react";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import {
+  Button,
+  CircularProgress,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
 import DonationModal from "./donation/DonationModal";
+import {
+  deleteDonationProject,
+  fetchDonationProjects,
+  revalidateDonationProjectsPublicCache,
+} from "../services/donationApi";
 
-// FIXME: list order should't be managed my number, open modal to select list order
-// FIXME: create modal for this Updates, FAQs, Sections <Each different modal>
-// FIXME: add backend service for this, make it POST / GET / DELETE
-// FIXME: add Edit Modal with Different UI and Tabs for Comments
-// FIXME: card or the project have more icon and menu that contain DELETE/EDIT/CHAT
-// FIXME: manage the comments for each DonationProject and each BLOG/BREAKDOWN(updates)
+type DonationProjectRecord = {
+  _id: string;
+  title: string;
+  status?: string;
+  goalAmount?: number;
+  raisedAmount?: number;
+  currency?: string;
+  listOrder?: number | null;
+  showOnDonationPage?: boolean;
+};
 
 const Donation = () => {
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [donationProjects, setDonationProjects] = useState<DonationProjectRecord[]>(
+    []
+  );
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const loadDonationProjects = useCallback(async () => {
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const result = await fetchDonationProjects();
+
+      if (!result.ok) {
+        setDonationProjects([]);
+        setErrorMsg(result.message);
+        return;
+      }
+
+      setDonationProjects(result.donationProjects);
+    } catch (error) {
+      setDonationProjects([]);
+      setErrorMsg(
+        error instanceof Error
+          ? error.message
+          : "Failed to load donation projects."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadDonationProjects();
+  }, [loadDonationProjects]);
 
   const handleAddDonation = () => {
     setIsEditing(false);
+    setEditingProjectId(null);
+    setOpen(true);
+  };
+
+  const handleEditDonation = (projectId: string) => {
+    setIsEditing(true);
+    setEditingProjectId(projectId);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
     setIsEditing(false);
+    setEditingProjectId(null);
+  };
+
+  const handleDeleteDonation = async (projectId: string) => {
+    setDeletingId(projectId);
+    setErrorMsg("");
+
+    try {
+      const result = await deleteDonationProject(projectId);
+
+      if (!result.ok) {
+        setErrorMsg(result.message);
+        return;
+      }
+
+      await revalidateDonationProjectsPublicCache();
+      await loadDonationProjects();
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -67,11 +148,76 @@ const Donation = () => {
             px: 2,
             pb: 2,
             overflow: "auto",
+            gap: 1.5,
           }}
-        ></Stack>
+        >
+          {loading ? (
+            <Stack sx={{ alignItems: "center", py: 4 }}>
+              <CircularProgress size={28} />
+            </Stack>
+          ) : errorMsg ? (
+            <Typography variant="body2" sx={{ color: "error.main" }}>
+              {errorMsg}
+            </Typography>
+          ) : donationProjects.length === 0 ? (
+            <Typography variant="body2" sx={{ color: "text.secondary", py: 2 }}>
+              No donation projects yet.
+            </Typography>
+          ) : (
+            donationProjects.map((project) => (
+              <Stack
+                key={project._id}
+                sx={{
+                  width: "100%",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 2,
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
+                  borderRadius: 2,
+                  p: 1.5,
+                }}
+              >
+                <Stack sx={{ gap: 0.5 }}>
+                  <Typography sx={{ fontWeight: 700 }}>{project.title}</Typography>
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                    {`${project.status ?? "ongoing"} · ${project.currency ?? "USD"} ${project.raisedAmount ?? 0} / ${project.goalAmount ?? 0}`}
+                    {project.listOrder ? ` · order ${project.listOrder}` : ""}
+                  </Typography>
+                </Stack>
+
+                <Stack sx={{ flexDirection: "row", gap: 0.5 }}>
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    aria-label="Edit donation project"
+                    onClick={() => handleEditDonation(project._id)}
+                  >
+                    <EditOutlinedIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    aria-label="Delete donation project"
+                    disabled={deletingId === project._id}
+                    onClick={() => void handleDeleteDonation(project._id)}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+              </Stack>
+            ))
+          )}
+        </Stack>
       </Stack>
 
-      <DonationModal open={open} isEditing={isEditing} onClose={handleClose} />
+      <DonationModal
+        open={open}
+        isEditing={isEditing}
+        editingProjectId={editingProjectId}
+        onClose={handleClose}
+        onSaved={loadDonationProjects}
+      />
     </Stack>
   );
 };

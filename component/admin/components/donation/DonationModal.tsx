@@ -20,12 +20,30 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import { fetchProjects } from "../../services/projectsApi";
+import {
+  createDonationProject,
+  fetchDonationProject,
+  revalidateDonationProjectsPublicCache,
+  updateDonationProject,
+} from "../../services/donationApi";
+import { fetchBlogs } from "../../services/blogApi";
+import { fetchBreakdowns } from "../../services/breakdownApi";
 import DonationDateFields from "../DonationDateFields";
 import AddSection from "./AddSection";
 import AddUpdate from "./AddUpdate";
 import AddFAQ from "./AddFAQ";
+import {
+  hydrateUpdateRefs,
+  mapFaqFromApi,
+  mapSectionsFromApi,
+  mapUpdateRefsToPayload,
+  type FaqDraft,
+  type SectionDraft,
+  type UpdateDraft,
+} from "./donationDrafts";
 
 const CURRENCIES = {
   USD: { symbol: "$", label: "USD" },
@@ -45,7 +63,9 @@ type DonationStatus = "ongoing" | "finished" | "paused";
 type DonationModalProps = {
   open: boolean;
   isEditing: boolean;
+  editingProjectId: string | null;
   onClose: () => void;
+  onSaved: () => void;
 };
 
 function getProjectId(project: ProjectRecord) {
@@ -118,16 +138,24 @@ const IOSSwitch = styled((props: SwitchProps) => (
 
 type SecondaryModal = "section" | "update" | "faq" | null;
 
-const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
+const DonationModal = ({
+  open,
+  isEditing,
+  editingProjectId,
+  onClose,
+  onSaved,
+}: DonationModalProps) => {
   const [secondaryModal, setSecondaryModal] = useState<SecondaryModal>(null);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
+  const [existingPoster, setExistingPoster] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [goalAmount, setGoalAmount] = useState("");
   const [raisedAmount, setRaisedAmount] = useState("");
+  const [donorCount, setDonorCount] = useState("");
   const [currency, setCurrency] = useState<CurrencyCode>("USD");
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
@@ -138,19 +166,108 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
   const [type, setType] = useState<DonationStatus>("ongoing");
   const [showOnDonationPage, setShowOnDonationPage] = useState(true);
   const [listOrder, setListOrder] = useState("");
+  const [sections, setSections] = useState<SectionDraft[]>([]);
+  const [faqs, setFaqs] = useState<FaqDraft[]>([]);
+  const [updates, setUpdates] = useState<UpdateDraft[]>([]);
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingProject, setIsLoadingProject] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currencyMeta = getCurrencyMeta(currency);
 
   useEffect(() => {
-    if (!image) {
-      setImagePreview(null);
+    if (image) {
+      const url = URL.createObjectURL(image);
+      setImagePreview(url);
+      return () => URL.revokeObjectURL(url);
+    }
+
+    setImagePreview(existingPoster);
+  }, [image, existingPoster]);
+
+  useEffect(() => {
+    if (!open) {
       return;
     }
 
-    const url = URL.createObjectURL(image);
-    setImagePreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [image]);
+    const controller = new AbortController();
+
+    const loadProject = async () => {
+      if (!isEditing || !editingProjectId) {
+        resetForm();
+        return;
+      }
+
+      setIsLoadingProject(true);
+      setSubmitError("");
+
+      try {
+        const [projectResult, blogResult, breakdownResult] = await Promise.all([
+          fetchDonationProject(editingProjectId, { signal: controller.signal }),
+          fetchBlogs({ signal: controller.signal }),
+          fetchBreakdowns({ signal: controller.signal }),
+        ]);
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        if (!projectResult.ok || !projectResult.donationProject) {
+          setSubmitError(
+            projectResult.message || "Failed to load donation project."
+          );
+          return;
+        }
+
+        const project = projectResult.donationProject;
+
+        setTitle(project.title ?? "");
+        setDescription(project.shortDescription ?? "");
+        setExistingPoster(project.poster ?? null);
+        setImage(null);
+        setVideoUrl(project.videoUrl ?? "");
+        setGoalAmount(String(project.goalAmount ?? ""));
+        setRaisedAmount(String(project.raisedAmount ?? 0));
+        setDonorCount(String(project.donorCount ?? 0));
+        setCurrency(project.currency === "INR" ? "INR" : "USD");
+        setStartDate(project.startDate ? dayjs(project.startDate) : null);
+        setEndDate(project.endDate ? dayjs(project.endDate) : null);
+        setProjectId(project.projectId ? String(project.projectId) : "");
+        setType(project.status ?? "ongoing");
+        setShowOnDonationPage(Boolean(project.showOnDonationPage));
+        setListOrder(
+          project.listOrder !== null && project.listOrder !== undefined
+            ? String(project.listOrder)
+            : ""
+        );
+        setSections(mapSectionsFromApi(project.sections));
+        setFaqs(mapFaqFromApi(project.faq));
+        setUpdates(
+          hydrateUpdateRefs(
+            project.updateRefs,
+            blogResult.ok ? blogResult.blogs : [],
+            breakdownResult.ok ? breakdownResult.breakdowns : []
+          )
+        );
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setSubmitError(
+            error instanceof Error
+              ? error.message
+              : "Failed to load donation project."
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingProject(false);
+        }
+      }
+    };
+
+    void loadProject();
+
+    return () => controller.abort();
+  }, [open, isEditing, editingProjectId]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -201,6 +318,7 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
 
   const handleRemoveImage = () => {
     setImage(null);
+    setExistingPoster(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -232,6 +350,22 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
     }
   };
 
+  const handleDonorCountChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = event.target;
+
+    if (value === "") {
+      setDonorCount("");
+      return;
+    }
+
+    const parsed = Number(value);
+    if (Number.isInteger(parsed) && parsed >= 0) {
+      setDonorCount(String(parsed));
+    }
+  };
+
   const resetForm = () => {
     setType("ongoing");
     setProjectId("");
@@ -242,10 +376,16 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
     setVideoUrl("");
     setGoalAmount("");
     setRaisedAmount("");
+    setDonorCount("");
     setCurrency("USD");
     setStartDate(null);
     setEndDate(null);
     setImage(null);
+    setExistingPoster(null);
+    setSections([]);
+    setFaqs([]);
+    setUpdates([]);
+    setSubmitError("");
     setSecondaryModal(null);
   };
 
@@ -254,6 +394,76 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
   const handleCancel = () => {
     resetForm();
     onClose();
+  };
+
+  const handleSubmit = async () => {
+    if (isSubmitting || isLoadingProject) {
+      return;
+    }
+
+    if (!title.trim()) {
+      setSubmitError("Title is required.");
+      return;
+    }
+
+    if (!goalAmount.trim() || Number.isNaN(Number(goalAmount))) {
+      setSubmitError("Goal amount is required.");
+      return;
+    }
+
+    if (!startDate) {
+      setSubmitError("Start date is required.");
+      return;
+    }
+
+    if (!image && !existingPoster) {
+      setSubmitError("Poster image is required.");
+      return;
+    }
+
+    setSubmitError("");
+    setIsSubmitting(true);
+
+    try {
+      const payload = {
+        title: title.trim(),
+        shortDescription: description.trim(),
+        poster: image ?? undefined,
+        existingPoster: existingPoster ?? undefined,
+        videoUrl: videoUrl.trim(),
+        goalAmount: Number(goalAmount),
+        raisedAmount: raisedAmount.trim() ? Number(raisedAmount) : 0,
+        donorCount: donorCount.trim() ? Number(donorCount) : 0,
+        currency,
+        status: type,
+        startDate: startDate.toISOString(),
+        endDate: endDate ? endDate.toISOString() : "",
+        projectId,
+        showOnDonationPage,
+        listOrder: listOrder.trim() ? Number(listOrder) : "",
+        sections,
+        faq: faqs,
+        updateRefs: mapUpdateRefsToPayload(updates),
+      };
+
+      const result =
+        isEditing && editingProjectId
+          ? await updateDonationProject(editingProjectId, payload)
+          : await createDonationProject(payload);
+
+      if (!result.ok) {
+        setSubmitError(result.message || "Failed to save donation project.");
+        return;
+      }
+
+      await revalidateDonationProjectsPublicCache();
+
+      resetForm();
+      onSaved();
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -333,7 +543,7 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
                       sx={{
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
+                        objectFit: "contain",
                       }}
                     />
                     <IconButton
@@ -457,6 +667,20 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
                 }}
               />
               <TextField
+                label="Donors"
+                variant="standard"
+                type="number"
+                value={donorCount}
+                onChange={handleDonorCountChange}
+                fullWidth
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                    step: 1,
+                  },
+                }}
+              />
+              <TextField
                 label="Currency"
                 variant="standard"
                 select
@@ -544,56 +768,29 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
                 },
               }}
             >
-              <ButtonGroup
-                color="primary"
-                aria-label="sections-buttons-options"
-                sx={{
-                  width: "100%",
-                }}
+              <Button
+                className="add-button"
+                variant="contained"
+                onClick={() => setSecondaryModal("section")}
               >
-                <Button
-                  className="add-button"
-                  variant="contained"
-                  onClick={() => setSecondaryModal("section")}
-                >
-                  Add Sections
-                </Button>
-                <Button className="display-button">Display Sections</Button>
-              </ButtonGroup>
+                Add Sections
+              </Button>
 
-              <ButtonGroup
-                color="primary"
-                aria-label="FAQ-buttons-options"
-                sx={{
-                  width: "100%",
-                }}
+              <Button
+                className="add-button"
+                variant="contained"
+                onClick={() => setSecondaryModal("faq")}
               >
-                <Button
-                  className="add-button"
-                  variant="contained"
-                  onClick={() => setSecondaryModal("faq")}
-                >
-                  Add FAQs
-                </Button>
-                <Button className="display-button">Display FAQs</Button>
-              </ButtonGroup>
+                Add FAQs
+              </Button>
 
-              <ButtonGroup
-                color="primary"
-                aria-label="Updates-buttons-options"
-                sx={{
-                  width: "100%",
-                }}
+              <Button
+                className="add-button"
+                variant="contained"
+                onClick={() => setSecondaryModal("update")}
               >
-                <Button
-                  className="add-button"
-                  variant="contained"
-                  onClick={() => setSecondaryModal("update")}
-                >
-                  Add Updates
-                </Button>
-                <Button className="display-button">Display Updates</Button>
-              </ButtonGroup>
+                Add Updates
+              </Button>
             </Stack>
 
             <Stack
@@ -703,6 +900,47 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
                 label="showOnDonationPage"
               />
             </Stack>
+
+            {submitError ? (
+              <Typography
+                variant="body2"
+                sx={{ color: "error.main", width: "100%" }}
+              >
+                {submitError}
+              </Typography>
+            ) : null}
+
+            {isLoadingProject ? (
+              <Typography
+                variant="body2"
+                sx={{ color: "text.secondary", width: "100%" }}
+              >
+                Loading donation project...
+              </Typography>
+            ) : null}
+
+            <Stack
+              sx={{
+                direction: "ltr",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                gap: 1,
+                width: "100%",
+                pt: 1,
+              }}
+            >
+              <Button variant="outlined" color="primary" onClick={handleCancel}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting || isLoadingProject}
+                onClick={() => void handleSubmit()}
+              >
+                {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}
+              </Button>
+            </Stack>
           </Stack>
         </Stack>
       </Modal>
@@ -710,14 +948,24 @@ const DonationModal = ({ open, isEditing, onClose }: DonationModalProps) => {
       <AddSection
         open={secondaryModal === "section"}
         onClose={closeSecondaryModal}
+        sections={sections}
+        onSectionsChange={setSections}
       />
 
       <AddUpdate
         open={secondaryModal === "update"}
         onClose={closeSecondaryModal}
+        updates={updates}
+        onUpdatesChange={setUpdates}
+        projectId={projectId}
       />
 
-      <AddFAQ open={secondaryModal === "faq"} onClose={closeSecondaryModal} />
+      <AddFAQ
+        open={secondaryModal === "faq"}
+        onClose={closeSecondaryModal}
+        faqs={faqs}
+        onFaqsChange={setFaqs}
+      />
     </>
   );
 };

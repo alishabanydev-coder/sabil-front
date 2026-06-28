@@ -1,10 +1,22 @@
 import TabsSection from "@/component/donation/TabsSection";
 import TopSection from "@/component/donation/TopSection";
-import { dummyDonationProject } from "@/component/donation/dummy/donationProject";
+import { fetchPublicDonationProject } from "@/component/donation/services/donationPublicApi";
 import { Stack } from "@mui/material";
+import { notFound } from "next/navigation";
 
-const DonationProjectPage = () => {
-  const projectData = dummyDonationProject;
+const DonationProjectPage = async ({
+  params,
+}: {
+  params: Promise<{ donationProjectId: string }>;
+}) => {
+  const { donationProjectId } = await params;
+  const result = await fetchPublicDonationProject(donationProjectId);
+
+  if (!result.ok || !result.donationProject) {
+    notFound();
+  }
+
+  const projectData = result.donationProject;
 
   return (
     <Stack

@@ -16,31 +16,7 @@ import {
 } from "@mui/material";
 import { secondaryModalSlotProps } from "./secondaryModalBackdrop";
 import ImageSlider from "@/component/donation/component/ImageSlider";
-
-type SectionDraft = {
-  id: string;
-  header: string;
-  text: string;
-  images: string[];
-  order: number;
-};
-
-const INITIAL_SECTIONS: SectionDraft[] = [
-  {
-    id: "seed-1",
-    header: "What is this project?",
-    text: "A family-friendly animation project for children.",
-    images: ["/news2.png", "/news1.png"],
-    order: 0,
-  },
-  {
-    id: "seed-2",
-    header: "Our goals",
-    text: "Complete Season 1 — animation, voice acting, and distribution.",
-    images: ["/banner.png"],
-    order: 1,
-  },
-];
+import type { SectionDraft, SectionImageDraft } from "./donationDrafts";
 
 const createId = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -50,24 +26,37 @@ const createId = () =>
 const reindex = (sections: SectionDraft[]) =>
   sections.map((section, index) => ({ ...section, order: index }));
 
+const getImageUrls = (images: SectionImageDraft[]) =>
+  images.map((image) => image.url);
+
 const AddSection = ({
   open,
   onClose,
+  sections,
+  onSectionsChange,
 }: {
   open: boolean;
   onClose: () => void;
+  sections: SectionDraft[];
+  onSectionsChange: (sections: SectionDraft[]) => void;
 }) => {
-  const [sections, setSections] = useState<SectionDraft[]>(INITIAL_SECTIONS);
+  const [localSections, setLocalSections] = useState<SectionDraft[]>(sections);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<SectionImageDraft[]>([]);
 
   const formRef = useRef<HTMLDivElement>(null);
 
   const isValid = title.trim().length > 0;
   const isEditing = editingId !== null;
+
+  useEffect(() => {
+    if (open) {
+      setLocalSections(sections);
+    }
+  }, [open, sections]);
 
   useEffect(() => {
     if (showForm && editingId) {
@@ -88,7 +77,10 @@ const AddSection = ({
       return;
     }
 
-    const urls = files.map((file) => URL.createObjectURL(file));
+    const urls = files.map((file) => ({
+      url: URL.createObjectURL(file),
+      file,
+    }));
     setImages((prev) => [...prev, ...urls]);
     event.target.value = "";
   };
@@ -121,7 +113,7 @@ const AddSection = ({
     }
 
     if (editingId) {
-      setSections((prev) =>
+      setLocalSections((prev) =>
         prev.map((section) =>
           section.id === editingId
             ? { ...section, header: title.trim(), text: text.trim(), images }
@@ -129,7 +121,7 @@ const AddSection = ({
         )
       );
     } else {
-      setSections((prev) => [
+      setLocalSections((prev) => [
         ...prev,
         {
           id: createId(),
@@ -146,11 +138,11 @@ const AddSection = ({
   };
 
   const handleRemove = (id: string) => {
-    setSections((prev) => reindex(prev.filter((section) => section.id !== id)));
+    setLocalSections((prev) => reindex(prev.filter((section) => section.id !== id)));
   };
 
   const handleMove = (index: number, direction: -1 | 1) => {
-    setSections((prev) => {
+    setLocalSections((prev) => {
       const target = index + direction;
       if (target < 0 || target >= prev.length) {
         return prev;
@@ -160,6 +152,11 @@ const AddSection = ({
       [next[index], next[target]] = [next[target], next[index]];
       return reindex(next);
     });
+  };
+
+  const handleSave = () => {
+    onSectionsChange(localSections);
+    onClose();
   };
 
   return (
@@ -185,12 +182,12 @@ const AddSection = ({
           <Typography variant="h6">Sections</Typography>
           <Divider flexItem />
 
-          {sections.length === 0 ? (
+          {localSections.length === 0 ? (
             <Typography variant="body2" sx={{ color: "text.secondary", py: 1 }}>
               No sections yet. Add one below.
             </Typography>
           ) : (
-            sections.map((section, index) => (
+            localSections.map((section, index) => (
               <Stack
                 key={section.id}
                 sx={{
@@ -227,7 +224,7 @@ const AddSection = ({
                     <IconButton
                       size="small"
                       aria-label="Move section down"
-                      disabled={index === sections.length - 1}
+                      disabled={index === localSections.length - 1}
                       onClick={() => handleMove(index, 1)}
                     >
                       <ArrowDownwardIcon fontSize="small" />
@@ -269,7 +266,7 @@ const AddSection = ({
                 {section.images.length > 0 ? (
                   <Stack sx={{ width: "100%" }}>
                     <ImageSlider
-                      images={section.images}
+                      images={getImageUrls(section.images)}
                       title={section.header || section.id}
                     />
                   </Stack>
@@ -343,7 +340,7 @@ const AddSection = ({
               <Stack sx={{ gap: 1 }}>
                 {images.length > 0 ? (
                   <Stack sx={{ width: "100%", gap: 1 }}>
-                    <ImageSlider images={images} title="Section images" />
+                    <ImageSlider images={getImageUrls(images)} title="Section images" />
                     <Stack
                       sx={{
                         flexDirection: "row",
@@ -351,9 +348,9 @@ const AddSection = ({
                         gap: 1,
                       }}
                     >
-                      {images.map((src, index) => (
+                      {images.map((image, index) => (
                         <Stack
-                          key={src}
+                          key={`${image.url}-${index}`}
                           sx={{
                             position: "relative",
                             width: 64,
@@ -366,7 +363,7 @@ const AddSection = ({
                         >
                           <Box
                             component="img"
-                            src={src}
+                            src={image.url}
                             alt={`Selected ${index + 1}`}
                             sx={{
                               width: "100%",
@@ -452,7 +449,7 @@ const AddSection = ({
           <Button variant="outlined" color="primary" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={handleSave}>
             Submit
           </Button>
         </Stack>

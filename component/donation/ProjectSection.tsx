@@ -1,9 +1,12 @@
 import { Stack } from "@mui/material";
-import ProjectSwiper from "./component/ProjectSwiper";
 import SectionHeader from "./component/SectionHeader";
 import ProjectCardSection from "./component/ProjectCardSection";
+import { fetchPublicDonationProjects } from "./services/donationPublicApi";
 
-const ProjectSection = () => {
+const ProjectSection = async () => {
+  const result = await fetchPublicDonationProjects();
+  const projects = result.ok ? result.donationProjects : [];
+
   return (
     <Stack
       sx={{
@@ -16,8 +19,7 @@ const ProjectSection = () => {
       }}
     >
       <SectionHeader />
-      {/* <ProjectSwiper /> */}
-      <ProjectCardSection />
+      <ProjectCardSection projects={projects} />
     </Stack>
   );
 };
