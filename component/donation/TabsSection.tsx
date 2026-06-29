@@ -6,6 +6,7 @@ import Documents from "./component/Documents";
 import Updates from "./component/Updates";
 import FAQTab from "./component/FAQTab";
 import { type DonationUpdate } from "./component/UpdateCard";
+import CommentSection from "./component/CommentSection";
 
 type DonationProject = {
   _id: string;
@@ -22,7 +23,7 @@ type DonationProject = {
     header: string;
     summary: string;
     order: number;
-  }[];  
+  }[];
   sections?: {
     id: string;
     header: string;
@@ -102,7 +103,7 @@ const TabsSection = ({ projectData }: { projectData: DonationProject }) => {
         <FAQTab projectData={projectData} />
       </TabLayout>
       <TabLayout value={value} index={3}>
-        comments
+        <CommentSection projectData={projectData} />
       </TabLayout>
     </Stack>
   );
