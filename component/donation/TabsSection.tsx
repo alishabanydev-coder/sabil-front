@@ -4,6 +4,34 @@ import { Stack, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import Documents from "./component/Documents";
 import Updates from "./component/Updates";
+import FAQTab from "./component/FAQTab";
+import { type DonationUpdate } from "./component/UpdateCard";
+
+type DonationProject = {
+  _id: string;
+  title: string;
+  slug: string;
+  poster: string;
+  shortDescription: string;
+  goalAmount: number;
+  raisedAmount: number;
+  donorCount: number;
+  currency?: "USD" | "INR" | string;
+  videoUrl?: string | null;
+  faq?: {
+    header: string;
+    summary: string;
+    order: number;
+  }[];  
+  sections?: {
+    id: string;
+    header: string;
+    text: string;
+    images: string[];
+    order: number;
+  }[];
+  updates?: DonationUpdate[];
+};
 
 const TabLayout = ({
   children,
@@ -21,7 +49,7 @@ const TabLayout = ({
   );
 };
 
-const TabsSection = ({ projectData }: { projectData: any }) => {
+const TabsSection = ({ projectData }: { projectData: DonationProject }) => {
   const [value, setValue] = useState(0);
   return (
     <Stack
@@ -55,6 +83,10 @@ const TabsSection = ({ projectData }: { projectData: any }) => {
             sx={{ fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 } }}
           />
           <Tab
+            label="FAQ"
+            sx={{ fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 } }}
+          />
+          <Tab
             label="Comments"
             sx={{ fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 } }}
           />
@@ -67,6 +99,9 @@ const TabsSection = ({ projectData }: { projectData: any }) => {
         <Updates projectData={projectData} />
       </TabLayout>
       <TabLayout value={value} index={2}>
+        <FAQTab projectData={projectData} />
+      </TabLayout>
+      <TabLayout value={value} index={3}>
         comments
       </TabLayout>
     </Stack>

@@ -30,6 +30,7 @@ type UpdateCardProps = {
   updateNumber: number;
 };
 
+
 const formatUpdateDate = (value: string) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {

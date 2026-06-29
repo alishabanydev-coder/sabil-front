@@ -2,15 +2,35 @@
 
 import { Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
-import UpdateCard, { DonationUpdate } from "./UpdateCard";
+import UpdateCard, { type DonationUpdate } from "./UpdateCard";
 
-type UpdatesProps = {
-  projectData: {
-    updates?: DonationUpdate[];
-  };
+type DonationProject = {
+  _id: string;
+  title: string;
+  slug: string;
+  poster: string;
+  shortDescription: string;
+  goalAmount: number;
+  raisedAmount: number;
+  donorCount: number;
+  currency?: "USD" | "INR" | string;
+  videoUrl?: string | null;
+  faq?: {
+    header: string;
+    summary: string;
+    order: number;
+  }[];
+  sections?: {
+    id: string;
+    header: string;
+    text: string;
+    images: string[];
+    order: number;
+  }[];
+  updates?: DonationUpdate[];
 };
 
-const Updates = ({ projectData }: UpdatesProps) => {
+const Updates = ({ projectData }: { projectData: DonationProject }) => {
   const updates = useMemo(
     () =>
       [...(projectData.updates ?? [])].sort(

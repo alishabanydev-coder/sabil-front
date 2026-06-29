@@ -4,6 +4,7 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useMemo, useRef } from "react";
 import { useScrollSpy } from "@/component/donation/hooks/useScrollSpy";
 import ImageSlider from "./ImageSlider";
+import { type DonationUpdate } from "./UpdateCard";
 
 type DocSection = {
   id: string;
@@ -13,10 +14,30 @@ type DocSection = {
   order: number;
 };
 
-type DocumentsProps = {
-  projectData: {
-    sections: DocSection[];
-  };
+type DonationProject = {
+  _id: string;
+  title: string;
+  slug: string;
+  poster: string;
+  shortDescription: string;
+  goalAmount: number;
+  raisedAmount: number;
+  donorCount: number;
+  currency?: "USD" | "INR" | string;
+  videoUrl?: string | null;
+  faq?: {
+    header: string;
+    summary: string;
+    order: number;
+  }[];
+  sections?: {
+    id: string;
+    header: string;
+    text: string;
+    images: string[];
+    order: number;
+  }[];
+  updates?: DonationUpdate[];
 };
 
 const hasHeader = (section: DocSection) =>
@@ -37,7 +58,7 @@ const SectionImages = ({
 
 const SCROLL_SPY_OFFSET = 120;
 
-const Documents = ({ projectData }: DocumentsProps) => {
+const Documents = ({ projectData }: { projectData: DonationProject }) => {
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const sections = useMemo(
