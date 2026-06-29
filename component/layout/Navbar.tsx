@@ -18,14 +18,34 @@ import { ScondaryButton } from "../ui/ScondaryButton";
 const HOME_SCROLL_TARGET_KEY = "homeScrollTarget";
 const NAVBAR_SCROLL_OFFSET = 80;
 
-const navItems = [
+type NavItem =
+  | { label: string; href: string }
+  | { label: string; sectionId: string };
+
+const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { label: "App", href: "/app" },
   { label: "news", sectionId: "contact" },
   { label: "People Opinions", sectionId: "about" },
   { label: "Watch Us", sectionId: "programs" },
   { label: "BreakDown", sectionId: "projects" },
   { label: "SUBSCRIBTION", sectionId: "subscription" },
-] as const;
+];
+
+const NAV_ITEMS_BY_ROUTE: Record<string, readonly NavItem[]> = {
+  "/donation": [
+    { label: "Catalogue", href: "/" },
+    { label: "App", href: "/app" },
+    { label: "Main Donation Page", href: "/donation" },
+  ],
+};
+
+const resolveNavItems = (pathname: string): readonly NavItem[] => {
+  const matchedRoute = Object.keys(NAV_ITEMS_BY_ROUTE).find(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+
+  return matchedRoute ? NAV_ITEMS_BY_ROUTE[matchedRoute] : DEFAULT_NAV_ITEMS;
+};
 
 const scrollToSection = (sectionId: string) => {
   const element = document.getElementById(sectionId);
@@ -38,11 +58,13 @@ const scrollToSection = (sectionId: string) => {
   window.scrollTo({ top, behavior: "smooth" });
 };
 
-export default function Navbar() {
+export default function Navbar({ navItems }: { navItems?: readonly NavItem[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(menuAnchor);
+
+  const resolvedNavItems = navItems ?? resolveNavItems(pathname);
 
   useEffect(() => {
     if (pathname !== "/") {
@@ -87,8 +109,8 @@ export default function Navbar() {
     }
   };
 
-  const handleCatalogueClick = (shouldCloseMenu = false) => {
-    if (typeof window !== "undefined") {
+  const handleHrefClick = (href: string, shouldCloseMenu = false) => {
+    if (href === "/app" && typeof window !== "undefined") {
       window.sessionStorage.setItem("appLoaderStartAt", String(Date.now()));
     }
     if (shouldCloseMenu) {
@@ -171,14 +193,14 @@ export default function Navbar() {
         }}
       >
         <Stack direction="row" sx={{ gap: { xs: 1, md: 3 } }}>
-          {navItems.map((item) =>
+          {resolvedNavItems.map((item) =>
             "href" in item ? (
               <Typography
                 key={item.label}
                 component={Link}
                 href={item.href}
                 prefetch={false}
-                onClick={() => handleCatalogueClick()}
+                onClick={() => handleHrefClick(item.href)}
                 sx={{
                   color: "#fff",
                   fontSize: { xs: 12, md: 14, lg: 16 },
@@ -261,14 +283,14 @@ export default function Navbar() {
             },
           }}
         >
-          {navItems.map((item) =>
+          {resolvedNavItems.map((item) =>
             "href" in item ? (
               <MenuItem
                 key={item.label}
                 component={Link}
                 href={item.href}
                 prefetch={false}
-                onClick={() => handleCatalogueClick(true)}
+                onClick={() => handleHrefClick(item.href, true)}
                 sx={{
                   mt: 0.4,
                   mx: 1,

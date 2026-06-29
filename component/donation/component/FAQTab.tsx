@@ -108,6 +108,7 @@ const FAQTab = ({ projectData }: { projectData: DonationProject }) => {
         {projectData.faq.length > 0 ? (
           projectData.faq.map((faq) => (
             <Accordion
+              key={faq.order}
               expanded={expanded === faq.order.toString()}
               onChange={handleChange(faq.order.toString())}
             >
@@ -125,40 +126,6 @@ const FAQTab = ({ projectData }: { projectData: DonationProject }) => {
         ) : (
           <Typography>No FAQ found</Typography>
         )}
-        {/* <Accordion
-          expanded={expanded === "panel2"}
-          onChange={handleChange("panel2")}
-        >
-          <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-            <Typography component="span">Collapsible Group Item #2</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-              eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-              eget.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion
-          expanded={expanded === "panel3"}
-          onChange={handleChange("panel3")}
-        >
-          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <Typography component="span">Collapsible Group Item #3</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-              eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-              eget.
-            </Typography>
-          </AccordionDetails>
-        </Accordion> */}
       </Stack>
     </Stack>
   );
