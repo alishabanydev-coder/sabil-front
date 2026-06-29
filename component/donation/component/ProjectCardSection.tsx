@@ -22,6 +22,51 @@ const titleSx = {
   letterSpacing: 2,
 } as const;
 
+const PARTICLE_TILE_SIZE = 5.5;
+
+const progressSx = {
+  width: "100%",
+  height: 15,
+  borderRadius: 10,
+  overflow: "hidden",
+  "@keyframes donationProgressParticles": {
+    "0%": { backgroundPosition: "0 0" },
+    "100%": {
+      backgroundPosition: `${PARTICLE_TILE_SIZE}px ${PARTICLE_TILE_SIZE}px`,
+    },
+  },
+  "@keyframes donationProgressShine": {
+    "0%": { transform: "translateX(-120%)" },
+    "100%": { transform: "translateX(320%)" },
+  },
+  "& .MuiLinearProgress-bar": {
+    borderRadius: 10,
+    overflow: "hidden",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      inset: 0,
+      backgroundImage:
+        "radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 0)",
+      backgroundSize: `${PARTICLE_TILE_SIZE}px ${PARTICLE_TILE_SIZE}px`,
+      backgroundPosition: "0 0",
+      willChange: "background-position",
+      animation: "donationProgressParticles 1s linear infinite",
+    },
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      bottom: 0,
+      left: 0,
+      width: "35%",
+      background:
+        "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)",
+      animation: "donationProgressShine 1.8s ease-in-out infinite",
+    },
+  },
+} as const;
+
 export type PublicDonationProjectCard = {
   _id: string;
   slug: string;
@@ -68,7 +113,7 @@ const ProjectCardContent = ({
       aria-label="Donation progress"
       value={getProgressValue(project)}
       variant="determinate"
-      sx={{ width: "100%", height: 12, borderRadius: 10 }}
+      sx={progressSx}
     />
   </Stack>
 );

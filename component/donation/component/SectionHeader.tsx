@@ -39,7 +39,7 @@ const SectionHeader = () => {
         </Typography>
       </Stack>
 
-      <Button variant="text" sx={{ mt: 0.2, color: "text.primary" }}>
+      {/* <Button variant="text" sx={{ mt: 0.2, color: "text.primary" }}>
         <Typography
           variant="body2"
           component="p"
@@ -47,7 +47,7 @@ const SectionHeader = () => {
         >
           more ...
         </Typography>
-      </Button>
+      </Button> */}
     </Stack>
   );
 };

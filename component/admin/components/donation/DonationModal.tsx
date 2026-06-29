@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Divider,
   FormControl,
   FormControlLabel,
   IconButton,
@@ -60,10 +61,16 @@ type ProjectRecord = {
 
 type DonationStatus = "ongoing" | "finished" | "paused";
 
+type ExistingDonationProject = {
+  _id: string;
+  listOrder?: number | null;
+};
+
 type DonationModalProps = {
   open: boolean;
   isEditing: boolean;
   editingProjectId: string | null;
+  existingProjects?: ExistingDonationProject[];
   onClose: () => void;
   onSaved: () => void;
 };
@@ -142,6 +149,7 @@ const DonationModal = ({
   open,
   isEditing,
   editingProjectId,
+  existingProjects = [],
   onClose,
   onSaved,
 }: DonationModalProps) => {
@@ -174,6 +182,17 @@ const DonationModal = ({
   const [isLoadingProject, setIsLoadingProject] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currencyMeta = getCurrencyMeta(currency);
+
+  const trimmedListOrder = listOrder.trim();
+  const isListOrderDuplicate =
+    trimmedListOrder !== "" &&
+    existingProjects.some(
+      (project) =>
+        project._id !== editingProjectId &&
+        project.listOrder !== null &&
+        project.listOrder !== undefined &&
+        Number(project.listOrder) === Number(trimmedListOrder)
+    );
 
   useEffect(() => {
     if (image) {
@@ -418,6 +437,13 @@ const DonationModal = ({
 
     if (!image && !existingPoster) {
       setSubmitError("Poster image is required.");
+      return;
+    }
+
+    if (isListOrderDuplicate) {
+      setSubmitError(
+        `listOrder ${trimmedListOrder} is already used by another project. Pick a different order.`
+      );
       return;
     }
 
@@ -881,6 +907,12 @@ const DonationModal = ({
                 type="number"
                 value={listOrder}
                 onChange={handleListOrderChange}
+                error={isListOrderDuplicate}
+                helperText={
+                  isListOrderDuplicate
+                    ? "This order is already used by another project."
+                    : " "
+                }
                 sx={{ width: 250 }}
                 slotProps={{
                   htmlInput: {
@@ -889,6 +921,7 @@ const DonationModal = ({
                   },
                 }}
               />
+              
               <FormControlLabel
                 control={
                   <IOSSwitch
@@ -919,6 +952,8 @@ const DonationModal = ({
               </Typography>
             ) : null}
 
+            <Divider flexItem sx={{ mt: -3, mb: -2 }} />
+
             <Stack
               sx={{
                 direction: "ltr",
@@ -935,7 +970,8 @@ const DonationModal = ({
               <Button
                 variant="contained"
                 color="primary"
-                disabled={isSubmitting || isLoadingProject}
+                fullWidth
+                disabled={isSubmitting || isLoadingProject || isListOrderDuplicate}
                 onClick={() => void handleSubmit()}
               >
                 {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}

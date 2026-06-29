@@ -215,6 +215,7 @@ const Donation = () => {
         open={open}
         isEditing={isEditing}
         editingProjectId={editingProjectId}
+        existingProjects={donationProjects}
         onClose={handleClose}
         onSaved={loadDonationProjects}
       />
