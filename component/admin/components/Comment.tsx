@@ -33,7 +33,13 @@ type CommentRecord = {
   updatedAt: string;
 };
 
-type TargetType = "video" | "blog" | "breakdown" | "general" | "project";
+type TargetType =
+  | "video"
+  | "blog"
+  | "breakdown"
+  | "general"
+  | "project"
+  | "projectDonation";
 
 type TargetOption = {
   _id: string;

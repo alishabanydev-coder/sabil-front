@@ -58,7 +58,11 @@ const scrollToSection = (sectionId: string) => {
   window.scrollTo({ top, behavior: "smooth" });
 };
 
-export default function Navbar({ navItems }: { navItems?: readonly NavItem[] }) {
+export default function Navbar({
+  navItems,
+}: {
+  navItems?: readonly NavItem[];
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -136,6 +140,8 @@ export default function Navbar({ navItems }: { navItems?: readonly NavItem[] }) 
       }}
     >
       <ScondaryButton
+        href="/sign-in"
+        component={Link}
         sx={{
           px: { xs: 0.7, sm: 2 },
           py: { xs: 0.4, sm: 1 },
