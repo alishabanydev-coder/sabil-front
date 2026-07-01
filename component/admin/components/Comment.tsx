@@ -15,6 +15,7 @@ import {
   updateComment,
 } from "../services/commentsApi";
 import { fetchBlogs } from "../services/blogApi";
+import { fetchDonationProjects } from "../services/donationApi";
 import {
   fetchChannelBreakdowns,
   fetchChannelProjects,
@@ -161,10 +162,12 @@ const Comment = () => {
   const loadTargetOptions = async (signal?: AbortSignal) => {
     setTargetOptionsLoading(true);
 
-    const [blogsResult, projectsResult] = await Promise.all([
-      fetchBlogs({ signal }),
-      fetchChannelProjects({ signal }),
-    ]);
+    const [blogsResult, projectsResult, donationProjectsResult] =
+      await Promise.all([
+        fetchBlogs({ signal }),
+        fetchChannelProjects({ signal }),
+        fetchDonationProjects({ signal }),
+      ]);
 
     const nextOptions: TargetOption[] = [];
 
@@ -174,6 +177,16 @@ const Comment = () => {
           _id: blog._id,
           targetType: "blog",
           label: blog.title || blog._id,
+        });
+      });
+    }
+
+    if (donationProjectsResult.ok) {
+      donationProjectsResult.donationProjects.forEach((donationProject) => {
+        nextOptions.push({
+          _id: donationProject._id,
+          targetType: "projectDonation",
+          label: donationProject.title || donationProject._id,
         });
       });
     }
@@ -286,6 +299,9 @@ const Comment = () => {
   const hasProjectTargetOption = targetOptions.some(
     (item) => item.targetType === "project"
   );
+  const hasProjectDonationTargetOption = targetOptions.some(
+    (item) => item.targetType === "projectDonation"
+  );
   const targetIdRequired = targetType !== "general";
 
   useEffect(() => {
@@ -306,7 +322,7 @@ const Comment = () => {
   const handleSubmit = async () => {
     const normalizedText = text.trim();
     const normalizedUsername = username.trim();
-    const normalizedTargetType = targetType.trim().toLowerCase();
+    const normalizedTargetType = targetType.trim();
     const normalizedTargetId = targetId.trim();
     const normalizedParentCommentId = parentCommentId.trim();
 
@@ -532,6 +548,13 @@ const Comment = () => {
                 project (not allowed)
               </MenuItem>
             )}
+            {hasProjectDonationTargetOption ? (
+              <MenuItem value="projectDonation">projectDonation</MenuItem>
+            ) : (
+              <MenuItem value="projectDonation" disabled>
+                projectDonation (not allowed)
+              </MenuItem>
+            )}
             {showGeneralTargetOption ? (
               <MenuItem value="general">general</MenuItem>
             ) : (
@@ -622,6 +645,13 @@ const Comment = () => {
               ) : (
                 <MenuItem value="project" disabled>
                   project (not allowed)
+                </MenuItem>
+              )}
+              {hasProjectDonationTargetOption ? (
+                <MenuItem value="projectDonation">projectDonation</MenuItem>
+              ) : (
+                <MenuItem value="projectDonation" disabled>
+                  projectDonation (not allowed)
                 </MenuItem>
               )}
               {showGeneralTargetOption ? (

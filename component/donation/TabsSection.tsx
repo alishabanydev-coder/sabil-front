@@ -103,7 +103,7 @@ const TabsSection = ({ projectData }: { projectData: DonationProject }) => {
         <FAQTab projectData={projectData} />
       </TabLayout>
       <TabLayout value={value} index={3}>
-        <CommentSection projectData={projectData} />
+        <CommentSection setValue={setValue} projectData={projectData} />
       </TabLayout>
     </Stack>
   );
