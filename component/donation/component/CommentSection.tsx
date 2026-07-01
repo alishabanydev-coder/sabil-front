@@ -3,9 +3,6 @@
 import {
   fetchCurrentUser,
   getStoredUserToken,
-  loginUser,
-  registerUser,
-  saveUserSession,
 } from "@/component/auth/services/userAuthApi";
 import {
   createPublicComment,
@@ -71,12 +68,8 @@ const CommentSection = ({ projectData }: { projectData: DonationProject }) => {
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
-  const [authMode, setAuthMode] = useState<"login" | "register">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [authError, setAuthError] = useState("");
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const signInHref = `/sign-in?returnUrl=${encodeURIComponent(`/donation/${projectData.slug}`)}`;
 
   const loadComments = useCallback(async () => {
     setLoading(true);
@@ -112,31 +105,6 @@ const CommentSection = ({ projectData }: { projectData: DonationProject }) => {
     void loadComments();
     void loadCurrentUser();
   }, [loadComments, loadCurrentUser]);
-
-  const handleAuthSubmit = async () => {
-    setAuthError("");
-    setIsAuthenticating(true);
-
-    try {
-      const result =
-        authMode === "login"
-          ? await loginUser({ email, password })
-          : await registerUser({ email, password, displayName });
-
-      if (!result.ok || !result.token) {
-        setAuthError(result.message);
-        return;
-      }
-
-      saveUserSession(result.token);
-      setCurrentUser(result.user);
-      setEmail("");
-      setPassword("");
-      setDisplayName("");
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
 
   const handleSubmitComment = async () => {
     const normalizedText = commentText.trim();
@@ -221,60 +189,17 @@ const CommentSection = ({ projectData }: { projectData: DonationProject }) => {
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
                 Sign in to leave a comment
               </Typography>
-              <Stack direction="row" sx={{ gap: 1 }}>
-                <Button
-                  size="small"
-                  variant={authMode === "login" ? "contained" : "outlined"}
-                  onClick={() => setAuthMode("login")}
-                >
-                  Login
-                </Button>
-                <Button
-                  size="small"
-                  variant={authMode === "register" ? "contained" : "outlined"}
-                  onClick={() => setAuthMode("register")}
-                >
-                  Register
-                </Button>
-              </Stack>
-              {authMode === "register" ? (
-                <TextField
-                  label="Display name"
-                  value={displayName}
-                  onChange={(event) => setDisplayName(event.target.value)}
-                  size="small"
-                />
-              ) : null}
-              <TextField
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                size="small"
-              />
-              <TextField
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                size="small"
-              />
-              {authError ? (
-                <Typography variant="body2" sx={{ color: "error.main" }}>
-                  {authError}
-                </Typography>
-              ) : null}
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                Create an account or sign in to share your thoughts on this
+                project.
+              </Typography>
               <Button
+                component={Link}
+                href={signInHref}
                 variant="contained"
-                disabled={isAuthenticating}
-                onClick={() => void handleAuthSubmit()}
                 sx={{ alignSelf: "flex-start" }}
               >
-                {isAuthenticating
-                  ? "Please wait..."
-                  : authMode === "login"
-                    ? "Sign in"
-                    : "Create account"}
+                Sign in
               </Button>
             </Stack>
           )}

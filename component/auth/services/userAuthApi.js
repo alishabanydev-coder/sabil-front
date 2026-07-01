@@ -2,6 +2,8 @@ import { getApiBase } from "@/lib/apiBase";
 
 const API_BASE = getApiBase();
 export const USER_TOKEN_KEY = "userToken";
+/** Matches backend JWT `expiresIn` in userAuthRoutes.js */
+export const USER_SESSION_DAYS = 1;
 
 function getUserAuthHeaders(json = false) {
   const token =
@@ -37,6 +39,10 @@ export function clearUserSession() {
   }
 
   localStorage.removeItem(USER_TOKEN_KEY);
+}
+
+export function logoutUser() {
+  clearUserSession();
 }
 
 export function saveUserSession(token) {
