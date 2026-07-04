@@ -13,6 +13,7 @@ import {
   Avatar,
   Button,
   IconButton,
+  Pagination,
   Stack,
   TextField,
   Tooltip,
@@ -85,6 +86,8 @@ function groupCommentsByParent(comments: PublicComment[]) {
   return { roots, repliesByParent };
 }
 
+const PUBLIC_COMMENT_PAGE_SIZE = 10;
+
 function readIsAdminSession() {
   if (typeof window === "undefined") {
     return false;
@@ -112,6 +115,8 @@ const CommentSection = ({
 }) => {
   const [comments, setComments] = useState<PublicComment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [errorMsg, setErrorMsg] = useState("");
   const [commentText, setCommentText] = useState("");
   const [submitError, setSubmitError] = useState("");
@@ -135,23 +140,28 @@ const CommentSection = ({
     `/donation/${projectData.slug}`
   )}`;
 
-  const loadComments = useCallback(async () => {
+  const loadComments = useCallback(async (targetPage = 1) => {
     setLoading(true);
     setErrorMsg("");
 
     const result = await fetchPublicComments(
       "projectDonation",
-      projectData._id
+      projectData._id,
+      { page: targetPage, limit: PUBLIC_COMMENT_PAGE_SIZE }
     );
 
     if (!result.ok) {
       setComments([]);
+      setPage(1);
+      setTotalPages(1);
       setErrorMsg(result.message);
       setLoading(false);
       return;
     }
 
     setComments(result.comments);
+    setPage(result.page);
+    setTotalPages(result.totalPages);
     setLoading(false);
   }, [projectData._id]);
 
@@ -166,10 +176,10 @@ const CommentSection = ({
   }, []);
 
   useEffect(() => {
-    void loadComments();
+    void loadComments(page);
     void loadCurrentUser();
     setIsAdmin(readIsAdminSession());
-  }, [loadComments, loadCurrentUser]);
+  }, [loadComments, loadCurrentUser, page]);
 
   const handleSubmitComment = async () => {
     const normalizedText = commentText.trim();
@@ -199,7 +209,10 @@ const CommentSection = ({
       }
 
       setCommentText("");
-      setComments((current) => [result.comment as PublicComment, ...current]);
+      setPage(1);
+      if (page === 1) {
+        void loadComments(1);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -241,7 +254,7 @@ const CommentSection = ({
 
       setReplyText("");
       setReplyingToId(null);
-      setComments((current) => [...current, result.comment as PublicComment]);
+      void loadComments(page);
     } finally {
       setIsReplySubmitting(false);
     }
@@ -284,6 +297,7 @@ const CommentSection = ({
               : item
           )
       );
+      void loadComments(page);
     } finally {
       setDeletingCommentId(null);
     }
@@ -660,7 +674,21 @@ const CommentSection = ({
               No comments yet. Be the first to share your thoughts.
             </Typography>
           ) : (
-            roots.map((comment) => renderComment(comment))
+            <Stack sx={{ gap: 2 }}>
+              {roots.map((comment) => renderComment(comment))}
+              {totalPages > 1 ? (
+                <Stack sx={{ alignItems: "center", pt: 1 }}>
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    onChange={(_event, nextPage) => setPage(nextPage)}
+                    color="primary"
+                    size="small"
+                    disabled={loading}
+                  />
+                </Stack>
+              ) : null}
+            </Stack>
           )}
         </Stack>
         <Stack

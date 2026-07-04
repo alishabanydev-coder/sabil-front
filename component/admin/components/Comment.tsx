@@ -14,6 +14,7 @@ import {
   fetchComments,
   updateComment,
 } from "../services/commentsApi";
+import CommentThreadModal from "./CommentThreadModal";
 import { fetchBlogs } from "../services/blogApi";
 import { fetchDonationProjects } from "../services/donationApi";
 import {
@@ -62,13 +63,19 @@ const style = {
   bgcolor: "background.paper",
   borderRadius: 2,
   boxShadow: 24,
-  p: 3,
+  p: 2,
   gap: 2,
 };
 
 const Comment = () => {
   const [open, setOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit" | "reply">("add");
+  const [threadOpen, setThreadOpen] = useState(false);
+  const [threadTarget, setThreadTarget] = useState<{
+    targetType: string;
+    targetId: string | null;
+    label: string;
+  } | null>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [text, setText] = useState("");
   const [username, setUsername] = useState("");
@@ -102,6 +109,32 @@ const Comment = () => {
     setModalMode("add");
     setOpen(true);
     resetForm();
+  };
+
+  const handleSee = (comment: CommentRecord) => {
+    const matchedTarget = targetOptions.find(
+      (option) =>
+        option.targetType === comment.targetType &&
+        option._id === (comment.targetId || "")
+    );
+
+    const label =
+      matchedTarget?.label ||
+      `${comment.targetType}${
+        comment.targetId ? ` · ${comment.targetId}` : ""
+      }`;
+
+    setThreadTarget({
+      targetType: comment.targetType,
+      targetId: comment.targetId,
+      label,
+    });
+    setThreadOpen(true);
+  };
+
+  const handleCloseThread = () => {
+    setThreadOpen(false);
+    setThreadTarget(null);
   };
 
   const handleEdit = (comment: CommentRecord) => {
@@ -211,7 +244,9 @@ const Comment = () => {
             ? videosResult.videos.map((video) => ({
                 _id: video._id,
                 targetType: "video" as const,
-                label: `${project.name || project._id} - ${video.title || video._id}`,
+                label: `${project.name || project._id} - ${
+                  video.title || video._id
+                }`,
               }))
             : [];
 
@@ -219,7 +254,9 @@ const Comment = () => {
             ? breakdownsResult.breakdowns.map((breakdown) => ({
                 _id: breakdown._id,
                 targetType: "breakdown" as const,
-                label: `${project.name || project._id} - ${breakdown.title || breakdown._id}`,
+                label: `${project.name || project._id} - ${
+                  breakdown.title || breakdown._id
+                }`,
               }))
             : [];
 
@@ -239,7 +276,9 @@ const Comment = () => {
   useEffect(() => {
     setAdminRole(localStorage.getItem("role") || "");
     try {
-      const savedPermissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+      const savedPermissions = JSON.parse(
+        localStorage.getItem("permissions") || "[]"
+      );
       const hasScopedChannels = Array.isArray(savedPermissions)
         ? savedPermissions.some(
             (permission) =>
@@ -326,8 +365,13 @@ const Comment = () => {
     const normalizedTargetId = targetId.trim();
     const normalizedParentCommentId = parentCommentId.trim();
 
-    if (!normalizedText || !normalizedUsername || !normalizedTargetType) {
-      setSubmitErrorMsg("Text, username, and target type are required.");
+    if (!normalizedText || !normalizedTargetType) {
+      setSubmitErrorMsg("Text and target type are required.");
+      return;
+    }
+
+    if (modalMode !== "edit" && !normalizedUsername) {
+      setSubmitErrorMsg("Username is required.");
       return;
     }
 
@@ -389,8 +433,8 @@ const Comment = () => {
         error instanceof Error
           ? error.message
           : modalMode === "edit"
-            ? "Failed to update comment."
-            : "Failed to create comment."
+          ? "Failed to update comment."
+          : "Failed to create comment."
       );
     } finally {
       setIsSubmitting(false);
@@ -429,12 +473,15 @@ const Comment = () => {
     );
   };
 
+  console.log("theared: ", threadOpen);
+  console.log("add: ", open);
+
   const columns: GridColDef<CommentRecord>[] = useMemo(
     () => [
       {
         field: "actions",
         headerName: "Actions",
-        width: 280,
+        width: 340,
         sortable: false,
         filterable: false,
         renderCell: (params) => (
@@ -452,7 +499,16 @@ const Comment = () => {
             <Button
               size="small"
               variant="outlined"
+              onClick={() => handleSee(params.row)}
+              sx={{ fontSize: 11 }}
+            >
+              See
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
               onClick={() => handleEdit(params.row)}
+              sx={{ fontSize: 11 }}
             >
               Edit
             </Button>
@@ -460,6 +516,7 @@ const Comment = () => {
               size="small"
               variant="contained"
               onClick={() => handleReply(params.row)}
+              sx={{ fontSize: 11 }}
             >
               Reply
             </Button>
@@ -468,6 +525,7 @@ const Comment = () => {
               color="error"
               variant="outlined"
               onClick={() => handleDelete(params.row)}
+              sx={{ fontSize: 11 }}
             >
               Delete
             </Button>
@@ -587,6 +645,19 @@ const Comment = () => {
         pageSizeOptions={[5]}
       />
 
+      {threadTarget ? (
+        <CommentThreadModal
+          open={threadOpen}
+          onClose={handleCloseThread}
+          targetType={threadTarget.targetType}
+          targetId={threadTarget.targetId}
+          targetLabel={threadTarget.label}
+          onThreadChanged={() => {
+            void loadComments();
+          }}
+        />
+      ) : null}
+
       <Modal open={open} onClose={handleClose}>
         <Stack sx={style}>
           <Stack sx={{ width: "100%", gap: 2 }}>
@@ -594,8 +665,8 @@ const Comment = () => {
               {modalMode === "edit"
                 ? "Edit Comment"
                 : modalMode === "reply"
-                  ? "Reply Comment"
-                  : "Add Comment"}
+                ? "Reply Comment"
+                : "Add Comment"}
             </Typography>
 
             <TextField
@@ -604,6 +675,7 @@ const Comment = () => {
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               fullWidth
+              disabled={modalMode === "edit"}
             />
             <TextField
               label="Target Type"
@@ -673,10 +745,15 @@ const Comment = () => {
                 disabled={!targetType || targetOptionsLoading}
               >
                 <MenuItem value="">
-                  {targetType ? "Select target item" : "Select target type first"}
+                  {targetType
+                    ? "Select target item"
+                    : "Select target type first"}
                 </MenuItem>
                 {availableTargetIdOptions.map((item) => (
-                  <MenuItem key={`${item.targetType}-${item._id}`} value={item._id}>
+                  <MenuItem
+                    key={`${item.targetType}-${item._id}`}
+                    value={item._id}
+                  >
                     {item.label}
                   </MenuItem>
                 ))}
@@ -716,12 +793,12 @@ const Comment = () => {
                     ? "Saving..."
                     : "Save"
                   : modalMode === "reply"
-                    ? isSubmitting
-                      ? "Replying..."
-                      : "Reply"
-                    : isSubmitting
-                      ? "Adding..."
-                      : "Add"}
+                  ? isSubmitting
+                    ? "Replying..."
+                    : "Reply"
+                  : isSubmitting
+                  ? "Adding..."
+                  : "Add"}
               </Button>
               <Button variant="outlined" color="primary" onClick={handleClose}>
                 Cancel

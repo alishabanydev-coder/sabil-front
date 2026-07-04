@@ -34,10 +34,21 @@ function normalizePublicComment(comment) {
   };
 }
 
-export async function fetchPublicComments(targetType, targetId) {
+/**
+ * @param {string} targetType
+ * @param {string} targetId
+ * @param {{ limit?: number, page?: number }} [options]
+ */
+export async function fetchPublicComments(
+  targetType,
+  targetId,
+  { limit = 10, page = 1 } = {}
+) {
   const params = new URLSearchParams({
     targetType,
     targetId,
+    limit: String(limit),
+    page: String(page),
   });
 
   const response = await fetch(
@@ -51,6 +62,10 @@ export async function fetchPublicComments(targetType, targetId) {
       ok: false,
       message: data?.message || "Failed to load comments.",
       comments: [],
+      page: 1,
+      limit,
+      totalRoots: 0,
+      totalPages: 1,
     };
   }
 
@@ -62,6 +77,10 @@ export async function fetchPublicComments(targetType, targetId) {
     ok: true,
     message: "",
     comments,
+    page: Number(data?.page) > 0 ? Number(data.page) : 1,
+    limit: Number(data?.limit) > 0 ? Number(data.limit) : limit,
+    totalRoots: Number(data?.totalRoots) >= 0 ? Number(data.totalRoots) : 0,
+    totalPages: Number(data?.totalPages) > 0 ? Number(data.totalPages) : 1,
   };
 }
 
