@@ -134,6 +134,14 @@ const CommentSection = ({
     null
   );
   const altchaRef = useRef<AltchaWidgetHandle>(null);
+  const replyAltchaRef = useRef<AltchaWidgetHandle>(null);
+  const [altchaVerified, setAltchaVerified] = useState(false);
+  const [replyAltchaVerified, setReplyAltchaVerified] = useState(false);
+
+  const canPostComment =
+    Boolean(commentText.trim()) && altchaVerified && !isSubmitting;
+  const canPostReply =
+    Boolean(replyText.trim()) && replyAltchaVerified && !isReplySubmitting;
 
   const { roots, repliesByParent } = useMemo(
     () => groupCommentsByParent(comments),
@@ -201,18 +209,31 @@ const CommentSection = ({
     setIsSubmitting(true);
 
     try {
+      const altcha = await altchaRef.current?.getPayload();
+      if (!altcha) {
+        setSubmitError("Security verification failed. Please try again.");
+        setAltchaVerified(false);
+        altchaRef.current?.reset();
+        return;
+      }
+
       const result = await createPublicComment({
         text: normalizedText,
         targetType: "projectDonation",
         targetId: projectData._id,
+        altcha,
       });
 
       if (!result.ok || !result.comment) {
         setSubmitError(result.message);
+        setAltchaVerified(false);
+        altchaRef.current?.reset();
         return;
       }
 
       setCommentText("");
+      setAltchaVerified(false);
+      altchaRef.current?.reset();
       setPage(1);
       if (page === 1) {
         void loadComments(1);
@@ -226,6 +247,8 @@ const CommentSection = ({
     setReplyingToId((current) => (current === commentId ? null : commentId));
     setReplyText("");
     setReplyError("");
+    setReplyAltchaVerified(false);
+    replyAltchaRef.current?.reset();
   };
 
   const handleSubmitReply = async (parentCommentId: string) => {
@@ -244,20 +267,33 @@ const CommentSection = ({
     setIsReplySubmitting(true);
 
     try {
+      const altcha = await replyAltchaRef.current?.getPayload();
+      if (!altcha) {
+        setReplyError("Security verification failed. Please try again.");
+        setReplyAltchaVerified(false);
+        replyAltchaRef.current?.reset();
+        return;
+      }
+
       const result = await createPublicComment({
         text: normalizedText,
         targetType: "projectDonation",
         targetId: projectData._id,
         parentCommentId,
+        altcha,
       });
 
       if (!result.ok || !result.comment) {
         setReplyError(result.message);
+        setReplyAltchaVerified(false);
+        replyAltchaRef.current?.reset();
         return;
       }
 
       setReplyText("");
       setReplyingToId(null);
+      setReplyAltchaVerified(false);
+      replyAltchaRef.current?.reset();
       void loadComments(page);
     } finally {
       setIsReplySubmitting(false);
@@ -290,6 +326,8 @@ const CommentSection = ({
         setReplyingToId(null);
         setReplyText("");
         setReplyError("");
+        setReplyAltchaVerified(false);
+        replyAltchaRef.current?.reset();
       }
 
       setComments((current) =>
@@ -445,6 +483,10 @@ const CommentSection = ({
                   },
                 }}
               />
+              <AltchaWidget
+                ref={replyAltchaRef}
+                onVerifiedChange={setReplyAltchaVerified}
+              />
               {replyError ? (
                 <Typography
                   variant="body2"
@@ -460,7 +502,7 @@ const CommentSection = ({
                 <Button
                   variant="contained"
                   size="small"
-                  disabled={isReplySubmitting}
+                  disabled={!canPostReply}
                   onClick={() => void handleSubmitReply(comment._id)}
                   sx={{ fontSize: { xs: 10, sm: 11, md: 13, lg: 14 } }}
                 >
@@ -586,6 +628,10 @@ const CommentSection = ({
                   },
                 }}
               />
+              <AltchaWidget
+                ref={altchaRef}
+                onVerifiedChange={setAltchaVerified}
+              />
               {submitError ? (
                 <Typography
                   variant="body2"
@@ -599,7 +645,7 @@ const CommentSection = ({
               ) : null}
               <Button
                 variant="contained"
-                disabled={isSubmitting}
+                disabled={!canPostComment}
                 onClick={() => void handleSubmitComment()}
                 sx={{
                   alignSelf: "flex-start",

@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import AltchaWidget, {
+  type AltchaWidgetHandle,
+} from "@/component/auth/AltchaWidget";
 import {
   Box,
   Stack,
@@ -27,6 +30,11 @@ export default function LoginPanel({ setIsValid }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [altchaVerified, setAltchaVerified] = useState(false);
+  const altchaRef = useRef<AltchaWidgetHandle>(null);
+
+  const formIsValid = Boolean(userName.trim() && password);
+  const canSubmit = formIsValid && altchaVerified && !loading;
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,10 +47,20 @@ export default function LoginPanel({ setIsValid }: Props) {
 
     setLoading(true);
     try {
-      const result = await loginHandler({ userName, password });
+      const altcha = await altchaRef.current?.getPayload();
+      if (!altcha) {
+        setErrorMsg("Security verification failed. Please try again.");
+        setAltchaVerified(false);
+        altchaRef.current?.reset();
+        return;
+      }
+
+      const result = await loginHandler({ userName, password, altcha });
 
       if (!result.ok || !result.data) {
         setErrorMsg(result.message || "Invalid username or password.");
+        setAltchaVerified(false);
+        altchaRef.current?.reset();
         return;
       }
 
@@ -56,6 +74,8 @@ export default function LoginPanel({ setIsValid }: Props) {
 
       setIsValid(true);
     } catch {
+      setAltchaVerified(false);
+      altchaRef.current?.reset();
       setErrorMsg("Login failed. Please try again.");
     } finally {
       setLoading(false);
@@ -305,6 +325,11 @@ export default function LoginPanel({ setIsValid }: Props) {
             }}
           />
 
+          <AltchaWidget
+            ref={altchaRef}
+            onVerifiedChange={setAltchaVerified}
+          />
+
           {errorMsg && (
             <Typography
               component="p"
@@ -331,7 +356,7 @@ export default function LoginPanel({ setIsValid }: Props) {
             startIcon={
               loading ? <CircularProgress size={22} color="inherit" /> : null
             }
-            disabled={loading}
+            disabled={!canSubmit}
             sx={{
               mt: 1,
               height: 45,

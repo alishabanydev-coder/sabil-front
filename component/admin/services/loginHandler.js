@@ -1,8 +1,10 @@
-export async function loginHandler({ userName, password, signal } = {}) {
-  const response = await fetch("http://localhost:5000/api/admin/login", {
+import { getApiBase } from "@/lib/apiBase";
+
+export async function loginHandler({ userName, password, altcha, signal } = {}) {
+  const response = await fetch(`${getApiBase()}/api/admin/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userName, password }),
+    body: JSON.stringify({ userName, password, altcha }),
     signal,
   });
 

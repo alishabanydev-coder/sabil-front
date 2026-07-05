@@ -26,6 +26,7 @@ export function createPublicComment(body: {
   targetType: string;
   targetId: string;
   parentCommentId?: string;
+  altcha: string;
 }): Promise<{
   ok: boolean;
   message: string;

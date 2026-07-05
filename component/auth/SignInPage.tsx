@@ -69,7 +69,11 @@ export default function SignInPage() {
   const [checkingSession, setCheckingSession] = useState(true);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [altchaVerified, setAltchaVerified] = useState(false);
   const altchaRef = useRef<AltchaWidgetHandle>(null);
+
+  const formIsValid = validateAuthForm(mode, form) === null;
+  const canSubmit = formIsValid && altchaVerified && !loading;
 
   useEffect(() => {
     setMode(parseAuthMode(searchParams.get("mode")));
@@ -116,6 +120,7 @@ export default function SignInPage() {
       setErrorMsg("");
       setShowPassword(false);
       setShowConfirmPassword(false);
+      setAltchaVerified(false);
       altchaRef.current?.reset();
 
       const params = new URLSearchParams(searchParams.toString());
@@ -150,6 +155,7 @@ export default function SignInPage() {
       const altcha = await altchaRef.current?.getPayload();
       if (!altcha) {
         setErrorMsg("Security verification failed. Please try again.");
+        setAltchaVerified(false);
         altchaRef.current?.reset();
         return;
       }
@@ -161,6 +167,7 @@ export default function SignInPage() {
 
       if (!result.ok || !result.token) {
         setErrorMsg(result.message);
+        setAltchaVerified(false);
         altchaRef.current?.reset();
         return;
       }
@@ -170,6 +177,7 @@ export default function SignInPage() {
       setForm(EMPTY_FORM);
       router.replace(returnUrl);
     } catch {
+      setAltchaVerified(false);
       altchaRef.current?.reset();
       setErrorMsg(
         mode === "login"
@@ -188,6 +196,8 @@ export default function SignInPage() {
     setErrorMsg("");
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setAltchaVerified(false);
+    altchaRef.current?.reset();
   };
 
   const isRegister = mode === "register";
@@ -464,7 +474,10 @@ export default function SignInPage() {
             />
           ) : null}
 
-          <AltchaWidget ref={altchaRef} />
+          <AltchaWidget
+            ref={altchaRef}
+            onVerifiedChange={setAltchaVerified}
+          />
 
           {errorMsg ? (
             <Typography
@@ -485,7 +498,7 @@ export default function SignInPage() {
             color="primary"
             fullWidth
             type="submit"
-            disabled={loading}
+            disabled={!canSubmit}
             startIcon={
               loading ? <CircularProgress size={22} color="inherit" /> : null
             }
