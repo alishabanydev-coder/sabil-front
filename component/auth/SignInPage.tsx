@@ -15,7 +15,13 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import {
   buildAuthPayload,
@@ -248,7 +254,7 @@ export default function SignInPage() {
           maxWidth: 400,
           display: "flex",
           flexDirection: "column",
-          gap: 2,
+          gap: 1,
         }}
       >
         <Typography
@@ -266,7 +272,7 @@ export default function SignInPage() {
         </Typography>
 
         {isLoggedIn && currentUser ? (
-          <Stack sx={{ gap: 2, alignItems: "center", direction: "ltr" }}>
+          <Stack sx={{ gap: 1, alignItems: "center", direction: "ltr" }}>
             <Avatar
               src={currentUser.avatar || undefined}
               alt={currentUser.displayName}
@@ -286,8 +292,8 @@ export default function SignInPage() {
               variant="caption"
               sx={{ color: "text.secondary", textAlign: "center" }}
             >
-              You are signed in. Sessions last {USER_SESSION_DAYS} days, then you
-              will need to sign in again.
+              You are signed in. Sessions last {USER_SESSION_DAYS} days, then
+              you will need to sign in again.
             </Typography>
             <Button
               component={Link}
@@ -321,7 +327,7 @@ export default function SignInPage() {
           </Stack>
         ) : (
           <>
-            <Typography
+            {/* <Typography
               variant="body2"
               sx={{
                 textAlign: "center",
@@ -332,7 +338,7 @@ export default function SignInPage() {
               {isRegister
                 ? "Join Sabeel Kids to comment and support projects."
                 : "Welcome back to Sabeel Kids."}
-            </Typography>
+            </Typography> */}
 
             <Stack direction="row" sx={{ gap: 1 }}>
               <Button
@@ -358,190 +364,198 @@ export default function SignInPage() {
             <Box
               component="form"
               onSubmit={handleSubmit}
-              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-          {isRegister ? (
-            <TextField
-              label="Display name"
-              variant="outlined"
-              fullWidth
-              value={form.displayName}
-              onChange={(event) =>
-                updateField("displayName", event.target.value)
-              }
-              helperText="Shown when you comment"
-              sx={{ direction: "ltr" }}
-              slotProps={{
-                htmlInput: {
-                  autoComplete: "name",
-                  spellCheck: false,
-                },
-              }}
-            />
-          ) : null}
+              {isRegister ? (
+                <TextField
+                  label="Display name"
+                  variant="outlined"
+                  fullWidth
+                  value={form.displayName}
+                  onChange={(event) =>
+                    updateField("displayName", event.target.value)
+                  }
+                  helperText="Shown when you comment"
+                  sx={{ direction: "ltr" }}
+                  slotProps={{
+                    htmlInput: {
+                      autoComplete: "name",
+                      spellCheck: false,
+                    },
+                  }}
+                />
+              ) : null}
 
-          <TextField
-            label="Email"
-            type="email"
-            variant="outlined"
-            fullWidth
-            value={form.email}
-            onChange={(event) => updateField("email", event.target.value)}
-            sx={{ direction: "ltr" }}
-            slotProps={{
-              htmlInput: {
-                autoCapitalize: "off",
-                autoComplete: "email",
-                spellCheck: false,
-              },
-            }}
-          />
+              <TextField
+                label="Email"
+                type="email"
+                variant="outlined"
+                fullWidth
+                value={form.email}
+                onChange={(event) => updateField("email", event.target.value)}
+                sx={{ direction: "ltr" }}
+                slotProps={{
+                  htmlInput: {
+                    autoCapitalize: "off",
+                    autoComplete: "email",
+                    spellCheck: false,
+                  },
+                }}
+              />
 
-          <TextField
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            variant="outlined"
-            fullWidth
-            value={form.password}
-            onChange={(event) => updateField("password", event.target.value)}
-            helperText={isRegister ? "At least 6 characters" : undefined}
-            sx={{ direction: "ltr" }}
-            slotProps={{
-              htmlInput: {
-                autoCapitalize: "off",
-                autoComplete: isRegister ? "new-password" : "current-password",
-                spellCheck: false,
-              },
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
-                      onClick={() => setShowPassword((current) => !current)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
+              <TextField
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                variant="outlined"
+                fullWidth
+                value={form.password}
+                onChange={(event) =>
+                  updateField("password", event.target.value)
+                }
+                helperText={isRegister ? "At least 6 characters" : undefined}
+                sx={{ direction: "ltr" }}
+                slotProps={{
+                  htmlInput: {
+                    autoCapitalize: "off",
+                    autoComplete: isRegister
+                      ? "new-password"
+                      : "current-password",
+                    spellCheck: false,
+                  },
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
+                          onClick={() => setShowPassword((current) => !current)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
 
-          {isRegister ? (
-            <TextField
-              label="Confirm password"
-              type={showConfirmPassword ? "text" : "password"}
-              variant="outlined"
-              fullWidth
-              value={form.confirmPassword}
-              onChange={(event) =>
-                updateField("confirmPassword", event.target.value)
-              }
-              sx={{ direction: "ltr" }}
-              slotProps={{
-                htmlInput: {
-                  autoCapitalize: "off",
-                  autoComplete: "new-password",
-                  spellCheck: false,
-                },
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label={
-                          showConfirmPassword
-                            ? "Hide confirm password"
-                            : "Show confirm password"
-                        }
-                        onClick={() =>
-                          setShowConfirmPassword((current) => !current)
-                        }
-                        edge="end"
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          ) : null}
+              {isRegister ? (
+                <TextField
+                  label="Confirm password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  variant="outlined"
+                  fullWidth
+                  value={form.confirmPassword}
+                  onChange={(event) =>
+                    updateField("confirmPassword", event.target.value)
+                  }
+                  sx={{ direction: "ltr" }}
+                  slotProps={{
+                    htmlInput: {
+                      autoCapitalize: "off",
+                      autoComplete: "new-password",
+                      spellCheck: false,
+                    },
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label={
+                              showConfirmPassword
+                                ? "Hide confirm password"
+                                : "Show confirm password"
+                            }
+                            onClick={() =>
+                              setShowConfirmPassword((current) => !current)
+                            }
+                            edge="end"
+                          >
+                            {showConfirmPassword ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              ) : null}
 
-          <AltchaWidget
-            ref={altchaRef}
-            onVerifiedChange={setAltchaVerified}
-          />
+              <AltchaWidget
+                ref={altchaRef}
+                onVerifiedChange={setAltchaVerified}
+              />
 
-          {errorMsg ? (
+              {errorMsg ? (
+                <Typography
+                  component="p"
+                  sx={{
+                    direction: "ltr",
+                    fontSize: 14,
+                    color: "error.main",
+                    textAlign: "center",
+                  }}
+                >
+                  {errorMsg}
+                </Typography>
+              ) : null}
+
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                type="submit"
+                disabled={loading}
+                startIcon={
+                  loading ? (
+                    <CircularProgress size={22} color="inherit" />
+                  ) : null
+                }
+                sx={{
+                  mt: 0.5,
+                  height: 45,
+                  fontFamily: "Namecat",
+                  fontSize: 16,
+                  letterSpacing: 1.4,
+                }}
+              >
+                {loading ? "Please wait..." : submitLabel}
+              </Button>
+            </Box>
+
             <Typography
-              component="p"
+              variant="body2"
               sx={{
-                direction: "ltr",
-                fontSize: 14,
-                color: "error.main",
                 textAlign: "center",
+                color: "text.secondary",
+                direction: "ltr",
               }}
             >
-              {errorMsg}
+              {isRegister
+                ? "Already have an account?"
+                : "Don't have an account?"}{" "}
+              <Typography
+                component="button"
+                type="button"
+                onClick={() => switchMode(isRegister ? "login" : "register")}
+                sx={{
+                  border: "none",
+                  bgcolor: "transparent",
+                  p: 0,
+                  cursor: "pointer",
+                  color: "primary.main",
+                  fontWeight: 600,
+                  textDecoration: "underline",
+                  fontSize: "inherit",
+                  fontFamily: "inherit",
+                }}
+              >
+                {isRegister ? "Sign in" : "Create account"}
+              </Typography>
             </Typography>
-          ) : null}
-
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            type="submit"
-            disabled={!canSubmit}
-            startIcon={
-              loading ? <CircularProgress size={22} color="inherit" /> : null
-            }
-            sx={{
-              mt: 0.5,
-              height: 45,
-              fontFamily: "Namecat",
-              fontSize: 16,
-              letterSpacing: 1.4,
-            }}
-          >
-            {loading ? "Please wait..." : submitLabel}
-          </Button>
-        </Box>
-
-        <Typography
-          variant="body2"
-          sx={{
-            textAlign: "center",
-            color: "text.secondary",
-            direction: "ltr",
-          }}
-        >
-          {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
-          <Typography
-            component="button"
-            type="button"
-            onClick={() => switchMode(isRegister ? "login" : "register")}
-            sx={{
-              border: "none",
-              bgcolor: "transparent",
-              p: 0,
-              cursor: "pointer",
-              color: "primary.main",
-              fontWeight: 600,
-              textDecoration: "underline",
-              fontSize: "inherit",
-              fontFamily: "inherit",
-            }}
-          >
-            {isRegister ? "Sign in" : "Create account"}
-          </Typography>
-        </Typography>
           </>
         )}
 
