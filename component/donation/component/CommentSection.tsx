@@ -22,7 +22,10 @@ import {
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import AltchaWidget, {
+  type AltchaWidgetHandle,
+} from "@/component/auth/AltchaWidget";
 import { type DonationUpdate } from "./UpdateCard";
 
 type DonationProject = {
@@ -130,6 +133,7 @@ const CommentSection = ({
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(
     null
   );
+  const altchaRef = useRef<AltchaWidgetHandle>(null);
 
   const { roots, repliesByParent } = useMemo(
     () => groupCommentsByParent(comments),

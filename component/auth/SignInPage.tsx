@@ -15,7 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import {
   buildAuthPayload,
@@ -33,6 +33,7 @@ import {
   saveUserSession,
   USER_SESSION_DAYS,
 } from "./services/userAuthApi";
+import AltchaWidget, { type AltchaWidgetHandle } from "./AltchaWidget";
 
 type AuthUser = {
   id: string;
@@ -68,6 +69,7 @@ export default function SignInPage() {
   const [checkingSession, setCheckingSession] = useState(true);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const altchaRef = useRef<AltchaWidgetHandle>(null);
 
   useEffect(() => {
     setMode(parseAuthMode(searchParams.get("mode")));
@@ -114,6 +116,7 @@ export default function SignInPage() {
       setErrorMsg("");
       setShowPassword(false);
       setShowConfirmPassword(false);
+      altchaRef.current?.reset();
 
       const params = new URLSearchParams(searchParams.toString());
       if (nextMode === "register") {
@@ -144,13 +147,21 @@ export default function SignInPage() {
 
     setLoading(true);
     try {
+      const altcha = await altchaRef.current?.getPayload();
+      if (!altcha) {
+        setErrorMsg("Security verification failed. Please try again.");
+        altchaRef.current?.reset();
+        return;
+      }
+
       const result =
         mode === "login"
-          ? await loginUser(payload)
-          : await registerUser(payload);
+          ? await loginUser({ ...payload, altcha })
+          : await registerUser({ ...payload, altcha });
 
       if (!result.ok || !result.token) {
         setErrorMsg(result.message);
+        altchaRef.current?.reset();
         return;
       }
 
@@ -159,6 +170,7 @@ export default function SignInPage() {
       setForm(EMPTY_FORM);
       router.replace(returnUrl);
     } catch {
+      altchaRef.current?.reset();
       setErrorMsg(
         mode === "login"
           ? "Sign in failed. Please try again."
@@ -451,6 +463,8 @@ export default function SignInPage() {
               }}
             />
           ) : null}
+
+          <AltchaWidget ref={altchaRef} />
 
           {errorMsg ? (
             <Typography
