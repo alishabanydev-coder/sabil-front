@@ -1,270 +1,114 @@
 import {
   Button,
-  IconButton,
+  ButtonGroup,
+  Checkbox,
+  CircularProgress,
+  FormControlLabel,
+  MenuItem,
   Modal,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useMemo, useState } from "react";
-import { createUser, deleteUser, fetchUsers } from "../services/usersApi";
-import ReadOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import { DataGrid } from "@mui/x-data-grid";
+import { DonationSource, useAdminUsers } from "../hooks/useAdminUsers";
 
-type UserRecord = {
-  id: string;
-  _id: string;
-  username: string;
-  message: string;
-  phoneNumbers: string[];
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-const style = {
+const modalStyle = {
   direction: "ltr",
+  height: "auto",
+  maxHeight: "80vh",
+  width: "50%",
   position: "absolute",
+  flexDirection: "row",
+  overflow: "auto",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
   bgcolor: "background.paper",
-  p: 2,
   borderRadius: 2,
+  boxShadow: 24,
+  p: 2,
+  gap: 2,
 };
 
+const addDonationModalStyle = {
+  ...modalStyle,
+  width: "28rem",
+};
+
+export type { UserRecord } from "../hooks/useAdminUsers";
+
 const Users = () => {
-  const [open, setOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [phoneNumbers, setPhoneNumbers] = useState("");
-  const [rows, setRows] = useState<UserRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const resetForm = () => {
-    setSelectedUserId(null);
-    setModalMode("add");
-    setUsername("");
-    setEmail("");
-    setMessage("");
-    setPhoneNumbers("");
-    setSubmitErrorMsg("");
-  };
-
-  const mapUserRow = (user: any): UserRecord => ({
-    id: user._id,
-    _id: user._id,
-    username: user.name || "",
-    message: user.message || "",
-    phoneNumbers: Array.isArray(user.phoneNumbers) ? user.phoneNumbers : [],
-    email: user.email || "",
-    createdAt: user.createdAt || "",
-    updatedAt: user.updatedAt || "",
-  });
-
-  const loadUsers = async (signal?: AbortSignal) => {
-    setLoading(true);
-    setErrorMsg("");
-    const result = await fetchUsers({ signal });
-    if (!result.ok) {
-      setLoading(false);
-      setErrorMsg(result.message);
-      return;
-    }
-
-    setRows(result.users.map(mapUserRow));
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    loadUsers(controller.signal).catch((error) => {
-      if (!controller.signal.aborted) {
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load users."
-        );
-      }
-    });
-
-    return () => controller.abort("Users tab unmounted");
-  }, []);
-
-  const handleOpenUserModal = (user: UserRecord) => {
-    setSelectedUserId(user._id);
-    setModalMode("edit");
-    setUsername(user.username || "");
-    setEmail(user.email || "");
-    setMessage(user.message || "");
-    setPhoneNumbers(
-      Array.isArray(user.phoneNumbers) ? user.phoneNumbers.join(", ") : ""
-    );
-    setSubmitErrorMsg("");
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    resetForm();
-  };
-
-  const handleOpenAdd = () => {
-    setOpen(true);
-    resetForm();
-  };
-
-  const handleSubmit = async () => {
-    const normalizedUsername = username.trim();
-    const normalizedMessage = message.trim();
-    const normalizedEmail = email.trim();
-    const normalizedPhoneNumbers = phoneNumbers
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
-
-    if (!normalizedUsername || !normalizedMessage) {
-      setSubmitErrorMsg("Username and message are required.");
-      return;
-    }
-
-    setSubmitErrorMsg("");
-    setIsSubmitting(true);
-
-    try {
-      const result = await createUser({
-        name: normalizedUsername,
-        email: normalizedEmail,
-        message: normalizedMessage,
-        phoneNumbers: normalizedPhoneNumbers,
-      });
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      if (result.user) {
-        setRows((currentRows) => [mapUserRow(result.user), ...currentRows]);
-      }
-      handleClose();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to create user."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async (user: UserRecord) => {
-    const shouldDelete = window.confirm(`Delete user "${user.username}"?`);
-    if (!shouldDelete) {
-      return;
-    }
-
-    const result = await deleteUser(user._id);
-    if (!result.ok) {
-      setErrorMsg(result.message);
-      return;
-    }
-
-    setRows((currentRows) => currentRows.filter((row) => row._id !== user._id));
-  };
-
-  const handleExportCsv = () => {
-    const header = [
-      "Username",
-      "Email",
-      "Phone Numbers",
-      "Message",
-      "Created At",
-      "Updated At",
-    ];
-    const lines = rows.map((row) =>
-      [
-        row.username,
-        row.email,
-        row.phoneNumbers.join(" | "),
-        row.message,
-        row.createdAt,
-        row.updatedAt,
-      ]
-        .map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`)
-        .join(",")
-    );
-    const csvContent = [header.join(","), ...lines].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.setAttribute("download", "users.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(blobUrl);
-  };
-
-  const columns: GridColDef<UserRecord>[] = useMemo(
-    () => [
-      {
-        field: "actions",
-        headerName: "Actions",
-        width: 140,
-        sortable: false,
-        filterable: false,
-        renderCell: (params) => (
-          <Stack
-            direction="row"
-            sx={{
-              gap: 1,
-              width: "100%",
-              height: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <IconButton
-              size="small"
-              onClick={() => handleOpenUserModal(params.row)}
-            >
-              <ReadOutlinedIcon />
-            </IconButton>
-            <IconButton
-              size="small"
-              color="error"
-              onClick={() => handleDelete(params.row)}
-            >
-              <DeleteOutlinedIcon />
-            </IconButton>
-          </Stack>
-        ),
-      },
-      { field: "username", headerName: "Username", width: 150 },
-      { field: "email", headerName: "Email", width: 220 },
-      {
-        field: "phoneNumbers",
-        headerName: "Phone Numbers",
-        width: 220,
-        renderCell: (params) =>
-          Array.isArray(params.row.phoneNumbers)
-            ? params.row.phoneNumbers.join(", ")
-            : "",
-      },
-      { field: "message", headerName: "Message", width: 220 },
-      { field: "createdAt", headerName: "Created At", width: 150 },
-      { field: "updatedAt", headerName: "Updated At", width: 150 },
-    ],
-    []
-  );
+  const {
+    addConfirmPassword,
+    addDonationErrorMsg,
+    addDonationOpen,
+    addEmail,
+    addPassword,
+    addShowAsAnonymousInDonations,
+    addUserErrorMsg,
+    addUserOpen,
+    addUsername,
+    amount,
+    columns,
+    currency,
+    donationProjectOptions,
+    donationsErrorMsg,
+    editDonationErrorMsg,
+    editDonationOpen,
+    editDonationProjectTitle,
+    editOpen,
+    editPanel,
+    email,
+    errorMsg,
+    filteredRows,
+    filterTargetType,
+    filterUsername,
+    handleAddDonation,
+    handleCloseAddDonation,
+    handleCloseAddUser,
+    handleCloseEdit,
+    handleCloseEditDonation,
+    handleCreateUser,
+    handleDeleteDonation,
+    handleOpenAddDonation,
+    handleOpenAddUser,
+    handleOpenEditDonation,
+    handleSaveProfile,
+    handleShowDonations,
+    handleUpdateDonation,
+    isAddingDonation,
+    isAddDonationDisabled,
+    isCreateUserDisabled,
+    isCreatingUser,
+    isDeletingDonationId,
+    isEditDonationDisabled,
+    isFetchingDonationProjects,
+    isLoadingDonations,
+    isProfileSaveDisabled,
+    isSubmitting,
+    isUpdatingDonation,
+    loading,
+    selectedDonationProjectId,
+    setAddConfirmPassword,
+    setAddEmail,
+    setAddPassword,
+    setAddShowAsAnonymousInDonations,
+    setAddUsername,
+    setAmount,
+    setCurrency,
+    setFilterTargetType,
+    setFilterUsername,
+    setSelectedDonationProjectId,
+    setShowAsAnonymousInDonations,
+    setSource,
+    setUsername,
+    showAsAnonymousInDonations,
+    source,
+    submitErrorMsg,
+    userDonations,
+    username,
+  } = useAdminUsers();
 
   return (
     <Stack>
@@ -274,104 +118,441 @@ const Users = () => {
         </Typography>
 
         <Stack direction="row" sx={{ gap: 1 }}>
-          <Button variant="outlined" onClick={handleExportCsv}>
-            Export Excel (CSV)
-          </Button>
-          <Button variant="contained" onClick={handleOpenAdd}>
+          <TextField
+            size="small"
+            label="Filter Username"
+            value={filterUsername}
+            onChange={(event) => setFilterUsername(event.target.value)}
+          />
+
+          <TextField
+            size="small"
+            label="Filter Target Type"
+            select
+            value={filterTargetType}
+            onChange={(event) => setFilterTargetType(event.target.value)}
+            sx={{ minWidth: 180 }}
+          >
+            <MenuItem value="blog">user name</MenuItem>
+          </TextField>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenAddUser}
+          >
             Add User
           </Button>
         </Stack>
       </Stack>
+
       {errorMsg ? (
-        <Typography color="error" variant="body2" sx={{ mb: 1 }}>
+        <Typography color="error" sx={{ mb: 1 }}>
           {errorMsg}
         </Typography>
       ) : null}
+
       <DataGrid
-        rows={rows}
+        rows={filteredRows}
         columns={columns}
         loading={loading}
         initialState={{
           pagination: {
-            paginationModel: { pageSize: 5 },
+            paginationModel: {
+              pageSize: 5,
+            },
           },
         }}
+        pageSizeOptions={[5]}
       />
 
-      <Modal open={open} onClose={handleClose}>
-        <Stack sx={style}>
+      <Modal open={addUserOpen} onClose={handleCloseAddUser}>
+        <Stack sx={addDonationModalStyle}>
           <Stack sx={{ width: "100%", gap: 2 }}>
-            <Typography variant="h6">
-              {modalMode === "edit" ? "Edit User" : "Add User"}
-            </Typography>
+            <Typography variant="h6">Add User</Typography>
+
+            <TextField
+              label="Username"
+              variant="standard"
+              value={addUsername}
+              onChange={(event) => setAddUsername(event.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Email"
+              type="email"
+              variant="standard"
+              value={addEmail}
+              onChange={(event) => setAddEmail(event.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Password"
+              type="password"
+              variant="standard"
+              value={addPassword}
+              onChange={(event) => setAddPassword(event.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Confirm Password"
+              type="password"
+              variant="standard"
+              value={addConfirmPassword}
+              onChange={(event) => setAddConfirmPassword(event.target.value)}
+              fullWidth
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={addShowAsAnonymousInDonations}
+                  onChange={(event) =>
+                    setAddShowAsAnonymousInDonations(event.target.checked)
+                  }
+                />
+              }
+              label="Show as anonymous in donations"
+            />
+
+            <Stack direction="row" sx={{ gap: 2 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleCloseAddUser}
+              >
+                Cancel
+              </Button>
+              <Button
+                fullWidth
+                disabled={isCreateUserDisabled}
+                variant="contained"
+                color="primary"
+                onClick={() => void handleCreateUser()}
+              >
+                {isCreatingUser ? "Creating..." : "Create User"}
+              </Button>
+            </Stack>
+            {addUserErrorMsg ? (
+              <Typography color="error" variant="body2">
+                {addUserErrorMsg}
+              </Typography>
+            ) : null}
+          </Stack>
+        </Stack>
+      </Modal>
+
+      <Modal open={editOpen} onClose={handleCloseEdit}>
+        <Stack sx={modalStyle}>
+          <Stack sx={{ width: "100%", gap: 1 }}>
+            <Typography variant="h6">Edit User</Typography>
 
             <TextField
               label="Username"
               variant="standard"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              disabled={modalMode === "edit"}
               fullWidth
             />
             <TextField
               label="Email"
               variant="standard"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              disabled={modalMode === "edit"}
               fullWidth
+              disabled
             />
 
-            <TextField
-              label="Phone Numbers"
-              variant="standard"
-              type="tel"
-              value={phoneNumbers}
-              onChange={(event) =>
-                setPhoneNumbers(event.target.value.replace(/[^\d,]/g, ""))
-              }
-              disabled={modalMode === "edit"}
-              helperText="Use digits only. For multiple numbers, separate with comma."
-              fullWidth
-            />
-            <TextField
-              label="Message"
-              multiline
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              disabled={modalMode === "edit"}
-              fullWidth
-            />
-            <Stack direction="row" sx={{ gap: 2 }}>
-              {modalMode === "add" ? (
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
-                  disabled={
-                    isSubmitting ||
-                    !username.trim() ||
-                    !email.trim() ||
-                    !phoneNumbers.trim() ||
-                    !message.trim()
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showAsAnonymousInDonations}
+                  onChange={(event) =>
+                    setShowAsAnonymousInDonations(event.target.checked)
                   }
-                >
-                  {isSubmitting ? "Adding..." : "Add"}
-                </Button>
-              ) : null}
-              <Button variant="outlined" color="primary" onClick={handleClose}>
-                {modalMode === "edit" ? "Close" : "Cancel"}
+                />
+              }
+              label="Show as anonymous in donations"
+            />
+
+            <ButtonGroup fullWidth>
+              <Button
+                variant={editPanel === "donations" ? "contained" : "outlined"}
+                onClick={handleShowDonations}
+              >
+                Donations
+              </Button>
+              <Button variant="outlined" onClick={handleOpenAddDonation}>
+                Add Donation
+              </Button>
+            </ButtonGroup>
+
+            {editPanel === "donations" ? (
+              <Stack
+                sx={{
+                  gap: 1,
+                  maxHeight: 260,
+                  border: "1px solid",
+                  borderColor: "primary.main",
+                  p: 1,
+                  borderRadius: 1,
+                  overflow: "auto",
+                }}
+              >
+                {isLoadingDonations ? (
+                  <Stack sx={{ py: 2, alignItems: "center" }}>
+                    <CircularProgress size={24} />
+                  </Stack>
+                ) : donationsErrorMsg ? (
+                  <Typography color="error" variant="body2">
+                    {donationsErrorMsg}
+                  </Typography>
+                ) : userDonations.length === 0 ? (
+                  <Typography variant="body2" color="text.secondary">
+                    No donations yet.
+                  </Typography>
+                ) : (
+                  userDonations.map((donation) => (
+                    <Stack
+                      key={donation.id}
+                      direction="row"
+                      sx={{
+                        p: 1.5,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: 1,
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                        boxShadow: 2,
+                        gap: 1,
+                      }}
+                    >
+                      <Stack sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {donation.projectTitle}
+                        </Typography>
+                        <Typography variant="body2">
+                          {donation.amount} {donation.currency}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {donation.source} ·{" "}
+                          {donation.createdAt
+                            ? new Date(donation.createdAt).toLocaleString()
+                            : "—"}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" sx={{ gap: 0.5, flexShrink: 0 }}>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontSize: 11, minWidth: 0, px: 1 }}
+                          onClick={() => handleOpenEditDonation(donation)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="small"
+                          color="error"
+                          variant="outlined"
+                          sx={{ fontSize: 11, minWidth: 0, px: 1 }}
+                          disabled={isDeletingDonationId === donation.id}
+                          onClick={() => void handleDeleteDonation(donation)}
+                        >
+                          {isDeletingDonationId === donation.id
+                            ? "..."
+                            : "Delete"}
+                        </Button>
+                      </Stack>
+                    </Stack>
+                  ))
+                )}
+              </Stack>
+            ) : null}
+
+            <Stack direction="row" sx={{ gap: 2 }}>
+              <Button
+                fullWidth
+                disabled={isProfileSaveDisabled}
+                variant="contained"
+                color="primary"
+                onClick={() => void handleSaveProfile()}
+              >
+                {isSubmitting ? "Saving..." : "Save"}
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleCloseEdit}
+              >
+                Cancel
               </Button>
             </Stack>
-            {selectedUserId ? (
-              <Typography variant="caption" color="text.secondary">
-                User ID: {selectedUserId}
-              </Typography>
-            ) : null}
             {submitErrorMsg ? (
               <Typography color="error" variant="body2">
                 {submitErrorMsg}
+              </Typography>
+            ) : null}
+          </Stack>
+        </Stack>
+      </Modal>
+
+      <Modal open={addDonationOpen} onClose={handleCloseAddDonation}>
+        <Stack sx={addDonationModalStyle}>
+          <Stack sx={{ width: "100%", gap: 2 }}>
+            <Typography variant="h6">Add Donation</Typography>
+
+            <TextField
+              label="Donation Project"
+              select
+              variant="standard"
+              value={selectedDonationProjectId}
+              onChange={(event) =>
+                setSelectedDonationProjectId(event.target.value)
+              }
+              fullWidth
+              disabled={
+                isFetchingDonationProjects ||
+                donationProjectOptions.length === 0
+              }
+              helperText={
+                isFetchingDonationProjects
+                  ? "Loading donation projects..."
+                  : donationProjectOptions.length === 0
+                  ? "No donation projects available."
+                  : ""
+              }
+            >
+              <MenuItem value="">Select donation project</MenuItem>
+              {donationProjectOptions.map((project) => (
+                <MenuItem key={project._id} value={project._id}>
+                  {project.title}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              label="Amount"
+              type="number"
+              variant="standard"
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              fullWidth
+              slotProps={{
+                htmlInput: { min: 0, step: "any" },
+              }}
+            />
+
+            <TextField
+              label="Currency"
+              select
+              variant="standard"
+              value={currency}
+              onChange={(event) => setCurrency(event.target.value)}
+              fullWidth
+            >
+              <MenuItem value="USD">USD</MenuItem>
+              <MenuItem value="INR">INR</MenuItem>
+            </TextField>
+
+            <Stack direction="row" sx={{ gap: 2 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleCloseAddDonation}
+              >
+                Cancel
+              </Button>
+              <Button
+                fullWidth
+                disabled={isAddDonationDisabled}
+                variant="contained"
+                color="primary"
+                onClick={() => void handleAddDonation()}
+              >
+                {isAddingDonation ? "Adding..." : "Add Donation"}
+              </Button>
+            </Stack>
+            {addDonationErrorMsg ? (
+              <Typography color="error" variant="body2">
+                {addDonationErrorMsg}
+              </Typography>
+            ) : null}
+          </Stack>
+        </Stack>
+      </Modal>
+
+      <Modal open={editDonationOpen} onClose={handleCloseEditDonation}>
+        <Stack sx={addDonationModalStyle}>
+          <Stack sx={{ width: "100%", gap: 2 }}>
+            <Typography variant="h6">Edit Donation</Typography>
+
+            <TextField
+              label="Donation Project"
+              variant="standard"
+              value={editDonationProjectTitle}
+              fullWidth
+              disabled
+            />
+
+            <TextField
+              label="Amount"
+              type="number"
+              variant="standard"
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              fullWidth
+              slotProps={{
+                htmlInput: { min: 0, step: "any" },
+              }}
+            />
+
+            <TextField
+              label="Currency"
+              select
+              variant="standard"
+              value={currency}
+              onChange={(event) => setCurrency(event.target.value)}
+              fullWidth
+            >
+              <MenuItem value="USD">USD</MenuItem>
+              <MenuItem value="INR">INR</MenuItem>
+            </TextField>
+
+            <TextField
+              label="Source"
+              select
+              variant="standard"
+              value={source}
+              onChange={(event) =>
+                setSource(event.target.value as DonationSource)
+              }
+              fullWidth
+            >
+              <MenuItem value="manual">manual</MenuItem>
+              <MenuItem value="patreon">patreon</MenuItem>
+              <MenuItem value="whatsapp">whatsapp</MenuItem>
+            </TextField>
+
+            <Stack direction="row" sx={{ gap: 2 }}>
+              <Button
+                fullWidth
+                disabled={isEditDonationDisabled}
+                variant="contained"
+                color="primary"
+                onClick={() => void handleUpdateDonation()}
+              >
+                {isUpdatingDonation ? "Saving..." : "Save"}
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleCloseEditDonation}
+              >
+                Cancel
+              </Button>
+            </Stack>
+            {editDonationErrorMsg ? (
+              <Typography color="error" variant="body2">
+                {editDonationErrorMsg}
               </Typography>
             ) : null}
           </Stack>

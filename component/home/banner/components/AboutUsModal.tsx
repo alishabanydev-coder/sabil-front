@@ -52,6 +52,7 @@ const AboutUsModal = ({
             src={aboutUs?.videoUrl}
             playIcon={<WatchPlayerPlayIcon />}
             previewAriaLabel={`Play ${aboutUs?.title || "about us video"}`}
+            light={true}
             controls
             width="100%"
             height="100%"

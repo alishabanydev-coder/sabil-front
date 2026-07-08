@@ -26,11 +26,12 @@ import Channels from "./components/Channels";
 import Blog from "./components/Blog";
 import SocialMedia from "./components/SocialMedia";
 import Comment from "./components/Comment";
-import Users from "./components/Users";
 import MainPageLayout from "./components/MainPageLayout";
 import AboutUs from "./components/AboutUs";
 import Catalogue from "./components/Catalogue";
 import Donation from "./components/Donation";
+import Supporters from "./components/Supporters";
+import Users from "./components/Users";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -108,34 +109,41 @@ const allTabs = [
   },
   {
     id: 9,
-    label: "Users (Supporters)",
-    title: "Users / Supporters",
+    label: "Users",
+    title: "Users",
     permissionKey: "users",
     component: <Users />,
   },
   {
     id: 10,
+    label: "Supporters (let's call you)",
+    title: "Supporters (let's call you)",
+    permissionKey: "supporters",
+    component: <Supporters />,
+  },
+  {
+    id: 11,
     label: "Social Media",
     title: "Social Media",
     permissionKey: "socialMedia",
     component: <SocialMedia />,
   },
   {
-    id: 11,
+    id: 12,
     label: "About Us",
     title: "About Us",
     permissionKey: "aboutUs",
     component: <AboutUs />,
   },
   {
-    id: 12,
+    id: 13,
     label: "Donation",
     title: "Donation",
     permissionKey: "donation",
     component: <Donation />,
   },
   {
-    id: 13,
+    id: 14,
     label: "Admins",
     title: "Admins",
     permissionKey: "admins",
@@ -415,7 +423,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
                 justifyContent: "flex-start",
                 textAlign: "left",
                 textTransform: "none",
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: 700,
                 border: (theme) =>
                   selectedTabValue === tab.id

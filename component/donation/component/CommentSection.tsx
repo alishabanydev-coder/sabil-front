@@ -107,7 +107,16 @@ type AuthUser = {
   email: string;
   displayName: string;
   avatar?: string | null;
+  showAsAnonymousInDonations?: boolean;
 };
+
+function getPublicCommentAuthorLabel(user: AuthUser | null) {
+  if (!user) {
+    return "Anonymous";
+  }
+
+  return user.showAsAnonymousInDonations ? "Anonymous" : user.displayName;
+}
 
 const CommentSection = ({
   setValue,
@@ -143,6 +152,11 @@ const CommentSection = ({
   const canPostReply =
     Boolean(replyText.trim()) && replyAltchaVerified && !isReplySubmitting;
 
+  const currentUserLabel = getPublicCommentAuthorLabel(currentUser);
+  const showCurrentUserEmail = Boolean(
+    currentUser && !currentUser.showAsAnonymousInDonations
+  );
+
   const { roots, repliesByParent } = useMemo(
     () => groupCommentsByParent(comments),
     [comments]
@@ -152,30 +166,41 @@ const CommentSection = ({
     `/donation/${projectData.slug}`
   )}`;
 
-  const loadComments = useCallback(async (targetPage = 1) => {
-    setLoading(true);
-    setErrorMsg("");
+  const loadComments = useCallback(
+    async (targetPage = 1) => {
+      if (!projectData?._id) {
+        setComments([]);
+        setPage(1);
+        setTotalPages(1);
+        setLoading(false);
+        return;
+      }
 
-    const result = await fetchPublicComments(
-      "projectDonation",
-      projectData._id,
-      { page: targetPage, limit: PUBLIC_COMMENT_PAGE_SIZE }
-    );
+      setLoading(true);
+      setErrorMsg("");
 
-    if (!result.ok) {
-      setComments([]);
-      setPage(1);
-      setTotalPages(1);
-      setErrorMsg(result.message);
+      const result = await fetchPublicComments(
+        "projectDonation",
+        projectData._id,
+        { page: targetPage, limit: PUBLIC_COMMENT_PAGE_SIZE }
+      );
+
+      if (!result.ok) {
+        setComments([]);
+        setPage(1);
+        setTotalPages(1);
+        setErrorMsg(result.message);
+        setLoading(false);
+        return;
+      }
+
+      setComments(result.comments);
+      setPage(result.page);
+      setTotalPages(result.totalPages);
       setLoading(false);
-      return;
-    }
-
-    setComments(result.comments);
-    setPage(result.page);
-    setTotalPages(result.totalPages);
-    setLoading(false);
-  }, [projectData._id]);
+    },
+    [projectData._id]
+  );
 
   const loadCurrentUser = useCallback(async () => {
     if (!getStoredUserToken()) {
@@ -188,10 +213,14 @@ const CommentSection = ({
   }, []);
 
   useEffect(() => {
+    if (!projectData?._id) {
+      return;
+    }
+
     void loadComments(page);
     void loadCurrentUser();
     setIsAdmin(readIsAdminSession());
-  }, [loadComments, loadCurrentUser, page]);
+  }, [loadComments, loadCurrentUser, page, projectData?._id]);
 
   const handleSubmitComment = async () => {
     const normalizedText = commentText.trim();
@@ -235,9 +264,7 @@ const CommentSection = ({
       setAltchaVerified(false);
       altchaRef.current?.reset();
       setPage(1);
-      if (page === 1) {
-        void loadComments(1);
-      }
+      void loadComments(1);
     } finally {
       setIsSubmitting(false);
     }
@@ -585,8 +612,12 @@ const CommentSection = ({
                 }}
               >
                 <Avatar
-                  src={currentUser.avatar || undefined}
-                  alt={currentUser.email}
+                  src={
+                    currentUser.showAsAnonymousInDonations
+                      ? undefined
+                      : currentUser.avatar || undefined
+                  }
+                  alt={currentUserLabel}
                   sx={{
                     width: { xs: 28, sm: 32, md: 36, lg: 40 },
                     height: { xs: 28, sm: 32, md: 36, lg: 40 },
@@ -601,17 +632,19 @@ const CommentSection = ({
                       fontSize: { xs: 10, sm: 12, md: 14, lg: 16 },
                     }}
                   >
-                    {currentUser.displayName}
+                    {currentUserLabel}
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: { xs: 9, sm: 10, md: 12, lg: 14 },
-                    }}
-                  >
-                    {currentUser.email}
-                  </Typography>
+                  {showCurrentUserEmail ? (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "text.secondary",
+                        fontSize: { xs: 9, sm: 10, md: 12, lg: 14 },
+                      }}
+                    >
+                      {currentUser.email}
+                    </Typography>
+                  ) : null}
                 </Stack>
               </Stack>
               <TextField
