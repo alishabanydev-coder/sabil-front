@@ -4,7 +4,7 @@ import { ThemeProvider } from "./ThemeContext";
 import MUIThemeProvider from "./MUIThemeProvider";
 import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
 
-const SITE_URL = "https://sabeellkids.com";
+const SITE_URL = "https://sabeelkids.com";
 
 export const metadata: Metadata = {
   title: "Sabeel Kids | Joyful Islamic Streaming for Children",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     ],
     apple: "/icon-192.png",
   },
-    authors: [{ name: "Sabeel Group", url: "https://sabeellkids.com" }],
+    authors: [{ name: "Sabeel Group", url: "https://sabeelkids.com" }],
   creator: "Sabeel Group",
   publisher: "Sabeel Kids",
   openGraph: {

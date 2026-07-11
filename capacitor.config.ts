@@ -4,7 +4,7 @@ const serverUrl =
   process.env.CAPACITOR_SERVER_URL || "https://sabeelkids.com/app";
 
 const config: CapacitorConfig = {
-  appId: "com.sabeellkids.app",
+  appId: "com.sabeelkids.app",
   appName: "Sabeel Kids",
   webDir: "capacitor-www",
   server: {

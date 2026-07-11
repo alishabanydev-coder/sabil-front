@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 //base url
-const SITE_URL = "https://sabeellkids.com";
+const SITE_URL = "https://sabeelkids.com";
 
 type PageProps = {
   params: Promise<{ donationProjectId: string }>;

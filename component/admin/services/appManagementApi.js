@@ -1,8 +1,7 @@
+import { getApiBase } from '@/lib/apiBase';
 import { handleExpiredAdminSession } from './adminSession';
 
-const API_BASE =
-  (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_ADMIN_API_URL) ||
-  'http://localhost:5000';
+const API_BASE = getApiBase();
 
 function getAuthHeaders(json = false) {
   const token =
