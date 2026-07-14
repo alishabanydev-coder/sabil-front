@@ -1,3 +1,4 @@
+import type { ThreadComment } from "@/types/admin";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   createComment,
@@ -5,15 +6,6 @@ import {
   fetchCommentThread,
   updateComment,
 } from "../services/commentsApi";
-
-export type ThreadComment = {
-  _id: string;
-  text: string;
-  username: string;
-  parentCommentId?: string | null;
-  createdAt?: string | null;
-  replies?: ThreadComment[];
-};
 
 type UseCommentThreadParams = {
   open: boolean;

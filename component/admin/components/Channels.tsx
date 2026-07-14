@@ -12,34 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import {
-  createChannelVideo,
-  deleteChannelVideo,
-  fetchChannelProjects,
-  fetchChannelVideos,
-  updateChannelVideo,
-} from "../services/projectsApi";
+import { useAdminChannels } from "../hooks/useAdminChannels";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-
-interface ProjectRecord {
-  _id: string;
-  id: string;
-  name: string;
-  thumbnail: string;
-}
-
-interface VideoRecord {
-  _id: string;
-  id?: string;
-  title: string;
-  url: string;
-  thumbnail: string;
-  description: string;
-  season: number;
-  episode: number;
-}
 
 const style = {
   direction: "ltr",
@@ -59,303 +34,49 @@ const style = {
 };
 
 const Channels = () => {
-  const [projects, setProjects] = useState<ProjectRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [videoUrl, setVideoUrl] = useState("");
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [season, setSeason] = useState("");
-  const [episode, setEpisode] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-  const [videos, setVideos] = useState<VideoRecord[]>([]);
-  const [videosLoading, setVideosLoading] = useState(false);
-  const [videosErrorMsg, setVideosErrorMsg] = useState("");
-  const [selectedSeason, setSelectedSeason] = useState<number>(1);
-  const [selectedVideo, setSelectedVideo] = useState<VideoRecord | null>(null);
-  const [isEditingVideo, setIsEditingVideo] = useState(false);
-  const [previewThumbnail, setPreviewThumbnail] = useState(false);
-  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState("");
-
-  const videosBySeason = videos.reduce<Record<number, VideoRecord[]>>(
-    (groups, video) => {
-      const seasonNumber = video.season || 1;
-
-      return {
-        ...groups,
-        [seasonNumber]: [...(groups[seasonNumber] || []), video],
-      };
-    },
-    {}
-  );
-  const seasons = Object.keys(videosBySeason)
-    .map(Number)
-    .sort((a, b) => a - b);
-  const parsedSeason = Number(season);
-  const parsedEpisode = Number(episode);
-  const episodeAlreadyExists = videos.some(
-    (video) =>
-      video.season === parsedSeason &&
-      video.episode === parsedEpisode &&
-      video._id !== selectedVideo?._id &&
-      Number.isInteger(parsedSeason) &&
-      Number.isInteger(parsedEpisode)
-  );
-  const activeThumbnailPreviewUrl =
-    thumbnailPreviewUrl || selectedVideo?.thumbnail || "";
-
-  const handleSelectedVideo = (video: VideoRecord) => {
-    setSelectedVideo(video);
-    setIsEditing(true);
-    setIsEditingVideo(true);
-    setOpen(true);
-    setTitle(video.title);
-    setVideoUrl(video.url);
-    setThumbnail(null);
-    setDescription(video.description);
-    setSeason(video.season.toString());
-    setEpisode(video.episode.toString());
-    setPreviewThumbnail(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-    setTitle("");
-    setVideoUrl("");
-    setThumbnail(null);
-    setDescription("");
-    setSeason("");
-    setEpisode("");
-    setSubmitErrorMsg("");
-    setIsEditing(false);
-    setPreviewThumbnail(false);
-    setSelectedVideo(null);
-    setIsEditingVideo(false);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setTitle("");
-    setVideoUrl("");
-    setThumbnail(null);
-    setDescription("");
-    setSeason("");
-    setEpisode("");
-    setSubmitErrorMsg("");
-    setIsEditing(false);
-    setPreviewThumbnail(false);
-    setSelectedVideo(null);
-    setIsEditingVideo(false);
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedProject) {
-      setSubmitErrorMsg("Please select a project first.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setSubmitErrorMsg("");
-
-    if (episodeAlreadyExists) {
-      setSubmitErrorMsg(
-        `Season ${parsedSeason}, episode ${parsedEpisode} already exists.`
-      );
-      setIsSubmitting(false);
-      return;
-    }
-
-    try {
-      const videoPayload = {
-        title: title.trim(),
-        url: videoUrl.trim(),
-        thumbnail: thumbnail || selectedVideo?.thumbnail,
-        description: description.trim(),
-        season: Number(season),
-        episode: Number(episode),
-      };
-      const result =
-        isEditingVideo && selectedVideo
-          ? await updateChannelVideo(
-              selectedProject,
-              selectedVideo._id,
-              videoPayload
-            )
-          : await createChannelVideo(selectedProject, videoPayload);
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      if (result.video) {
-        setVideos((currentVideos) =>
-          [
-            ...currentVideos.filter((video) => video._id !== result.video?._id),
-            result.video,
-          ].sort(
-            (firstVideo, secondVideo) =>
-              firstVideo.season - secondVideo.season ||
-              firstVideo.episode - secondVideo.episode
-          )
-        );
-      }
-
-      handleClose();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to create video."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!selectedProject) {
-      setSubmitErrorMsg("Please select a project first.");
-      return;
-    }
-
-    if (!selectedVideo) {
-      setSubmitErrorMsg("Please select a video first.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setSubmitErrorMsg("");
-
-    try {
-      const result = await deleteChannelVideo(
-        selectedProject,
-        selectedVideo._id
-      );
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      setVideos((currentVideos) =>
-        currentVideos.filter((video) => video._id !== selectedVideo._id)
-      );
-      handleClose();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to delete video."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadProjects() {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const result = await fetchChannelProjects({
-          signal: controller.signal,
-        });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-
-        if (!result.ok) {
-          setErrorMsg(result.message);
-          return;
-        }
-
-        setProjects(result.projects);
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load projects."
-        );
-      }
-    }
-
-    loadProjects();
-
-    return () => controller.abort("Channels tab unmounted");
-  }, []);
-
-  useEffect(() => {
-    if (!selectedProject) {
-      setVideos([]);
-      setVideosErrorMsg("");
-      setVideosLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function loadVideos() {
-      setVideosLoading(true);
-      setVideosErrorMsg("");
-
-      try {
-        const result = await fetchChannelVideos(selectedProject, {
-          signal: controller.signal,
-        });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setVideosLoading(false);
-
-        if (!result.ok) {
-          setVideos([]);
-          setVideosErrorMsg(result.message);
-          return;
-        }
-
-        setVideos(result.videos);
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setVideos([]);
-        setVideosLoading(false);
-        setVideosErrorMsg(
-          error instanceof Error ? error.message : "Failed to load videos."
-        );
-      }
-    }
-
-    loadVideos();
-
-    return () => controller.abort("Selected project changed");
-  }, [selectedProject]);
-
-  useEffect(() => {
-    if (!thumbnail) {
-      setThumbnailPreviewUrl("");
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(thumbnail);
-    setThumbnailPreviewUrl(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [thumbnail]);
+  const {
+    activeThumbnailPreviewUrl,
+    description,
+    episode,
+    episodeAlreadyExists,
+    errorMsg,
+    handleClose,
+    handleDelete,
+    handleOpen,
+    handleSelectProject,
+    handleSelectedVideo,
+    handleSubmit,
+    handleToggleSeason,
+    isEditing,
+    isEditingVideo,
+    isSubmitDisabled,
+    isSubmitting,
+    loading,
+    open,
+    parsedEpisode,
+    parsedSeason,
+    previewThumbnail,
+    projects,
+    season,
+    seasons,
+    selectedProject,
+    selectedSeason,
+    selectedVideo,
+    setDescription,
+    setEpisode,
+    setPreviewThumbnail,
+    setSeason,
+    setThumbnail,
+    setTitle,
+    setVideoUrl,
+    submitErrorMsg,
+    thumbnail,
+    title,
+    videoUrl,
+    videosBySeason,
+    videosErrorMsg,
+    videosLoading,
+  } = useAdminChannels();
 
   return (
     <>
@@ -418,7 +139,7 @@ const Channels = () => {
                         transition: "all 0.3s ease",
                       }}
                       onClick={() => {
-                        setSelectedProject(project._id || project.id || null);
+                        handleSelectProject(project._id || project.id || null);
                       }}
                     />
                   ))}
@@ -482,9 +203,9 @@ const Channels = () => {
               </Typography>
             ) : (
               <Stack sx={{ width: "100%", gap: 3, overflow: "auto", pt: 1, pb: 2 }}>
-                {seasons.map((season) => (
+                {seasons.map((seasonNumber) => (
                   <Stack
-                    key={season}
+                    key={seasonNumber}
                     sx={{
                       width: "100%",
                       alignItems: "center",
@@ -498,11 +219,7 @@ const Channels = () => {
                         direction="row"
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() =>
-                          setSelectedSeason(
-                            selectedSeason === season ? null : season
-                          )
-                        }
+                        onClick={() => handleToggleSeason(seasonNumber)}
                         sx={{
                           gap: 1,
                           alignItems: "center",
@@ -514,23 +231,25 @@ const Channels = () => {
                       >
                         <Typography
                           color={
-                            selectedSeason !== season ? "common.white" : "error"
+                            selectedSeason !== seasonNumber
+                              ? "common.white"
+                              : "error"
                           }
                           variant="body2"
                           sx={{ fontWeight: 700 }}
                         >
-                          Season {season}
+                          Season {seasonNumber}
                         </Typography>
 
                         <IconButton size="small">
                           <motion.span
                             animate={{
-                              rotate: selectedSeason === season ? 180 : 0,
+                              rotate: selectedSeason === seasonNumber ? 180 : 0,
                             }}
                             transition={{ duration: 0.2 }}
                             style={{ display: "flex" }}
                           >
-                            {selectedSeason === season ? (
+                            {selectedSeason === seasonNumber ? (
                               <KeyboardArrowUpIcon />
                             ) : (
                               <KeyboardArrowDownIcon />
@@ -540,10 +259,10 @@ const Channels = () => {
                       </Stack>
                     </Divider>
                     <AnimatePresence initial={false}>
-                      {selectedSeason === season && (
+                      {selectedSeason === seasonNumber && (
                         <Stack
                           component={motion.div}
-                          key={`season-${season}-videos`}
+                          key={`season-${seasonNumber}-videos`}
                           direction="row"
                           initial={{ height: 0, opacity: 0, y: -10 }}
                           animate={{ height: "auto", opacity: 1, y: 0 }}
@@ -557,7 +276,7 @@ const Channels = () => {
                             py: 1,
                           }}
                         >
-                          {videosBySeason[season].map((video, index) => (
+                          {videosBySeason[seasonNumber].map((video, index) => (
                             <Stack
                               component={motion.div}
                               onClick={() => {
@@ -747,16 +466,7 @@ const Channels = () => {
               }}
             >
               <Button
-                disabled={
-                  isSubmitting ||
-                  !title.trim() ||
-                  !videoUrl.trim() ||
-                  (!thumbnail && !selectedVideo?.thumbnail) ||
-                  !description.trim() ||
-                  !season ||
-                  !episode ||
-                  episodeAlreadyExists
-                }
+                disabled={isSubmitDisabled}
                 fullWidth
                 variant="contained"
                 color="primary"

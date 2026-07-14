@@ -10,264 +10,36 @@ import {
   Typography,
 } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
-import { useEffect, useRef, useState } from "react";
-import {
-  createBreakdown,
-  deleteBreakdown,
-  fetchBreakdowns,
-  updateBreakdown,
-} from "../services/breakdownApi";
-import { fetchProjects } from "../services/projectsApi";
-
-type ProjectRecord = {
-  _id?: string;
-  id?: string;
-  name?: string;
-  thumbnail?: string;
-  description?: string;
-};
-
-type BreakdownRecord = {
-  _id: string;
-  projectId: string;
-  title: string;
-  content: string;
-  thumbnail: string;
-  videoUrl?: string;
-};
+import { useAdminBreakdown } from "../hooks/useAdminBreakdown";
 
 const Breakdown = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [open, setOpen] = useState(false);
-  const [projectId, setProjectId] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [thumbnailPreview, setThumbnailPreview] = useState("");
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [breakdowns, setBreakdowns] = useState<BreakdownRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [projects, setProjects] = useState<ProjectRecord[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingBreakdownId, setEditingBreakdownId] = useState<string | null>(
-    null
-  );
-
-  const handleAddBreakdown = () => {
-    setIsEditing(false);
-    setEditingBreakdownId(null);
-    setProjectId("");
-    setTitle("");
-    setContent("");
-    setVideoUrl("");
-    setThumbnailPreview("");
-    setThumbnailFile(null);
-    setSubmitErrorMsg("");
-    setOpen(true);
-  };
-
-  const handleEditBreakdown = (breakdown: BreakdownRecord) => {
-    setIsEditing(true);
-    setEditingBreakdownId(breakdown._id);
-    setOpen(true);
-    setProjectId(breakdown.projectId);
-    setTitle(breakdown.title);
-    setContent(breakdown.content);
-    setVideoUrl(breakdown.videoUrl || "");
-    setThumbnailPreview(breakdown.thumbnail || "");
-    setThumbnailFile(null);
-  };
-
-  const handleThumbnailChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    setThumbnailFile(file);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setThumbnailPreview(
-        typeof reader.result === "string" ? reader.result : ""
-      );
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleDelete = async () => {
-    if (!isEditing || !editingBreakdownId) {
-      return;
-    }
-
-    setSubmitErrorMsg("");
-    setIsSubmitting(true);
-
-    try {
-      const result = await deleteBreakdown(editingBreakdownId);
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      setBreakdowns((currentBreakdowns) =>
-        currentBreakdowns.filter(
-          (breakdown) => breakdown._id !== editingBreakdownId
-        )
-      );
-      handleCancel();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to delete breakdown."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleSubmit = async () => {
-    setSubmitErrorMsg("");
-    setIsSubmitting(true);
-
-    try {
-      const payload = {
-        projectId: projectId.trim(),
-        title: title.trim(),
-        content: content.trim(),
-        videoUrl: videoUrl.trim(),
-        ...(thumbnailFile ? { thumbnail: thumbnailFile } : {}),
-      };
-
-      if (!isEditing && !thumbnailFile) {
-        setSubmitErrorMsg("Breakdown thumbnail is required.");
-        return;
-      }
-
-      const result =
-        isEditing && editingBreakdownId
-          ? await updateBreakdown(editingBreakdownId, payload)
-          : await createBreakdown(payload);
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      if (result.breakdown) {
-        setBreakdowns((currentBreakdowns) =>
-          isEditing
-            ? currentBreakdowns.map((breakdown) =>
-                breakdown._id === result.breakdown._id
-                  ? result.breakdown
-                  : breakdown
-              )
-            : [result.breakdown, ...currentBreakdowns]
-        );
-      }
-
-      handleCancel();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error
-          ? error.message
-          : isEditing
-            ? "Failed to update breakdown."
-            : "Failed to create breakdown."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-    setIsEditing(false);
-    setEditingBreakdownId(null);
-    setProjectId("");
-    setTitle("");
-    setContent("");
-    setVideoUrl("");
-    setThumbnailPreview("");
-    setThumbnailFile(null);
-    setSubmitErrorMsg("");
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadBreakdowns() {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const result = await fetchBreakdowns({ signal: controller.signal });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-
-        if (!result.ok) {
-          setErrorMsg(result.message);
-          return;
-        }
-
-        setBreakdowns(result.breakdowns);
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load breakdowns."
-        );
-      }
-    }
-
-    async function loadProjects() {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const result = await fetchProjects({ signal: controller.signal });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-
-        if (!result.ok) {
-          setErrorMsg(result.message);
-          return;
-        }
-
-        setProjects(result.projects);
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load Projects."
-        );
-      }
-    }
-
-    loadBreakdowns();
-    loadProjects();
-
-    return () => controller.abort("Breakdowns tab unmounted");
-  }, []);
+  const {
+    breakdowns,
+    content,
+    errorMsg,
+    fileInputRef,
+    handleAddBreakdown,
+    handleCancel,
+    handleDelete,
+    handleEditBreakdown,
+    handleSubmit,
+    handleThumbnailChange,
+    isEditing,
+    isSubmitDisabled,
+    isSubmitting,
+    loading,
+    open,
+    projectId,
+    projects,
+    setContent,
+    setProjectId,
+    setTitle,
+    setVideoUrl,
+    submitErrorMsg,
+    thumbnailPreview,
+    title,
+    videoUrl,
+  } = useAdminBreakdown();
 
   return (
     <Stack sx={{ width: "100%", height: "100%" }}>
@@ -510,13 +282,7 @@ const Breakdown = () => {
                 color="primary"
                 sx={{ width: "100%" }}
                 onClick={handleSubmit}
-                disabled={
-                  isSubmitting ||
-                  !projectId ||
-                  !title.trim() ||
-                  !content.trim() ||
-                  (!isEditing && !thumbnailFile)
-                }
+                disabled={isSubmitDisabled}
               >
                 {isSubmitting
                   ? "Saving..."

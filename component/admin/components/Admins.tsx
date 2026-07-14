@@ -13,62 +13,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  createAdmin,
-  deleteAdmin,
-  fetchAdmins,
-  updateAdmin,
-} from "../services/adminsApi";
-import { fetchProjects } from "../services/projectsApi";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-
-const PERMISSION_TAB_KEYS = [
-  "mainPageLayout",
-  "appManagement",
-  "banner",
-  "breakdowns",
-  "blog",
-  "comments",
-  "channels",
-  "users",
-  "socialMedia",
-  "aboutUs",
-] as const;
-
-type PermissionTabKey = (typeof PERMISSION_TAB_KEYS)[number];
-
-const PERMISSION_TAB_LABELS: Record<PermissionTabKey, string> = {
-  mainPageLayout: "Main Page Layout",
-  appManagement: "App Management",
-  banner: "Banner",
-  breakdowns: "Breakdowns",
-  blog: "Blog",
-  comments: "Comments",
-  channels: "Channels",
-  users: "Users",
-  socialMedia: "Social Media",
-  aboutUs: "About Us",
-};
-
-type AdminRecord = {
-  _id?: string;
-  id?: string;
-  userName?: string;
-  name?: string;
-  role?: string;
-  permissions?: Array<{
-    tab?: string;
-    projectIds?: Array<string | ProjectRecord>;
-  }>;
-};
-
-type ProjectRecord = {
-  _id?: string;
-  id?: string;
-  name?: string;
-};
+import {
+  ADMIN_PERMISSION_TAB_KEYS,
+  ADMIN_PERMISSION_TAB_LABELS,
+  type AdminPermissionTabKey,
+} from "@/types/admin";
+import { getRecordId, useAdminAdmins } from "../hooks/useAdminAdmins";
 
 const style = {
   direction: "ltr",
@@ -87,249 +39,35 @@ const style = {
   gap: 2,
 };
 
-function getRecordId(record: { _id?: string; id?: string } | string) {
-  return typeof record === "string" ? record : record._id || record.id || "";
-}
-
-function getProjectName(projects: ProjectRecord[], projectId: string) {
-  return projects.find((project) => getRecordId(project) === projectId)?.name;
-}
-
-function hasProject(projects: ProjectRecord[], projectId: string) {
-  return projects.some((project) => getRecordId(project) === projectId);
-}
-
 const Admins = () => {
-  const firstFieldRef = useRef<HTMLInputElement>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
-  const [adminRole, setAdminRole] = useState<"admin" | "super_admin">("admin");
-  const [adminPermissions, setAdminPermissions] = useState<PermissionTabKey[]>(
-    []
-  );
-  const [adminProjectIds, setAdminProjectIds] = useState<string[]>([]);
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingAdminId, setEditingAdminId] = useState("");
-  const [admins, setAdmins] = useState<AdminRecord[]>([]);
-  const [projects, setProjects] = useState<ProjectRecord[]>([]);
-  const [loadingAdmins, setLoadingAdmins] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  const handleClose = () => {
-    setOpen(false);
-    setIsFormOpen(false);
-    reset();
-  };
-
-  const loadAdmins = useCallback(async () => {
-    setLoadingAdmins(true);
-    const result = await fetchAdmins();
-    setLoadingAdmins(false);
-
-    if (result.ok) {
-      setAdmins(result.admins);
-    }
-  }, []);
-
-  const loadProjects = useCallback(async () => {
-    const result = await fetchProjects();
-
-    if (result.ok) {
-      setProjects(result.projects);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isFormOpen) {
-      return;
-    }
-    const id = requestAnimationFrame(() => {
-      firstFieldRef.current?.focus();
-    });
-    return () => cancelAnimationFrame(id);
-  }, [isFormOpen]);
-
-  const reset = () => {
-    setUserName("");
-    setAdminPassword("");
-    setAdminRole("admin");
-    setAdminPermissions([]);
-    setAdminProjectIds([]);
-    setFormError("");
-    setIsEditing(false);
-    setEditingAdminId("");
-  };
-
-  const handleAddAdmin = () => {
-    setOpen(true);
-    setFormSuccess("");
-    setFormError("");
-    reset();
-    setIsEditing(false);
-    setIsFormOpen(true);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-    setIsFormOpen(false);
-    reset();
-  };
-
-  const handleEditAdmin = (admin: AdminRecord) => {
-    const nextRole =
-      admin.role === "super_admin"
-        ? ("super_admin" as const)
-        : ("admin" as const);
-    const nextPermissions: PermissionTabKey[] = (admin.permissions || [])
-      .map((permission) => permission.tab)
-      .filter(
-        (tab): tab is PermissionTabKey =>
-          Boolean(tab) &&
-          (PERMISSION_TAB_KEYS as readonly string[]).includes(tab as string)
-      );
-    const nextProjectIds =
-      (admin.permissions || [])
-        .find((permission) => permission.tab === "channels")
-        ?.projectIds?.map(getRecordId)
-        .filter((projectId) => projectId && hasProject(projects, projectId)) ||
-      [];
-
-    setOpen(true);
-    setFormError("");
-    setFormSuccess("");
-    setEditingAdminId(admin._id || admin.id || "");
-    setUserName(admin.userName || "");
-    setAdminPassword("");
-    setAdminRole(nextRole);
-    setAdminPermissions(nextPermissions);
-    setAdminProjectIds(nextProjectIds);
-    setIsEditing(true);
-    setIsFormOpen(true);
-  };
-
-  const handleCreate = async () => {
-    if (submitting) {
-      return;
-    }
-
-    setFormError("");
-    setFormSuccess("");
-
-    if (!isFormOpen) {
-      return;
-    }
-
-    const u = userName.trim();
-    if (!u || (!isEditing && !adminPassword)) {
-      setFormError(
-        isEditing
-          ? "Username is required."
-          : "Username and password are required."
-      );
-      return;
-    }
-
-    if (adminRole === "admin") {
-      if (adminPermissions.length === 0) {
-        setFormError(
-          "For role admin, select at least one tab for full CRUD access."
-        );
-        return;
-      }
-
-      if (
-        adminPermissions.includes("channels") &&
-        adminProjectIds.length === 0
-      ) {
-        setFormError("Select at least one project for channel access.");
-        return;
-      }
-    }
-
-    const permissions =
-      adminRole === "admin"
-        ? adminPermissions.map((tab) => ({
-            tab,
-            canRead: true,
-            canCreate: true,
-            canUpdate: true,
-            canDelete: true,
-            projectIds: tab === "channels" ? adminProjectIds : [],
-          }))
-        : undefined;
-
-    setSubmitting(true);
-    const payload = {
-      userName: u,
-      name: u,
-      role: adminRole,
-      ...(adminPassword ? { password: adminPassword } : {}),
-      ...(adminRole === "admin" && permissions ? { permissions } : {}),
-    };
-    const result =
-      isEditing && editingAdminId
-        ? await updateAdmin(editingAdminId, payload)
-        : await createAdmin({ ...payload, password: adminPassword });
-    setSubmitting(false);
-
-    if (!result.ok) {
-      setFormError(result.message);
-      return;
-    }
-
-    setFormSuccess(
-      isEditing ? "Updated successfully." : "Created successfully."
-    );
-    setIsFormOpen(false);
-    setOpen(false);
-    reset();
-    // await loadAdmins();
-  };
-
-  const handleDeleteAdmin = async (admin: AdminRecord) => {
-    const id = admin._id || admin.id;
-    if (!id) {
-      setFormError("Admin id is missing.");
-      return;
-    }
-
-    const ok = window.confirm(
-      `Delete admin "${admin.userName || admin.name || id}"?`
-    );
-    if (!ok) {
-      return;
-    }
-
-    setFormError("");
-    setFormSuccess("");
-    const result = await deleteAdmin(id);
-
-    if (!result.ok) {
-      setFormError(result.message);
-      return;
-    }
-
-    setAdmins((prev) => prev.filter((item) => (item._id || item.id) !== id));
-    setFormSuccess("Deleted successfully.");
-    if (editingAdminId === id) {
-      setIsFormOpen(false);
-      reset();
-    }
-  };
-
-  useEffect(() => {
-    loadAdmins();
-  }, [formSuccess]);
-
-  useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
-
-  const disabled = !isFormOpen;
+  const {
+    adminPassword,
+    adminPermissions,
+    adminProjectIds,
+    adminRole,
+    admins,
+    disabled,
+    firstFieldRef,
+    getPermissionLabel,
+    handleAddAdmin,
+    handleCancel,
+    handleClose,
+    handleCreate,
+    handleDeleteAdmin,
+    handleEditAdmin,
+    isEditing,
+    isFormOpen,
+    loadingAdmins,
+    open,
+    projects,
+    setAdminPassword,
+    setAdminPermissions,
+    setAdminProjectIds,
+    setAdminRole,
+    setUserName,
+    submitting,
+    userName,
+  } = useAdminAdmins();
 
   return (
     <Stack direction="row" sx={{ gap: 2, height: "100%" }}>
@@ -480,18 +218,10 @@ const Admins = () => {
                       (admin.permissions || [])
                         .filter((permission) => permission.tab)
                         .map((permission) => {
-                          const tab = permission.tab as PermissionTabKey;
-                          const projectNames = (permission.projectIds || [])
-                            .map(getRecordId)
-                            .filter(Boolean)
-                            .map((projectId) =>
-                              getProjectName(projects, projectId)
-                            )
-                            .filter(Boolean);
+                          const tab = permission.tab as AdminPermissionTabKey;
                           const label =
-                            tab === "channels" && projectNames.length > 0
-                              ? `Channels: ${projectNames.join(", ")}`
-                              : PERMISSION_TAB_LABELS[tab] || permission.tab;
+                            getPermissionLabel(tab, permission.projectIds) ||
+                            permission.tab;
 
                           return (
                             <Chip
@@ -591,15 +321,15 @@ const Admins = () => {
               disabled={disabled}
               onChange={(e) =>
                 setAdminPermissions(
-                  e.target.value as unknown as PermissionTabKey[]
+                  e.target.value as unknown as AdminPermissionTabKey[]
                 )
               }
               slotProps={{
                 select: {
                   multiple: true,
                   renderValue: (selected) =>
-                    (selected as PermissionTabKey[])
-                      .map((tab) => PERMISSION_TAB_LABELS[tab])
+                    (selected as AdminPermissionTabKey[])
+                      .map((tab) => ADMIN_PERMISSION_TAB_LABELS[tab])
                       .join(", "),
                 },
               }}
@@ -609,10 +339,10 @@ const Admins = () => {
                   : "Super admins automatically get all permissions."
               }
             >
-              {PERMISSION_TAB_KEYS.map((tab) => (
+              {ADMIN_PERMISSION_TAB_KEYS.map((tab) => (
                 <MenuItem key={tab} value={tab}>
                   <Checkbox checked={adminPermissions.includes(tab)} />
-                  <ListItemText primary={PERMISSION_TAB_LABELS[tab]} />
+                  <ListItemText primary={ADMIN_PERMISSION_TAB_LABELS[tab]} />
                 </MenuItem>
               ))}
             </TextField>

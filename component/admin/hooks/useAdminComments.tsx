@@ -1,3 +1,8 @@
+import type {
+  CommentModalMode,
+  CommentRecord,
+  CommentThreadTarget,
+} from "@/types/admin";
 import { Button, Stack } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -14,26 +19,6 @@ import {
   fetchChannelProjects,
   fetchChannelVideos,
 } from "../services/projectsApi";
-
-export type CommentRecord = {
-  id: string;
-  _id: string;
-  text: string;
-  username: string;
-  targetType: string;
-  targetId: string | null;
-  parentCommentId: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type CommentModalMode = "add" | "edit" | "reply";
-
-export type CommentThreadTarget = {
-  targetType: string;
-  targetId: string | null;
-  label: string;
-};
 
 type TargetType =
   | "video"

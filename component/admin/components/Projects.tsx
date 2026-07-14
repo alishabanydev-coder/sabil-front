@@ -11,39 +11,7 @@ import {
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  createProject,
-  deleteProject,
-  fetchProjects,
-  updateProject,
-} from "../services/projectsApi";
-
-type ProjectRecord = {
-  _id?: string;
-  id?: string;
-  name?: string;
-  thumbnail?: string;
-  description?: string;
-  characters?: Array<{
-    name?: string;
-    image?: string;
-  }>;
-};
-
-type CharacterFormRecord = {
-  key: string;
-  name: string;
-  image: string;
-  imageFile: File | null;
-};
-
-const createCharacterDraft = (): CharacterFormRecord => ({
-  key: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
-  name: "",
-  image: "",
-  imageFile: null,
-});
+import { useAdminProjects } from "../hooks/useAdminProjects";
 
 const style = {
   direction: "ltr",
@@ -62,224 +30,35 @@ const style = {
 };
 
 const Projects = () => {
-  const [open, setOpen] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [projectImage, setProjectImage] = useState("");
-  const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
-  const [projectName, setProjectName] = useState("");
-  const [projectDescription, setProjectDescription] = useState("");
-  const [characters, setCharacters] = useState<CharacterFormRecord[]>([]);
-  const [projects, setProjects] = useState<ProjectRecord[]>([]);
-  const [loadingProjects, setLoadingProjects] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [editingProjectId, setEditingProjectId] = useState("");
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
+  const {
+    characters,
+    fileInputRef,
+    formMessage,
+    formMessageColor,
+    handleAddCharacter,
+    handleCharacterImageChange,
+    handleCharacterNameChange,
+    handleClose,
+    handleDeleteProject,
+    handleEditProject,
+    handleImageChange,
+    handleOpen,
+    handleRemoveCharacter,
+    handleSubmit,
+    loadingProjects,
+    open,
+    projectDescription,
+    projectImage,
+    projectName,
+    projects,
+    resetForm,
+    setProjectDescription,
+    setProjectName,
+    submitLabel,
+    submitting,
+  } = useAdminProjects();
 
-  const loadProjects = useCallback(async () => {
-    setLoadingProjects(true);
-    const result = await fetchProjects();
-    setLoadingProjects(false);
-
-    if (result.ok) {
-      setProjects(result.projects);
-      return;
-    }
-
-    setFormError(result.message);
-  }, []);
-
-  useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
-
-  const resetForm = () => {
-    setOpen(false);
-    setProjectImage("");
-    setProjectImageFile(null);
-    setProjectName("");
-    setProjectDescription("");
-    setCharacters([]);
-    setEditingProjectId("");
-    setFormError("");
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    resetForm()
-  };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    setProjectImageFile(file);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setProjectImage(typeof reader.result === "string" ? reader.result : "");
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmit = async () => {
-    if (submitting) {
-      return;
-    }
-
-    const name = projectName.trim();
-    const description = projectDescription.trim();
-    const normalizedCharacters = characters
-      .map((character) => ({
-        name: character.name.trim(),
-        image: character.image,
-        imageFile: character.imageFile,
-      }))
-      .filter(
-        (character) => character.name || character.image || character.imageFile
-      );
-
-    setFormError("");
-    setFormSuccess("");
-
-    const isCreate = !editingProjectId;
-    if (!name || !description || (isCreate && !projectImageFile)) {
-      setFormError("Project name, image, and description are required.");
-      return;
-    }
-
-    const hasInvalidCharacter = normalizedCharacters.some(
-      (character) =>
-        !character.name || (!character.image && !character.imageFile)
-    );
-
-    if (hasInvalidCharacter) {
-      setFormError("Each character must include both name and image.");
-      return;
-    }
-
-    setSubmitting(true);
-    const payload = {
-      name,
-      description,
-      ...(projectImageFile ? { thumbnail: projectImageFile } : {}),
-      characters: normalizedCharacters,
-    };
-    const result = editingProjectId
-      ? await updateProject(editingProjectId, payload)
-      : await createProject(payload);
-    setSubmitting(false);
-
-    if (!result.ok) {
-      setFormError(result.message);
-      return;
-    }
-
-    setFormSuccess(
-      editingProjectId
-        ? "Project updated successfully."
-        : "Project uploaded successfully."
-    );
-    resetForm();
-    await loadProjects();
-  };
-
-  const handleEditProject = (project: ProjectRecord) => {
-    setOpen(true);
-    setFormError("");
-    setFormSuccess("");
-    setEditingProjectId(project._id || project.id || "");
-    setProjectName(project.name || "");
-    setProjectImage(project.thumbnail || "");
-    setProjectImageFile(null);
-    setProjectDescription(project.description || "");
-    setCharacters(
-      Array.isArray(project.characters)
-        ? project.characters.map((character) => ({
-            key: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
-            name: character.name || "",
-            image: character.image || "",
-            imageFile: null,
-          }))
-        : []
-    );
-  };
-
-  const handleCharacterNameChange = (key: string, value: string) => {
-    setCharacters((prevCharacters) =>
-      prevCharacters.map((character) =>
-        character.key === key ? { ...character, name: value } : character
-      )
-    );
-  };
-
-  const handleCharacterImageChange = (
-    key: string,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCharacters((prevCharacters) =>
-        prevCharacters.map((character) =>
-          character.key === key
-            ? {
-                ...character,
-                image: typeof reader.result === "string" ? reader.result : "",
-                imageFile: file,
-              }
-            : character
-        )
-      );
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveCharacter = (key: string) => {
-    setCharacters((prevCharacters) =>
-      prevCharacters.filter((character) => character.key !== key)
-    );
-  };
-
-  const handleDeleteProject = async (project: ProjectRecord) => {
-    const id = project._id || project.id;
-
-    if (!id) {
-      setFormError("Project id is missing.");
-      return;
-    }
-
-    const ok = window.confirm(`Delete project "${project.name || id}"?`);
-    if (!ok) {
-      return;
-    }
-
-    setFormError("");
-    setFormSuccess("");
-    const result = await deleteProject(id);
-
-    if (!result.ok) {
-      setFormError(result.message);
-      return;
-    }
-
-    setProjects((prev) => prev.filter((item) => (item._id || item.id) !== id));
-    setFormSuccess("Project deleted successfully.");
-
-    if (editingProjectId === id) {
-      resetForm();
-    }
-  };
-  //FIXME: fix this Charecter Image in a good way and send it and get it in the main page layout
+  // FIXME: fix character image handling and sync with main page layout.
   return (
     <Stack direction="row" sx={{ gap: 3, height: "100%" }}>
       <Stack
@@ -521,12 +300,7 @@ const Projects = () => {
                     <Button
                       variant="outlined"
                       size="small"
-                      onClick={() =>
-                        setCharacters((prevCharacters) => [
-                          ...prevCharacters,
-                          createCharacterDraft(),
-                        ])
-                      }
+                      onClick={handleAddCharacter}
                     >
                       Add Character
                     </Button>
@@ -634,15 +408,15 @@ const Projects = () => {
                 </Stack>
               </Stack>
 
-              {(formError || formSuccess) && (
+              {formMessage && (
                 <Typography
                   component="p"
                   sx={{
-                    color: formError ? "error.main" : "success.main",
+                    color: formMessageColor,
                     fontSize: 14,
                   }}
                 >
-                  {formError || formSuccess}
+                  {formMessage}
                 </Typography>
               )}
 
@@ -661,11 +435,7 @@ const Projects = () => {
                   onClick={handleSubmit}
                   disabled={submitting}
                 >
-                  {submitting
-                    ? "Saving..."
-                    : editingProjectId
-                      ? "Update Project"
-                      : "Upload Project"}
+                  {submitLabel}
                 </Button>
                 <Button
                   variant="outlined"

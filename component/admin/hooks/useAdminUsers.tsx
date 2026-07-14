@@ -1,3 +1,10 @@
+import type {
+  AdminUserEditPanel,
+  DonationProjectOption,
+  DonationSource,
+  UserDonationRecord,
+  UserRecord,
+} from "@/types/admin";
 import { Button, Stack } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -12,37 +19,6 @@ import {
   updateDonation,
   updateSiteUser,
 } from "../services/siteUsersApi";
-
-export type UserRecord = {
-  id: string;
-  username: string;
-  email: string;
-  showAsAnonymousInDonations: boolean;
-  donationProjects: string[];
-  donationCount: number;
-  totalAmount: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type DonationProjectOption = {
-  _id: string;
-  title: string;
-};
-
-export type UserDonationRecord = {
-  id: string;
-  donationProjectId: string;
-  projectTitle: string;
-  amount: number;
-  currency: string;
-  source: string;
-  createdAt: string;
-};
-
-export type DonationSource = "manual" | "patreon" | "whatsapp";
-
-export type EditPanel = "profile" | "donations";
 
 function getDonationProjectTitle(donation: any) {
   const project = donation?.donationProjectId;
@@ -94,7 +70,7 @@ export const useAdminUsers = () => {
   const [addUserOpen, setAddUserOpen] = useState(false);
   const [addDonationOpen, setAddDonationOpen] = useState(false);
   const [editDonationOpen, setEditDonationOpen] = useState(false);
-  const [editPanel, setEditPanel] = useState<EditPanel>("profile");
+  const [editPanel, setEditPanel] = useState<AdminUserEditPanel>("profile");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedDonationId, setSelectedDonationId] = useState<string | null>(
     null

@@ -7,102 +7,24 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useAdminDonation } from "../hooks/useAdminDonation";
 import DonationModal from "./donation/DonationModal";
-import {
-  deleteDonationProject,
-  fetchDonationProjects,
-  revalidateDonationProjectsPublicCache,
-} from "../services/donationApi";
-
-type DonationProjectRecord = {
-  _id: string;
-  title: string;
-  status?: string;
-  goalAmount?: number;
-  raisedAmount?: number;
-  currency?: string;
-  listOrder?: number | null;
-  showOnDonationPage?: boolean;
-};
 
 const Donation = () => {
-  const [open, setOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
-  const [donationProjects, setDonationProjects] = useState<DonationProjectRecord[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const loadDonationProjects = useCallback(async () => {
-    setLoading(true);
-    setErrorMsg("");
-
-    try {
-      const result = await fetchDonationProjects();
-
-      if (!result.ok) {
-        setDonationProjects([]);
-        setErrorMsg(result.message);
-        return;
-      }
-
-      setDonationProjects(result.donationProjects);
-    } catch (error) {
-      setDonationProjects([]);
-      setErrorMsg(
-        error instanceof Error
-          ? error.message
-          : "Failed to load donation projects."
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadDonationProjects();
-  }, [loadDonationProjects]);
-
-  const handleAddDonation = () => {
-    setIsEditing(false);
-    setEditingProjectId(null);
-    setOpen(true);
-  };
-
-  const handleEditDonation = (projectId: string) => {
-    setIsEditing(true);
-    setEditingProjectId(projectId);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setIsEditing(false);
-    setEditingProjectId(null);
-  };
-
-  const handleDeleteDonation = async (projectId: string) => {
-    setDeletingId(projectId);
-    setErrorMsg("");
-
-    try {
-      const result = await deleteDonationProject(projectId);
-
-      if (!result.ok) {
-        setErrorMsg(result.message);
-        return;
-      }
-
-      await revalidateDonationProjectsPublicCache();
-      await loadDonationProjects();
-    } finally {
-      setDeletingId(null);
-    }
-  };
+  const {
+    deletingId,
+    donationProjects,
+    editingProjectId,
+    errorMsg,
+    handleAddDonation,
+    handleClose,
+    handleDeleteDonation,
+    handleEditDonation,
+    isEditing,
+    loadDonationProjects,
+    loading,
+    open,
+  } = useAdminDonation();
 
   return (
     <Stack sx={{ width: "100%", height: "100%" }}>

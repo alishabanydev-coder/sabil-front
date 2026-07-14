@@ -11,7 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { DonationSource, useAdminUsers } from "../hooks/useAdminUsers";
+import type { DonationSource } from "@/types/admin";
+import { useAdminUsers } from "../hooks/useAdminUsers";
 
 const modalStyle = {
   direction: "ltr",
@@ -35,8 +36,6 @@ const addDonationModalStyle = {
   ...modalStyle,
   width: "28rem",
 };
-
-export type { UserRecord } from "../hooks/useAdminUsers";
 
 const Users = () => {
   const {

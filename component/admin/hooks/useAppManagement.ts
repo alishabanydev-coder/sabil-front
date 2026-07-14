@@ -1,3 +1,10 @@
+import type {
+  AppManagementModalItem,
+  AppManagementProjectPreviewData,
+  AppManagementProjectRecord,
+  AppManagementSection,
+  AppManagementVideoRecord,
+} from "@/types/admin";
 import { useEffect, useMemo, useState, type SyntheticEvent } from "react";
 import {
   fetchAdminAppCatalogueHomeVideos,
@@ -6,41 +13,7 @@ import {
   updateAdminAppCatalogueNavigationButtons,
 } from "../services/appManagementApi";
 
-export type Section = {
-  name: "navBtn" | "homeVideo";
-  title: string;
-  url: string;
-};
-
-export type ProjectRecord = {
-  _id: string;
-  name: string;
-  thumbnail: string;
-};
-
-export type VideoRecord = {
-  _id: string;
-  title: string;
-  thumbnail: string;
-  projectId: string;
-};
-
-export type ProjectPreviewData = {
-  _id?: string;
-  id?: string;
-  title: string;
-  name?: string;
-  image: string;
-};
-
-export type ModalItem = {
-  id: string;
-  title: string;
-  image: string;
-  projectId?: string;
-};
-
-export const appManagementSections: Section[] = [
+export const appManagementSections: AppManagementSection[] = [
   { name: "navBtn", title: "Navigation Buttons", url: "" },
   { name: "homeVideo", title: "Home Videos", url: "" },
 ];
@@ -56,12 +29,12 @@ export const useAppManagement = () => {
   const [homeImageRaw, setHomeImageRaw] = useState("/home.png");
   const [homeImageFile, setHomeImageFile] = useState<File | null>(null);
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([]);
-  const [availableProjects, setAvailableProjects] = useState<ProjectRecord[]>(
+  const [availableProjects, setAvailableProjects] = useState<AppManagementProjectRecord[]>(
     []
   );
-  const [availableVideos, setAvailableVideos] = useState<VideoRecord[]>([]);
+  const [availableVideos, setAvailableVideos] = useState<AppManagementVideoRecord[]>([]);
   const [manualVideoIds, setManualVideoIds] = useState<string[]>([]);
-  const [selectedSection, setSelectedSection] = useState<Section | null>(null);
+  const [selectedSection, setSelectedSection] = useState<AppManagementSection | null>(null);
   const [activeNavId, setActiveNavId] = useState<string>("home");
   const [draftSelectedProjectIds, setDraftSelectedProjectIds] = useState<
     string[]
@@ -161,10 +134,10 @@ export const useAppManagement = () => {
     );
     return selectedProjectIds
       .map((id) => projectMap.get(id))
-      .filter((project): project is ProjectRecord => Boolean(project));
+      .filter((project): project is AppManagementProjectRecord => Boolean(project));
   }, [availableProjects, selectedProjectIds]);
 
-  const modalItems = useMemo<ModalItem[]>(() => {
+  const modalItems = useMemo<AppManagementModalItem[]>(() => {
     if (selectedSection?.name === "navBtn") {
       return availableProjects.map((item) => ({
         id: item._id,
@@ -201,7 +174,7 @@ export const useAppManagement = () => {
     );
     const previouslySelectedVideos = manualVideoIds
       .map((id) => videosMap.get(id))
-      .filter((video): video is VideoRecord => Boolean(video));
+      .filter((video): video is AppManagementVideoRecord => Boolean(video));
 
     if (isRandomVideosSelected) {
       return previouslySelectedVideos.length > 0
@@ -213,7 +186,7 @@ export const useAppManagement = () => {
   }, [availableVideos, isRandomVideosSelected, manualVideoIds]);
 
   const projectById = useMemo(() => {
-    const projectMap = new Map<string, ProjectPreviewData>();
+    const projectMap = new Map<string, AppManagementProjectPreviewData>();
     availableProjects.forEach((project) => {
       projectMap.set(project._id, {
         _id: project._id,
@@ -254,7 +227,7 @@ export const useAppManagement = () => {
   const displayVideos =
     activeNavId === "home" ? previewVideos : activeProjectVideos;
 
-  const openSection = (section: Section) => {
+  const openSection = (section: AppManagementSection) => {
     if (section.name === "navBtn") {
       setDraftSelectedProjectIds(selectedProjectIds);
     }

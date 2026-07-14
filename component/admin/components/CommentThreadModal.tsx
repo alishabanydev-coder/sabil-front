@@ -9,8 +9,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import type { ThreadComment } from "@/types/admin";
 import {
-  ThreadComment,
   useCommentThread,
 } from "../hooks/useCommentThread";
 
@@ -374,5 +374,3 @@ export default function CommentThreadModal({
     </Modal>
   );
 }
-
-export type { ThreadComment };

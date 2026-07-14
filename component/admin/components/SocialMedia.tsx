@@ -7,20 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import {
-  createSocialMediaLink,
-  deleteSocialMediaLink,
-  fetchSocialMediaLinks,
-  updateSocialMediaLink,
-} from "../services/socialMediaApi";
-
-type SocialMediaRecord = {
-  _id: string;
-  name: string;
-  url: string;
-  icon: string;
-};
+import { useAdminSocialMedia } from "../hooks/useAdminSocialMedia";
 
 const style = {
   direction: "ltr",
@@ -40,212 +27,29 @@ const style = {
 };
 
 const SocialMedia = () => {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
-  const [socialMedias, setSocialMedias] = useState<SocialMediaRecord[]>([]);
-  const [logo, setLogo] = useState<File | null>(null);
-  const [logoPreviewUrl, setLogoPreviewUrl] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [editingSocialMedia, setEditingSocialMedia] =
-    useState<SocialMediaRecord | null>(null);
-
-  const resetForm = () => {
-    setOpen(false);
-    setEditingSocialMedia(null);
-    setName("");
-    setUrl("");
-    setLogo(null);
-    setSubmitErrorMsg("");
-  };
-
-  const handleClose = () => {
-    resetForm();
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleSelectForEdit = (socialMedia: SocialMediaRecord) => {
-    setOpen(true);
-    setEditingSocialMedia(socialMedia);
-    setName(socialMedia.name);
-    setUrl(socialMedia.url);
-    setLogo(null);
-    setSubmitErrorMsg("");
-  };
-
-  const handleCancel = () => {
-    resetForm();
-  };
-
-  const handleSubmit = async () => {
-    const normalizedName = name.trim();
-    const normalizedUrl = url.trim();
-
-    if (!normalizedName || !normalizedUrl) {
-      setSubmitErrorMsg("Name and URL are required.");
-      return;
-    }
-
-    if (!editingSocialMedia && !logo) {
-      setSubmitErrorMsg("Logo is required.");
-      return;
-    }
-
-    setSubmitErrorMsg("");
-    setIsSubmitting(true);
-    setOpen(false);
-
-    try {
-      const result = editingSocialMedia
-        ? await updateSocialMediaLink(editingSocialMedia._id, {
-            name: normalizedName,
-            url: normalizedUrl,
-            ...(logo ? { icon: logo } : {}),
-          })
-        : await createSocialMediaLink({
-            name: normalizedName,
-            url: normalizedUrl,
-            icon: logo,
-          });
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      if (result.socialMediaLink) {
-        if (editingSocialMedia) {
-          setSocialMedias((currentItems) =>
-            currentItems.map((item) =>
-              item._id === editingSocialMedia._id
-                ? result.socialMediaLink
-                : item
-            )
-          );
-        } else {
-          setSocialMedias((currentItems) => [
-            result.socialMediaLink,
-            ...currentItems,
-          ]);
-        }
-      }
-
-      resetForm();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error
-          ? error.message
-          : editingSocialMedia
-            ? "Failed to update social media link."
-            : "Failed to create social media link."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDeleteSocialMedia = async () => {
-    if (!editingSocialMedia || isSubmitting) {
-      return;
-    }
-
-    const shouldDelete = window.confirm(
-      `Delete social media "${editingSocialMedia.name}"?`
-    );
-    if (!shouldDelete) {
-      return;
-    }
-
-    setSubmitErrorMsg("");
-    setIsSubmitting(true);
-
-    try {
-      const result = await deleteSocialMediaLink(editingSocialMedia._id);
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      setSocialMedias((currentItems) =>
-        currentItems.filter((item) => item._id !== editingSocialMedia._id)
-      );
-      resetForm();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error
-          ? error.message
-          : "Failed to delete social media link."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadSocialMedia() {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const result = await fetchSocialMediaLinks({
-          signal: controller.signal,
-        });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-
-        if (!result.ok) {
-          setErrorMsg(result.message);
-          return;
-        }
-
-        setSocialMedias(result.socialMediaLinks);
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error
-            ? error.message
-            : "Failed to load social media links."
-        );
-      }
-    }
-
-    loadSocialMedia();
-
-    return () => controller.abort("SocialMedia tab unmounted");
-  }, []);
-
-  useEffect(() => {
-    if (!logo) {
-      setLogoPreviewUrl("");
-      return;
-    }
-
-    const nextPreview = URL.createObjectURL(logo);
-    setLogoPreviewUrl(nextPreview);
-
-    return () => {
-      URL.revokeObjectURL(nextPreview);
-    };
-  }, [logo]);
-
-  const displayedLogoUrl =
-    logoPreviewUrl || (editingSocialMedia ? editingSocialMedia.icon : "");
+  const {
+    displayedLogoUrl,
+    editingSocialMedia,
+    errorMsg,
+    handleCancel,
+    handleClose,
+    handleDeleteSocialMedia,
+    handleOpen,
+    handleSelectForEdit,
+    handleSubmit,
+    isSubmitDisabled,
+    isSubmitting,
+    loading,
+    name,
+    open,
+    setLogo,
+    setName,
+    setUrl,
+    socialMedias,
+    submitErrorMsg,
+    submitLabel,
+    url,
+  } = useAdminSocialMedia();
 
   return (
     <Stack
@@ -473,13 +277,9 @@ const SocialMedia = () => {
                 color="primary"
                 onClick={handleSubmit}
                 fullWidth
-                disabled={isSubmitting || !name.trim() || !url.trim()}
+                disabled={isSubmitDisabled}
               >
-                {isSubmitting
-                  ? "Saving..."
-                  : editingSocialMedia
-                    ? "Save Changes"
-                    : "Add"}
+                {submitLabel}
               </Button>
               {editingSocialMedia && (
                 <Button

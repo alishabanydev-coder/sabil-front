@@ -10,296 +10,42 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
-import { fetchProjects } from "../services/projectsApi";
-import {
-  fetchChannelCatalogues,
-  createChannelCatalogue,
-  updateChannelCatalogue,
-  deleteChannelCatalogue,
-} from "../services/projectsApi";
-
-type ProjectRecord = {
-  _id?: string;
-  id?: string;
-  name?: string;
-  thumbnail?: string;
-  description?: string;
-};
-
-type CatalogueRecord = {
-  _id: string;
-  projectId: string;
-  title: string;
-  content: string;
-  thumbnail: string;
-};
+import { useAdminCatalogue } from "../hooks/useAdminCatalogue";
 
 const Catalogue = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [open, setOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [projectId, setProjectId] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [thumbnailPreview, setThumbnailPreview] = useState("");
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [projects, setProjects] = useState<ProjectRecord[]>([]);
-  const [catalogues, setCatalogues] = useState<CatalogueRecord[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [editingCatalogueId, setEditingCatalogueId] = useState<string | null>(
-    null
-  );
-  const [openProjectMenu, setOpenProjectMenu] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<ProjectRecord | null>(
-    null
-  );
-
-  const menuElRef = useRef<HTMLButtonElement>(null);
-
-  const handleProjectMenuClose = () => {
-    setOpenProjectMenu(false);
-  };
-
-  const handleProjectMenuClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    setOpenProjectMenu(true);
-    menuElRef.current = event.currentTarget;
-  };
-
-  const handleProjectSelect = (project: ProjectRecord) => {
-    setSelectedProject(project);
-    setProjectId(project._id ?? "");
-    handleProjectMenuClose();
-  };
-
-  const visibleCatalogues = selectedProject?._id
-    ? catalogues.filter(
-        (catalogue) => catalogue.projectId === selectedProject._id
-      )
-    : catalogues;
-
-  const handleAddCatalogue = () => {
-    setIsEditing(false);
-    setEditingCatalogueId(null);
-    // setProjectId("");
-    setTitle("");
-    setContent("");
-    setThumbnailPreview("");
-    setThumbnailFile(null);
-    setSubmitErrorMsg("");
-    setOpen(true);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-    setIsEditing(false);
-    setEditingCatalogueId(null);
-    setProjectId("");
-    setTitle("");
-    setContent("");
-    setThumbnailPreview("");
-    setThumbnailFile(null);
-    setSubmitErrorMsg("");
-  };
-
-  const handleThumbnailChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    setThumbnailFile(file);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setThumbnailPreview(
-        typeof reader.result === "string" ? reader.result : ""
-      );
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmit = async () => {
-    setSubmitErrorMsg("");
-    setIsSubmitting(true);
-
-    try {
-      const normalizedImage = thumbnailPreview.trim();
-      const payload = {
-        header: title.trim(),
-        body: content.trim(),
-        image: thumbnailFile ?? normalizedImage,
-      };
-
-      if (!isEditing && !thumbnailFile) {
-        setSubmitErrorMsg("Catalogue image is required.");
-        return;
-      }
-      const result =
-        isEditing && editingCatalogueId
-          ? await updateChannelCatalogue(
-              projectId.trim(),
-              editingCatalogueId,
-              payload
-            )
-          : await createChannelCatalogue(projectId.trim(), payload);
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      if (result.catalogue) {
-        setCatalogues((currentCatalogues) =>
-          isEditing
-            ? currentCatalogues.map((catalogue) =>
-                catalogue._id === result.catalogue._id
-                  ? result.catalogue
-                  : catalogue
-              )
-            : [result.catalogue, ...currentCatalogues]
-        );
-      }
-
-      handleCancel();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error
-          ? error.message
-          : isEditing
-            ? "Failed to update catalogue."
-            : "Failed to create catalogue."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!isEditing || !editingCatalogueId) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const result = await deleteChannelCatalogue(
-        projectId.trim(),
-        editingCatalogueId
-      );
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      setCatalogues((currentCatalogues) =>
-        currentCatalogues.filter(
-          (catalogue) => catalogue._id !== editingCatalogueId
-        )
-      );
-      handleCancel();
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to delete catalogue."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleEditCatalogue = (catalogue: CatalogueRecord) => {
-    setIsEditing(true);
-    setEditingCatalogueId(catalogue._id);
-    setOpen(true);
-    setProjectId(catalogue.projectId);
-    setTitle(catalogue.title);
-    setContent(catalogue.content);
-    setThumbnailPreview(catalogue.thumbnail || "");
-    setThumbnailFile(null);
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadCatalogues() {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const result = await fetchChannelCatalogues({
-          signal: controller.signal,
-        });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-
-        if (!result.ok) {
-          setErrorMsg(result.message);
-          return;
-        }
-
-        setCatalogues(result.catalogues);
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load catalogues."
-        );
-      }
-    }
-
-    async function loadProjects() {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const result = await fetchProjects({ signal: controller.signal });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-
-        if (!result.ok) {
-          setErrorMsg(result.message);
-          return;
-        }
-
-        setProjects(result.projects);
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load Projects."
-        );
-      }
-    }
-
-    loadProjects();
-    loadCatalogues();
-
-    return () => controller.abort("Catalogues tab unmounted");
-  }, []);
+  const {
+    content,
+    errorMsg,
+    fileInputRef,
+    handleAddCatalogue,
+    handleCancel,
+    handleDelete,
+    handleEditCatalogue,
+    handleProjectMenuClick,
+    handleProjectMenuClose,
+    handleProjectSelect,
+    handleSubmit,
+    handleThumbnailChange,
+    isEditing,
+    isSubmitDisabled,
+    isSubmitting,
+    loading,
+    menuElRef,
+    open,
+    openProjectMenu,
+    projectId,
+    projects,
+    selectedProject,
+    setContent,
+    setProjectId,
+    setTitle,
+    submitErrorMsg,
+    thumbnailPreview,
+    title,
+    visibleCatalogues,
+  } = useAdminCatalogue();
 
   return (
     <Stack sx={{ width: "100%", height: "100%" }}>
@@ -613,13 +359,7 @@ const Catalogue = () => {
                 color="primary"
                 sx={{ width: "100%" }}
                 onClick={handleSubmit}
-                disabled={
-                  isSubmitting ||
-                  !projectId ||
-                  !title.trim() ||
-                  !content.trim() ||
-                  (!isEditing && !thumbnailFile)
-                }
+                disabled={isSubmitDisabled}
               >
                 {isSubmitting
                   ? "Saving..."

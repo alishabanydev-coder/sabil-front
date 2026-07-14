@@ -7,115 +7,26 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { fetchAboutUs, updateAboutUs } from "../services/aboutUsApi";
+import { useAdminAboutUs } from "../hooks/useAdminAboutUs";
 
 const AboutUs = () => {
-  const [videoUrl, setVideoUrl] = useState("");
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [isActive, setIsActive] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadAboutUs() {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const result = await fetchAboutUs({ signal: controller.signal });
-
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        if (!result.ok) {
-          setErrorMsg(result.message);
-          return;
-        }
-
-        if (!result.aboutUs) {
-          return;
-        }
-
-        const payload = result.aboutUs;
-        setVideoUrl(typeof payload.videoUrl === "string" ? payload.videoUrl : "");
-        setTitle(typeof payload.title === "string" ? payload.title : "");
-        setMessage(typeof payload.message === "string" ? payload.message : "");
-        setIsActive(payload.isActive !== false);
-        setLastUpdatedAt(
-          typeof payload.updatedAt === "string" ? payload.updatedAt : null
-        );
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        setLoading(false);
-        setErrorMsg(
-          error instanceof Error
-            ? error.message
-            : "Failed to load About Us content."
-        );
-      }
-    }
-
-    loadAboutUs();
-
-    return () => controller.abort("AboutUs tab unmounted");
-  }, []);
-
-  const handleSave = async () => {
-    const normalizedVideoUrl = videoUrl.trim();
-    const normalizedTitle = title.trim();
-    const normalizedMessage = message.trim();
-
-    if (!normalizedVideoUrl || !normalizedTitle || !normalizedMessage) {
-      setSubmitErrorMsg("Video URL, title, and message are required.");
-      return;
-    }
-
-    setSubmitErrorMsg("");
-    setIsSubmitting(true);
-
-    try {
-      const result = await updateAboutUs({
-        videoUrl: normalizedVideoUrl,
-        title: normalizedTitle,
-        message: normalizedMessage,
-        isActive,
-      });
-
-      if (!result.ok) {
-        setSubmitErrorMsg(result.message);
-        return;
-      }
-
-      if (result.aboutUs) {
-        const payload = result.aboutUs;
-        setVideoUrl(typeof payload.videoUrl === "string" ? payload.videoUrl : "");
-        setTitle(typeof payload.title === "string" ? payload.title : "");
-        setMessage(typeof payload.message === "string" ? payload.message : "");
-        setIsActive(payload.isActive !== false);
-        setLastUpdatedAt(
-          typeof payload.updatedAt === "string" ? payload.updatedAt : null
-        );
-      }
-    } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to save About Us content."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    errorMsg,
+    handleSave,
+    isActive,
+    isSaveDisabled,
+    isSubmitting,
+    lastUpdatedAt,
+    loading,
+    message,
+    setIsActive,
+    setMessage,
+    setTitle,
+    setVideoUrl,
+    submitErrorMsg,
+    title,
+    videoUrl,
+  } = useAdminAboutUs();
 
   return (
     <Stack
@@ -145,7 +56,7 @@ const AboutUs = () => {
           {errorMsg}
         </Typography>
       ) : (
-        <Stack sx={{ gap: 2}}>
+        <Stack sx={{ gap: 2 }}>
           <TextField
             label="YouTube Video URL"
             placeholder="https://www.youtube.com/watch?v=..."
@@ -181,9 +92,7 @@ const AboutUs = () => {
               variant="contained"
               color="primary"
               onClick={handleSave}
-              disabled={
-                isSubmitting || !videoUrl.trim() || !title.trim() || !message.trim()
-              }
+              disabled={isSaveDisabled}
             >
               {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
