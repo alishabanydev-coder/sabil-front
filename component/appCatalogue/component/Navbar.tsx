@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button, IconButton, Stack, Typography } from "@mui/material";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { useRouter } from "next/navigation";
 import { App } from "@capacitor/app";
 import { isNativeApp, useNativeApp } from "@/lib/capacitor/nativeApp";
@@ -74,17 +75,30 @@ const Navbar = () => {
             Sabeel Kids
           </Typography>
         </Stack>
-        <Button
-          onClick={handleLogout}
-          variant="contained"
-          color="primary"
-          startIcon={<LogoutIcon />}
-          sx={{
-            fontSize: { xs: 12, sm: 14, md: 16, lg: 18 },
-          }}
-        >
-          Logout
-        </Button>
+        <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
+          {!isNative && (
+            <Button
+              component="a"
+              href="/downloads/sabeel-kids.apk"
+              download
+              variant="outlined"
+              color="primary"
+              startIcon={<FileDownloadIcon />}
+              sx={{ fontSize: { xs: 12, sm: 14, md: 16, lg: 18 } }}
+            >
+              Download now
+            </Button>
+          )}
+          <Button
+            onClick={handleLogout}
+            variant="contained"
+            color="primary"
+            startIcon={<LogoutIcon />}
+            sx={{ fontSize: { xs: 12, sm: 14, md: 16, lg: 18 } }}
+          >
+            Logout
+          </Button>
+        </Stack>
       </Stack>
 
       {showFloatingLogout && (
@@ -94,6 +108,7 @@ const Navbar = () => {
             top: { xs: isNative ? 30 : 37, md: 48 },
             right: { xs: isNative ? 30 : 12, md: 24 },
             zIndex: 1000,
+            gap: 1,
           }}
         >
           <IconButton
@@ -119,6 +134,33 @@ const Navbar = () => {
           >
             <LogoutIcon sx={{ fontSize: { xs: isNative ? 25 : 20, md: 24 } }} />
           </IconButton>
+          {!isNative && (
+            <IconButton
+              color="primary"
+              component="a"
+              href="/downloads/sabeel-kids.apk"
+              download
+              sx={{
+                width: { xs: 30, md: 46 },
+                height: { xs: 30, md: 46 },
+                border: "1px solid",
+                borderColor: "primary.main",
+                bgcolor: "background.paper",
+                backdropFilter: "blur(8px)",
+                boxShadow: (theme) =>
+                  `0 8px 22px -10px ${theme.palette.primary.main}`,
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  bgcolor: "background.paper",
+                  boxShadow: (theme) =>
+                    `0 8px 22px -6px ${theme.palette.primary.main}`,
+                },
+              }}
+              aria-label="download app"
+            >
+              <FileDownloadIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+            </IconButton>
+          )}
         </Stack>
       )}
     </>
