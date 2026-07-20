@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
@@ -123,7 +123,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           }}
         >
           <Image
-            src="/Media section.png"
+            src="/Media section.webp"
             alt="watch us"
             fill
             style={{ objectFit: "cover" }}

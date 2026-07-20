@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import { Stack } from "@mui/material";
@@ -57,7 +57,7 @@ const Banner = ({
       }}
     >
       <Image
-        src="/banner.png"
+        src="/banner.webp"
         alt="some image"
         fill
         style={{ objectFit: "fill" }}

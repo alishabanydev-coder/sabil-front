@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   AppManagementModalItem,
   AppManagementProjectPreviewData,
   AppManagementProjectRecord,
@@ -25,8 +25,8 @@ export const useAppManagement = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [isRandomVideosSelected, setIsRandomVideosSelected] = useState(true);
-  const [homeImage, setHomeImage] = useState("/home.png");
-  const [homeImageRaw, setHomeImageRaw] = useState("/home.png");
+  const [homeImage, setHomeImage] = useState("/home.webp");
+  const [homeImageRaw, setHomeImageRaw] = useState("/home.webp");
   const [homeImageFile, setHomeImageFile] = useState<File | null>(null);
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([]);
   const [availableProjects, setAvailableProjects] = useState<AppManagementProjectRecord[]>(
@@ -74,8 +74,8 @@ export const useAppManagement = () => {
             navResult.message || "Failed to load navigation settings."
           );
         } else {
-          setHomeImage(navResult.homeImage || "/home.png");
-          setHomeImageRaw(navResult.homeImageRaw || "/home.png");
+          setHomeImage(navResult.homeImage || "/home.webp");
+          setHomeImageRaw(navResult.homeImageRaw || "/home.webp");
           setSelectedProjectIds(
             Array.isArray(navResult.selectedProjectIds)
               ? navResult.selectedProjectIds
@@ -305,8 +305,8 @@ export const useAppManagement = () => {
       return;
     }
 
-    setHomeImage(result.homeImage || "/home.png");
-    setHomeImageRaw(result.homeImageRaw || "/home.png");
+    setHomeImage(result.homeImage || "/home.webp");
+    setHomeImageRaw(result.homeImageRaw || "/home.webp");
     setHomeImageFile(null);
     setSelectedProjectIds(
       Array.isArray(result.selectedProjectIds) ? result.selectedProjectIds : []

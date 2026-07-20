@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+﻿import { Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -28,7 +28,7 @@ export default function Footer() {
         aspectRatio: { xs: "16 / 6", md: "16 / 5" },
       }}
     >
-      <Image src="/footer.png" alt="some image" fill style={{ objectFit: "fill" }} />
+      <Image src="/footer.webp" alt="some image" fill style={{ objectFit: "fill" }} />
 
       <Stack
         sx={{
@@ -47,7 +47,7 @@ export default function Footer() {
           }}
         >
           <Image
-            src="/kid-with-ball.png"
+            src="/kid-with-ball.webp"
             alt="some image"
             fill
             style={{ objectFit: "contain" }}
@@ -71,7 +71,7 @@ export default function Footer() {
           }}
         >
           <Image
-            src="/ball.png"
+            src="/ball.webp"
             alt="some image"
             fill
             style={{ objectFit: "cover" }}
@@ -173,7 +173,7 @@ export default function Footer() {
             },
           }}
         >
-          <Image src="/logo-skatch.png" alt="some image" fill className="cursor-pointer" />
+          <Image src="/logo-skatch.webp" alt="some image" fill className="cursor-pointer" />
         </Stack>
         <Typography
           sx={{

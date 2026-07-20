@@ -1,4 +1,4 @@
-import "./globals.css";
+﻿import "./globals.css";
 import type { Metadata } from "next";
 import { ThemeProvider } from "./ThemeContext";
 import MUIThemeProvider from "./MUIThemeProvider";
@@ -24,10 +24,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/logo32.png", sizes: "32x32", type: "image/png" },
-      { url: "/logo16.png", sizes: "16x16", type: "image/png" },
+      { url: "/logo32.webp", sizes: "32x32", type: "image/webp" },
+      { url: "/logo16.webp", sizes: "16x16", type: "image/webp" },
     ],
-    apple: "/icon-192.png",
+    apple: "/icon-192.webp",
   },
     authors: [{ name: "Sabeel Group", url: "https://sabeelkids.com" }],
   creator: "Sabeel Group",

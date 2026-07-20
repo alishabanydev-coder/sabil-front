@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -93,7 +93,7 @@ const buildUpdateFromBlog = (
   images: blog.image ?? [],
   videoUrl: blog.videoUrl ?? "",
   authorName: "Sabeel Media Cast",
-  authorAvatar: "/avatar1.png",
+  authorAvatar: "/avatar1.webp",
   createdAt: blog.createdAt ?? new Date().toISOString(),
   order,
 });
@@ -113,7 +113,7 @@ const buildUpdateFromBreakdown = (
   images: breakdown.thumbnail ? [breakdown.thumbnail] : [],
   videoUrl: breakdown.videoUrl ?? "",
   authorName: "Sabeel Media Cast",
-  authorAvatar: "/avatar1.png",
+  authorAvatar: "/avatar1.webp",
   createdAt: breakdown.createdAt ?? new Date().toISOString(),
   order,
 });

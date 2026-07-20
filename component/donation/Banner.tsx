@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { alpha, Stack, Typography } from "@mui/material";
 import { keyframes } from "@mui/system";
@@ -50,7 +50,7 @@ const Banner = () => {
             position: "relative",
             width: "100%",
             aspectRatio: 16 / 9,
-            backgroundImage: "url(/news1.png)",
+            backgroundImage: "url(/news1.webp)",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",

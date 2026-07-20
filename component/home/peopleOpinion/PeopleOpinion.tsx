@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Avatar, Stack, Typography } from "@mui/material";
 import Image from "next/image";
@@ -218,7 +218,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   </Typography>
 
                   <Image
-                    src="/virgol.png"
+                    src="/virgol.webp"
                     alt="virgol"
                     width={32}
                     height={32}
@@ -233,7 +233,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   />
 
                   <Image
-                    src="/virgol.png"
+                    src="/virgol.webp"
                     alt="virgol"
                     width={32}
                     height={32}

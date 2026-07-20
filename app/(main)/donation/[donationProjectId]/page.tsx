@@ -1,4 +1,4 @@
-import TabsSection from "@/component/donation/TabsSection";
+﻿import TabsSection from "@/component/donation/TabsSection";
 import TopSection from "@/component/donation/TopSection";
 import { fetchPublicDonationProject } from "@/component/donation/services/donationPublicApi";
 import { Stack } from "@mui/material";
@@ -37,7 +37,7 @@ export async function generateMetadata({
   const url = `${SITE_URL}/donation/${project.slug || donationProjectId}`;
   const image =
     project.poster ||
-    `${SITE_URL}/icon-192.png`;
+    `${SITE_URL}/icon-192.webp`;
 
   return {
     title,

@@ -1,4 +1,4 @@
-import AddIcon from "@mui/icons-material/Add";
+﻿import AddIcon from "@mui/icons-material/Add";
 import {
   Alert,
   Button,
@@ -147,7 +147,7 @@ const AppManagement = () => {
               }}
             >
               <img
-                src={homeImage || "/home.png"}
+                src={homeImage || "/home.webp"}
                 alt="home"
                 style={{ width: 75, height: 75 }}
               />

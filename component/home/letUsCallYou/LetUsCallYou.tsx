@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Stack, TextField, Typography } from "@mui/material";
 import Image from "next/image";
@@ -77,7 +77,7 @@ const LetUsCallYou = () => {
             },
           }}
         >
-          <Image src="/let-us-call-you-background.png" alt="logo" fill />
+          <Image src="/let-us-call-you-background.webp" alt="logo" fill />
         </Stack>
         <Stack
           direction="row"

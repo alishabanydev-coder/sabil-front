@@ -1,4 +1,4 @@
-import { IconButton, Stack, Typography } from "@mui/material";
+﻿import { IconButton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import SeactionHeader from "@/component/ui/SectionHeader";
 
@@ -38,7 +38,7 @@ const FollowUs = ({
         }}
       >
         <Image
-          src="/follow-us.png"
+          src="/follow-us.webp"
           alt="follow us"
           fill
           style={{ objectFit: "fill" }}
@@ -105,7 +105,7 @@ const FollowUs = ({
           }}
         >
           <Image
-            src="/follow-us-image.png"
+            src="/follow-us-image.webp"
             alt="follow us"
             fill
             style={{ objectFit: "contain" }}

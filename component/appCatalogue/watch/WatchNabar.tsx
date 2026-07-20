@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
 import { ArrowBack } from "@mui/icons-material";
@@ -32,7 +32,7 @@ const WatchNabar = () => {
           },
         }}
       >
-        <Image src="/icon-512.png" alt="logo" width={80} height={80} />
+        <Image src="/icon-512.webp" alt="logo" width={80} height={80} />
       </Stack>
       <Stack>
         <IconButton

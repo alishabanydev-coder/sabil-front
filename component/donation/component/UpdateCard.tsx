@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -305,7 +305,7 @@ const UpdateCard = ({ update, updateNumber }: UpdateCardProps) => {
 
       <Stack sx={{ flexDirection: "row", gap: 1 }}>
         <Avatar
-          src={update.authorAvatar || "/avatar1.png"}
+          src={update.authorAvatar || "/avatar1.webp"}
           sx={{
             width: { xs: 32, sm: 40, md: 48, lg: 56, xl: 64 },
             height: { xs: 32, sm: 40, md: 48, lg: 56, xl: 64 },

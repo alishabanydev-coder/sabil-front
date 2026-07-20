@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -11,7 +11,7 @@ import "swiper/css";
 
 const projects = Array.from({ length: 6 }, (_, index) => ({
   id: index + 1,
-  image: "/news1.png",
+  image: "/news1.webp",
   alt: `project ${index + 1}`,
 }));
 

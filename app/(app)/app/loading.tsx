@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+﻿import { Box, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 
 export default function AppRouteLoading() {
@@ -77,7 +77,7 @@ export default function AppRouteLoading() {
         }}
       >
         <Image
-          src="/icon-192.png"
+          src="/icon-192.webp"
           alt="logo"
           fill
           style={{

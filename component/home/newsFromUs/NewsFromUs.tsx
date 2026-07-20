@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import { Button, Stack, Typography } from "@mui/material";
@@ -10,7 +10,7 @@ import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import EastRoundedIcon from "@mui/icons-material/EastRounded";
 
-const DEFAULT_NEWS_IMAGE = "/news1.png";
+const DEFAULT_NEWS_IMAGE = "/news1.webp";
 import Pagination from "../banner/components/Pagination";
 import SeactionHeader from "@/component/ui/SectionHeader";
 import NewsFromUsModal from "./component/NewsFromUsModal";

@@ -1,4 +1,4 @@
-export type SectionImageDraft = {
+﻿export type SectionImageDraft = {
   url: string;
   file?: File;
 };
@@ -122,7 +122,7 @@ export function hydrateUpdateRefs(
             images: [],
             videoUrl: "",
             authorName: "Sabeel Media Cast",
-            authorAvatar: "/avatar1.png",
+            authorAvatar: "/avatar1.webp",
             createdAt: new Date().toISOString(),
             order: ref.order ?? index,
           };
@@ -139,7 +139,7 @@ export function hydrateUpdateRefs(
           images: blog.image ?? [],
           videoUrl: blog.videoUrl ?? "",
           authorName: "Sabeel Media Cast",
-          authorAvatar: "/avatar1.png",
+          authorAvatar: "/avatar1.webp",
           createdAt: blog.createdAt ?? new Date().toISOString(),
           order: ref.order ?? index,
         };
@@ -158,7 +158,7 @@ export function hydrateUpdateRefs(
           images: [],
           videoUrl: "",
           authorName: "Sabeel Media Cast",
-          authorAvatar: "/avatar1.png",
+          authorAvatar: "/avatar1.webp",
           createdAt: new Date().toISOString(),
           order: ref.order ?? index,
         };
@@ -175,7 +175,7 @@ export function hydrateUpdateRefs(
         images: breakdown.thumbnail ? [breakdown.thumbnail] : [],
         videoUrl: breakdown.videoUrl ?? "",
         authorName: "Sabeel Media Cast",
-        authorAvatar: "/avatar1.png",
+        authorAvatar: "/avatar1.webp",
         createdAt: breakdown.createdAt ?? new Date().toISOString(),
         order: ref.order ?? index,
       };

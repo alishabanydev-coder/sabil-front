@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { alpha, LinearProgress, Stack, Typography } from "@mui/material";
 import Image from "next/image";
@@ -146,7 +146,7 @@ const ProjectCardImage = ({
     }}
   >
     <Image
-      src={project.poster || "/news2.png"}
+      src={project.poster || "/news2.webp"}
       alt={project.title}
       fill
       sizes={imageSizes}

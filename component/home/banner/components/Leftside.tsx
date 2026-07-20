@@ -1,4 +1,4 @@
-import { PrimaryButton } from "@/component/ui/PrimaryButton";
+﻿import { PrimaryButton } from "@/component/ui/PrimaryButton";
 import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Image from "next/image";
 
@@ -46,7 +46,7 @@ const Leftside = ({
           }}
         >
           <Image
-            src="/icon-192.png"
+            src="/icon-192.webp"
             alt={"logo"}
             fill
             style={{

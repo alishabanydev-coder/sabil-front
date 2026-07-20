@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -19,35 +19,35 @@ const supporters = [
   {
     id: 1,
     name: "Sarah Ahmed",
-    image: "/avatar1.png",
+    image: "/avatar1.webp",
     comment:
       "Sabeel Kids changed how my children learn about Islam. We donate every month.",
   },
   {
     id: 2,
     name: "Omar Hassan",
-    image: "/avatar2.png",
+    image: "/avatar2.webp",
     comment:
       "Beautiful animation and meaningful stories. Proud to support this mission.",
   },
   {
     id: 3,
     name: "Fatima Ali",
-    image: "/avatar3.png",
+    image: "/avatar3.webp",
     comment:
       "Our family loves Al-Furqan. Donating helps keep this content free for everyone.",
   },
   {
     id: 4,
     name: "Yusuf Khan",
-    image: "/avatar1.png",
+    image: "/avatar1.webp",
     comment:
       "The quality of education and entertainment here is unmatched. Thank you, team!",
   },
   {
     id: 5,
     name: "Amina Noor",
-    image: "/avatar2.png",
+    image: "/avatar2.webp",
     comment:
       "I donated in honor of my parents. May this work reach every child who needs it.",
   },
@@ -136,7 +136,7 @@ const DonateNow = () => {
           },
         }}
       >
-        <img className="donate-now-bg" src="/news2.png" alt="" aria-hidden />
+        <img className="donate-now-bg" src="/news2.webp" alt="" aria-hidden />
 
         <Stack
           aria-hidden

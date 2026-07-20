@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -57,7 +57,7 @@ const Navbar = () => {
       >
         <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
           <Image
-            src="/icon-512.png"
+            src="/icon-512.webp"
             alt="Project Title"
             width={56}
             height={56}

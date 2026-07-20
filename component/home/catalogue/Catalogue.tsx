@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
@@ -59,7 +59,7 @@ const Catalogue = ({
       }}
     >
       <Image
-        src="/catalogue.png"
+        src="/catalogue.webp"
         alt="catalogue"
         fill
         style={{ objectFit: "fill" }}
