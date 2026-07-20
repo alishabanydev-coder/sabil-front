@@ -77,24 +77,72 @@ const Navbar = () => {
         </Stack>
         <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
           {!isNative && (
-            <Button
-              component="a"
-              href="/downloads/sabeel-kids.apk"
-              download
-              variant="outlined"
-              color="primary"
-              startIcon={<FileDownloadIcon />}
-              sx={{ fontSize: { xs: 12, sm: 14, md: 16, lg: 18 } }}
-            >
-              Download now
-            </Button>
+            <>
+              <IconButton
+                color="primary"
+                href="/downloads/sabeel-kids.apk"
+                download
+                sx={{
+                  display: { xs: "inline-flex", md: "none" },
+                  borderRadius: 3,
+                  width: 30,
+                  height: 30,
+                  border: "1px solid",
+                  borderColor: "primary.main",
+                  bgcolor: "background.paper",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: (theme) =>
+                    `0 8px 22px -10px ${theme.palette.primary.main}`,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    bgcolor: "background.paper",
+                    boxShadow: (theme) =>
+                      `0 8px 22px -6px ${theme.palette.primary.main}`,
+                  },
+                }}
+                aria-label="download app"
+              >
+                <FileDownloadIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+              <Button
+                color="primary"
+                href="/downloads/sabeel-kids.apk"
+                download
+                sx={{
+                  display: { xs: "none", md: "inline-flex" },
+                  borderRadius: 3,
+                  width: 46,
+                  height: 46,
+                  minWidth: 46,
+                  border: "1px solid",
+                  borderColor: "primary.main",
+                  bgcolor: "background.paper",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: (theme) =>
+                    `0 8px 22px -10px ${theme.palette.primary.main}`,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    bgcolor: "background.paper",
+                    boxShadow: (theme) =>
+                      `0 8px 22px -6px ${theme.palette.primary.main}`,
+                  },
+                }}
+                aria-label="download app"
+              >
+                <FileDownloadIcon sx={{ fontSize: 24 }} />
+              </Button>
+            </>
           )}
           <Button
             onClick={handleLogout}
             variant="contained"
             color="primary"
             startIcon={<LogoutIcon />}
-            sx={{ fontSize: { xs: 12, sm: 14, md: 16, lg: 18 } }}
+            sx={{
+              fontSize: { xs: 12, sm: 14, md: 16, lg: 18 },
+              py: { xs: 0.5, sm: 0.5, md: 1 },
+              px: { xs: 1, sm: 1.5, md: 2 },
+            }}
           >
             Logout
           </Button>
@@ -104,6 +152,7 @@ const Navbar = () => {
       {showFloatingLogout && (
         <Stack
           sx={{
+            flexDirection: "row",
             position: "fixed",
             top: { xs: isNative ? 30 : 37, md: 48 },
             right: { xs: isNative ? 30 : 12, md: 24 },
@@ -111,29 +160,6 @@ const Navbar = () => {
             gap: 1,
           }}
         >
-          <IconButton
-            onClick={handleLogout}
-            color="primary"
-            sx={{
-              width: { xs: isNative ? 48 : 30, md: 46 },
-              height: { xs: isNative ? 48 : 30, md: 46 },
-              border: "1px solid",
-              borderColor: "primary.main",
-              bgcolor: "background.paper",
-              backdropFilter: "blur(8px)",
-              boxShadow: (theme) =>
-                `0 8px 22px -10px ${theme.palette.primary.main}`,
-              transition: "all 0.3s ease",
-              "&:hover": {
-                bgcolor: "background.paper",
-                boxShadow: (theme) =>
-                  `0 8px 22px -6px ${theme.palette.primary.main}`,
-              },
-            }}
-            aria-label="logout"
-          >
-            <LogoutIcon sx={{ fontSize: { xs: isNative ? 25 : 20, md: 24 } }} />
-          </IconButton>
           {!isNative && (
             <IconButton
               color="primary"
@@ -161,6 +187,29 @@ const Navbar = () => {
               <FileDownloadIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
             </IconButton>
           )}
+          <IconButton
+            onClick={handleLogout}
+            color="primary"
+            sx={{
+              width: { xs: isNative ? 48 : 30, md: 46 },
+              height: { xs: isNative ? 48 : 30, md: 46 },
+              border: "1px solid",
+              borderColor: "primary.main",
+              bgcolor: "background.paper",
+              backdropFilter: "blur(8px)",
+              boxShadow: (theme) =>
+                `0 8px 22px -10px ${theme.palette.primary.main}`,
+              transition: "all 0.3s ease",
+              "&:hover": {
+                bgcolor: "background.paper",
+                boxShadow: (theme) =>
+                  `0 8px 22px -6px ${theme.palette.primary.main}`,
+              },
+            }}
+            aria-label="logout"
+          >
+            <LogoutIcon sx={{ fontSize: { xs: isNative ? 25 : 20, md: 24 } }} />
+          </IconButton>
         </Stack>
       )}
     </>

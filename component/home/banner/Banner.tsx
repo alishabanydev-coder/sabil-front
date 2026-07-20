@@ -36,8 +36,14 @@ const Banner = ({
 }) => {
   const bannerSwiperRef = useRef<any>(null);
   const [openAboutUsModal, setOpenAboutUsModal] = useState(false);
+  const isAboutUsPublished = Boolean(aboutUs);
   const onCloseAboutUsModal = () => setOpenAboutUsModal(false);
-  const onOpenAboutUsModal = () => setOpenAboutUsModal(true);
+  const onOpenAboutUsModal = () => {
+    if (!isAboutUsPublished) {
+      return;
+    }
+    setOpenAboutUsModal(true);
+  };
 
   const handleNext = () => bannerSwiperRef.current?.slideNext();
   const handlePrev = () => bannerSwiperRef.current?.slidePrev();
@@ -56,7 +62,10 @@ const Banner = ({
         fill
         style={{ objectFit: "fill" }}
       />
-      <Leftside onOpenAboutUsModal={onOpenAboutUsModal} />
+      <Leftside
+        showAboutUsButton={isAboutUsPublished}
+        onOpenAboutUsModal={onOpenAboutUsModal}
+      />
       <Rightside
         onSwiperInit={(swiper) => (bannerSwiperRef.current = swiper)}
         bannerData={bannerData || []}
@@ -71,11 +80,13 @@ const Banner = ({
         <Pagination onNext={handleNext} onPrev={handlePrev} />
       </Stack>
 
-      <AboutUsModal
-        open={openAboutUsModal}
-        onClose={onCloseAboutUsModal}
-        aboutUs={aboutUs}
-      />
+      {isAboutUsPublished ? (
+        <AboutUsModal
+          open={openAboutUsModal}
+          onClose={onCloseAboutUsModal}
+          aboutUs={aboutUs}
+        />
+      ) : null}
     </Stack>
   );
 };

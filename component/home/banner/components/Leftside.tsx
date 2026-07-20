@@ -6,8 +6,10 @@ const textMd = `A\nGATEWAY\nTO THE\nFUTURE`;
 const textXs = `A GATEWAY TO \n THE FUTURE`;
 
 const Leftside = ({
+  showAboutUsButton = false,
   onOpenAboutUsModal,
 }: {
+  showAboutUsButton?: boolean;
   onOpenAboutUsModal: () => void;
 }) => {
   const theme = useTheme();
@@ -87,19 +89,21 @@ const Leftside = ({
             zIndex: 100,
           }}
         >
-          <PrimaryButton
-            sx={{
-              fontFamily: "Namecat",
-              height: { xs: 25, sm: 30, md: "auto" },
-              fontSize: { xs: 7, sm: 12, md: 20 },
-              px: { xs: 0.7, sm: 1.2, md: 2 },
-              py: { xs: 0, sm: 0.3, md: 1 },
-              letterSpacing: 2,
-            }}
-            onClick={onOpenAboutUsModal}
-          >
-            About Us
-          </PrimaryButton>
+          {showAboutUsButton ? (
+            <PrimaryButton
+              sx={{
+                fontFamily: "Namecat",
+                height: { xs: 25, sm: 30, md: "auto" },
+                fontSize: { xs: 7, sm: 12, md: 20 },
+                px: { xs: 0.7, sm: 1.2, md: 2 },
+                py: { xs: 0, sm: 0.3, md: 1 },
+                letterSpacing: 2,
+              }}
+              onClick={onOpenAboutUsModal}
+            >
+              About Us
+            </PrimaryButton>
+          ) : null}
           <PrimaryButton
             sx={{
               fontFamily: "Namecat",

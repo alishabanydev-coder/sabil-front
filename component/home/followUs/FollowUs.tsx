@@ -2,13 +2,6 @@ import { IconButton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import SeactionHeader from "@/component/ui/SectionHeader";
 
-const fallbackIcons = [
-  { id: 1, name: "youtube", icon: "/youtube-icon.png" },
-  { id: 4, name: "facebook", icon: "/facebook-icon.png" },
-  { id: 3, name: "instagram", icon: "/insta-icon.png" },
-  { id: 2, name: "x", icon: "/x-icon.png" },
-];
-
 type SocialMediaLink = {
   _id?: string;
   name?: string;
@@ -21,20 +14,14 @@ const FollowUs = ({
 }: {
   socialMediaLinks?: SocialMediaLink[];
 }) => {
-  const icons =
-    socialMediaLinks.length > 0
-      ? socialMediaLinks
-          .filter((item) => typeof item?.icon === "string" && item.icon)
-          .map((item, index) => ({
-            id: item._id || index,
-            name: item.name || "social-media",
-            icon: item.icon as string,
-            url: item.url || "#",
-          }))
-      : fallbackIcons.map((item) => ({
-          ...item,
-          url: "#",
-        }));
+  const icons = socialMediaLinks
+    .filter((item) => typeof item?.icon === "string" && item.icon)
+    .map((item, index) => ({
+      id: item._id || index,
+      name: item.name || "social-media",
+      icon: item.icon as string,
+      url: item.url || "#",
+    }));
 
   return (
     <Stack
@@ -67,7 +54,10 @@ const FollowUs = ({
             width: "40%",
           }}
         >
-          <SeactionHeader text="Follow Us" sx={{ textAlign: "start", fontSize: { xs: 15, sm: 16, md: 24 } }} />
+          <SeactionHeader
+            text="Follow Us"
+            sx={{ textAlign: "start", fontSize: { xs: 15, sm: 16, md: 24 } }}
+          />
 
           <Typography
             sx={{

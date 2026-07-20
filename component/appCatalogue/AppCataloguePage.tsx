@@ -85,7 +85,7 @@ export default function AppCataloguePage({
       sx={{
         gap: 2,
         color: "#fff",
-        py: 1,
+        py: 2,
       }}
     >
       {/* NavigationButtons */}

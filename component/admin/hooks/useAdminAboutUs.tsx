@@ -1,6 +1,22 @@
 import type { AdminAboutUsRecord } from "@/types/admin";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchAboutUs, updateAboutUs } from "../services/aboutUsApi";
+
+type AboutUsFormSnapshot = {
+  videoUrl: string;
+  title: string;
+  message: string;
+  isActive: boolean;
+};
+
+function toAboutUsFormSnapshot(payload: AdminAboutUsRecord): AboutUsFormSnapshot {
+  return {
+    videoUrl: typeof payload.videoUrl === "string" ? payload.videoUrl : "",
+    title: typeof payload.title === "string" ? payload.title : "",
+    message: typeof payload.message === "string" ? payload.message : "",
+    isActive: payload.isActive !== false,
+  };
+}
 
 function applyAboutUsPayload(
   payload: AdminAboutUsRecord,
@@ -10,12 +26,15 @@ function applyAboutUsPayload(
     setMessage: (value: string) => void;
     setIsActive: (value: boolean) => void;
     setLastUpdatedAt: (value: string | null) => void;
+    setSavedSnapshot: (value: AboutUsFormSnapshot) => void;
   }
 ) {
-  setters.setVideoUrl(typeof payload.videoUrl === "string" ? payload.videoUrl : "");
-  setters.setTitle(typeof payload.title === "string" ? payload.title : "");
-  setters.setMessage(typeof payload.message === "string" ? payload.message : "");
-  setters.setIsActive(payload.isActive !== false);
+  const snapshot = toAboutUsFormSnapshot(payload);
+  setters.setVideoUrl(snapshot.videoUrl);
+  setters.setTitle(snapshot.title);
+  setters.setMessage(snapshot.message);
+  setters.setIsActive(snapshot.isActive);
+  setters.setSavedSnapshot(snapshot);
   setters.setLastUpdatedAt(
     typeof payload.updatedAt === "string" ? payload.updatedAt : null
   );
@@ -26,6 +45,9 @@ export const useAdminAboutUs = () => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [savedSnapshot, setSavedSnapshot] = useState<AboutUsFormSnapshot | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
@@ -62,6 +84,7 @@ export const useAdminAboutUs = () => {
           setMessage,
           setIsActive,
           setLastUpdatedAt,
+          setSavedSnapshot,
         });
       } catch (error) {
         if (controller.signal.aborted) {
@@ -115,6 +138,7 @@ export const useAdminAboutUs = () => {
           setMessage,
           setIsActive,
           setLastUpdatedAt,
+          setSavedSnapshot,
         });
       }
     } catch (error) {
@@ -126,8 +150,25 @@ export const useAdminAboutUs = () => {
     }
   }, [isActive, message, title, videoUrl]);
 
+  const hasChanges = useMemo(() => {
+    if (!savedSnapshot) {
+      return true;
+    }
+
+    return (
+      videoUrl.trim() !== savedSnapshot.videoUrl.trim() ||
+      title.trim() !== savedSnapshot.title.trim() ||
+      message.trim() !== savedSnapshot.message.trim() ||
+      isActive !== savedSnapshot.isActive
+    );
+  }, [isActive, message, savedSnapshot, title, videoUrl]);
+
   const isSaveDisabled =
-    isSubmitting || !videoUrl.trim() || !title.trim() || !message.trim();
+    isSubmitting ||
+    !hasChanges ||
+    !videoUrl.trim() ||
+    !title.trim() ||
+    !message.trim();
 
   return {
     errorMsg,

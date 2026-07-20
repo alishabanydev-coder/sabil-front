@@ -4,6 +4,8 @@ import { getApiBase } from "@/lib/apiBase";
 
 const API_BASE = getApiBase();
 
+export const SOCIAL_MEDIA_TAG = "social-media";
+
 function normalizeAssetUrl(value) {
   if (typeof value !== "string" || !value.startsWith("/")) {
     return value;
@@ -74,7 +76,7 @@ export async function fetchSocialMediaLinks({ signal } = {}) {
 export async function fetchPublicSocialMediaLinks({ signal } = {}) {
   const response = await fetch(`${API_BASE}/api/admin/public/social-media`, {
     method: "GET",
-    cache: "force-cache",
+    next: { tags: [SOCIAL_MEDIA_TAG] },
     signal,
   });
   const data = await readJson(response);
@@ -98,6 +100,16 @@ export async function fetchPublicSocialMediaLinks({ signal } = {}) {
     message: "",
     status: response.status,
   };
+}
+
+export async function revalidateSocialMediaPublicCache() {
+  try {
+    await fetch("/api/revalidate-social-media", {
+      method: "POST",
+    });
+  } catch {
+    // Ignore revalidate errors so admin save flow is not blocked.
+  }
 }
 
 export async function createSocialMediaLink(body, { signal } = {}) {

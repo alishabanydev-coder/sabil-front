@@ -4,6 +4,7 @@ import {
   createSocialMediaLink,
   deleteSocialMediaLink,
   fetchSocialMediaLinks,
+  revalidateSocialMediaPublicCache,
   updateSocialMediaLink,
 } from "../services/socialMediaApi";
 
@@ -87,6 +88,8 @@ export const useAdminSocialMedia = () => {
         return;
       }
 
+      await revalidateSocialMediaPublicCache();
+
       if (result.socialMediaLink) {
         if (editingSocialMedia) {
           setSocialMedias((currentItems) =>
@@ -139,6 +142,8 @@ export const useAdminSocialMedia = () => {
         setSubmitErrorMsg(result.message);
         return;
       }
+
+      await revalidateSocialMediaPublicCache();
 
       setSocialMedias((currentItems) =>
         currentItems.filter((item) => item._id !== editingSocialMedia._id)
