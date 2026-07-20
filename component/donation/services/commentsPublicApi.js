@@ -1,4 +1,4 @@
-import { getApiBase } from "@/lib/apiBase";
+import { getApiBase, getPublicAssetBase } from "@/lib/apiBase";
 import { getStoredUserToken } from "@/component/auth/services/userAuthApi";
 
 const API_BASE = getApiBase();
@@ -17,7 +17,7 @@ function normalizeAssetUrl(value) {
   }
 
   if (value.startsWith("/uploads/")) {
-    return `${API_BASE}${value}`;
+    return `${getPublicAssetBase()}${value}`;
   }
 
   return value;

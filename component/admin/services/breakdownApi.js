@@ -1,6 +1,6 @@
 import { handleExpiredAdminSession } from "./adminSession";
 
-import { getApiBase } from "@/lib/apiBase";
+import { getApiBase, getPublicAssetBase } from "@/lib/apiBase";
 
 const API_BASE = getApiBase();
 
@@ -9,7 +9,7 @@ function normalizeAssetUrl(value) {
     return value;
   }
 
-  return `${API_BASE}${value}`;
+  return `${getPublicAssetBase()}${value}`;
 }
 
 function getAuthHeaders(json = false) {

@@ -1,6 +1,6 @@
 import { handleExpiredAdminSession } from "./adminSession";
 
-import { getApiBase } from "@/lib/apiBase";
+import { getApiBase, getPublicAssetBase } from "@/lib/apiBase";
 
 const API_BASE = getApiBase();
 
@@ -29,7 +29,7 @@ function normalizeBanner(banner) {
 
   const poster =
     typeof banner.poster === "string" && banner.poster.startsWith("/")
-      ? `${API_BASE}${banner.poster}`
+      ? `${getPublicAssetBase()}${banner.poster}`
       : banner.poster;
 
   return {

@@ -1,6 +1,6 @@
 import { handleExpiredAdminSession } from "./adminSession";
 
-import { getApiBase } from "@/lib/apiBase";
+import { getApiBase, getPublicAssetBase } from "@/lib/apiBase";
 
 const API_BASE = getApiBase();
 
@@ -55,7 +55,7 @@ function normalizeAssetUrl(value) {
     return typeof value === "string" && value.startsWith("data:") ? "" : value;
   }
 
-  return `${API_BASE}${value}`;
+  return `${getPublicAssetBase()}${value}`;
 }
 
 function normalizeSectionItem(section, item) {
