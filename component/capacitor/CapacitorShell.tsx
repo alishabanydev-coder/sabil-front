@@ -69,7 +69,7 @@ export default function CapacitorShell({
           await StatusBar.setBackgroundColor({ color: "#12041f" });
         }
       } catch {
-        // Native plugins are unavailable outside the Capacitor shell.
+        console.log('no capcitor')
       }
 
       const rehideSystemUi = () => {
@@ -85,7 +85,7 @@ export default function CapacitorShell({
       try {
         await SplashScreen.hide();
       } catch {
-        // Keep the app usable if splash dismissal fails.
+        console.log('splash screen error')
       }
 
       return () => {
@@ -105,7 +105,7 @@ export default function CapacitorShell({
           }
         );
       } catch {
-        // Fall back to browser events when the Network plugin is unavailable.
+        console.log('error in the Browser to load')
       }
 
       window.addEventListener("online", onBrowserOnline);

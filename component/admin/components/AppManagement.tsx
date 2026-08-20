@@ -1,6 +1,7 @@
 ﻿import AddIcon from "@mui/icons-material/Add";
 import {
   Alert,
+  alpha,
   Button,
   Checkbox,
   CircularProgress,
@@ -199,11 +200,16 @@ const AppManagement = () => {
             </Button>
           </Stack>
 
-          <Stack sx={{ width: "100%", flex: 1, minHeight: 0, gap: 1 }}>
+          <Stack sx={{ width: "100%", flex: 1, minHeight: 0 }}>
             {activeNavId === "home" ? (
               <Stack
                 direction="row"
-                sx={{ gap: 2, justifyContent: "center", alignItems: "center" }}
+                sx={{
+                  gap: 2,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  pb: 1,
+                }}
               >
                 <Button
                   variant="contained"
@@ -229,7 +235,7 @@ const AppManagement = () => {
             ) : (
               <Stack
                 direction="row"
-                sx={{ justifyContent: "center", alignItems: "center" }}
+                sx={{ justifyContent: "center", alignItems: "center", pb: 1 }}
               >
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
                   {activeProject?.name || "Project"} Videos
@@ -237,137 +243,153 @@ const AppManagement = () => {
               </Stack>
             )}
 
+            <Divider flexItem sx={{ width: "95%", mx: "auto" }} />
+
             <Stack
-              direction="row"
               sx={{
-                gap: 2,
+                pt: 2,
                 width: "100%",
-                flex: 1,
-                minHeight: 0,
-                flexWrap: "wrap",
-                alignItems: "flex-start",
-                alignContent: "flex-start",
-                overflow: "hidden",
-                overflowY: "auto",
-                borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-                px: 1,
-                py: 1,
+                height: "100%",
+                overflow: "auto",
+                alignItems: "center",
               }}
             >
-              {displayVideos.length > 0 ? (
-                displayVideos.map((video) => {
-                  const project = projectById.get(video.projectId);
-                  const projectLogo = project?.image || video.thumbnail;
-                  const projectName =
-                    project?.title || project?.name || "Project";
-                  return (
-                    <Stack
-                      key={video._id}
-                      sx={{
-                        opacity:
-                          activeNavId === "home" && isRandomVideosSelected
-                            ? 0.5
-                            : 1,
-                        cursor:
-                          activeNavId === "home" && isRandomVideosSelected
-                            ? "not-allowed"
-                            : "pointer",
-                        width: 240,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        border: (theme) =>
-                          `1px solid ${theme.palette.primary.main}`,
-                      }}
-                    >
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        style={{
-                          width: "100%",
-                          aspectRatio: "16 / 9",
-                          objectFit: "contain",
-                        }}
-                      />
-                      <Divider flexItem />
+              <Stack
+                direction="row"
+                sx={{
+                  display: "grid",
+                  gap: { xs: 2, md: 5 },
+                  gridTemplateColumns:
+                    "repeat(auto-fill, minmax(300px, 300px))",
+                  justifyContent: "center",
+                  width: "100%",
+                  px: 2,
+                  pb: 2,
+                }}
+              >
+                {displayVideos.length > 0 ? (
+                  displayVideos.map((video) => {
+                    const project = projectById.get(video.projectId);
+                    const projectLogo = project?.image || video.thumbnail;
+                    const projectName =
+                      project?.title || project?.name || "Project";
+                    return (
                       <Stack
-                        direction="row"
+                        key={video._id}
                         sx={{
-                          pl: 0.8,
-                          gap: 1,
-                          alignItems: "center",
-                          "& img": {
-                            objectFit: "contain",
-                            border: "1px solid",
-                            borderColor: "primary.main",
-                            borderRadius: "50%",
+                          opacity:
+                            activeNavId === "home" && isRandomVideosSelected
+                              ? 0.5
+                              : 1,
+                          cursor:
+                            activeNavId === "home" && isRandomVideosSelected
+                              ? "not-allowed"
+                              : "pointer",
+                          width: 300,
+                          borderRadius: 1,
+                          overflow: "hidden",
+                          border: (theme) =>
+                            `1px solid ${theme.palette.primary.main}`,
+                          "&:hover": {
+                            boxShadow: (theme) =>
+                              `0 0 10px 5px ${alpha(
+                                theme.palette.primary.main,
+                                0.3
+                              )}`,
+                            cursor: "pointer",
                           },
                         }}
                       >
-                        <Image
-                          src={projectLogo}
-                          alt={projectName}
-                          width={36}
-                          height={36}
-                          style={{ objectFit: "contain" }}
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          style={{
+                            width: "100%",
+                            aspectRatio: "16 / 9",
+                            objectFit: "contain",
+                          }}
                         />
-                        <Stack sx={{ width: "100%", overflow: "hidden" }}>
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              width: "100%",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                              color: "text.primary",
-                              fontWeight: 700,
-                              fontSize: 18,
-                            }}
-                          >
-                            {video.title}
-                          </Typography>
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              width: "100%",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                              color: "text.secondary",
-                              fontWeight: 300,
-                              fontFamily: "Namecat",
-                              letterSpacing: 2,
-                              fontSize: 11,
-                            }}
-                          >
-                            {projectName}
-                          </Typography>
+                        <Divider flexItem />
+                        <Stack
+                          direction="row"
+                          sx={{
+                            pl: 0.8,
+                            gap: 1,
+                            alignItems: "center",
+                            "& img": {
+                              objectFit: "contain",
+                              border: "1px solid",
+                              borderColor: "primary.main",
+                              borderRadius: "50%",
+                            },
+                          }}
+                        >
+                          <Image
+                            src={projectLogo}
+                            alt={projectName}
+                            width={36}
+                            height={36}
+                            style={{ objectFit: "contain" }}
+                          />
+                          <Stack sx={{ width: "100%", overflow: "hidden" }}>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                width: "100%",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                color: "text.primary",
+                                fontWeight: 700,
+                                fontSize: { xs: 12, sm: 14, md: 16 },
+                              }}
+                            >
+                              {video.title}
+                            </Typography>
+                            <Typography
+                              variant="subtitle2"
+                              sx={{
+                                width: "100%",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                color: "text.secondary",
+                                fontWeight: 300,
+                                fontFamily: "Namecat",
+                                letterSpacing: 2,
+                                fontSize: { xs: 10, sm: 12 },
+                              }}
+                            >
+                              {projectName}
+                            </Typography>
+                          </Stack>
                         </Stack>
                       </Stack>
-                    </Stack>
-                  );
-                })
-              ) : activeNavId === "home" ? (
-                Array.from({ length: 5 }).map((_, index) => (
-                  <Skeleton
-                    key={index}
-                    variant="rectangular"
-                    sx={{ width: "100%", height: "100%" }}
-                  />
-                ))
-              ) : (
-                <Stack
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography color="text.secondary">
-                    No videos found for this project.
-                  </Typography>
-                </Stack>
-              )}
+                    );
+                  })
+                ) : activeNavId === "home" ? (
+                  Array.from({ length: 5 }).map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      variant="rectangular"
+                      sx={{ width: "100%", height: "100%" }}
+                    />
+                  ))
+                ) : (
+                  <Stack
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography color="text.secondary">
+                      No videos found for this project.
+                    </Typography>
+                  </Stack>
+                )}
+              </Stack>
             </Stack>
           </Stack>
         </Stack>

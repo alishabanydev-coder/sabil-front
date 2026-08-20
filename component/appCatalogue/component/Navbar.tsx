@@ -3,15 +3,24 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Button, IconButton, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { useRouter } from "next/navigation";
 import { App } from "@capacitor/app";
 import { isNativeApp, useNativeApp } from "@/lib/capacitor/nativeApp";
 
 const Navbar = () => {
+  const theme = useTheme();
   const router = useRouter();
   const isNative = useNativeApp();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [showFloatingLogout, setShowFloatingLogout] = useState(false);
 
   const handleLogout = () => {
@@ -55,7 +64,17 @@ const Navbar = () => {
           px: { xs: 2, md: 4 },
         }}
       >
-        <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
+        <Stack
+          direction="row"
+          sx={{
+            gap: 1,
+            alignItems: "center",
+            "& img": {
+              width: { xs: 45, sm: 45, md: 54, lg: 62 },
+              height: { xs: 45, sm: 45, md: 54, lg: 62 },
+            },
+          }}
+        >
           <Image
             src="/icon-512.webp"
             alt="Project Title"
@@ -65,7 +84,7 @@ const Navbar = () => {
           <Typography
             sx={{
               display: { xs: "none", sm: "block" },
-              fontSize: { xs: 20, sm: 22, md: 32, lg: 36 },
+              fontSize: { xs: 20, sm: 22, md: 28, lg: 34 },
               fontWeight: 700,
               fontFamily: "Bhel Puri",
               textTransform: "uppercase",
@@ -76,7 +95,7 @@ const Navbar = () => {
           </Typography>
         </Stack>
         <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
-          {!isNative && (
+          {!isNative && isMobile && (
             <>
               <IconButton
                 color="primary"
@@ -140,11 +159,11 @@ const Navbar = () => {
             startIcon={<LogoutIcon />}
             sx={{
               fontSize: { xs: 12, sm: 14, md: 16, lg: 18 },
-              py: { xs: 0.5, sm: 0.5, md: 1 },
+              py: { xs: 0.5, sm: 0.4 },
               px: { xs: 1, sm: 1.5, md: 2 },
             }}
           >
-            Logout
+            {isNative ? "Logout" : "back"}
           </Button>
         </Stack>
       </Stack>

@@ -180,7 +180,11 @@ const Projects = () => {
                       component="p"
                       sx={{ color: "text.secondary", fontSize: 13, mt: 0.5 }}
                     >
-                      {`Characters: ${Array.isArray(project.characters) ? project.characters.length : 0}`}
+                      {`Characters: ${
+                        Array.isArray(project.characters)
+                          ? project.characters.length
+                          : 0
+                      }`}
                     </Typography>
                   </Stack>
 

@@ -124,7 +124,19 @@ const Blog = () => {
               No blogs yet.
             </Typography>
           ) : (
-            <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+            <Stack
+              direction="row"
+              //  sx={{ gap: 1.5, flexWrap: "wrap" }}
+              sx={{
+                display: "grid",
+                gap: { xs: 2, md: 5 },
+                gridTemplateColumns: "repeat(auto-fill, minmax(400px, 400px))",
+                justifyContent: "center",
+                width: "100%",
+                px: 2,
+                pb: 2,
+              }}
+            >
               {blogs.map((blog) => (
                 <Stack
                   key={blog._id}
@@ -133,10 +145,14 @@ const Blog = () => {
                     borderRadius: 2,
                     border: (theme) => `1px solid ${theme.palette.divider}`,
                     gap: 0.75,
-                    width: 450,
+                    width: 400,
                     height: 250,
                     boxShadow: 3,
                     position: "relative",
+                    "&:hover": {
+                      boxShadow: 6,
+                      cursor: "pointer",
+                    },
                   }}
                 >
                   <Stack
@@ -206,14 +222,16 @@ const Blog = () => {
                     variant="body2"
                     sx={{
                       border: (theme) => `1px solid ${theme.palette.divider}`,
-                      p: 1,
-                      borderRadius: 2,
-                      whiteSpace: "pre-wrap",
-                      width: "100%",
                       height: 115,
+                      pt: 1,
+                      pb: 1,
+                      px: 1,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
-                      overflowWrap: "anywhere",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 5,
+                      whiteSpace: "normal",
                       wordBreak: "break-word",
                     }}
                   >
@@ -379,8 +397,8 @@ const Blog = () => {
                 {isSubmitting
                   ? "Saving..."
                   : editingBlog
-                    ? "Save Changes"
-                    : "Add Blog"}
+                  ? "Save Changes"
+                  : "Add Blog"}
               </Button>
               <Button variant="outlined" color="primary" onClick={handleClose}>
                 Cancel

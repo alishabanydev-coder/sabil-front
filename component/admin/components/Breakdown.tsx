@@ -100,7 +100,17 @@ const Breakdown = () => {
               No breakdowns yet.
             </Typography>
           ) : (
-            <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+            <Stack
+              sx={{
+                display: "grid",
+                gap: { xs: 2, md: 5 },
+                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 300px))",
+                justifyContent: "center",
+                width: "100%",
+                px: 2,
+                pb: 2,
+              }}
+            >
               {breakdowns.map((breakdown) => (
                 <Stack
                   key={breakdown._id}
@@ -114,8 +124,8 @@ const Breakdown = () => {
                     boxShadow: 3,
                     cursor: "pointer",
                     "&:hover": {
-                      bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, 0.3),
+                      boxShadow: 6,
+                      cursor: "pointer",
                     },
                   }}
                 >
@@ -151,7 +161,25 @@ const Breakdown = () => {
                       )?.name ?? breakdown.projectId
                     )}
                   </Typography>
-                  <Typography variant="body2">{breakdown.content}</Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      border: (theme) => `1px solid ${theme.palette.divider}`,
+                      height: 85,
+                      pt: 0,
+                      pb: 0,
+                      px: 1,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 4,
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {breakdown.content}
+                  </Typography>
                   {breakdown.videoUrl ? (
                     <Typography variant="body2" color="primary">
                       {breakdown.videoUrl}
@@ -287,8 +315,8 @@ const Breakdown = () => {
                 {isSubmitting
                   ? "Saving..."
                   : isEditing
-                    ? "Edit Breakdown"
-                    : "Add Breakdown"}
+                  ? "Edit Breakdown"
+                  : "Add Breakdown"}
               </Button>
 
               {isEditing && (

@@ -85,7 +85,9 @@ const MainPageLayout = () => {
                         direction="row"
                         sx={{ gap: 1, alignItems: "center" }}
                       >
-                        {selectedProject ? selectedProject.name : "All Projects"}
+                        {selectedProject
+                          ? selectedProject.name
+                          : "All Projects"}
                         {selectedProject ? (
                           <img
                             src={selectedProject.thumbnail}
@@ -183,6 +185,7 @@ const MainPageLayout = () => {
                                 WebkitBoxOrient: "vertical",
                                 WebkitLineClamp: 6,
                                 wordBreak: "break-word",
+                                lineHeight: 1.6,
                               }}
                             >
                               {item.text || "No text"}{" "}

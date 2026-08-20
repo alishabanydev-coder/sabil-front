@@ -167,7 +167,17 @@ const Catalogue = () => {
               No catalogues yet.
             </Typography>
           ) : (
-            <Stack direction="row" sx={{ gap: 1.5, flexWrap: "wrap" }}>
+            <Stack
+              sx={{
+                display: "grid",
+                gap: { xs: 2, md: 5 },
+                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 300px))",
+                justifyContent: "center",
+                width: "100%",
+                px: 2,
+                pb: 2,
+              }}
+            >
               {visibleCatalogues.map((catalogue) => (
                 <Stack
                   key={catalogue._id}
@@ -181,8 +191,8 @@ const Catalogue = () => {
                     boxShadow: 3,
                     cursor: "pointer",
                     "&:hover": {
-                      bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, 0.3),
+                      boxShadow: 6,
+                      cursor: "pointer",
                     },
                   }}
                 >
@@ -230,7 +240,12 @@ const Catalogue = () => {
                   <Typography
                     variant="body2"
                     sx={{
-                      height: 100,
+                      border: (theme) => `1px solid ${theme.palette.divider}`,
+                      borderRadius: 2,
+                      pt: 0.5,
+                      pb: 0.5,
+                      px: 0.5,
+                      height: 110,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       display: "-webkit-box",
@@ -364,8 +379,8 @@ const Catalogue = () => {
                 {isSubmitting
                   ? "Saving..."
                   : isEditing
-                    ? "Edit Catalogue"
-                    : "Add Catalogue"}
+                  ? "Edit Catalogue"
+                  : "Add Catalogue"}
               </Button>
 
               {isEditing && (

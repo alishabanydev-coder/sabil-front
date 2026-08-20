@@ -56,7 +56,6 @@ const Banner = () => {
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
           borderRadius: 2,
           mt: 3,
-          p: 2,
         }}
       >
         <Stack
@@ -87,7 +86,8 @@ const Banner = () => {
           sx={{
             width: "100%",
             height: "100%",
-            pt: 4,
+            pt: 6,
+            overflow: "auto",
             alignItems: "center",
           }}
         >
@@ -99,8 +99,18 @@ const Banner = () => {
             </Typography>
           ) : banners.length > 0 ? (
             <Stack
-              direction="row"
-              sx={{ gap: 2, flexWrap: "wrap", justifyContent: "center" }}
+              sx={{
+                display: "grid",
+                gap: { xs: 1, md: 3 },
+                gridTemplateColumns: {
+                  xs: "repeat(auto-fill, minmax(180px, 180px))",
+                  md: "repeat(auto-fill, minmax(250px, 250px))",
+                },
+                justifyContent: "center",
+                width: "100%",
+                px: 2,
+                pb: 2,
+              }}
             >
               {banners.map((bannerItem) => (
                 <Stack
@@ -109,10 +119,14 @@ const Banner = () => {
                     gap: 1.5,
                     alignItems: "center",
                     boxShadow: 3,
-                    width: 250,
+                    width: { xs: 180, md: 250 },
                     p: 1,
                     borderRadius: 2,
                     border: (theme) => `1px solid ${theme.palette.divider}`,
+                    "&:hover": {
+                      boxShadow: 6,
+                      cursor: "pointer",
+                    },
                   }}
                 >
                   <Stack

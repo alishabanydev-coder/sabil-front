@@ -185,7 +185,6 @@ export default function AppCataloguePage({
             xs: "repeat(auto-fill, minmax(180px, 180px))",
             md: "repeat(auto-fill, minmax(320px, 320px))",
           },
-
           justifyContent: "center",
         }}
       >
@@ -250,10 +249,7 @@ export default function AppCataloguePage({
               return (
                 <Stack
                   key={item._id}
-                  onClick={() => {
-                    console.log("clicked", item._id);
-                    router.push(`/app/watch/${item._id}`);
-                  }}
+                  onClick={() => router.push(`/app/watch/${item._id}`)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
