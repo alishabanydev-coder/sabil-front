@@ -1,10 +1,10 @@
 "use client";
 
-import { Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useNativeApp } from "@/lib/capacitor/nativeApp";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 
 type NavigationButtonData = {
   id: string;
@@ -80,16 +80,33 @@ export default function AppCataloguePage({
         py: 2,
       }}
     >
+      <Typography
+        variant="h6"
+        sx={{
+          width: "82%",
+          mx: "auto",
+          textAlign: "start",
+          fontWeight: 700,
+          fontSize: { xs: 18, md: 24 },
+          textTransform: "uppercase",
+          color: "primary.main",
+          letterSpacing: 1.5,
+          fontFamily: "Namecat",
+        }}
+      >
+        Explore by theme
+      </Typography>
       {/* cards */}
       <Stack
         sx={{
           display: "grid",
+          width: "82%",
+          mx: "auto",
           gap: { xs: 1, md: 3 },
           gridTemplateColumns: {
-            xs: "repeat(auto-fill, minmax(180px, 180px))",
-            md: "repeat(auto-fill, minmax(320px, 320px))",
+            xs: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
           },
-          justifyContent: "center",
         }}
       >
         {isCatalogueLoading
@@ -97,7 +114,7 @@ export default function AppCataloguePage({
               <Stack
                 key={`card-skeleton-${index}`}
                 sx={{
-                  width: { xs: 180, md: 320 },
+                  width: "100%",
                   pb: 0.5,
                   border: "1px solid #aaa",
                   borderRadius: 2,
@@ -163,10 +180,11 @@ export default function AppCataloguePage({
                   tabIndex={0}
                   role="button"
                   sx={{
-                    width: { xs: 180, md: 320 },
+                    position: "relative",
+                    width: "100%",
                     pb: 0.5,
-                    border: "1px solid #aaa",
-                    borderRadius: 2,
+                    borderRadius: 8,
+                    boxShadow: 3,
                     cursor: "pointer",
                     overflow: "hidden",
                     "&:hover": {
@@ -176,6 +194,11 @@ export default function AppCataloguePage({
                         transition: "all 0.3s ease",
                         transform: "scale(1.1) rotate(3deg)",
                       },
+                      "& .app-catalogue-page-play-button": {
+                        transform: "translateY(0)",
+                        scale: 1.1,
+                        transition: "all 0.3s ease",
+                      },
                     },
                     transition: "all 0.3s ease",
                   }}
@@ -184,7 +207,7 @@ export default function AppCataloguePage({
                     sx={{
                       position: "relative",
                       width: "100%",
-                      height: { xs: 101, md: 182 },
+                      aspectRatio: "16 / 9",
                       overflow: "hidden",
                     }}
                   >
@@ -196,10 +219,14 @@ export default function AppCataloguePage({
                       style={{ objectFit: "contain" }}
                     />
                   </Stack>
+
                   <Stack
                     direction="row"
                     sx={{
-                      pl: 0.8,
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      width: "100%",
                       gap: 1,
                       alignItems: "center",
                       "& img": {
@@ -212,24 +239,55 @@ export default function AppCataloguePage({
                       },
                     }}
                   >
-                    <Image
-                      src={projectLogo}
-                      alt={projectName}
-                      width={46}
-                      height={46}
-                      style={{ objectFit: "contain" }}
-                    />
-                    <Stack sx={{ width: "100%", overflow: "hidden" }}>
+                    <Stack
+                      sx={{
+                        width: "100%",
+                        bgcolor: "white",
+                        borderRadius: 300,
+                        boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
+                        pl: 8,
+                        position: "relative",
+                        pt: 1,
+                      }}
+                    >
+                      <Box
+                        className="app-catalogue-page-play-button"
+                        sx={{
+                          position: "absolute",
+                          left: 12,
+                          top: -20,
+                          width: 46,
+                          height: 46,
+                          borderRadius: "50%",
+                          boxShadow: 5,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          bgcolor: "white",
+                        }}
+                      >
+                        <PlayArrowRoundedIcon
+                          sx={{
+                            fontSize: { xs: 20, md: 24, lg: 32 },
+                            color: "primary.main",
+                          }}
+                        />
+                      </Box>
+
                       <Typography
                         variant="h6"
                         sx={{
+                          color: "primary.main",
+                          fontFamily: "Namecat",
+                          fontWeight: 700,
+                          fontSize: { xs: 12, md: 14, lg: 16 },
+                          letterSpacing: 1.5,
+                          textTransform: "uppercase",
                           width: "100%",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
-                          color: "text.primary",
-                          fontWeight: 700,
-                          fontSize: { xs: 12, md: 18 },
+                          lineHeight: 1,
                         }}
                       >
                         {item.title}
@@ -245,7 +303,7 @@ export default function AppCataloguePage({
                           fontWeight: 300,
                           fontFamily: "Namecat",
                           letterSpacing: 2,
-                          fontSize: { xs: 10, md: 12 },
+                          fontSize: { xs: 10, md: 11, lg: 12 },
                         }}
                       >
                         {projectName}
