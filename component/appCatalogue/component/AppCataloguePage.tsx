@@ -35,6 +35,7 @@ type AppCataloguePageProps = {
   navigationButtons: NavigationButtonData[];
   homeVideos: VideoData[];
   allVideos: VideoData[];
+  selectedVideos: VideoData[];
 };
 
 const NAV_SKELETON_COUNT = 4;
@@ -42,20 +43,11 @@ const CARD_SKELETON_COUNT = 6;
 
 export default function AppCataloguePage({
   navigationButtons,
+  selectedVideos,
   homeVideos,
   allVideos,
 }: AppCataloguePageProps) {
   const router = useRouter();
-  const isNative = useNativeApp();
-  const [selectedNav, setSelectedNav] = useState<string>("home");
-
-  const selectedVideos = useMemo(() => {
-    if (selectedNav === "home") {
-      return homeVideos;
-    }
-
-    return allVideos.filter((video) => video.projectId === selectedNav);
-  }, [allVideos, homeVideos, selectedNav]);
 
   const projectById = useMemo(() => {
     const projectMap = new Map<string, ProjectPreviewData>();
@@ -88,94 +80,6 @@ export default function AppCataloguePage({
         py: 2,
       }}
     >
-      {/* NavigationButtons */}
-      <Stack
-        sx={{
-          flexDirection: "row",
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 3,
-          position: "sticky",
-          top: isNative ? "-8px" : 0,
-          zIndex: 30,
-          py: 1,
-          bgcolor: "background.default",
-          backdropFilter: "blur(8px)",
-          borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: -12,
-            height: 12,
-            pointerEvents: "none",
-            width: "100%",
-            background: (theme) =>
-              `linear-gradient(to bottom, ${theme.palette.primary.main}44, transparent)`,
-          },
-        }}
-      >
-        <Stack
-          sx={{
-            width: { xs: "80%", sm: "60%" },
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          {navigationButtons.length > 0
-            ? navigationButtons.map((item) => {
-                const buttonId =
-                  item.type === "project" && item.projectId
-                    ? item.projectId
-                    : "home";
-                const isSelected = selectedNav === buttonId;
-                return (
-                  <Stack
-                    key={item.id}
-                    sx={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      opacity: 1,
-                      filter: isSelected ? "none" : "grayscale(100%)",
-                      transition: "all 0.3s ease",
-                      "& img": {
-                        width: { xs: 35, sm: 42, md: 64, lg: 110 },
-                        height: { xs: 35, sm: 42, md: 64, lg: 110 },
-                      },
-                    }}
-                    onClick={() => {
-                      setSelectedNav(buttonId);
-                    }}
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      width={110}
-                      height={110}
-                      style={{ objectFit: "contain" }}
-                    />
-                  </Stack>
-                );
-              })
-            : Array.from({ length: NAV_SKELETON_COUNT }, (_, index) => (
-                <Skeleton
-                  key={`nav-skeleton-${index}`}
-                  variant="circular"
-                  animation="wave"
-                  sx={{
-                    width: { xs: 35, sm: 42, md: 64, lg: 110 },
-                    height: { xs: 35, sm: 42, md: 64, lg: 110 },
-                  }}
-                />
-              ))}
-        </Stack>
-      </Stack>
-
       {/* cards */}
       <Stack
         sx={{

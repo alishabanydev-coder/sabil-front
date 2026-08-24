@@ -1,10 +1,11 @@
-import AppCataloguePage from "@/component/appCatalogue/AppCataloguePage";
+import AppCataloguePage from "@/component/appCatalogue/component/AppCataloguePage";
 import Navbar from "@/component/appCatalogue/component/Navbar";
 import { fetchPublicAllVideos } from "@/component/admin/services/mainPageLayoutApi";
 import {
   fetchPublicAppCatalogueHomeVideos,
   fetchPublicAppCatalogueNavigationButtons,
 } from "@/component/admin/services/appManagementApi";
+import AppIndex from "@/component/appCatalogue/AppIndex";
 
 type VideoData = {
   _id: string;
@@ -34,13 +35,10 @@ export default async function AppPage() {
   ) as VideoData[];
 
   return (
-    <>
-      <Navbar />
-      <AppCataloguePage
-        navigationButtons={navigationButtons}
-        homeVideos={homeVideos}
-        allVideos={allVideos}
-      />
-    </>
+    <AppIndex
+      navigationButtons={navigationButtons}
+      homeVideos={homeVideos}
+      allVideos={allVideos}
+    />
   );
 }

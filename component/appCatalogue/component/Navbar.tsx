@@ -1,27 +1,48 @@
 ﻿"use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {
-  Button,
-  IconButton,
-  Stack,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Avatar, Button, IconButton, Skeleton, Stack } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { useRouter } from "next/navigation";
 import { App } from "@capacitor/app";
-import { isNativeApp, useNativeApp } from "@/lib/capacitor/nativeApp";
+import { isNativeApp } from "@/lib/capacitor/nativeApp";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
 
-const Navbar = () => {
-  const theme = useTheme();
+type NavigationButtonData = {
+  id: string;
+  type: "home" | "project";
+  title: string;
+  image: string;
+  projectId?: string;
+};
+
+type VideoData = {
+  _id: string;
+  projectId: string;
+  title: string;
+  thumbnail: string;
+  season?: number;
+  episode?: number;
+};
+
+const NAV_SKELETON_COUNT = 4;
+
+const Navbar = ({
+  allVideos,
+  navigationButtons,
+  selectedNav,
+  setSelectedNav,
+}: {
+  allVideos: VideoData[];
+  navigationButtons: NavigationButtonData[];
+  selectedNav: string;
+  setSelectedNav: (nav: string) => void;
+}) => {
   const router = useRouter();
-  const isNative = useNativeApp();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [showFloatingLogout, setShowFloatingLogout] = useState(false);
 
   const handleLogout = () => {
     if (isNativeApp()) {
@@ -32,36 +53,24 @@ const Navbar = () => {
     router.push("/");
   };
 
-  useEffect(() => {
-    const scrollRoot = isNative
-      ? document.querySelector<HTMLElement>(".app-shell")
-      : null;
-
-    const getScrollOffset = () =>
-      scrollRoot ? scrollRoot.scrollTop : window.scrollY;
-
-    const onScroll = () => {
-      setShowFloatingLogout(getScrollOffset() > 80);
-    };
-
-    onScroll();
-
-    const target: HTMLElement | Window = scrollRoot ?? window;
-    target.addEventListener("scroll", onScroll, { passive: true });
-
-    return () => {
-      target.removeEventListener("scroll", onScroll);
-    };
-  }, [isNative]);
-
   return (
-    <>
+    <Stack
+      sx={{
+        position: "relative",
+        width: "100%",
+        aspectRatio: "1447 / 480",
+        backgroundImage: "url(/navbarBackground.png)",
+        backgroundSize: "100% 100%",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <Stack
         sx={{
           flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          px: { xs: 2, md: 4 },
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+          px: { xs: 2, md: 5 },
         }}
       >
         <Stack
@@ -69,169 +78,222 @@ const Navbar = () => {
           sx={{
             gap: 1,
             alignItems: "center",
-            "& img": {
-              width: { xs: 45, sm: 45, md: 54, lg: 62 },
-              height: { xs: 45, sm: 45, md: 54, lg: 62 },
+            position: "absolute",
+            top: 20,
+            right: { md: 45, lg: 56 },
+          }}
+        >
+          <IconButton
+            onClick={handleLogout}
+            sx={{
+              fontSize: { xs: 12, sm: 14, md: 16, lg: 18 },
+              color: "#ffff",
+              bgcolor: "secondary.main",
+              border: "1px solid",
+              borderColor: "#fff",
+              "&:hover": {
+                bgcolor: "secondary.main",
+                borderColor: "#fff",
+              },
+            }}
+          >
+            <LogoutIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+          </IconButton>
+
+          <Button
+            color="primary"
+            href="/downloads/sabeel-kids.apk"
+            download
+            sx={{
+              display: { xs: "none", md: "inline-flex" },
+              borderRadius: 6,
+              bgcolor: "secondary.main",
+              fontFamily: "Namecat",
+              letterSpacing: 1.2,
+              fontSize: 14,
+              color: "#fff",
+              px: 1.4,
+              border: "1px solid",
+              borderColor: "#fff",
+              backdropFilter: "blur(8px)",
+            }}
+            aria-label="download app"
+            startIcon={<FileDownloadIcon sx={{ fontSize: 24 }} />}
+          >
+            Download App
+          </Button>
+
+          <Avatar
+            src="/userAvatar.png"
+            alt="avatar"
+            sx={{ width: { md: 35, lg: 42 }, height: { md: 35, lg: 42 } }}
+          />
+        </Stack>
+
+        {/* logout + icons */}
+        <Stack
+          direction="row"
+          sx={{
+            gap: 1,
+            width: { md: "96%", lg: "98%" },
+            pt: { md: 3, lg: 5 },
+            mx: "auto",
+            alignItems: "center",
+            zIndex: 100,
+            "& .logo": {
+              width: { xs: 45, sm: 45, md: 120, lg: 140 },
+              height: { xs: 45, sm: 45, md: 120, lg: 140 },
             },
           }}
         >
           <Image
-            src="/icon-512.webp"
-            alt="Project Title"
-            width={56}
-            height={56}
+            className="logo"
+            src="/new-logo.png"
+            alt="sabeel kids logo"
+            width={72}
+            height={72}
           />
-          <Typography
+          <Stack
             sx={{
-              display: { xs: "none", sm: "block" },
-              fontSize: { xs: 20, sm: 22, md: 28, lg: 34 },
-              fontWeight: 700,
-              fontFamily: "Bhel Puri",
-              textTransform: "uppercase",
-              color: "primary.main",
+              width: { xs: "80%", sm: "100%" },
+              flexDirection: "row",
+              justifyContent: "start",
+              alignItems: "center",
+              gap: { md: 3, lg: 5 },
+              pl: { md: 8, lg: 10 },
             }}
           >
-            Sabeel Kids
-          </Typography>
-        </Stack>
-        <Stack direction="row" sx={{ gap: 1, alignItems: "center" }}>
-          {!isNative && isMobile && (
-            <>
-              <IconButton
-                color="primary"
-                href="/downloads/sabeel-kids.apk"
-                download
-                sx={{
-                  display: { xs: "inline-flex", md: "none" },
-                  borderRadius: 3,
-                  width: 30,
-                  height: 30,
-                  border: "1px solid",
-                  borderColor: "primary.main",
-                  bgcolor: "background.paper",
-                  backdropFilter: "blur(8px)",
-                  boxShadow: (theme) =>
-                    `0 8px 22px -10px ${theme.palette.primary.main}`,
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    bgcolor: "background.paper",
-                    boxShadow: (theme) =>
-                      `0 8px 22px -6px ${theme.palette.primary.main}`,
-                  },
-                }}
-                aria-label="download app"
-              >
-                <FileDownloadIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-              <Button
-                color="primary"
-                href="/downloads/sabeel-kids.apk"
-                download
-                sx={{
-                  display: { xs: "none", md: "inline-flex" },
-                  borderRadius: 3,
-                  width: 46,
-                  height: 46,
-                  minWidth: 46,
-                  border: "1px solid",
-                  borderColor: "primary.main",
-                  bgcolor: "background.paper",
-                  backdropFilter: "blur(8px)",
-                  boxShadow: (theme) =>
-                    `0 8px 22px -10px ${theme.palette.primary.main}`,
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    bgcolor: "background.paper",
-                    boxShadow: (theme) =>
-                      `0 8px 22px -6px ${theme.palette.primary.main}`,
-                  },
-                }}
-                aria-label="download app"
-              >
-                <FileDownloadIcon sx={{ fontSize: 24 }} />
-              </Button>
-            </>
-          )}
-          <Button
-            onClick={handleLogout}
-            variant="contained"
-            color="primary"
-            startIcon={<LogoutIcon />}
-            sx={{
-              fontSize: { xs: 12, sm: 14, md: 16, lg: 18 },
-              py: { xs: 0.5, sm: 0.4 },
-              px: { xs: 1, sm: 1.5, md: 2 },
-            }}
-          >
-            {isNative ? "Logout" : "back"}
-          </Button>
+            {navigationButtons.length > 0
+              ? navigationButtons.map((item) => {
+                  const buttonId =
+                    item.type === "project" && item.projectId
+                      ? item.projectId
+                      : "home";
+                  const isSelected = selectedNav === buttonId;
+                  return (
+                    <Stack
+                      key={item.id}
+                      sx={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        filter: isSelected ? "none" : "grayscale(100%)",
+                        transition: "all 0.3s ease",
+                        "& img": {
+                          width: { xs: 35, sm: 42, md: 90, lg: 110 },
+                          height: { xs: 35, sm: 42, md: 90, lg: 110 },
+                        },
+                      }}
+                      onClick={() => {
+                        setSelectedNav(buttonId);
+                      }}
+                    >
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        width={110}
+                        height={110}
+                        style={{ objectFit: "contain" }}
+                      />
+                    </Stack>
+                  );
+                })
+              : Array.from({ length: NAV_SKELETON_COUNT }, (_, index) => (
+                  <Skeleton
+                    key={`nav-skeleton-${index}`}
+                    variant="circular"
+                    animation="wave"
+                    sx={{
+                      width: { xs: 35, sm: 42, md: 64, lg: 110 },
+                      height: { xs: 35, sm: 42, md: 64, lg: 110 },
+                    }}
+                  />
+                ))}
+          </Stack>
         </Stack>
       </Stack>
 
-      {showFloatingLogout && (
+      <Stack
+        sx={{
+          position: "absolute",
+          bottom: -80,
+          left: 0,
+          width: "100%",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+          aspectRatio: "1448 / 460",
+          backgroundImage: "url(/featuredBackground.png)",
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
         <Stack
           sx={{
             flexDirection: "row",
-            position: "fixed",
-            top: { xs: isNative ? 30 : 37, md: 48 },
-            right: { xs: isNative ? 30 : 12, md: 24 },
-            zIndex: 1000,
-            gap: 1,
+            position: "relative",
+            width: "100%",
+            aspectRatio: "1448 / 460",
+            justifyContent: "center",
+            alignItems: "center",
+            "& .swiper": {
+              width: "100%",
+              height: "100%",
+            },
+            "& .swiper-slide": {
+              position: "relative",
+              bgcolor: "#fff",
+              height: "auto",
+              aspectRatio: "16 / 9",
+              alignSelf: "center",
+              borderRadius: "14px",
+              transitionProperty: "transform, opacity",
+              overflow: "hidden",
+              border: (theme) => `1px solid ${theme.palette.secondary.main}`,
+            },
+            "& .swiper-slide img": {
+              objectFit: "contain",
+            },
           }}
         >
-          {!isNative && (
-            <IconButton
-              color="primary"
-              component="a"
-              href="/downloads/sabeel-kids.apk"
-              download
-              sx={{
-                width: { xs: 30, md: 46 },
-                height: { xs: 30, md: 46 },
-                border: "1px solid",
-                borderColor: "primary.main",
-                bgcolor: "background.paper",
-                backdropFilter: "blur(8px)",
-                boxShadow: (theme) =>
-                  `0 8px 22px -10px ${theme.palette.primary.main}`,
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  bgcolor: "background.paper",
-                  boxShadow: (theme) =>
-                    `0 8px 22px -6px ${theme.palette.primary.main}`,
-                },
-              }}
-              aria-label="download app"
-            >
-              <FileDownloadIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
-            </IconButton>
-          )}
-          <IconButton
-            onClick={handleLogout}
-            color="primary"
-            sx={{
-              width: { xs: isNative ? 48 : 30, md: 46 },
-              height: { xs: isNative ? 48 : 30, md: 46 },
-              border: "1px solid",
-              borderColor: "primary.main",
-              bgcolor: "background.paper",
-              backdropFilter: "blur(8px)",
-              boxShadow: (theme) =>
-                `0 8px 22px -10px ${theme.palette.primary.main}`,
-              transition: "all 0.3s ease",
-              "&:hover": {
-                bgcolor: "background.paper",
-                boxShadow: (theme) =>
-                  `0 8px 22px -6px ${theme.palette.primary.main}`,
-              },
+          <Swiper
+            modules={[EffectCoverflow]}
+            effect="coverflow"
+            grabCursor
+            centeredSlides
+            loop
+            slidesPerView={3.6}
+            watchSlidesProgress
+            onProgress={(swiper) => {
+              swiper.slides.forEach((slideEl) => {
+                const progress =
+                  (slideEl as HTMLElement & { progress?: number }).progress ??
+                  0;
+                const opacity = Math.min(
+                  Math.max(3 - Math.abs(progress), 0),
+                  1
+                );
+                slideEl.style.opacity = String(opacity);
+              });
             }}
-            aria-label="logout"
+            coverflowEffect={{
+              rotate: 0,
+              stretch: "10%",
+              depth: 350,
+              modifier: 1,
+              slideShadows: false,
+            }}
           >
-            <LogoutIcon sx={{ fontSize: { xs: isNative ? 25 : 20, md: 24 } }} />
-          </IconButton>
+            {allVideos.map((video) => (
+              <SwiperSlide key={video._id}>
+                <Image src={video.thumbnail} alt={video.title} fill />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </Stack>
-      )}
-    </>
+      </Stack>
+    </Stack>
   );
 };
 

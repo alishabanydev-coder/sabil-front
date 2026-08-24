@@ -17,7 +17,7 @@ export default function AppShellStack({
         width: "100%",
         direction: "ltr",
         px: 0,
-        pt: { xs: 1, md: 2 },
+        // pt: { xs: 1, md: 2 },
         ...(native
           ? {
               height: "100dvh",
