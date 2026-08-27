@@ -75,7 +75,7 @@ export default function AppCataloguePage({
   return (
     <Stack
       sx={{
-        gap: 2,
+        gap: 1,
         color: "#fff",
         py: 2,
       }}

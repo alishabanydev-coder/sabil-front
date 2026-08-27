@@ -3,6 +3,7 @@
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
+  alpha,
   Avatar,
   Box,
   Button,
@@ -92,7 +93,7 @@ const Navbar = ({
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        mb: 10,
+        mb: 5,
       }}
     >
       <Stack
@@ -111,7 +112,7 @@ const Navbar = ({
             position: "absolute",
             top: 20,
             right: { md: 45, lg: 56 },
-            zIndex: 101,
+            zIndex: 120, // was 110 — now higher than the sibling logo+icons Stack
           }}
         >
           <IconButton
@@ -122,9 +123,18 @@ const Navbar = ({
               bgcolor: "secondary.main",
               border: "1px solid",
               borderColor: "#fff",
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+              transition: "all 0.3s ease",
               "&:hover": {
                 bgcolor: "secondary.main",
                 borderColor: "#fff",
+                transform: "translateY(-1px)",
+                boxShadow:
+                  "0 4px 8px rgba(0, 0, 0, 0.2), " +
+                  "2px 2px 4px 0 rgba(0, 0, 0, 0.3), " +
+                  "-2px -2px 4px 0 rgba(0, 0, 0, 0.2), " +
+                  "inset -4px -4px 6px 0 rgba(255, 255, 255, 0), " +
+                  "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.3)",
               },
             }}
           >
@@ -147,6 +157,17 @@ const Navbar = ({
               border: "1px solid",
               borderColor: "#fff",
               backdropFilter: "blur(8px)",
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-1px)",
+                boxShadow:
+                  "0 4px 8px rgba(0, 0, 0, 0.2), " +
+                  "2px 2px 4px 0 rgba(0, 0, 0, 0.3), " +
+                  "-2px -2px 4px 0 rgba(0, 0, 0, 0.2), " +
+                  "inset -4px -4px 6px 0 rgba(255, 255, 255, 0), " +
+                  "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.3)",
+              },
             }}
             aria-label="download app"
             startIcon={<FileDownloadIcon sx={{ fontSize: 24 }} />}
@@ -157,7 +178,21 @@ const Navbar = ({
           <Avatar
             src="/userAvatar.png"
             alt="avatar"
-            sx={{ width: { md: 35, lg: 42 }, height: { md: 35, lg: 42 } }}
+            sx={{
+              cursor: "pointer",
+              width: { md: 35, lg: 42 },
+              height: { md: 35, lg: 42 },
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-1px)",
+                boxShadow:
+                  "0 4px 8px rgba(0, 0, 0, 0.2), " +
+                  "2px 2px 4px 0 rgba(0, 0, 0, 0.3), " +
+                  "-2px -2px 4px 0 rgba(0, 0, 0, 0.2), " +
+                  "inset -4px -4px 6px 0 rgba(255, 255, 255, 0), " +
+                  "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.3)",
+              },
+            }}
           />
         </Stack>
 
@@ -170,10 +205,10 @@ const Navbar = ({
             pt: { md: 3, lg: 5 },
             mx: "auto",
             alignItems: "center",
-            zIndex: 100,
+            zIndex: 110,
             "& .logo": {
-              width: { xs: 45, sm: 45, md: 120, lg: 140 },
-              height: { xs: 45, sm: 45, md: 120, lg: 140 },
+              width: { xs: 45, sm: 45, md: 130, lg: 150 },
+              height: { xs: 45, sm: 45, md: 130, lg: 150 },
               cursor: "pointer",
               transition: "all 0.3s ease",
               "&:hover": {
@@ -192,11 +227,12 @@ const Navbar = ({
           <Stack
             sx={{
               width: { xs: "80%", sm: "100%" },
+              mx: "auto",
               flexDirection: "row",
-              justifyContent: "start",
+              justifyContent: "center",
               alignItems: "center",
               gap: { md: 3, lg: 5 },
-              pl: { md: 8, lg: 10 },
+              pr: { xs: 8, sm: 8, md: 17, lg: 19 },
             }}
           >
             {navigationButtons.length > 0
@@ -214,11 +250,39 @@ const Navbar = ({
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        filter: isSelected ? "none" : "grayscale(100%)",
+                        borderRadius: 3,
+                        p: { xs: 1, md: 0.8, lg: 1 },
+                        bgcolor: (theme) =>
+                          isSelected
+                            ? alpha(theme.palette.primary.main, 0.5)
+                            : alpha(theme.palette.background.paper, 0.08),
+                        backdropFilter: "blur(2px)",
+                        WebkitBackdropFilter: "blur(2px)",
+                        border: "3px solid",
+                        borderColor: (theme) =>
+                          isSelected
+                            ? alpha(theme.palette.warning.main, 0.7)
+                            : alpha(theme.palette.background.paper, 0.15),
+                        boxShadow: isSelected
+                          ? "0 4px 20px rgba(0, 0, 0, 0.2)"
+                          : "0 4px 16px rgba(0, 0, 0, 0.08)",
                         transition: "all 0.3s ease",
                         "& img": {
-                          width: { xs: 35, sm: 42, md: 90, lg: 110 },
-                          height: { xs: 35, sm: 42, md: 90, lg: 110 },
+                          filter: isSelected ? "none" : "grayscale(100%)",
+                          width: { xs: 35, sm: 42, md: 80, lg: 90 },
+                          height: { xs: 30, sm: 46, md: 75, lg: 85 },
+                          transition: "filter 0.3s ease",
+                        },
+                        "&:hover": {
+                          backdropFilter: "blur(8px)",
+                          WebkitBackdropFilter: "blur(8px)",
+                          bgcolor: (theme) =>
+                            isSelected
+                              ? alpha(theme.palette.primary.main, 0.6)
+                              : alpha(theme.palette.background.paper, 0.1),
+                          "& img": {
+                            filter: isSelected ? "none" : "grayscale(30%)",
+                          },
                         },
                       }}
                       onClick={() => {
@@ -238,11 +302,12 @@ const Navbar = ({
               : Array.from({ length: NAV_SKELETON_COUNT }, (_, index) => (
                   <Skeleton
                     key={`nav-skeleton-${index}`}
-                    variant="circular"
+                    variant="rounded"
                     animation="wave"
                     sx={{
                       width: { xs: 35, sm: 42, md: 64, lg: 110 },
                       height: { xs: 35, sm: 42, md: 64, lg: 110 },
+                      borderRadius: 3,
                     }}
                   />
                 ))}
@@ -269,11 +334,8 @@ const Navbar = ({
           sx={{
             position: "relative",
             width: "100%",
-            // IMPORTANT: let aspect-ratio control the height
             aspectRatio: "1448 / 460",
             minHeight: { xs: 200, sm: 260, md: 340 },
-            // remove height: "100%" — it fights with aspect-ratio
-
             "& .swiper": {
               width: "100%",
               height: "100%",
@@ -334,6 +396,7 @@ const Navbar = ({
             },
           }}
         >
+          {/* FIXME: fix the buttons position it stand higher */}
           {isReady ? (
             <>
               <Box
@@ -341,11 +404,11 @@ const Navbar = ({
                 sx={{
                   position: "absolute",
                   top: "50%",
-                  left: { xs: 12, sm: 20, md: 28 },
+                  left: { xs: 12, sm: 30, md: 40, lg: 50 },
                   transform: "translateY(-50%)",
                   zIndex: 20,
-                  height: "10%",
-                  aspectRatio: "1 / 1",
+                  width: { xs: 30, sm: 35, md: 40, lg: 45 },
+                  height: { xs: 30, sm: 35, md: 40, lg: 45 },
                   borderRadius: "50%",
                   bgcolor: "secondary.main",
                   border: "1px solid white",
@@ -372,11 +435,11 @@ const Navbar = ({
                 sx={{
                   position: "absolute",
                   top: "50%",
-                  right: { xs: 12, sm: 20, md: 28 },
+                  right: { xs: 12, sm: 30, md: 40, lg: 50 },
                   transform: "translateY(-50%)",
                   zIndex: 20,
-                  height: "10%",
-                  aspectRatio: "1 / 1",
+                  width: { xs: 30, sm: 35, md: 40, lg: 45 },
+                  height: { xs: 30, sm: 35, md: 40, lg: 45 },
                   borderRadius: "50%",
                   bgcolor: "secondary.main",
                   border: "1px solid white",
@@ -405,13 +468,12 @@ const Navbar = ({
                   display: "flex",
                   justifyContent: "center",
                   position: "absolute",
-                  bottom: 45,
+                  bottom: 35,
                   zIndex: 10,
                 }}
               >
                 <Box className="swiper-pagination" />
               </Box>
-
               <Swiper
                 modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
                 autoplay={{ delay: 2500, disableOnInteraction: false }}
