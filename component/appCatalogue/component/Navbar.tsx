@@ -83,6 +83,8 @@ const Navbar = ({
     router.push("/");
   };
 
+  // FIXME: go for the mobile version of the APp
+
   return (
     <Stack
       sx={{
@@ -112,7 +114,7 @@ const Navbar = ({
             position: "absolute",
             top: 20,
             right: { md: 45, lg: 56 },
-            zIndex: 120, // was 110 — now higher than the sibling logo+icons Stack
+            zIndex: 120,
           }}
         >
           <IconButton
@@ -396,7 +398,6 @@ const Navbar = ({
             },
           }}
         >
-          {/* FIXME: fix the buttons position it stand higher */}
           {isReady ? (
             <>
               <Box
