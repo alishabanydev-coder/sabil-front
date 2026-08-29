@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Stack } from "@mui/material";
 import AppCataloguePage from "./component/AppCataloguePage";
 import Navbar from "./component/Navbar";
 
@@ -40,8 +41,18 @@ const AppIndex = ({
     return allVideos.filter((video) => video.projectId === selectedNav);
   }, [allVideos, homeVideos, selectedNav]);
 
+  //FIXME: fix the scroll on mobile and make it for whole height of the screen not just AppCataloguePage
   return (
-    <>
+    <Stack
+      sx={{
+        height: { xs: "100dvh", sm: "auto" },
+        overflow: { xs: "hidden", sm: "visible" },
+        backgroundImage: {
+          xs: "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)",
+          sm: "none",
+        },
+      }}
+    >
       <Navbar
         navigationButtons={navigationButtons}
         selectedNav={selectedNav}
@@ -55,7 +66,7 @@ const AppIndex = ({
         homeVideos={homeVideos}
         allVideos={allVideos}
       />
-    </>
+    </Stack>
   );
 };
 

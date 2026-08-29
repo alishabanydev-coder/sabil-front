@@ -38,7 +38,6 @@ type AppCataloguePageProps = {
   selectedVideos: VideoData[];
 };
 
-const NAV_SKELETON_COUNT = 4;
 const CARD_SKELETON_COUNT = 6;
 
 export default function AppCataloguePage({
@@ -77,12 +76,18 @@ export default function AppCataloguePage({
       sx={{
         gap: 1,
         color: "#fff",
-        py: 2,
+        pt: { xs: 3, sm: 7, md: 5, lg: 3 },
+        pb: 2,
+        flex: { xs: 1, sm: "none" },
+        minHeight: { xs: 0, sm: "auto" },
+        overflow: { xs: "auto", sm: "visible" },
+        WebkitOverflowScrolling: { xs: "touch", sm: "auto" },
       }}
     >
       <Typography
         variant="h6"
         sx={{
+          display: { xs: "none", sm: "block" },
           width: "82%",
           mx: "auto",
           textAlign: "start",
@@ -100,11 +105,12 @@ export default function AppCataloguePage({
       <Stack
         sx={{
           display: "grid",
-          width: "82%",
+          width: { xs: "88%", sm: "82%" },
           mx: "auto",
           gap: { xs: 1, md: 3 },
           gridTemplateColumns: {
-            xs: "repeat(2, 1fr)",
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
             md: "repeat(3, 1fr)",
           },
         }}
@@ -183,10 +189,11 @@ export default function AppCataloguePage({
                     position: "relative",
                     width: "100%",
                     pb: 0.5,
-                    borderRadius: 8,
+                    borderRadius: { xs: 4, sm: 8 },
                     boxShadow: 3,
                     cursor: "pointer",
                     overflow: "hidden",
+                    bgcolor: 'white',
                     "&:hover": {
                       boxShadow: (theme) =>
                         `0px 2px 10px 1px ${theme.palette.primary.main}`,
@@ -243,11 +250,12 @@ export default function AppCataloguePage({
                       sx={{
                         width: "100%",
                         bgcolor: "white",
-                        borderRadius: 300,
+                        borderRadius: { xs: 4, sm: 300 },
                         boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
-                        pl: 8,
+                        pl: { xs: 8.5, sm: 8 },
                         position: "relative",
-                        pt: 1,
+                        pt: { xs: 1.2, sm: 1 },
+                        pb: { xs: .8, sm: 0 },
                       }}
                     >
                       <Box
@@ -255,9 +263,9 @@ export default function AppCataloguePage({
                         sx={{
                           position: "absolute",
                           left: 12,
-                          top: -20,
-                          width: 46,
-                          height: 46,
+                          top: { xs: -20, sm: -20 },
+                          width: { xs: 50, sm: 46 },
+                          height: { xs: 50, sm: 46 },
                           borderRadius: "50%",
                           boxShadow: 5,
                           display: "flex",
@@ -268,7 +276,7 @@ export default function AppCataloguePage({
                       >
                         <PlayArrowRoundedIcon
                           sx={{
-                            fontSize: { xs: 20, md: 24, lg: 32 },
+                            fontSize: { xs: 40, md: 24, lg: 32 },
                             color: "primary.main",
                           }}
                         />
@@ -280,7 +288,7 @@ export default function AppCataloguePage({
                           color: "primary.main",
                           fontFamily: "Namecat",
                           fontWeight: 700,
-                          fontSize: { xs: 12, md: 14, lg: 16 },
+                          fontSize: { xs: 13, md: 14, lg: 16 },
                           letterSpacing: 1.5,
                           textTransform: "uppercase",
                           width: "100%",
@@ -303,7 +311,7 @@ export default function AppCataloguePage({
                           fontWeight: 300,
                           fontFamily: "Namecat",
                           letterSpacing: 2,
-                          fontSize: { xs: 10, md: 11, lg: 12 },
+                          fontSize: { xs: 11, md: 11, lg: 12 },
                         }}
                       >
                         {projectName}
