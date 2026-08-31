@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Skeleton, Stack, Typography } from "@mui/material";
+import { alpha, Box, Skeleton, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -82,6 +82,30 @@ export default function AppCataloguePage({
         minHeight: { xs: 0, sm: "auto" },
         overflow: { xs: "auto", sm: "visible" },
         WebkitOverflowScrolling: { xs: "touch", sm: "auto" },
+
+        scrollbarWidth: "thin",
+        scrollbarColor: `#5c0c97 ${alpha('#ddd', .5)}`,
+
+        "&::-webkit-scrollbar": {
+          width: 8,
+          height: 6,
+        },
+        "&::-webkit-scrollbar-button": {
+          display: "none !important",
+          width: "0 !important",
+          height: "0 !important",
+          background: "transparent !important",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "#5c0c97",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "primary.main",
+          borderRadius: 3,
+        },
+        "&::-webkit-scrollbar-corner": {
+          backgroundColor: "transparent",
+        },
       }}
     >
       <Typography
@@ -193,7 +217,7 @@ export default function AppCataloguePage({
                     boxShadow: 3,
                     cursor: "pointer",
                     overflow: "hidden",
-                    bgcolor: 'white',
+                    bgcolor: "white",
                     "&:hover": {
                       boxShadow: (theme) =>
                         `0px 2px 10px 1px ${theme.palette.primary.main}`,
@@ -255,7 +279,7 @@ export default function AppCataloguePage({
                         pl: { xs: 8.5, sm: 8 },
                         position: "relative",
                         pt: { xs: 1.2, sm: 1 },
-                        pb: { xs: .8, sm: 0 },
+                        pb: { xs: 0.8, sm: 0 },
                       }}
                     >
                       <Box

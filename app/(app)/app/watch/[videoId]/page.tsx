@@ -174,7 +174,7 @@ const WatchPage = () => {
   return (
     <Stack
       sx={{
-        height: pageHeight,
+        height: '100vh',
         mt: { xs: isNative ? 0 : "60px", md: 0 },
         justifyContent: { xs: "flex-start", sm: "end" },
         alignItems: { xs: "stretch", sm: "end" },

@@ -41,7 +41,6 @@ const AppIndex = ({
     return allVideos.filter((video) => video.projectId === selectedNav);
   }, [allVideos, homeVideos, selectedNav]);
 
-  //FIXME: fix the scroll on mobile and make it for whole height of the screen not just AppCataloguePage
   return (
     <Stack
       sx={{

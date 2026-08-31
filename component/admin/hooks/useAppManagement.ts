@@ -18,6 +18,14 @@ export const appManagementSections: AppManagementSection[] = [
   { name: "homeVideo", title: "Home Videos", url: "" },
 ];
 
+function existingRecordIds<T extends { _id: string }>(
+  selectedIds: string[],
+  records: T[]
+) {
+  const existingIds = new Set(records.map((record) => String(record._id)));
+  return selectedIds.filter((id) => existingIds.has(String(id)));
+}
+
 export const useAppManagement = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -77,9 +85,14 @@ export const useAppManagement = () => {
           setHomeImage(navResult.homeImage || "/home.webp");
           setHomeImageRaw(navResult.homeImageRaw || "/home.webp");
           setSelectedProjectIds(
-            Array.isArray(navResult.selectedProjectIds)
-              ? navResult.selectedProjectIds
-              : []
+            existingRecordIds(
+              Array.isArray(navResult.selectedProjectIds)
+                ? navResult.selectedProjectIds
+                : [],
+              Array.isArray(navResult.availableProjects)
+                ? navResult.availableProjects
+                : []
+            )
           );
           setAvailableProjects(
             Array.isArray(navResult.availableProjects)
@@ -95,9 +108,14 @@ export const useAppManagement = () => {
         } else {
           setIsRandomVideosSelected(homeVideosResult.mode !== "manual");
           setManualVideoIds(
-            Array.isArray(homeVideosResult.manualVideoIds)
-              ? homeVideosResult.manualVideoIds
-              : []
+            existingRecordIds(
+              Array.isArray(homeVideosResult.manualVideoIds)
+                ? homeVideosResult.manualVideoIds
+                : [],
+              Array.isArray(homeVideosResult.availableVideos)
+                ? homeVideosResult.availableVideos
+                : []
+            )
           );
           setAvailableVideos(
             Array.isArray(homeVideosResult.availableVideos)
@@ -229,10 +247,14 @@ export const useAppManagement = () => {
 
   const openSection = (section: AppManagementSection) => {
     if (section.name === "navBtn") {
-      setDraftSelectedProjectIds(selectedProjectIds);
+      setDraftSelectedProjectIds(
+        existingRecordIds(selectedProjectIds, availableProjects)
+      );
     }
     if (section.name === "homeVideo") {
-      setDraftManualVideoIds(manualVideoIds);
+      setDraftManualVideoIds(
+        existingRecordIds(manualVideoIds, availableVideos)
+      );
     }
     setOpen(true);
     setSelectedSection(section);
@@ -249,8 +271,10 @@ export const useAppManagement = () => {
   };
 
   const handleCloseModal = () => {
-    setDraftSelectedProjectIds(selectedProjectIds);
-    setDraftManualVideoIds(manualVideoIds);
+    setDraftSelectedProjectIds(
+      existingRecordIds(selectedProjectIds, availableProjects)
+    );
+    setDraftManualVideoIds(existingRecordIds(manualVideoIds, availableVideos));
     setOpen(false);
     setSelectedSection(null);
   };
@@ -294,7 +318,10 @@ export const useAppManagement = () => {
     setSuccessMsg("");
 
     const result = await updateAdminAppCatalogueNavigationButtons({
-      projectIds: draftSelectedProjectIds,
+      projectIds: existingRecordIds(
+        draftSelectedProjectIds,
+        availableProjects
+      ),
       homeImage: homeImageRaw,
       imageFile: homeImageFile,
     });
@@ -327,7 +354,10 @@ export const useAppManagement = () => {
 
     const result = await updateAdminAppCatalogueHomeVideos({
       mode: isRandomVideosSelected ? "random" : "manual",
-      manualVideoIds: draftManualVideoIds,
+      manualVideoIds: existingRecordIds(
+        draftManualVideoIds,
+        availableVideos
+      ),
     });
     setSaving(false);
 

@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { alpha, Avatar, IconButton, Skeleton, Stack } from "@mui/material";
+import { alpha, Avatar, IconButton, Skeleton, Stack, Box } from "@mui/material";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import { useNavbarController } from "./useNavbarController";
 import type { NavbarProps } from "./navbarTypes";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const NAV_SKELETON_COUNT = 4;
 
@@ -101,23 +102,21 @@ const NavbarMobile = ({
       <Stack
         direction="row"
         sx={{
-          gap: 1,
-          width: "90%",
+          width: "100%",
           pt: 11,
           mx: "auto",
           alignItems: "center",
           zIndex: 110,
+          position: "relative",
         }}
       >
-        <Stack
-          sx={{
-            width: "80%",
-            mx: "auto",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 1,
-          }}
+        <Swiper
+          slidesPerView="auto"
+          spaceBetween={8}
+          watchOverflow={true}
+          slidesOffsetBefore={16} // left padding
+          slidesOffsetAfter={25}
+          style={{ width: "100%" }}
         >
           {navigationButtons.length > 0
             ? navigationButtons.map((item) => {
@@ -126,60 +125,78 @@ const NavbarMobile = ({
                     ? item.projectId
                     : "home";
                 const isSelected = selectedNav === buttonId;
+
                 return (
-                  <Stack
-                    key={item.id}
-                    sx={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      borderRadius: 3,
-                      p: 1,
-                      bgcolor: (theme) =>
-                        isSelected
-                          ? alpha(theme.palette.primary.main, 0.5)
-                          : alpha(theme.palette.background.paper, 0.08),
-                      backdropFilter: "blur(2px)",
-                      WebkitBackdropFilter: "blur(2px)",
-                      border: "3px solid",
-                      borderColor: (theme) =>
-                        isSelected
-                          ? alpha(theme.palette.warning.main, 0.7)
-                          : alpha(theme.palette.background.paper, 0.15),
-                      "& img": {
-                        filter: isSelected ? "none" : "grayscale(100%)",
-                        width: 45,
-                        height: 40,
-                      },
-                    }}
-                    onClick={() => {
-                      setSelectedNav(buttonId);
-                    }}
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      width={110}
-                      height={110}
-                      style={{ objectFit: "contain" }}
-                    />
-                  </Stack>
+                  <SwiperSlide key={item.id} style={{ width: "auto" }}>
+                    <Stack
+                      sx={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        borderRadius: 3,
+                        p: 1,
+                        bgcolor: (theme) =>
+                          isSelected
+                            ? alpha(theme.palette.primary.main, 0.5)
+                            : alpha(theme.palette.background.paper, 0.08),
+                        backdropFilter: "blur(2px)",
+                        WebkitBackdropFilter: "blur(2px)",
+                        border: "3px solid",
+                        borderColor: (theme) =>
+                          isSelected
+                            ? alpha(theme.palette.warning.main, 0.7)
+                            : alpha(theme.palette.background.paper, 0.15),
+                        "& img": {
+                          filter: isSelected ? "none" : "grayscale(100%)",
+                          width: 45,
+                          height: 40,
+                        },
+                      }}
+                      onClick={() => setSelectedNav(buttonId)}
+                    >
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        width={110}
+                        height={110}
+                        style={{ objectFit: "contain" }}
+                      />
+                    </Stack>
+                  </SwiperSlide>
                 );
               })
             : Array.from({ length: NAV_SKELETON_COUNT }, (_, index) => (
-                <Skeleton
+                <SwiperSlide
                   key={`nav-skeleton-${index}`}
-                  variant="rounded"
-                  animation="wave"
-                  sx={{
-                    width: 45,
-                    height: 45,
-                    borderRadius: 3,
-                  }}
-                />
+                  style={{ width: "auto" }}
+                >
+                  <Skeleton
+                    variant="rounded"
+                    animation="wave"
+                    sx={{
+                      width: 45,
+                      height: 45,
+                      borderRadius: 3,
+                    }}
+                  />
+                </SwiperSlide>
               ))}
-        </Stack>
+        </Swiper>
+
+        <Box
+          sx={{
+            display: navigationButtons.length > 4 ? "block" : "none",
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: 80,
+            pointerEvents: "none",
+            background: "linear-gradient(to left, white, transparent)",
+            zIndex: 1,
+          }}
+        />
       </Stack>
     </Stack>
   );
