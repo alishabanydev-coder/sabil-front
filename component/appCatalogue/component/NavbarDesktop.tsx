@@ -12,7 +12,9 @@ import {
   Stack,
 } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
 import {
   Autoplay,
   EffectCoverflow,
@@ -24,8 +26,17 @@ import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
 import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
 import { useNavbarController } from "./useNavbarController";
 import type { NavbarProps } from "./navbarTypes";
+
+const relayoutFeaturedSwiper = (swiper: SwiperType) => {
+  if (swiper.destroyed) return;
+  swiper.update();
+  swiper.navigation?.update?.();
+  swiper.pagination?.render?.();
+  swiper.pagination?.update?.();
+};
 
 const NAV_SKELETON_COUNT = 4;
 
@@ -36,6 +47,23 @@ const NavbarDesktop = ({
   setSelectedNav,
 }: NavbarProps) => {
   const { router, isReady, handleLogout } = useNavbarController();
+  const paginationRef = useRef<HTMLDivElement>(null);
+  const prevElRef = useRef<HTMLDivElement>(null);
+  const nextElRef = useRef<HTMLDivElement>(null);
+  const [swiperMounted, setSwiperMounted] = useState(false);
+
+  useEffect(() => {
+    if (!isReady) {
+      setSwiperMounted(false);
+      return;
+    }
+
+    const id = window.requestAnimationFrame(() => {
+      setSwiperMounted(true);
+    });
+
+    return () => window.cancelAnimationFrame(id);
+  }, [isReady]);
 
   return (
     <Stack
@@ -345,6 +373,15 @@ const NavbarDesktop = ({
               },
             },
             "& .swiper-slide img": { objectFit: "contain" },
+            "& .swiper-pagination-desktop": {
+              position: "static !important",
+              inset: "auto !important",
+              width: "auto !important",
+              transform: "none !important",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
             "& .swiper-pagination-bullet": {
               width: 8,
               height: 8,
@@ -355,6 +392,7 @@ const NavbarDesktop = ({
               opacity: 1,
               cursor: "pointer",
               transition: "all 0.3s ease",
+              flexShrink: 0,
             },
             "& .swiper-pagination-bullet-active": {
               bgcolor: "primary.main",
@@ -367,6 +405,7 @@ const NavbarDesktop = ({
           {isReady ? (
             <>
               <Box
+                ref={prevElRef}
                 className="featured-swiper-prev-desktop"
                 sx={{
                   position: "absolute",
@@ -398,6 +437,7 @@ const NavbarDesktop = ({
               </Box>
 
               <Box
+                ref={nextElRef}
                 className="featured-swiper-next-desktop"
                 sx={{
                   position: "absolute",
@@ -434,86 +474,129 @@ const NavbarDesktop = ({
                   display: "flex",
                   justifyContent: "center",
                   position: "absolute",
+                  left: 0,
                   bottom: 35,
                   zIndex: 10,
                 }}
               >
-                <Box className="swiper-pagination-desktop" />
+                <Box ref={paginationRef} className="swiper-pagination-desktop" />
               </Box>
-              <Swiper
-                modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
-                autoplay={{ delay: 2500, disableOnInteraction: false }}
-                navigation={{
-                  nextEl: ".featured-swiper-next-desktop",
-                  prevEl: ".featured-swiper-prev-desktop",
-                }}
-                pagination={{ clickable: true, el: ".swiper-pagination-desktop" }}
-                observer={true}
-                observeParents={true}
-                effect="coverflow"
-                centeredSlides
-                loop
-                slidesPerView={3.6}
-                watchSlidesProgress
-                onProgress={(swiper) => {
-                  swiper.slides.forEach((slideEl) => {
-                    const progress =
-                      (slideEl as HTMLElement & { progress?: number })
-                        .progress ?? 0;
-                    const opacity = Math.min(
-                      Math.max(3 - Math.abs(progress), 0),
-                      1
-                    );
-                    slideEl.style.opacity = String(opacity);
-                  });
-                }}
-                coverflowEffect={{
-                  rotate: 0,
-                  stretch: "10%",
-                  depth: 350,
-                  modifier: 1,
-                  slideShadows: false,
-                }}
-                onSwiper={(swiper) => {
-                  const update = () => {
-                    swiper.update();
-                    swiper.navigation?.update();
-                    swiper.pagination?.update();
-                  };
-                  requestAnimationFrame(() => requestAnimationFrame(update));
-                  setTimeout(update, 80);
-                }}
-              >
-                {allVideos.map((video) => (
-                  <SwiperSlide
-                    key={video._id}
-                    onClick={() => router.push(`/app/watch/${video._id}`)}
-                  >
-                    <Image
-                      src={video.thumbnail}
-                      alt={video.title}
-                      fill
-                      sizes="(max-width: 1200px) 40vw, 28vw"
-                      style={{ objectFit: "contain" }}
-                    />
-                    <Stack
-                      sx={{
-                        position: "absolute",
-                        inset: 0,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
+              {swiperMounted ? (
+                <Swiper
+                  modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
+                  autoplay={{ delay: 2500, disableOnInteraction: false }}
+                  navigation={{
+                    nextEl: nextElRef.current,
+                    prevEl: prevElRef.current,
+                  }}
+                  pagination={{
+                    clickable: true,
+                    el: paginationRef.current,
+                  }}
+                  observer
+                  observeParents
+                  observeSlideChildren
+                  effect="coverflow"
+                  centeredSlides
+                  loop
+                  slidesPerView={3.6}
+                  watchSlidesProgress
+                  onBeforeInit={(swiper) => {
+                    const navigation = swiper.params.navigation;
+                    const pagination = swiper.params.pagination;
+                    if (navigation && typeof navigation !== "boolean") {
+                      navigation.prevEl = prevElRef.current;
+                      navigation.nextEl = nextElRef.current;
+                    }
+                    if (pagination && typeof pagination !== "boolean") {
+                      pagination.el = paginationRef.current;
+                    }
+                  }}
+                  onProgress={(swiper) => {
+                    swiper.slides.forEach((slideEl) => {
+                      const progress =
+                        (slideEl as HTMLElement & { progress?: number })
+                          .progress ?? 0;
+                      const opacity = Math.min(
+                        Math.max(3 - Math.abs(progress), 0),
+                        1
+                      );
+                      slideEl.style.opacity = String(opacity);
+                    });
+                  }}
+                  coverflowEffect={{
+                    rotate: 0,
+                    stretch: "10%",
+                    depth: 350,
+                    modifier: 1,
+                    slideShadows: false,
+                  }}
+                  onSwiper={(swiper) => {
+                    const update = () => relayoutFeaturedSwiper(swiper);
+                    requestAnimationFrame(() => requestAnimationFrame(update));
+                    window.setTimeout(update, 120);
+
+                    const container = swiper.el;
+                    if (typeof ResizeObserver === "undefined" || !container) {
+                      return;
+                    }
+
+                    const observer = new ResizeObserver(() => {
+                      relayoutFeaturedSwiper(swiper);
+                    });
+                    observer.observe(container);
+                    swiper.on("destroy", () => observer.disconnect());
+                  }}
+                  onResize={(swiper) => relayoutFeaturedSwiper(swiper)}
+                >
+                  {allVideos.map((video) => (
+                    <SwiperSlide
+                      key={video._id}
+                      onClick={() => router.push(`/app/watch/${video._id}`)}
                     >
-                      <Box className="play-button">
-                        <PlayArrowRoundedIcon
-                          color="secondary"
-                          sx={{ fontSize: { sm: 48, md: 64, lg: 75 } }}
-                        />
-                      </Box>
-                    </Stack>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+                      <Image
+                        src={video.thumbnail}
+                        alt={video.title}
+                        fill
+                        sizes="(max-width: 1200px) 40vw, 28vw"
+                        style={{ objectFit: "contain" }}
+                      />
+                      <Stack
+                        sx={{
+                          position: "absolute",
+                          inset: 0,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Box className="play-button">
+                          <PlayArrowRoundedIcon
+                            color="secondary"
+                            sx={{ fontSize: { sm: 48, md: 64, lg: 75 } }}
+                          />
+                        </Box>
+                      </Stack>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              ) : (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Skeleton
+                    variant="rounded"
+                    width="70%"
+                    height="65%"
+                    sx={{ borderRadius: 3 }}
+                  />
+                </Box>
+              )}
             </>
           ) : (
             <Box
