@@ -21,3 +21,10 @@ export type NavbarProps = {
   selectedNav: string;
   setSelectedNav: (nav: string) => void;
 };
+
+export type AppCatalogueProps = {
+  navigationButtons: NavigationButtonData[];
+  homeVideos: VideoData[];
+  allVideos: VideoData[];
+  selectedVideos: VideoData[];
+};

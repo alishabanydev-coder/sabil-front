@@ -13,6 +13,7 @@
     "adb:reverse": "node scripts/adb-reverse.mjs",
     "cap:android": "npx cap open android",
     "cap:run:android": "npx cap run android",
+    "cap:run:phone": "node scripts/cap-run-phone.mjs",
     "cap:icons": "npx capacitor-assets generate --android --iconBackgroundColor \"#ffffff\" --splashBackgroundColor \"#12041f\" --logoSplashScale 0.18"
   },
   "dependencies": {

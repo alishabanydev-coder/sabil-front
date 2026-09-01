@@ -3,7 +3,9 @@
 import { useMemo, useState } from "react";
 import { Stack } from "@mui/material";
 import AppCataloguePage from "./component/AppCataloguePage";
+import AppCatalogueCapacitor from "./component/AppCatalogueCapacitor";
 import Navbar from "./component/Navbar";
+import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
 type NavigationButtonData = {
   id: string;
@@ -32,6 +34,7 @@ const AppIndex = ({
   allVideos: VideoData[];
 }) => {
   const [selectedNav, setSelectedNav] = useState<string>("home");
+  const isNative = useNativeApp();
 
   const selectedVideos = useMemo(() => {
     if (selectedNav === "home") {
@@ -41,15 +44,25 @@ const AppIndex = ({
     return allVideos.filter((video) => video.projectId === selectedNav);
   }, [allVideos, homeVideos, selectedNav]);
 
+  const catalogueProps = {
+    navigationButtons,
+    selectedVideos,
+    homeVideos,
+    allVideos,
+  };
+
   return (
     <Stack
       sx={{
-        height: { xs: "100dvh", sm: "auto" },
-        overflow: { xs: "hidden", sm: "visible" },
-        backgroundImage: {
-          xs: "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)",
-          sm: "none",
-        },
+        width: "100%",
+        height: isNative ? "100%" : { xs: "100dvh", sm: "auto" },
+        overflow: isNative ? "hidden" : { xs: "hidden", sm: "visible" },
+        backgroundImage: isNative
+          ? "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)"
+          : {
+              xs: "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)",
+              sm: "none",
+            },
       }}
     >
       <Navbar
@@ -59,12 +72,11 @@ const AppIndex = ({
         allVideos={allVideos}
       />
 
-      <AppCataloguePage
-        navigationButtons={navigationButtons}
-        selectedVideos={selectedVideos}
-        homeVideos={homeVideos}
-        allVideos={allVideos}
-      />
+      {isNative ? (
+        <AppCatalogueCapacitor {...catalogueProps} />
+      ) : (
+        <AppCataloguePage {...catalogueProps} />
+      )}
     </Stack>
   );
 };

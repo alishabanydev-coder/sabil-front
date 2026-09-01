@@ -29,7 +29,7 @@ function buildImageRemotePattern() {
 }
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["10.221.183.149", "10.0.2.2"],
+  allowedDevOrigins: ["10.221.183.149", "10.0.2.2", "192.168.2.224"],
   images: {
     dangerouslyAllowLocalIP: true,
     remotePatterns: [buildImageRemotePattern()],
