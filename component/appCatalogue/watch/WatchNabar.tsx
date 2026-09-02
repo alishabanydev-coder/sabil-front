@@ -14,40 +14,38 @@ const WatchNabar = () => {
     <Stack
       sx={{
         position: "absolute",
-        top: 0,
+        top: 15,
         left: 0,
         right: 0,
         zIndex: 100,
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
-        px: { xs: 2, md: 4 },
+        alignItems: "start",
+        px: { xs: 3, md: 4 },
       }}
     >
       <Stack
         sx={{
           "& img": {
-            width: { xs: isNative ? 72 : 52, md: 80 },
-            height: { xs: isNative ? 72 : 52, md: 80 },
+            width: { xs: isNative ? 84 : 52, md: 100 },
+            height: { xs: isNative ? 84 : 52, md: 100 },
           },
         }}
       >
-        <Image src="/icon-512.webp" alt="logo" width={80} height={80} />
+        <Image src="/new-logo.png" alt="logo" width={80} height={80} />
       </Stack>
       <Stack>
         <IconButton
-          onClick={() =>
-            isNative ? router.replace("/app") : router.back()
-          }
+          onClick={() => (isNative ? router.replace("/app") : router.back())}
           sx={{
-            bgcolor: "primary.main",
+            bgcolor: "secondary.main",
             color: "white",
             boxShadow: (theme) =>
-              `0 2px 10px 2px ${theme.palette.primary.main}`,
+              `0 2px 10px 2px ${theme.palette.secondary.main}`,
             "&:hover": {
-              bgcolor: "primary.main",
+              bgcolor: "secondary.main",
               boxShadow: (theme) =>
-                `0 3px 10px 4px ${theme.palette.primary.main}`,
+                `0 3px 10px 4px ${theme.palette.secondary.main}`,
               "& .MuiSvgIcon-root": {
                 scale: 1.4,
                 transition: "all 0.3s ease-out",

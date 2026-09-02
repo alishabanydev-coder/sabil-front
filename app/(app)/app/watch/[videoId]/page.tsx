@@ -163,44 +163,49 @@ const WatchPage = () => {
   const projectName = project?.title || project?.name;
   const projectLogo = project?.thumbnail;
 
-  const pageHeight = isNative
-    ? { xs: "calc(100dvh - 8px)", md: "calc(100dvh - 16px)" }
-    : {
-        xs: "calc(100dvh - 70px)",
-        sm: "calc(100dvh - 70px)",
-        md: "calc(100dvh - 35px)",
-      };
-
   return (
     <Stack
       sx={{
-        height: '100vh',
-        mt: { xs: isNative ? 0 : "60px", md: 0 },
-        justifyContent: { xs: "flex-start", sm: "end" },
-        alignItems: { xs: "stretch", sm: "end" },
+        height: isNative ? "100%" : { xs: "100dvh", sm: "100dvh", md: "100vh" },
+        maxHeight: isNative
+          ? "100%"
+          : { xs: "100dvh", sm: "100dvh", md: "none" },
+        minHeight: 0,
+        boxSizing: "border-box",
+        mt: 0,
+        pt: { xs: isNative ? 0 : "60px", sm: isNative ? 0 : "60px", md: 0 },
+        justifyContent: isNative
+          ? "flex-end"
+          : { xs: "flex-start", sm: "end" },
+        alignItems: isNative
+          ? "center"
+          : { xs: "stretch", sm: "end" },
         flexDirection: "column",
-        gap: { xs: 0, md: 2 },
+        gap: isNative ? 0.5 : { xs: 0, md: 1 },
         overflow: "hidden",
       }}
     >
       <Stack
         sx={{
-          flex: { xs: "0 0 auto", sm: `${PLAYER_FLEX} 1 0` },
-          minHeight: { xs: "auto", sm: 0 },
+          flex: isNative
+            ? `${PLAYER_FLEX} 1 0`
+            : { xs: "0 0 auto", sm: `${PLAYER_FLEX} 1 0` },
+          minHeight: isNative ? 0 : { xs: "auto", sm: 0 },
           width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: 1,
-          pb: 1,
-          overflow: { xs: "visible", sm: "hidden" },
-          px: { xs: 2, md: 0 },
+          py: isNative ? 0 : 1,
+          overflow: isNative ? "hidden" : { xs: "visible", sm: "hidden" },
+          px: isNative ? 2 : { xs: 2, md: 0 },
         }}
       >
+        {/* Player */}
         <Stack
           sx={{
-            flex: { xs: "0 0 auto", sm: 1 },
-            minHeight: { xs: "auto", sm: 0 },
+            flex: isNative ? 1 : { xs: "0 0 auto", sm: 1 },
+            minHeight: isNative ? 0 : { xs: "auto", sm: 0 },
             width: "100%",
             display: "flex",
             alignItems: "center",
@@ -210,26 +215,32 @@ const WatchPage = () => {
           <Stack
             sx={{
               position: "relative",
-              borderRadius: { xs: 4, md: 0 },
-              overflow: { xs: "hidden", md: "visible" },
+              borderRadius: isNative ? 4 : { xs: 4, md: 0 },
+              overflow: isNative ? "hidden" : { xs: "hidden", md: "visible" },
               display: "inline-flex",
               flexDirection: "column",
               alignItems: "stretch",
-              width: { xs: "100%", sm: "auto" },
-              height: { xs: "auto", sm: "100%" },
-              maxHeight: { xs: "none", sm: "100%" },
-              maxWidth: { xs: "100%", md: "80%" },
+              width: isNative
+                ? "auto"
+                : { xs: "100%", sm: "100%", md: "auto" },
+              height: isNative
+                ? "100%"
+                : { xs: "auto", sm: "auto", md: "100%" },
+              maxHeight: "100%",
+              maxWidth: isNative ? "100%" : { xs: "100%", md: "80%" },
               gap: 1,
             }}
           >
             <Stack
               sx={{
                 position: "relative",
-                flex: { xs: "0 0 auto", sm: 1 },
-                minHeight: { xs: "auto", sm: 0 },
-                width: "100%",
-                height: { xs: "auto", sm: "100%" },
-                maxHeight: { xs: "none", sm: "100%" },
+                flex: isNative ? "0 1 auto" : { xs: "0 0 auto", sm: "0 0 auto", md: 1 },
+                minHeight: 0,
+                width: isNative ? "auto" : "100%",
+                height: isNative
+                  ? "100%"
+                  : { xs: "auto", sm: "auto", md: "100%" },
+                maxHeight: "100%",
                 maxWidth: "100%",
                 aspectRatio: "16 / 9",
                 borderRadius: 4,
@@ -275,6 +286,13 @@ const WatchPage = () => {
                     borderRadius: 4,
                     "& .react-player__preview": {
                       position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    },
+                    "& video, & iframe": {
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
                     },
                   }}
                 >
@@ -287,8 +305,8 @@ const WatchPage = () => {
                           alt={video?.title || "Video"}
                           style={{
                             width: "100%",
-                            aspectRatio: "16 / 9",
-                            objectFit: "contain",
+                            height: "100%",
+                            objectFit: "cover",
                           }}
                         />
                       ) : (
@@ -321,81 +339,93 @@ const WatchPage = () => {
                   </Typography>
                 </Stack>
               )}
-            </Stack>
 
-            <Stack
-              sx={{
-                // display: { xs: "none", md: "flex" },
-                position: { xs: "absolute", md: "relative" },
-                backgroundColor: {
-                  xs: "rgba(0, 0, 0, 0.3)",
-                  md: "transparent",
-                },
-                px: { xs: 1, md: 0 },
-                py: { xs: 2, md: 0 },
-                bottom: 0,
-                zIndex: 200,
-                flexDirection: "row",
-                gap: 1,
-                height: 40,
-                flexShrink: 0,
-                alignItems: "center",
-                width: "100%",
-                "& img": {
-                  objectFit: "contain",
-                  borderRadius: "50%",
-                  border: "1px solid",
-                  borderColor: "primary.light",
-                  width: { xs: 32, sm: 36, md: 40, lg: 44 },
-                  height: { xs: 32, sm: 36, md: 40, lg: 44 },
-                },
-                "& .episode": {
-                  color: { xs: "white", md: "#777" },
-                  fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
-                  fontWeight: 500,
-                },
-                "& .title": {
-                  fontSize: { xs: 12, sm: 14, md: 24, lg: 30 },
-                  fontWeight: 700,
-                  color: { xs: "white", md: "primary.light" },
-                },
-              }}
-            >
-              {status === "ready" ? (
-                <>
-                  {projectLogo ? (
-                    <Image
-                      src={projectLogo}
-                      alt={projectName || "Project"}
-                      width={36}
-                      height={36}
+              <Stack
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.3)",
+                  px: 1,
+                  py: { xs: 2, sm: 1 },
+                  zIndex: 200,
+                  flexDirection: "row",
+                  gap: 1,
+                  height: { xs: 36, sm: 42, md: 56 },
+                  flexShrink: 0,
+                  alignItems: "center",
+                  width: "100%",
+                  minWidth: 0,
+                  "& img": {
+                    objectFit: "contain",
+                    borderRadius: "50%",
+                    border: "1px solid",
+                    borderColor: "primary.light",
+                    width: { xs: 30, sm: 36, md: 40, lg: 45 },
+                    height: { xs: 30, sm: 36, md: 40, lg: 45 },
+                    flexShrink: 0,
+                  },
+                  "& .episode": {
+                    color: "white",
+                    fontSize: { xs: 12, sm: 14, md: 18, lg: 20 },
+                    fontWeight: 500,
+                    flexShrink: 0,
+                    whiteSpace: "nowrap",
+                  },
+                  "& .title": {
+                    fontSize: { xs: 12, sm: 14, md: 20, lg: 21 },
+                    fontWeight: 700,
+                    color: "white",
+                    flex: 1,
+                    minWidth: 0,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  },
+                }}
+              >
+                {status === "ready" ? (
+                  <>
+                    {projectLogo ? (
+                      <Image
+                        src={projectLogo}
+                        alt={projectName || "Project"}
+                        width={36}
+                        height={36}
+                      />
+                    ) : null}
+                    <Typography className="episode">
+                      {`S${video?.season}-E${video?.episode} |`}
+                    </Typography>
+
+                    <Typography className="title">
+                      {video?.title || "Video"}
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Skeleton
+                      animation="wave"
+                      variant="circular"
+                      sx={{
+                        width: { xs: 32, sm: 36, md: 40, lg: 44 },
+                        height: { xs: 32, sm: 36, md: 40, lg: 44 },
+                        flexShrink: 0,
+                      }}
                     />
-                  ) : null}
-                  <Typography className="episode">
-                    {`S${video?.season}-E${video?.episode} |`}
-                  </Typography>
-
-                  <Typography className="title">
-                    {video?.title || "Video"}
-                  </Typography>
-                </>
-              ) : (
-                <>
-                  <Skeleton
-                    animation="wave"
-                    variant="circular"
-                    sx={{
-                      width: { xs: 32, sm: 36, md: 40, lg: 44 },
-                      height: { xs: 32, sm: 36, md: 40, lg: 44 },
-                    }}
-                  />
-                  <Skeleton
-                    animation="wave"
-                    variant="rectangular"
-                    sx={{ width: "100%", height: "100%", borderRadius: 2 }}
-                  />
-                </>
-              )}
+                    <Skeleton
+                      animation="wave"
+                      variant="rectangular"
+                      sx={{
+                        flex: 1,
+                        minWidth: 0,
+                        height: "100%",
+                        borderRadius: 2,
+                      }}
+                    />
+                  </>
+                )}
+              </Stack>
             </Stack>
           </Stack>
         </Stack>
@@ -413,8 +443,8 @@ const WatchPage = () => {
             position: "absolute",
             left: 0,
             right: 0,
-            bottom: -12,
-            height: 12,
+            bottom: isNative ? -5 : -12,
+            height: isNative ? 5 : 12,
             pointerEvents: "none",
             width: "100%",
             background: (theme) =>
@@ -425,7 +455,9 @@ const WatchPage = () => {
 
       <Stack
         sx={{
-          flex: { xs: "1 1 0", sm: `${RAIL_FLEX} 1 0` },
+          flex: isNative
+            ? `${RAIL_FLEX} 1 0`
+            : { xs: "1 1 0", sm: `${RAIL_FLEX} 1 0` },
           minHeight: 0,
           width: "100%",
           display: "flex",
