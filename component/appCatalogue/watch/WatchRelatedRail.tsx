@@ -115,7 +115,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
             bgcolor: "white",
             borderRadius: 2,
             boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
-            pl: isNative ? 5 : { xs: 8.5, sm: 7 },
+            pl: isNative ? 5 : { xs: 7, sm: 7 },
             position: "relative",
             pt: isNative ? 0.8 : { xs: 1.2, sm: 1 },
             pb: { xs: 0.8, sm: 0 },
@@ -127,8 +127,8 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
               position: "absolute",
               left: isNative ? 8 : 12,
               top: isNative ? -14 : { xs: -20, sm: -20 },
-              width: isNative ? 30 : { xs: 35, sm: 38, md: 38, lg: 42 },
-              height: isNative ? 30 : { xs: 35, sm: 40, md: 40, lg: 42 },
+              width: isNative ? 30 : { xs: 40, sm: 38, md: 38, lg: 42 },
+              height: isNative ? 30 : { xs: 40, sm: 40, md: 40, lg: 42 },
               borderRadius: "50%",
               boxShadow: 5,
               display: "flex",
@@ -140,7 +140,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
           >
             <PlayArrowRoundedIcon
               sx={{
-                fontSize: { xs: isNative ? 28 : 36, md: 45, lg: 36 },
+                fontSize: isNative ? 30 : { xs: 36, md: 45, lg: 36 },
                 color: "primary.main",
               }}
             />
