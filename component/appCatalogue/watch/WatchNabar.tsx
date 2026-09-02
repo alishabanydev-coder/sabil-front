@@ -36,7 +36,9 @@ const WatchNabar = () => {
       </Stack>
       <Stack>
         <IconButton
-          onClick={() => router.back()}
+          onClick={() =>
+            isNative ? router.replace("/app") : router.back()
+          }
           sx={{
             bgcolor: "primary.main",
             color: "white",

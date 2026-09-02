@@ -135,7 +135,7 @@ const NavbarMobile = ({
                         justifyContent: "center",
                         cursor: "pointer",
                         borderRadius: 3,
-                        p: 1,
+                        p: 0.8,
                         bgcolor: (theme) =>
                           isSelected
                             ? alpha(theme.palette.primary.main, 0.5)

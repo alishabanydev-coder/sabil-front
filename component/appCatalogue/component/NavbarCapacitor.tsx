@@ -22,7 +22,7 @@ const NavbarCapacitor = ({
       direction="row"
       sx={{
         width: "100%",
-        height: "20%",
+        height: "30%",
         minHeight: 0,
         flexShrink: 0,
         alignItems: "center",
@@ -55,6 +55,7 @@ const NavbarCapacitor = ({
           flex: 1,
           minWidth: 0,
           height: "100%",
+          px: 1,
           justifyContent: "center",
           "& .swiper": {
             width: "100%",
@@ -91,13 +92,13 @@ const NavbarCapacitor = ({
                     <Stack
                       onClick={() => setSelectedNav(buttonId)}
                       sx={{
-                        height: "72%",
+                        height: "50%",
                         aspectRatio: "1 / 1",
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
                         borderRadius: 2,
-                        p: 0.5,
+                        p: 0.8,
                         bgcolor: (theme) =>
                           isSelected
                             ? alpha(theme.palette.primary.main, 0.5)
@@ -157,14 +158,17 @@ const NavbarCapacitor = ({
         <IconButton
           onClick={handleLogout}
           sx={{
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
             p: 0,
             color: "#fff",
             bgcolor: "secondary.main",
             border: "1px solid",
             borderColor: "#fff",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+            "&:hover": {
+              bgcolor: "secondary.light",
+            },
           }}
         >
           <LogoutIcon sx={{ fontSize: 22 }} />
@@ -174,8 +178,8 @@ const NavbarCapacitor = ({
           src="/userAvatar.png"
           alt="avatar"
           sx={{
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
           }}
         />
       </Stack>

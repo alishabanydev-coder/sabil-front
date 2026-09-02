@@ -1,22 +1,20 @@
-﻿"use client";
+"use client";
 
-import { useMediaQuery, useTheme } from "@mui/material";
 import NavbarDesktop from "./NavbarDesktop";
 import NavbarMobile from "./NavbarMobile";
 import NavbarCapacitor from "./NavbarCapacitor";
 import type { NavbarProps } from "./navbarTypes";
-import { useNativeApp } from "@/lib/capacitor/nativeApp";
+import type { AppDisplayMode } from "@/lib/useAppDisplayMode";
 
-const Navbar = (props: NavbarProps) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isNative = useNativeApp();
-
-  if (isNative) {
+const Navbar = ({
+  displayMode,
+  ...props
+}: NavbarProps & { displayMode: Exclude<AppDisplayMode, "pending"> }) => {
+  if (displayMode === "native") {
     return <NavbarCapacitor {...props} />;
   }
 
-  if (isMobile) {
+  if (displayMode === "mobile") {
     return <NavbarMobile {...props} />;
   }
 

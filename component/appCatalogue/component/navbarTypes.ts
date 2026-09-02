@@ -27,4 +27,5 @@ export type AppCatalogueProps = {
   homeVideos: VideoData[];
   allVideos: VideoData[];
   selectedVideos: VideoData[];
+  selectedNav?: string;
 };

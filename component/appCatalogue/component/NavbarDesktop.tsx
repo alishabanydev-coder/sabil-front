@@ -228,7 +228,7 @@ const NavbarDesktop = ({
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              gap: { sm: 3, md: 3, lg: 5 },
+              gap: { sm: 1.5, md: 3, lg: 5 },
               pr: { sm: 8, md: 17, lg: 19 },
             }}
           >
@@ -248,7 +248,7 @@ const NavbarDesktop = ({
                         justifyContent: "center",
                         cursor: "pointer",
                         borderRadius: 3,
-                        p: { sm: 1, md: 0.8, lg: 1 },
+                        p: { sm: .3, md: 0.8, lg: 1 },
                         bgcolor: (theme) =>
                           isSelected
                             ? alpha(theme.palette.primary.main, 0.5)
@@ -266,8 +266,8 @@ const NavbarDesktop = ({
                         transition: "all 0.3s ease",
                         "& img": {
                           filter: isSelected ? "none" : "grayscale(100%)",
-                          width: { sm: 56, md: 80, lg: 90 },
-                          height: { sm: 50, md: 75, lg: 85 },
+                          width: { sm: 54, md: 80, lg: 90 },
+                          height: { sm: 45, md: 75, lg: 85 },
                           transition: "filter 0.3s ease",
                         },
                         "&:hover": {

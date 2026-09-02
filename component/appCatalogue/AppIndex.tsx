@@ -5,7 +5,7 @@ import { Stack } from "@mui/material";
 import AppCataloguePage from "./component/AppCataloguePage";
 import AppCatalogueCapacitor from "./component/AppCatalogueCapacitor";
 import Navbar from "./component/Navbar";
-import { useNativeApp } from "@/lib/capacitor/nativeApp";
+import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
 
 type NavigationButtonData = {
   id: string;
@@ -24,6 +24,9 @@ type VideoData = {
   episode?: number;
 };
 
+const APP_GRADIENT =
+  "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)";
+
 const AppIndex = ({
   navigationButtons,
   homeVideos,
@@ -34,7 +37,7 @@ const AppIndex = ({
   allVideos: VideoData[];
 }) => {
   const [selectedNav, setSelectedNav] = useState<string>("home");
-  const isNative = useNativeApp();
+  const displayMode = useAppDisplayMode();
 
   const selectedVideos = useMemo(() => {
     if (selectedNav === "home") {
@@ -49,23 +52,37 @@ const AppIndex = ({
     selectedVideos,
     homeVideos,
     allVideos,
+    selectedNav,
   };
+
+  if (displayMode === "pending") {
+    return (
+      <Stack
+        aria-hidden
+        sx={{
+          width: "100%",
+          height: "100dvh",
+          overflow: "hidden",
+          bgcolor: "#12041f",
+        }}
+      />
+    );
+  }
+
+  const isNative = displayMode === "native";
+  const isMobile = displayMode === "mobile";
 
   return (
     <Stack
       sx={{
         width: "100%",
-        height: isNative ? "100%" : { xs: "100dvh", sm: "auto" },
-        overflow: isNative ? "hidden" : { xs: "hidden", sm: "visible" },
-        backgroundImage: isNative
-          ? "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)"
-          : {
-              xs: "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)",
-              sm: "none",
-            },
+        height: isNative ? "100%" : isMobile ? "100dvh" : "auto",
+        overflow: isNative || isMobile ? "hidden" : "visible",
+        backgroundImage: isNative || isMobile ? APP_GRADIENT : "none",
       }}
     >
       <Navbar
+        displayMode={displayMode}
         navigationButtons={navigationButtons}
         selectedNav={selectedNav}
         setSelectedNav={setSelectedNav}

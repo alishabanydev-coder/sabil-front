@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Capacitor } from "@capacitor/core";
 import { Network } from "@capacitor/network";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import NativeConnectionErrorScreen from "./NativeConnectionErrorScreen";
+import NativeAppBackButton from "./NativeAppBackButton";
+import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
 
 export default function CapacitorShell({
   children,
@@ -13,6 +15,25 @@ export default function CapacitorShell({
   children: React.ReactNode;
 }) {
   const [isOffline, setIsOffline] = useState(false);
+  const displayMode = useAppDisplayMode();
+  const splashHiddenRef = useRef(false);
+
+  const isUsbDevServer = useCallback(() => {
+    const hostname = window.location.hostname;
+    return hostname === "localhost" || hostname === "127.0.0.1";
+  }, []);
+
+  const canReachDevServer = useCallback(async () => {
+    try {
+      const response = await fetch(window.location.href, {
+        method: "GET",
+        cache: "no-store",
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  }, []);
 
   const checkConnection = useCallback(async () => {
     if (!Capacitor.isNativePlatform()) {
@@ -21,15 +42,25 @@ export default function CapacitorShell({
 
     try {
       const status = await Network.getStatus();
-      setIsOffline(!status.connected);
-      return status.connected;
+      if (status.connected) {
+        setIsOffline(false);
+        return true;
+      }
     } catch {
-      const browserOnline =
-        typeof navigator !== "undefined" ? navigator.onLine : true;
-      setIsOffline(!browserOnline);
-      return browserOnline;
+      // Fall through. Production still shows the offline screen below.
     }
-  }, []);
+
+    // USB live-reload uses localhost, which Android does not count as "online".
+    // Production loads sabeelkids.com, so a real offline user still sees this screen.
+    if (isUsbDevServer()) {
+      const reachable = await canReachDevServer();
+      setIsOffline(!reachable);
+      return reachable;
+    }
+
+    setIsOffline(true);
+    return false;
+  }, [canReachDevServer, isUsbDevServer]);
 
   const handleRetry = useCallback(async () => {
     const isConnected = await checkConnection();
@@ -41,6 +72,25 @@ export default function CapacitorShell({
 
     return false;
   }, [checkConnection]);
+
+  useLayoutEffect(() => {
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
+
+    if (displayMode === "pending" || splashHiddenRef.current) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        splashHiddenRef.current = true;
+        void SplashScreen.hide();
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [displayMode]);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) {
@@ -56,7 +106,7 @@ export default function CapacitorShell({
       setIsOffline(false);
     };
     const onBrowserOffline = () => {
-      setIsOffline(true);
+      void checkConnection();
     };
 
     const setupNativeShell = async () => {
@@ -82,12 +132,6 @@ export default function CapacitorShell({
       document.addEventListener("visibilitychange", rehideSystemUi);
       window.addEventListener("focus", rehideSystemUi);
 
-      try {
-        await SplashScreen.hide();
-      } catch {
-        console.log('splash screen error')
-      }
-
       return () => {
         document.removeEventListener("visibilitychange", rehideSystemUi);
         window.removeEventListener("focus", rehideSystemUi);
@@ -101,7 +145,11 @@ export default function CapacitorShell({
         networkListener = await Network.addListener(
           "networkStatusChange",
           (status) => {
-            setIsOffline(!status.connected);
+            if (status.connected) {
+              setIsOffline(false);
+              return;
+            }
+            void checkConnection();
           }
         );
       } catch {
@@ -137,6 +185,7 @@ export default function CapacitorShell({
   return (
     <>
       {children}
+      <NativeAppBackButton />
       {isOffline ? (
         <NativeConnectionErrorScreen onRetry={handleRetry} />
       ) : null}

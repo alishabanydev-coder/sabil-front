@@ -1,23 +1,71 @@
 "use client";
 
 import { Box, Skeleton, Stack, Typography } from "@mui/material";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
+import { FreeMode } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/free-mode";
 import type { AppCatalogueProps, NavigationButtonData } from "./navbarTypes";
 
 const CARD_SKELETON_COUNT = 4;
+const CARD_ASPECT = 16 / 9;
+const SHADOW_GUTTER = 16;
 
 export default function AppCatalogueCapacitor({
   navigationButtons,
   selectedVideos,
   homeVideos,
   allVideos,
+  selectedNav,
 }: AppCatalogueProps) {
   const router = useRouter();
+  const trackRef = useRef<HTMLDivElement>(null);
+  const swiperRef = useRef<SwiperType | null>(null);
+  const [cardHeight, setCardHeight] = useState(0);
+
+  const cardWidth = cardHeight > 0 ? cardHeight * CARD_ASPECT : 0;
+  const slideStyle = {
+    width: cardWidth || 280,
+    height: "100%" as const,
+    boxSizing: "border-box" as const,
+    paddingTop: SHADOW_GUTTER,
+    paddingBottom: SHADOW_GUTTER,
+    display: "flex",
+    alignItems: "center",
+  };
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const updateSize = () => {
+      const swiperEl = track.querySelector(".swiper") as HTMLElement | null;
+      const swiperHeight = swiperEl?.clientHeight || track.clientHeight;
+      setCardHeight(Math.max(0, swiperHeight - SHADOW_GUTTER * 2));
+    };
+
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (cardHeight <= 0) return;
+    swiperRef.current?.update();
+  }, [cardHeight]);
+
+  useEffect(() => {
+    const swiper = swiperRef.current;
+    if (!swiper || swiper.destroyed) return;
+    swiper.slideTo(0, 0);
+    swiper.update();
+  }, [selectedNav, selectedVideos]);
 
   const projectById = useMemo(() => {
     const projectMap = new Map<string, { title: string; image: string }>();
@@ -42,42 +90,58 @@ export default function AppCatalogueCapacitor({
 
   return (
     <Stack
+      ref={trackRef}
       sx={{
         width: "100%",
-        height: "80%",
+        height: "70%",
         minHeight: 0,
-        pb: "env(safe-area-inset-bottom)",
-        pl: "max(16px, env(safe-area-inset-left))",
-        pr: "max(16px, env(safe-area-inset-right))",
+        py: 1,
+        pb: "max(12px, env(safe-area-inset-bottom))",
+        // pl: "max(-10px, env(safe-area-inset-left))",
+        // pr: "max(12px, env(safe-area-inset-right))",
         "& .swiper": {
           width: "100%",
           height: "100%",
-          py: 1,
+          overflow: "hidden",
         },
         "& .swiper-wrapper": {
           height: "100%",
+          alignItems: "stretch",
         },
         "& .swiper-slide": {
           height: "100%",
+          width: "auto",
+          flexShrink: 0,
+          overflow: "visible",
+          boxSizing: "border-box",
         },
       }}
     >
       <Swiper
-        slidesPerView={3.2}
+        key={selectedNav ?? "catalogue"}
+        modules={[FreeMode]}
+        slidesPerView="auto"
         spaceBetween={16}
+        freeMode={{
+          enabled: true,
+          sticky: false,
+          momentum: true,
+          momentumBounce: false,
+        }}
+        resistanceRatio={0.65}
         watchOverflow
         observer
         observeParents
-        breakpoints={{
-          0: { slidesPerView: 2.3, spaceBetween: 12 },
-          900: { slidesPerView: 3.2, spaceBetween: 16 },
-          1200: { slidesPerView: 4.2, spaceBetween: 20 },
+        observeSlideChildren
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+          swiper.update();
         }}
         style={{ width: "100%", height: "100%" }}
       >
         {isCatalogueLoading
           ? Array.from({ length: CARD_SKELETON_COUNT }, (_, index) => (
-              <SwiperSlide key={`card-skeleton-${index}`}>
+              <SwiperSlide key={`card-skeleton-${index}`} style={slideStyle}>
                 <Stack
                   sx={{
                     height: "100%",
@@ -85,6 +149,7 @@ export default function AppCatalogueCapacitor({
                     borderRadius: 4,
                     overflow: "hidden",
                     bgcolor: "white",
+                    boxShadow: 3,
                   }}
                 >
                   <Skeleton
@@ -100,7 +165,7 @@ export default function AppCatalogueCapacitor({
               const projectName = project?.title || "Project";
 
               return (
-                <SwiperSlide key={item._id}>
+                <SwiperSlide key={item._id} style={slideStyle}>
                   <Stack
                     onClick={() => router.push(`/app/watch/${item._id}`)}
                     onKeyDown={(event) => {
@@ -115,11 +180,10 @@ export default function AppCatalogueCapacitor({
                       position: "relative",
                       height: "100%",
                       width: "100%",
-                      borderRadius: 4,
-                      boxShadow: 3,
+                      borderRadius: 6,
+                      boxShadow: 4,
                       cursor: "pointer",
-                      overflow: "hidden",
-                      bgcolor: "white",
+                      bgcolor: "transparent",
                       transition: "all 0.3s ease",
                       "&:hover": {
                         boxShadow: (theme) =>
@@ -133,14 +197,24 @@ export default function AppCatalogueCapacitor({
                       },
                     }}
                   >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        height: "100%",
+                        width: "100%",
+                        borderRadius: 6,
+                        overflow: "hidden",
+                        bgcolor: "black",
+                      }}
+                    >
                     <Image
                       className="app-catalogue-capacitor-image"
                       src={item.thumbnail}
                       alt={item.title}
                       fill
-                      sizes="40vw"
+                      sizes={`${Math.round(cardWidth || 280)}px`}
                       style={{
-                        objectFit: "contain",
+                        objectFit: "cover",
                         transition: "transform 0.3s ease",
                       }}
                     />
@@ -162,7 +236,7 @@ export default function AppCatalogueCapacitor({
                           bgcolor: "white",
                           borderRadius: 300,
                           boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
-                          pl: 7,
+                          pl: 8,
                           pr: 1.5,
                           position: "relative",
                           py: 0.75,
@@ -229,6 +303,7 @@ export default function AppCatalogueCapacitor({
                         </Typography>
                       </Stack>
                     </Stack>
+                    </Box>
                   </Stack>
                 </SwiperSlide>
               );
