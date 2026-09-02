@@ -210,6 +210,7 @@ const WatchPage = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            pt: isNative ? 0.5 : 0,
           }}
         >
           <Stack
