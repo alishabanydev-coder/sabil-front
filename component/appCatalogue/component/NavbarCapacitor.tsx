@@ -93,27 +93,22 @@ const NavbarCapacitor = ({
                       onClick={() => setSelectedNav(buttonId)}
                       sx={{
                         height: "50%",
-                        aspectRatio: "1 / 1",
+                        aspectRatio: "1 / .85",
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        borderRadius: 2,
+                        boxShadow: isSelected ? 4 : 3,
+                        borderRadius: 5,
                         p: 0.8,
                         bgcolor: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.primary.main, 0.5)
-                            : alpha(theme.palette.background.paper, 0.08),
-                        backdropFilter: "blur(2px)",
-                        WebkitBackdropFilter: "blur(2px)",
+                            ? alpha(theme.palette.primary.main, 0.9)
+                            : alpha(theme.palette.background.paper, 1),
                         border: "3px solid",
                         borderColor: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.warning.main, 0.7)
-                            : alpha(theme.palette.background.paper, 0.15),
-                        "& img": {
-                          filter: isSelected ? "none" : "grayscale(100%)",
-                          objectFit: "contain",
-                        },
+                            ? alpha(theme.palette.warning.main, 1)
+                            : alpha(theme.palette.background.paper, 1),
                       }}
                     >
                       <Image

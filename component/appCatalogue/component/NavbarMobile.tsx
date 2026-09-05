@@ -68,6 +68,10 @@ const NavbarMobile = ({
             border: "1px solid",
             borderColor: "#fff",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+            "&:hover": {
+              bgcolor: "secondary.main",
+              borderColor: "#fff",
+            },
           }}
         >
           <FileDownloadIcon sx={{ fontSize: 18 }} />
@@ -84,6 +88,10 @@ const NavbarMobile = ({
             border: "1px solid",
             borderColor: "#fff",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+            "&:hover": {
+              bgcolor: "secondary.main",
+              borderColor: "#fff",
+            },
           }}
         >
           <LogoutIcon sx={{ fontSize: 18 }} />
@@ -116,7 +124,7 @@ const NavbarMobile = ({
           watchOverflow={true}
           slidesOffsetBefore={16} // left padding
           slidesOffsetAfter={25}
-          style={{ width: "100%" }}
+          style={{ width: "100%", paddingTop: 8, paddingBottom: 8 }}
         >
           {navigationButtons.length > 0
             ? navigationButtons.map((item) => {
@@ -134,23 +142,25 @@ const NavbarMobile = ({
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        borderRadius: 3,
+                        borderRadius: 4,
+                        boxShadow: isSelected ? 3 : 5,
                         p: 0.8,
                         bgcolor: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.primary.main, 0.5)
-                            : alpha(theme.palette.background.paper, 0.08),
+                            ? alpha(theme.palette.primary.main, 0.9)
+                            : alpha(theme.palette.background.paper, 1),
                         backdropFilter: "blur(2px)",
                         WebkitBackdropFilter: "blur(2px)",
-                        border: "3px solid",
-                        borderColor: (theme) =>
+                        border: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.warning.main, 0.7)
-                            : alpha(theme.palette.background.paper, 0.15),
+                            ? `3px solid ${alpha(
+                                theme.palette.warning.main,
+                                1
+                              )}`
+                            : "none",
                         "& img": {
-                          filter: isSelected ? "none" : "grayscale(100%)",
-                          width: 45,
-                          height: 40,
+                          width: 58,
+                          height: 48,
                         },
                       }}
                       onClick={() => setSelectedNav(buttonId)}
@@ -186,7 +196,7 @@ const NavbarMobile = ({
 
         <Box
           sx={{
-            display: navigationButtons.length > 4 ? "block" : "none",
+            display: navigationButtons.length > 3 ? "block" : "none",
             position: "absolute",
             top: 0,
             right: 0,

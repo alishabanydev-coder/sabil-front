@@ -204,8 +204,8 @@ const NavbarDesktop = ({
             alignItems: "center",
             zIndex: 110,
             "& .logo": {
-              width: { sm: 95, md: 130, lg: 150 },
-              height: { sm: 95, md: 130, lg: 150 },
+              width: { sm: 90, md: 140, lg: 165 },
+              height: { sm: 85, md: 130, lg: 150 },
               cursor: "pointer",
               transition: "all 0.3s ease",
               "&:hover": {
@@ -228,7 +228,8 @@ const NavbarDesktop = ({
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              gap: { sm: 1.5, md: 3, lg: 5 },
+              gap: { sm: 0.8, md: 1.2, lg: 2 },
+              pt: 1,
               pr: { sm: 8, md: 17, lg: 19 },
             }}
           >
@@ -247,39 +248,35 @@ const NavbarDesktop = ({
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        borderRadius: 3,
-                        p: { sm: .3, md: 0.8, lg: 1 },
+                        borderRadius: { sm: 5, md: 8, lg: 8 },
+                        p: { sm: 0.3, md: 0.8, lg: 1 },
                         bgcolor: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.primary.main, 0.5)
-                            : alpha(theme.palette.background.paper, 0.08),
-                        backdropFilter: "blur(2px)",
-                        WebkitBackdropFilter: "blur(2px)",
+                            ? alpha(theme.palette.primary.main, 0.9)
+                            : alpha(theme.palette.background.paper, 1),
+                        boxShadow: isSelected ? 3 : 4,
                         border: "3px solid",
                         borderColor: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.warning.main, 0.7)
-                            : alpha(theme.palette.background.paper, 0.15),
-                        boxShadow: isSelected
-                          ? "0 4px 20px rgba(0, 0, 0, 0.2)"
-                          : "0 4px 16px rgba(0, 0, 0, 0.08)",
+                            ? alpha(theme.palette.warning.main, 1)
+                            : alpha(theme.palette.background.paper, 1),
                         transition: "all 0.3s ease",
                         "& img": {
-                          filter: isSelected ? "none" : "grayscale(100%)",
-                          width: { sm: 54, md: 80, lg: 90 },
-                          height: { sm: 45, md: 75, lg: 85 },
+                          width: { sm: 60, md: 85, lg: 110 },
+                          height: { sm: 50, md: 70, lg: 85 },
                           transition: "filter 0.3s ease",
                         },
                         "&:hover": {
-                          backdropFilter: "blur(8px)",
-                          WebkitBackdropFilter: "blur(8px)",
+                          backdropFilter: "blur(2px)",
+                          WebkitBackdropFilter: "blur(2px)",
+                          borderColor: (theme) =>
+                            isSelected
+                              ? alpha(theme.palette.warning.main, 0.8)
+                              : alpha(theme.palette.background.paper, 0.2),
                           bgcolor: (theme) =>
                             isSelected
-                              ? alpha(theme.palette.primary.main, 0.6)
+                              ? alpha(theme.palette.primary.main, 0.8)
                               : alpha(theme.palette.background.paper, 0.1),
-                          "& img": {
-                            filter: isSelected ? "none" : "grayscale(30%)",
-                          },
                         },
                       }}
                       onClick={() => {
@@ -479,7 +476,10 @@ const NavbarDesktop = ({
                   zIndex: 10,
                 }}
               >
-                <Box ref={paginationRef} className="swiper-pagination-desktop" />
+                <Box
+                  ref={paginationRef}
+                  className="swiper-pagination-desktop"
+                />
               </Box>
               {swiperMounted ? (
                 <Swiper
