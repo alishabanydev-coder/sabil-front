@@ -1,27 +1,15 @@
 "use client";
 
 import { alpha, Box, Skeleton, Stack, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-
-type NavigationButtonData = {
-  id: string;
-  type: "home" | "project";
-  title: string;
-  image: string;
-  projectId?: string;
-};
-
-type VideoData = {
-  _id: string;
-  projectId: string;
-  title: string;
-  thumbnail: string;
-  season?: number;
-  episode?: number;
-};
+import ChannelFeaturedRail from "./ChannelFeaturedRail";
+import type {
+  AppCatalogueProps,
+  NavigationButtonData,
+} from "./navbarTypes";
 
 type ProjectPreviewData = {
   _id?: string;
@@ -31,13 +19,6 @@ type ProjectPreviewData = {
   image: string;
 };
 
-type AppCataloguePageProps = {
-  navigationButtons: NavigationButtonData[];
-  homeVideos: VideoData[];
-  allVideos: VideoData[];
-  selectedVideos: VideoData[];
-};
-
 const CARD_SKELETON_COUNT = 6;
 
 export default function AppCataloguePage({
@@ -45,8 +26,10 @@ export default function AppCataloguePage({
   selectedVideos,
   homeVideos,
   allVideos,
-}: AppCataloguePageProps) {
+  selectedNav = "home",
+}: AppCatalogueProps) {
   const router = useRouter();
+  const isHome = selectedNav === "home";
 
   const projectById = useMemo(() => {
     const projectMap = new Map<string, ProjectPreviewData>();
@@ -76,7 +59,9 @@ export default function AppCataloguePage({
       sx={{
         gap: 1,
         color: "#fff",
-        pt: { xs: 3, sm: 7, md: 5, lg: 3 },
+        pt: isHome
+          ? { xs: 3, sm: 7, md: 5, lg: 3 }
+          : { xs: 3, sm: 2, md: 2, lg: 1.5 },
         pb: 2,
         flex: { xs: 1, sm: "none" },
         minHeight: { xs: 0, sm: "auto" },
@@ -84,7 +69,7 @@ export default function AppCataloguePage({
         WebkitOverflowScrolling: { xs: "touch", sm: "auto" },
 
         scrollbarWidth: "thin",
-        scrollbarColor: `#5c0c97 ${alpha('#ddd', .5)}`,
+        scrollbarColor: `#5c0c97 ${alpha("#ddd", 0.5)}`,
 
         "&::-webkit-scrollbar": {
           width: 8,
@@ -108,23 +93,27 @@ export default function AppCataloguePage({
         },
       }}
     >
-      <Typography
-        variant="h6"
-        sx={{
-          display: { xs: "none", sm: "block" },
-          width: "82%",
-          mx: "auto",
-          textAlign: "start",
-          fontWeight: 700,
-          fontSize: { xs: 18, md: 24 },
-          textTransform: "uppercase",
-          color: "primary.main",
-          letterSpacing: 1.5,
-          fontFamily: "Namecat",
-        }}
-      >
-        Explore by theme
-      </Typography>
+      {isHome ? (
+        <Typography
+          variant="h6"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            width: "82%",
+            mx: "auto",
+            textAlign: "start",
+            fontWeight: 700,
+            fontSize: { xs: 18, md: 24 },
+            textTransform: "uppercase",
+            color: "primary.main",
+            letterSpacing: 1.5,
+            fontFamily: "Namecat",
+          }}
+        >
+          Explore by theme
+        </Typography>
+      ) : (
+        <ChannelFeaturedRail videos={selectedVideos} />
+      )}
       {/* cards */}
       <Stack
         sx={{

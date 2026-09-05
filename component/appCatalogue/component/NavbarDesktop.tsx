@@ -51,9 +51,10 @@ const NavbarDesktop = ({
   const prevElRef = useRef<HTMLDivElement>(null);
   const nextElRef = useRef<HTMLDivElement>(null);
   const [swiperMounted, setSwiperMounted] = useState(false);
+  const isHome = selectedNav === "home";
 
   useEffect(() => {
-    if (!isReady) {
+    if (!isReady || !isHome) {
       setSwiperMounted(false);
       return;
     }
@@ -63,7 +64,7 @@ const NavbarDesktop = ({
     });
 
     return () => window.cancelAnimationFrame(id);
-  }, [isReady]);
+  }, [isReady, isHome]);
 
   return (
     <Stack
@@ -71,11 +72,11 @@ const NavbarDesktop = ({
         position: "relative",
         width: "100%",
         aspectRatio: "1447 / 480",
-        backgroundImage: "url(/navbarBackground.png)",
+        backgroundImage: "url(/application-background.png)",
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        mb: 5,
+        mb: isHome ? 5 : { sm: 1, md: 0 },
       }}
     >
       <Stack
@@ -309,6 +310,7 @@ const NavbarDesktop = ({
         </Stack>
       </Stack>
 
+      {isHome && (
       <Stack
         sx={{
           position: "absolute",
@@ -618,6 +620,7 @@ const NavbarDesktop = ({
           )}
         </Stack>
       </Stack>
+      )}
     </Stack>
   );
 };
