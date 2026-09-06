@@ -112,7 +112,10 @@ export default function AppCataloguePage({
           Explore by theme
         </Typography>
       ) : (
-        <ChannelFeaturedRail videos={selectedVideos} />
+        <ChannelFeaturedRail
+          videos={selectedVideos}
+          isLoading={isCatalogueLoading}
+        />
       )}
       {/* cards */}
       <Stack

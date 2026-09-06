@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Skeleton,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
@@ -20,12 +27,88 @@ const SLIDES_OFFSET_AFTER = {
   xl: 90,
 } as const;
 
+const RAIL_SKELETON_COUNT = 4;
+
 type ChannelFeaturedRailProps = {
   videos: VideoData[];
+  isLoading?: boolean;
 };
+
+const railRootSx = {
+  display: { xs: "none", sm: "flex" },
+  width: "82%",
+  mx: "auto",
+  alignItems: "center",
+  gap: { sm: 1.5, md: 2.5 },
+  mt: { xs: -3, sm: -16, md: -22, lg: -30, xl: -36 },
+  mb: { sm: 2, md: 3 },
+  zIndex: 100,
+} as const;
+
+const railTrackSx = {
+  position: "relative",
+  flex: 1,
+  minWidth: 0,
+  borderRadius: 8,
+  overflow: "hidden",
+  bgcolor: "primary.light",
+  px: { sm: 1.5, md: 2 },
+  py: { sm: 0.5, md: 0 },
+  pr: { sm: 1, md: 0 },
+} as const;
+
+function FeaturedRailLabel() {
+  return (
+    <Stack
+      direction="row"
+      sx={{
+        alignItems: "center",
+        gap: 1,
+        flexShrink: 0,
+        maxWidth: { sm: 100, md: 150 },
+      }}
+    >
+      <Box
+        sx={{
+          width: { sm: 36, md: 48 },
+          height: { sm: 36, md: 48 },
+          borderRadius: "50%",
+          bgcolor: "primary.main",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          boxShadow: 2,
+        }}
+      >
+        <StarRoundedIcon
+          sx={{
+            transform: "rotate(35deg)",
+            color: "#f1d332",
+            fontSize: { sm: 28, md: 36 },
+          }}
+        />
+      </Box>
+      <Typography
+        sx={{
+          color: "primary.main",
+          fontFamily: "Namecat",
+          fontWeight: 700,
+          fontSize: { sm: 12, md: 18 },
+          lineHeight: 1.15,
+          letterSpacing: 0.5,
+          textTransform: "lowercase",
+        }}
+      >
+        featured on video
+      </Typography>
+    </Stack>
+  );
+}
 
 export default function ChannelFeaturedRail({
   videos,
+  isLoading = false,
 }: ChannelFeaturedRailProps) {
   const router = useRouter();
   const theme = useTheme();
@@ -39,10 +122,10 @@ export default function ChannelFeaturedRail({
   const slidesOffsetAfter = isXl
     ? SLIDES_OFFSET_AFTER.xl
     : isLg
-    ? SLIDES_OFFSET_AFTER.lg
-    : isMd
-    ? SLIDES_OFFSET_AFTER.md
-    : SLIDES_OFFSET_AFTER.sm;
+      ? SLIDES_OFFSET_AFTER.lg
+      : isMd
+        ? SLIDES_OFFSET_AFTER.md
+        : SLIDES_OFFSET_AFTER.sm;
 
   useEffect(() => {
     const swiper = swiperRef.current;
@@ -51,85 +134,87 @@ export default function ChannelFeaturedRail({
     swiper.update();
   }, [slidesOffsetAfter]);
 
+  if (isLoading) {
+    return (
+      <Stack direction="row" sx={railRootSx}>
+        <FeaturedRailLabel />
+        <Box sx={{ ...railTrackSx, py: { sm: 1, md: 1 } }}>
+          <Stack
+            direction="row"
+            sx={{
+              gap: "14px",
+              overflow: "hidden",
+              alignItems: "center",
+              pr: { sm: 8, md: 12 },
+            }}
+          >
+            {Array.from({ length: RAIL_SKELETON_COUNT }, (_, index) => (
+              <Skeleton
+                key={`rail-skeleton-${index}`}
+                variant="rounded"
+                animation="wave"
+                sx={{
+                  flexShrink: 0,
+                  width: { sm: 140, md: 180, lg: 210 },
+                  aspectRatio: "16 / 9",
+                  height: "auto",
+                  borderRadius: 5,
+                  bgcolor: "rgba(255,255,255,0.55)",
+                }}
+              />
+            ))}
+          </Stack>
+
+          <Box
+            aria-hidden
+            sx={{
+              pointerEvents: "none",
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: { sm: 90, md: 140 },
+              borderRadius: "0 32px 32px 0",
+              background: (t) =>
+                `linear-gradient(to right, transparent 0%, ${t.palette.primary.light} 40%, ${t.palette.primary.light} 100%)`,
+              zIndex: 4,
+            }}
+          />
+
+          <Skeleton
+            variant="circular"
+            animation="wave"
+            sx={{
+              position: "absolute",
+              right: { sm: 14, md: 24 },
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 5,
+              width: { sm: 34, md: 42 },
+              height: { sm: 34, md: 42 },
+              bgcolor: "rgba(255,255,255,0.7)",
+            }}
+          />
+        </Box>
+      </Stack>
+    );
+  }
+
   if (videos.length === 0) {
     return null;
   }
 
-  //FIXME: fix this position of the whole thing cuz it should be upper and lower
-
   return (
-    <Stack
-      direction="row"
-      sx={{
-        display: { xs: "none", sm: "flex" },
-        width: "82%",
-        mx: "auto",
-        alignItems: "center",
-        gap: { sm: 1.5, md: 2.5 },
-        mt: { xs: -3, sm: -5, md: -25 },
-        mb: { sm: 2, md: 3 },
-        zIndex: 100,
-      }}
-    >
-      <Stack
-        direction="row"
-        sx={{
-          alignItems: "center",
-          gap: 1,
-          flexShrink: 0,
-          maxWidth: { sm: 100, md: 150 },
-        }}
-      >
-        <Box
-          sx={{
-            width: { sm: 36, md: 48 },
-            height: { sm: 36, md: 48 },
-            borderRadius: "50%",
-            bgcolor: "primary.main",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            boxShadow: 2,
-          }}
-        >
-          <StarRoundedIcon
-            sx={{
-              transform: "rotate(35deg)",
-              color: "#f1d332",
-              fontSize: { sm: 28, md: 36 },
-            }}
-          />
-        </Box>
-        <Typography
-          sx={{
-            color: "primary.main",
-            fontFamily: "Namecat",
-            fontWeight: 700,
-            fontSize: { sm: 12, md: 18 },
-            lineHeight: 1.15,
-            letterSpacing: 0.5,
-            textTransform: "lowercase",
-          }}
-        >
-          featured on video
-        </Typography>
-      </Stack>
+    <Stack direction="row" sx={railRootSx}>
+      <FeaturedRailLabel />
 
       <Box
         sx={{
-          position: "relative",
-          flex: 1,
-          minWidth: 0,
-          borderRadius: 8,
-          overflow: "hidden",
-          bgcolor: "primary.light",
-          px: { sm: 1.5, md: 2 },
-          py: { sm: 1, md: 1.25 },
-          pr: { sm: 1, md: 0 },
+          ...railTrackSx,
           "& .swiper": {
             width: "100%",
             overflow: "hidden",
+            py: 1,
           },
           "& .swiper-slide": {
             width: "auto",
@@ -169,7 +254,7 @@ export default function ChannelFeaturedRail({
                   border: "1px solid",
                   borderColor: "divider",
                   cursor: "pointer",
-                  boxShadow: 1,
+                  boxShadow: 0.5,
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                   "&:hover": {
                     transform: "translateY(-2px)",
@@ -199,8 +284,8 @@ export default function ChannelFeaturedRail({
             bottom: 0,
             width: { sm: 90, md: 140 },
             borderRadius: "0 32px 32px 0",
-            background: (theme) =>
-              `linear-gradient(to right, transparent 0%, ${theme.palette.primary.light} 40%, ${theme.palette.primary.light} 100%)`,
+            background: (t) =>
+              `linear-gradient(to right, transparent 0%, ${t.palette.primary.light} 40%, ${t.palette.primary.light} 100%)`,
             zIndex: 4,
           }}
         />
@@ -218,7 +303,7 @@ export default function ChannelFeaturedRail({
             height: { sm: 34, md: 42 },
             borderRadius: "50%",
             bgcolor: "#fff",
-            border: (theme) => `2px solid ${theme.palette.primary.main}`,
+            border: (t) => `2px solid ${t.palette.primary.main}`,
             color: "error.main",
             display: "flex",
             alignItems: "center",

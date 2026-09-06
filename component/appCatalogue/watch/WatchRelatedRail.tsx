@@ -9,9 +9,7 @@ import "swiper/css";
 import type { WatchCatalogueVideo } from "./buildWatchRelatedVideos";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
-//FIXME: make the navigationButtons more round (border-radius) make is rectangule with white background.
 //FIXME: add switch button to toggle between Urdo and English in videoPage and SabeelToons.
-//FIXME: chnannels UI should be different from HomePage. rather Swiper they have Featured Videos (what is the Featured Videos? and what is inside it?).
 //FIXME: add Admin panel for the Featured Videos and Swiper videos in HomePage.
 
 const SKELETON_COUNT = 6;
