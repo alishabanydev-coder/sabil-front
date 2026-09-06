@@ -6,10 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import ChannelFeaturedRail from "./ChannelFeaturedRail";
-import type {
-  AppCatalogueProps,
-  NavigationButtonData,
-} from "./navbarTypes";
+import type { AppCatalogueProps, NavigationButtonData } from "./navbarTypes";
 
 type ProjectPreviewData = {
   _id?: string;
@@ -25,6 +22,8 @@ export default function AppCataloguePage({
   navigationButtons,
   selectedVideos,
   homeVideos,
+  suggestedVideos,
+  featuredVideos,
   allVideos,
   selectedNav = "home",
 }: AppCatalogueProps) {
@@ -52,6 +51,7 @@ export default function AppCataloguePage({
   const isCatalogueLoading =
     navigationButtons.length === 0 &&
     homeVideos.length === 0 &&
+    suggestedVideos.length === 0 &&
     allVideos.length === 0;
 
   return (
@@ -113,7 +113,7 @@ export default function AppCataloguePage({
         </Typography>
       ) : (
         <ChannelFeaturedRail
-          videos={selectedVideos}
+          videos={featuredVideos}
           isLoading={isCatalogueLoading}
         />
       )}

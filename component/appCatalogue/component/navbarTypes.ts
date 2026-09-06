@@ -17,6 +17,7 @@ export type VideoData = {
 
 export type NavbarProps = {
   allVideos: VideoData[];
+  suggestedVideos: VideoData[];
   navigationButtons: NavigationButtonData[];
   selectedNav: string;
   setSelectedNav: (nav: string) => void;
@@ -25,6 +26,8 @@ export type NavbarProps = {
 export type AppCatalogueProps = {
   navigationButtons: NavigationButtonData[];
   homeVideos: VideoData[];
+  suggestedVideos: VideoData[];
+  featuredVideos: VideoData[];
   allVideos: VideoData[];
   selectedVideos: VideoData[];
   selectedNav?: string;

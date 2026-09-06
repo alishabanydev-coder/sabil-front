@@ -20,6 +20,7 @@ export default function AppCatalogueCapacitor({
   navigationButtons,
   selectedVideos,
   homeVideos,
+  suggestedVideos,
   allVideos,
   selectedNav,
 }: AppCatalogueProps) {
@@ -86,6 +87,7 @@ export default function AppCatalogueCapacitor({
   const isCatalogueLoading =
     navigationButtons.length === 0 &&
     homeVideos.length === 0 &&
+    suggestedVideos.length === 0 &&
     allVideos.length === 0;
 
   return (

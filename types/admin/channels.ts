@@ -14,4 +14,5 @@ export type AdminChannelVideoRecord = {
   description: string;
   season: number;
   episode: number;
+  isPublished?: boolean;
 };

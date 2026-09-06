@@ -18,11 +18,11 @@ import {
   clearAdminSession,
 } from "./services/adminSession";
 import Admins from "./components/Admins";
-import AppManagement from "./components/AppManagement";
+import AppManagement from "./components/appManagement/AppManagement";
 import Banner from "./components/Banner";
 import Breakdown from "./components/Breakdown";
 import Projects from "./components/Projects";
-import Channels from "./components/Channels";
+import Channels from "./components/channel/Channels";
 import Blog from "./components/Blog";
 import SocialMedia from "./components/SocialMedia";
 import Comment from "./components/Comment";

@@ -86,12 +86,18 @@ export async function fetchAdminAppCatalogueNavigationButtons({ signal } = {}) {
     ? data.selectedProjects.map((item) => ({
         ...item,
         thumbnail: normalizeAssetUrl(item.thumbnail),
+        featuredVideoIds: Array.isArray(item.featuredVideoIds)
+          ? item.featuredVideoIds.map(String)
+          : [],
       }))
     : [];
   const availableProjects = Array.isArray(data?.availableProjects)
     ? data.availableProjects.map((item) => ({
         ...item,
         thumbnail: normalizeAssetUrl(item.thumbnail),
+        featuredVideoIds: Array.isArray(item.featuredVideoIds)
+          ? item.featuredVideoIds.map(String)
+          : [],
       }))
     : [];
 
@@ -149,6 +155,9 @@ export async function updateAdminAppCatalogueNavigationButtons(
     ? data.selectedProjects.map((item) => ({
         ...item,
         thumbnail: normalizeAssetUrl(item.thumbnail),
+        featuredVideoIds: Array.isArray(item.featuredVideoIds)
+          ? item.featuredVideoIds.map(String)
+          : [],
       }))
     : [];
 
@@ -241,6 +250,157 @@ export async function updateAdminAppCatalogueHomeVideos(
   };
 }
 
+export async function fetchAdminAppCatalogueSuggestedVideos({ signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/app-catalogue/suggested-videos`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+    return {
+      ok: false,
+      videoIds: [],
+      videos: [],
+      availableVideos: [],
+      message: data?.message || 'Failed to load suggested videos.',
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    videoIds: Array.isArray(data?.videoIds) ? data.videoIds.map(String) : [],
+    videos: Array.isArray(data?.videos)
+      ? data.videos.map((item) => normalizeVideo(item)).filter(Boolean)
+      : [],
+    availableVideos: Array.isArray(data?.availableVideos)
+      ? data.availableVideos.map((item) => normalizeVideo(item)).filter(Boolean)
+      : [],
+    message: '',
+    status: response.status,
+  };
+}
+
+export async function updateAdminAppCatalogueSuggestedVideos(
+  { videoIds } = {},
+  { signal } = {}
+) {
+  const response = await fetch(`${API_BASE}/api/admin/app-catalogue/suggested-videos`, {
+    method: 'PUT',
+    headers: getAuthHeaders(true),
+    body: JSON.stringify({
+      videoIds: Array.isArray(videoIds) ? videoIds : [],
+    }),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+    return {
+      ok: false,
+      videoIds: [],
+      videos: [],
+      message: data?.message || 'Failed to save suggested videos.',
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    videoIds: Array.isArray(data?.videoIds) ? data.videoIds.map(String) : [],
+    videos: Array.isArray(data?.videos)
+      ? data.videos.map((item) => normalizeVideo(item)).filter(Boolean)
+      : [],
+    message: '',
+    status: response.status,
+  };
+}
+
+export async function fetchAdminProjectFeaturedVideos(projectId, { signal } = {}) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/app-catalogue/projects/${projectId}/featured-videos`,
+    {
+      method: 'GET',
+      headers: getAuthHeaders(),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+    return {
+      ok: false,
+      projectId: projectId || '',
+      videoIds: [],
+      videos: [],
+      availableVideos: [],
+      message: data?.message || 'Failed to load featured videos.',
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    projectId: data?.projectId ? String(data.projectId) : String(projectId),
+    videoIds: Array.isArray(data?.videoIds) ? data.videoIds.map(String) : [],
+    videos: Array.isArray(data?.videos)
+      ? data.videos.map((item) => normalizeVideo(item)).filter(Boolean)
+      : [],
+    availableVideos: Array.isArray(data?.availableVideos)
+      ? data.availableVideos.map((item) => normalizeVideo(item)).filter(Boolean)
+      : [],
+    message: '',
+    status: response.status,
+  };
+}
+
+export async function updateAdminProjectFeaturedVideos(
+  projectId,
+  { videoIds } = {},
+  { signal } = {}
+) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/app-catalogue/projects/${projectId}/featured-videos`,
+    {
+      method: 'PUT',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify({
+        videoIds: Array.isArray(videoIds) ? videoIds : [],
+      }),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+    return {
+      ok: false,
+      projectId: projectId || '',
+      videoIds: [],
+      videos: [],
+      message: data?.message || 'Failed to save featured videos.',
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    projectId: data?.projectId ? String(data.projectId) : String(projectId),
+    videoIds: Array.isArray(data?.videoIds) ? data.videoIds.map(String) : [],
+    videos: Array.isArray(data?.videos)
+      ? data.videos.map((item) => normalizeVideo(item)).filter(Boolean)
+      : [],
+    message: '',
+    status: response.status,
+  };
+}
+
 export async function fetchPublicAppCatalogueNavigationButtons() {
   const response = await fetch(`${API_BASE}/api/admin/public/app-catalogue/navigation-buttons`, {
     method: 'GET',
@@ -265,5 +425,41 @@ export async function fetchPublicAppCatalogueHomeVideos() {
     videos: Array.isArray(data?.videos)
       ? data.videos.map((item) => normalizeVideo(item)).filter(Boolean)
       : [],
+  };
+}
+
+export async function fetchPublicAppCatalogueSuggestedVideos() {
+  const response = await fetch(`${API_BASE}/api/admin/public/app-catalogue/suggested-videos`, {
+    method: 'GET',
+    cache: 'no-store',
+  });
+  const data = await readJson(response);
+
+  return {
+    videoIds: Array.isArray(data?.videoIds) ? data.videoIds.map(String) : [],
+    videos: Array.isArray(data?.videos)
+      ? data.videos.map((item) => normalizeVideo(item)).filter(Boolean)
+      : [],
+  };
+}
+
+export async function fetchPublicAppCatalogueFeaturedVideos() {
+  const response = await fetch(`${API_BASE}/api/admin/public/app-catalogue/featured-videos`, {
+    method: 'GET',
+    cache: 'no-store',
+  });
+  const data = await readJson(response);
+  const featuredByProjectId = {};
+
+  if (data?.featuredByProjectId && typeof data.featuredByProjectId === 'object') {
+    Object.entries(data.featuredByProjectId).forEach(([projectId, value]) => {
+      featuredByProjectId[String(projectId)] = Array.isArray(value?.videos)
+        ? value.videos.map((item) => normalizeVideo(item)).filter(Boolean)
+        : [];
+    });
+  }
+
+  return {
+    featuredByProjectId,
   };
 }

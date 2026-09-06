@@ -9,13 +9,18 @@ import { useEffect, useMemo, useState, type SyntheticEvent } from "react";
 import {
   fetchAdminAppCatalogueHomeVideos,
   fetchAdminAppCatalogueNavigationButtons,
+  fetchAdminAppCatalogueSuggestedVideos,
   updateAdminAppCatalogueHomeVideos,
   updateAdminAppCatalogueNavigationButtons,
+  updateAdminAppCatalogueSuggestedVideos,
+  updateAdminProjectFeaturedVideos,
 } from "../services/appManagementApi";
 
 export const appManagementSections: AppManagementSection[] = [
   { name: "navBtn", title: "Navigation Buttons", url: "" },
   { name: "homeVideo", title: "Home Videos", url: "" },
+  { name: "suggestedVideo", title: "Suggested Videos", url: "" },
+  { name: "featuredVideo", title: "Featured Videos", url: "" },
 ];
 
 function existingRecordIds<T extends { _id: string }>(
@@ -48,6 +53,11 @@ export const useAppManagement = () => {
     string[]
   >([]);
   const [draftManualVideoIds, setDraftManualVideoIds] = useState<string[]>([]);
+  const [suggestedVideoIds, setSuggestedVideoIds] = useState<string[]>([]);
+  const [featuredVideoIdsByProject, setFeaturedVideoIdsByProject] = useState<
+    Record<string, string[]>
+  >({});
+  const [draftRailVideoIds, setDraftRailVideoIds] = useState<string[]>([]);
 
   const revalidateAppCataloguePublicData = async () => {
     try {
@@ -66,12 +76,16 @@ export const useAppManagement = () => {
       setLoading(true);
       setErrorMsg("");
       try {
-        const [navResult, homeVideosResult] = await Promise.all([
-          fetchAdminAppCatalogueNavigationButtons({
-            signal: controller.signal,
-          }),
-          fetchAdminAppCatalogueHomeVideos({ signal: controller.signal }),
-        ]);
+        const [navResult, homeVideosResult, suggestedVideosResult] =
+          await Promise.all([
+            fetchAdminAppCatalogueNavigationButtons({
+              signal: controller.signal,
+            }),
+            fetchAdminAppCatalogueHomeVideos({ signal: controller.signal }),
+            fetchAdminAppCatalogueSuggestedVideos({
+              signal: controller.signal,
+            }),
+          ]);
 
         if (controller.signal.aborted) {
           return;
@@ -101,6 +115,12 @@ export const useAppManagement = () => {
           );
         }
 
+        const loadedVideos = homeVideosResult.ok
+          ? Array.isArray(homeVideosResult.availableVideos)
+            ? homeVideosResult.availableVideos
+            : []
+          : [];
+
         if (!homeVideosResult.ok) {
           setErrorMsg(
             homeVideosResult.message || "Failed to load home videos settings."
@@ -112,16 +132,46 @@ export const useAppManagement = () => {
               Array.isArray(homeVideosResult.manualVideoIds)
                 ? homeVideosResult.manualVideoIds
                 : [],
-              Array.isArray(homeVideosResult.availableVideos)
-                ? homeVideosResult.availableVideos
-                : []
+              loadedVideos
             )
           );
-          setAvailableVideos(
-            Array.isArray(homeVideosResult.availableVideos)
-              ? homeVideosResult.availableVideos
-              : []
+          setAvailableVideos(loadedVideos);
+        }
+
+        if (!suggestedVideosResult.ok) {
+          setErrorMsg(
+            suggestedVideosResult.message || "Failed to load suggested videos."
           );
+        } else {
+          setSuggestedVideoIds(
+            existingRecordIds(
+              Array.isArray(suggestedVideosResult.videoIds)
+                ? suggestedVideosResult.videoIds
+                : [],
+              loadedVideos.length > 0
+                ? loadedVideos
+                : Array.isArray(suggestedVideosResult.availableVideos)
+                  ? suggestedVideosResult.availableVideos
+                  : []
+            )
+          );
+        }
+
+        if (navResult.ok) {
+          const nextFeaturedByProject: Record<string, string[]> = {};
+          (Array.isArray(navResult.availableProjects)
+            ? navResult.availableProjects
+            : []
+          ).forEach((project) => {
+            const storedFeaturedIds = Array.isArray(project.featuredVideoIds)
+              ? project.featuredVideoIds
+              : [];
+            nextFeaturedByProject[project._id] =
+              loadedVideos.length > 0
+                ? existingRecordIds(storedFeaturedIds, loadedVideos)
+                : storedFeaturedIds;
+          });
+          setFeaturedVideoIdsByProject(nextFeaturedByProject);
         }
       } catch (error) {
         const isAbortError =
@@ -173,8 +223,28 @@ export const useAppManagement = () => {
       }));
     }
 
+    if (selectedSection?.name === "suggestedVideo") {
+      return availableVideos.map((item) => ({
+        id: item._id,
+        title: item.title,
+        image: item.thumbnail,
+        projectId: item.projectId,
+      }));
+    }
+
+    if (selectedSection?.name === "featuredVideo") {
+      return availableVideos
+        .filter((item) => item.projectId === activeNavId)
+        .map((item) => ({
+          id: item._id,
+          title: item.title,
+          image: item.thumbnail,
+          projectId: item.projectId,
+        }));
+    }
+
     return [];
-  }, [availableProjects, availableVideos, selectedSection?.name]);
+  }, [activeNavId, availableProjects, availableVideos, selectedSection?.name]);
 
   const modalSelectedIds = useMemo(
     () =>
@@ -182,8 +252,16 @@ export const useAppManagement = () => {
         ? draftSelectedProjectIds
         : selectedSection?.name === "homeVideo"
           ? draftManualVideoIds
-          : [],
-    [draftManualVideoIds, draftSelectedProjectIds, selectedSection?.name]
+          : selectedSection?.name === "suggestedVideo" ||
+              selectedSection?.name === "featuredVideo"
+            ? draftRailVideoIds
+            : [],
+    [
+      draftManualVideoIds,
+      draftRailVideoIds,
+      draftSelectedProjectIds,
+      selectedSection?.name,
+    ]
   );
 
   const previewVideos = useMemo(() => {
@@ -245,6 +323,27 @@ export const useAppManagement = () => {
   const displayVideos =
     activeNavId === "home" ? previewVideos : activeProjectVideos;
 
+  const railVideos = useMemo(() => {
+    const videosMap = new Map(
+      availableVideos.map((video) => [video._id, video])
+    );
+
+    if (activeNavId === "home") {
+      return suggestedVideoIds
+        .map((id) => videosMap.get(id))
+        .filter((video): video is AppManagementVideoRecord => Boolean(video));
+    }
+
+    return (featuredVideoIdsByProject[activeNavId] || [])
+      .map((id) => videosMap.get(id))
+      .filter((video): video is AppManagementVideoRecord => Boolean(video));
+  }, [
+    activeNavId,
+    availableVideos,
+    featuredVideoIdsByProject,
+    suggestedVideoIds,
+  ]);
+
   const openSection = (section: AppManagementSection) => {
     if (section.name === "navBtn") {
       setDraftSelectedProjectIds(
@@ -254,6 +353,22 @@ export const useAppManagement = () => {
     if (section.name === "homeVideo") {
       setDraftManualVideoIds(
         existingRecordIds(manualVideoIds, availableVideos)
+      );
+    }
+    if (section.name === "suggestedVideo") {
+      setDraftRailVideoIds(
+        existingRecordIds(suggestedVideoIds, availableVideos)
+      );
+    }
+    if (section.name === "featuredVideo") {
+      const channelVideos = availableVideos.filter(
+        (video) => video.projectId === activeNavId
+      );
+      setDraftRailVideoIds(
+        existingRecordIds(
+          featuredVideoIdsByProject[activeNavId] || [],
+          channelVideos
+        )
       );
     }
     setOpen(true);
@@ -270,11 +385,35 @@ export const useAppManagement = () => {
     openSection(appManagementSections[1]);
   };
 
+  const openSuggestedVideosModal = () => {
+    openSection(appManagementSections[2]);
+  };
+
+  const openFeaturedVideosModal = () => {
+    openSection(appManagementSections[3]);
+  };
+
+  const openRailVideosModal = () => {
+    if (activeNavId === "home") {
+      openSuggestedVideosModal();
+      return;
+    }
+    openFeaturedVideosModal();
+  };
+
   const handleCloseModal = () => {
     setDraftSelectedProjectIds(
       existingRecordIds(selectedProjectIds, availableProjects)
     );
     setDraftManualVideoIds(existingRecordIds(manualVideoIds, availableVideos));
+    setDraftRailVideoIds(
+      activeNavId === "home"
+        ? existingRecordIds(suggestedVideoIds, availableVideos)
+        : existingRecordIds(
+            featuredVideoIdsByProject[activeNavId] || [],
+            availableVideos.filter((video) => video.projectId === activeNavId)
+          )
+    );
     setOpen(false);
     setSelectedSection(null);
   };
@@ -301,6 +440,16 @@ export const useAppManagement = () => {
     setDraftManualVideoIds((current) => current.filter((id) => id !== videoId));
   };
 
+  const handleRailVideoToggle = (videoId: string, checked: boolean) => {
+    if (checked) {
+      setDraftRailVideoIds((current) =>
+        current.includes(videoId) ? current : [...current, videoId]
+      );
+      return;
+    }
+    setDraftRailVideoIds((current) => current.filter((id) => id !== videoId));
+  };
+
   const toggleModalSelection = (id: string) => {
     const isSelected = modalSelectedIds.includes(id);
     if (selectedSection?.name === "navBtn") {
@@ -309,6 +458,13 @@ export const useAppManagement = () => {
     }
     if (selectedSection?.name === "homeVideo") {
       handleManualVideoToggle(id, !isSelected);
+      return;
+    }
+    if (
+      selectedSection?.name === "suggestedVideo" ||
+      selectedSection?.name === "featuredVideo"
+    ) {
+      handleRailVideoToggle(id, !isSelected);
     }
   };
 
@@ -400,12 +556,92 @@ export const useAppManagement = () => {
     setSelectedSection(null);
   };
 
+  const handleSaveSuggestedVideos = async () => {
+    setSaving(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    const result = await updateAdminAppCatalogueSuggestedVideos({
+      videoIds: existingRecordIds(draftRailVideoIds, availableVideos),
+    });
+    setSaving(false);
+
+    if (!result.ok) {
+      setErrorMsg(result.message || "Failed to save suggested videos.");
+      return;
+    }
+
+    setSuggestedVideoIds(
+      existingRecordIds(
+        Array.isArray(result.videoIds) ? result.videoIds : [],
+        availableVideos
+      )
+    );
+    setDraftRailVideoIds(
+      existingRecordIds(
+        Array.isArray(result.videoIds) ? result.videoIds : [],
+        availableVideos
+      )
+    );
+    await revalidateAppCataloguePublicData();
+    setSuccessMsg("Suggested videos saved.");
+    setOpen(false);
+    setSelectedSection(null);
+  };
+
+  const handleSaveFeaturedVideos = async () => {
+    if (activeNavId === "home") {
+      return;
+    }
+
+    setSaving(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    const channelVideos = availableVideos.filter(
+      (video) => video.projectId === activeNavId
+    );
+    const result = await updateAdminProjectFeaturedVideos(activeNavId, {
+      videoIds: existingRecordIds(draftRailVideoIds, channelVideos),
+    });
+    setSaving(false);
+
+    if (!result.ok) {
+      setErrorMsg(result.message || "Failed to save featured videos.");
+      return;
+    }
+
+    const savedIds = existingRecordIds(
+      Array.isArray(result.videoIds) ? result.videoIds : [],
+      channelVideos
+    );
+    setFeaturedVideoIdsByProject((current) => ({
+      ...current,
+      [activeNavId]: savedIds,
+    }));
+    setDraftRailVideoIds(savedIds);
+    await revalidateAppCataloguePublicData();
+    setSuccessMsg("Featured videos saved.");
+    setOpen(false);
+    setSelectedSection(null);
+  };
+
   const saveModalChanges = () => {
     if (selectedSection?.name === "navBtn") {
       void handleSaveNavigation();
       return;
     }
-    void handleSaveHomeVideos();
+    if (selectedSection?.name === "homeVideo") {
+      void handleSaveHomeVideos();
+      return;
+    }
+    if (selectedSection?.name === "suggestedVideo") {
+      void handleSaveSuggestedVideos();
+      return;
+    }
+    if (selectedSection?.name === "featuredVideo") {
+      void handleSaveFeaturedVideos();
+    }
   };
 
   const handleRandomModeChange = async (checked: boolean) => {
@@ -479,7 +715,9 @@ export const useAppManagement = () => {
     open,
     openHomeVideosModal,
     openNavigationModal,
+    openRailVideosModal,
     projectById,
+    railVideos,
     saveModalChanges,
     saving,
     selectedProjects,

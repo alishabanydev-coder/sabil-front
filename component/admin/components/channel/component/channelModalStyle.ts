@@ -1,0 +1,16 @@
+export const channelModalStyle = {
+  direction: "ltr",
+  height: "auto",
+  maxHeight: "80vh",
+  width: 380,
+  position: "absolute",
+  flexDirection: "row",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 3,
+  gap: 2,
+} as const;

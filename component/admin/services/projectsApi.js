@@ -26,6 +26,21 @@ function normalizeProjectCharacters(characters) {
     .filter((item) => item.name && item.image);
 }
 
+function appendChannelVideoForm(formData, body) {
+  Object.entries(body || {}).forEach(([key, value]) => {
+    if (value === undefined || value === null) {
+      return;
+    }
+
+    if (typeof value === "boolean") {
+      formData.append(key, value ? "true" : "false");
+      return;
+    }
+
+    formData.append(key, value);
+  });
+}
+
 function normalizeProjectRecord(project) {
   if (!project || typeof project !== "object") {
     return project;
@@ -189,6 +204,7 @@ export async function fetchChannelVideos(projectId, { signal } = {}) {
       ? data.videos.map((video) => ({
           ...video,
           thumbnail: normalizeAssetUrl(video.thumbnail),
+          isPublished: video.isPublished !== false,
         }))
       : [],
     message: "",
@@ -482,12 +498,7 @@ export async function deleteChannelCatalogue(
 
 export async function createChannelVideo(projectId, body, { signal } = {}) {
   const formData = new FormData();
-
-  Object.entries(body || {}).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, value);
-    }
-  });
+  appendChannelVideoForm(formData, body);
 
   const response = await fetch(
     `${API_BASE}/api/admin/channels/projects/${projectId}/videos`,
@@ -517,6 +528,7 @@ export async function createChannelVideo(projectId, body, { signal } = {}) {
       ? {
           ...data.video,
           thumbnail: normalizeAssetUrl(data.video.thumbnail),
+          isPublished: data.video.isPublished !== false,
         }
       : null,
     message: "",
@@ -531,12 +543,7 @@ export async function updateChannelVideo(
   { signal } = {}
 ) {
   const formData = new FormData();
-
-  Object.entries(body || {}).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      formData.append(key, value);
-    }
-  });
+  appendChannelVideoForm(formData, body);
 
   const response = await fetch(
     `${API_BASE}/api/admin/channels/projects/${projectId}/videos/${videoId}`,
@@ -566,6 +573,7 @@ export async function updateChannelVideo(
       ? {
           ...data.video,
           thumbnail: normalizeAssetUrl(data.video.thumbnail),
+          isPublished: data.video.isPublished !== false,
         }
       : null,
     message: "",

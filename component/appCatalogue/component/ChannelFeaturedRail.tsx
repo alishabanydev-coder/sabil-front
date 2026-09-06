@@ -32,6 +32,7 @@ const RAIL_SKELETON_COUNT = 4;
 type ChannelFeaturedRailProps = {
   videos: VideoData[];
   isLoading?: boolean;
+  label?: string;
 };
 
 const railRootSx = {
@@ -57,7 +58,7 @@ const railTrackSx = {
   pr: { sm: 1, md: 0 },
 } as const;
 
-function FeaturedRailLabel() {
+function FeaturedRailLabel({ label }: { label: string }) {
   return (
     <Stack
       direction="row"
@@ -100,7 +101,7 @@ function FeaturedRailLabel() {
           textTransform: "lowercase",
         }}
       >
-        featured on video
+        {label}
       </Typography>
     </Stack>
   );
@@ -109,6 +110,7 @@ function FeaturedRailLabel() {
 export default function ChannelFeaturedRail({
   videos,
   isLoading = false,
+  label = "featured on video",
 }: ChannelFeaturedRailProps) {
   const router = useRouter();
   const theme = useTheme();
@@ -122,10 +124,10 @@ export default function ChannelFeaturedRail({
   const slidesOffsetAfter = isXl
     ? SLIDES_OFFSET_AFTER.xl
     : isLg
-      ? SLIDES_OFFSET_AFTER.lg
-      : isMd
-        ? SLIDES_OFFSET_AFTER.md
-        : SLIDES_OFFSET_AFTER.sm;
+    ? SLIDES_OFFSET_AFTER.lg
+    : isMd
+    ? SLIDES_OFFSET_AFTER.md
+    : SLIDES_OFFSET_AFTER.sm;
 
   useEffect(() => {
     const swiper = swiperRef.current;
@@ -134,10 +136,10 @@ export default function ChannelFeaturedRail({
     swiper.update();
   }, [slidesOffsetAfter]);
 
-  if (isLoading) {
+  if (isLoading || videos.length === 0) {
     return (
       <Stack direction="row" sx={railRootSx}>
-        <FeaturedRailLabel />
+        <FeaturedRailLabel label={label} />
         <Box sx={{ ...railTrackSx, py: { sm: 1, md: 1 } }}>
           <Stack
             direction="row"
@@ -152,7 +154,7 @@ export default function ChannelFeaturedRail({
               <Skeleton
                 key={`rail-skeleton-${index}`}
                 variant="rounded"
-                animation="wave"
+                animation="pulse"
                 sx={{
                   flexShrink: 0,
                   width: { sm: 140, md: 180, lg: 210 },
@@ -200,13 +202,9 @@ export default function ChannelFeaturedRail({
     );
   }
 
-  if (videos.length === 0) {
-    return null;
-  }
-
   return (
     <Stack direction="row" sx={railRootSx}>
-      <FeaturedRailLabel />
+      <FeaturedRailLabel label={label} />
 
       <Box
         sx={{

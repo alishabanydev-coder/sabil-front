@@ -2,36 +2,18 @@
 
 import {
   Button,
-  ButtonGroup,
   CircularProgress,
   Divider,
   IconButton,
-  Modal,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAdminChannels } from "../hooks/useAdminChannels";
+import { useAdminChannels } from "../../hooks/useAdminChannels";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-
-const style = {
-  direction: "ltr",
-  height: "auto",
-  maxHeight: "80vh",
-  width: 380,
-  position: "absolute",
-  flexDirection: "row",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  borderRadius: 2,
-  boxShadow: 24,
-  p: 3,
-  gap: 2,
-};
+import ChannelThumbnailPreviewModal from "./component/ChannelThumbnailPreviewModal";
+import ChannelVideoModal from "./component/ChannelVideoModal";
 
 const Channels = () => {
   const {
@@ -49,6 +31,7 @@ const Channels = () => {
     handleToggleSeason,
     isEditing,
     isEditingVideo,
+    isPublished,
     isSubmitDisabled,
     isSubmitting,
     loading,
@@ -64,6 +47,7 @@ const Channels = () => {
     selectedVideo,
     setDescription,
     setEpisode,
+    setIsPublished,
     setPreviewThumbnail,
     setSeason,
     setThumbnail,
@@ -77,6 +61,8 @@ const Channels = () => {
     videosErrorMsg,
     videosLoading,
   } = useAdminChannels();
+
+  //FIXME: remove the Unpulished from main page layout and other parts like it's modal and view, and if a video get unpublished what should happen to order and display ?
 
   return (
     <>
@@ -202,7 +188,9 @@ const Channels = () => {
                 No videos uploaded for this project.
               </Typography>
             ) : (
-              <Stack sx={{ width: "100%", gap: 3, overflow: "auto", pt: 1, pb: 2 }}>
+              <Stack
+                sx={{ width: "100%", gap: 3, overflow: "auto", pt: 1, pb: 2 }}
+              >
                 {seasons.map((seasonNumber) => (
                   <Stack
                     key={seasonNumber}
@@ -217,7 +205,7 @@ const Channels = () => {
                       <Stack
                         component={motion.div}
                         direction="row"
-                        whileHover={{ scale: 1.03 }}
+                        whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleToggleSeason(seasonNumber)}
                         sx={{
@@ -269,6 +257,7 @@ const Channels = () => {
                           exit={{ height: 0, opacity: 0, y: -10 }}
                           transition={{ duration: 0.28, ease: "easeOut" }}
                           sx={{
+                            position: "relative",
                             gap: 2,
                             flexWrap: "wrap",
                             justifyContent: "center",
@@ -287,9 +276,9 @@ const Channels = () => {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               transition={{
                                 delay: index * 0.04,
-                                duration: 0.22,
+                                duration: 0.08,
                               }}
-                              whileHover={{ y: -6, scale: 1.04 }}
+                              whileHover={{ y: -4, scale: 1.01 }}
                               sx={{
                                 width: 180,
                                 gap: 1,
@@ -298,8 +287,14 @@ const Channels = () => {
                                 p: 1,
                                 cursor: "pointer",
                                 borderRadius: 2,
+                                filter:
+                                  video.isPublished === false
+                                    ? "grayscale(100%)"
+                                    : "none",
+                                transition: "all 0.3s ease",
                                 backgroundColor: "background.paper",
                                 boxShadow: "0 10px 28px rgba(0,0,0,0.12)",
+                                opacity: video.isPublished === false ? 0.55 : 1,
                               }}
                             >
                               <Stack
@@ -318,14 +313,44 @@ const Channels = () => {
                                   style={{
                                     width: "100%",
                                     height: "100%",
+                                    filter:
+                                      video.isPublished === false
+                                        ? "blur(1px)"
+                                        : "none",
                                     objectFit: "contain",
                                     borderRadius: "8px",
                                   }}
                                 />
                               </Stack>
                               <Typography variant="body2">
-                                {`${video.episode.toString().padStart(2, "0")} - ${video.title}`}
+                                {`${video.episode
+                                  .toString()
+                                  .padStart(2, "0")} - ${video.title}`}
                               </Typography>
+                              {video.isPublished === false ? (
+                                <Stack
+                                  sx={{
+                                    position: "absolute",
+                                    bottom: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: "text.secondary",
+                                      fontWeight: 700,
+                                    }}
+                                  >
+                                    Hidden from public
+                                  </Typography>
+                                </Stack>
+                              ) : null}
                             </Stack>
                           ))}
                         </Stack>
@@ -339,208 +364,43 @@ const Channels = () => {
         </Stack>
       </Stack>
 
-      <Modal
+      <ChannelVideoModal
+        activeThumbnailPreviewUrl={activeThumbnailPreviewUrl}
+        description={description}
+        episode={episode}
+        episodeAlreadyExists={episodeAlreadyExists}
+        handleClose={handleClose}
+        handleDelete={handleDelete}
+        handleSubmit={handleSubmit}
+        isEditing={isEditing}
+        isEditingVideo={isEditingVideo}
+        isPublished={isPublished}
+        isSubmitDisabled={isSubmitDisabled}
+        isSubmitting={isSubmitting}
         open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Stack sx={style}>
-          <Stack sx={{ width: "100%", gap: 2 }}>
-            <Typography
-              component="h2"
-              sx={{ fontSize: 20, fontWeight: 700, textAlign: "center" }}
-            >
-              {isEditing ? "Edit Video" : "Add Video"}
-            </Typography>
+        parsedEpisode={parsedEpisode}
+        parsedSeason={parsedSeason}
+        season={season}
+        selectedVideo={selectedVideo}
+        setDescription={setDescription}
+        setEpisode={setEpisode}
+        setIsPublished={setIsPublished}
+        setPreviewThumbnail={setPreviewThumbnail}
+        setSeason={setSeason}
+        setThumbnail={setThumbnail}
+        setTitle={setTitle}
+        setVideoUrl={setVideoUrl}
+        submitErrorMsg={submitErrorMsg}
+        thumbnail={thumbnail}
+        title={title}
+        videoUrl={videoUrl}
+      />
 
-            <TextField
-              variant="standard"
-              label="Title"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              fullWidth
-              placeholder="Enter title"
-            />
-
-            <TextField
-              variant="standard"
-              label="Video URL"
-              value={videoUrl}
-              onChange={(event) => setVideoUrl(event.target.value)}
-              fullWidth
-              placeholder="Enter video url"
-            />
-
-            <ButtonGroup size="small" aria-label="Thumbnail actions">
-              <Button
-                component="label"
-                variant={
-                  thumbnail || selectedVideo?.thumbnail
-                    ? "contained"
-                    : "outlined"
-                }
-                color="primary"
-              >
-                {thumbnail
-                  ? thumbnail.name
-                  : isEditingVideo
-                    ? "Change Thumbnail"
-                    : "Select Thumbnail"}
-                <input
-                  hidden
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => {
-                    setThumbnail(event.target.files?.[0] ?? null);
-                  }}
-                />
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={!activeThumbnailPreviewUrl}
-                onClick={() => {
-                  setPreviewThumbnail(true);
-                }}
-              >
-                Preview Thumbnail
-              </Button>
-            </ButtonGroup>
-
-            <TextField
-              label="Description"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              fullWidth
-              multiline
-              rows={4}
-              placeholder="Enter description"
-            />
-            <Stack direction={"row"} sx={{ gap: 2 }}>
-              <TextField
-                label="Season"
-                type="number"
-                value={season}
-                onChange={(event) => setSeason(event.target.value)}
-                fullWidth
-                placeholder="Enter season"
-                sx={{ direction: "ltr" }}
-                slotProps={{
-                  htmlInput: {
-                    min: 1,
-                    step: 1,
-                  },
-                }}
-              />
-              <TextField
-                label="Episode"
-                type="number"
-                value={episode}
-                onChange={(event) => setEpisode(event.target.value)}
-                error={episodeAlreadyExists}
-                helperText={
-                  episodeAlreadyExists
-                    ? `Season ${parsedSeason}, episode ${parsedEpisode} already exists.`
-                    : ""
-                }
-                fullWidth
-                placeholder="Enter episode"
-                sx={{ direction: "ltr" }}
-                slotProps={{
-                  htmlInput: {
-                    min: 1,
-                    step: 1,
-                  },
-                }}
-              />
-            </Stack>
-
-            <Stack
-              direction="row"
-              sx={{
-                gap: 2,
-                width: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                disabled={isSubmitDisabled}
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                {isSubmitting ? "Uploading..." : "Submit"}
-              </Button>
-
-              {isEditingVideo && selectedVideo && !isSubmitting && (
-                <Button
-                  color="error"
-                  variant="outlined"
-                  onClick={handleDelete}
-                  disabled={!isEditingVideo || !selectedVideo || isSubmitting}
-                >
-                  Delete
-                </Button>
-              )}
-
-              <Button onClick={handleClose} variant="outlined" color="primary">
-                Cancel
-              </Button>
-            </Stack>
-            <Stack
-              sx={{
-                width: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {submitErrorMsg ? (
-                <Typography color="error" variant="body2">
-                  {submitErrorMsg}
-                </Typography>
-              ) : null}
-            </Stack>
-          </Stack>
-        </Stack>
-      </Modal>
-
-      <Modal
+      <ChannelThumbnailPreviewModal
+        activeThumbnailPreviewUrl={activeThumbnailPreviewUrl}
         open={previewThumbnail}
         onClose={() => setPreviewThumbnail(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Stack
-          sx={{
-            ...style,
-            width: "80%",
-            alignItems: "center",
-            backgroundColor: "",
-            boxShadow: 0,
-            p: 0,
-          }}
-        >
-          {activeThumbnailPreviewUrl ? (
-            <img
-              src={activeThumbnailPreviewUrl}
-              alt="Preview Thumbnail"
-              style={{
-                width: "100%",
-                maxHeight: "70vh",
-                objectFit: "contain",
-                borderRadius: 8,
-              }}
-            />
-          ) : (
-            <Typography color="text.secondary" variant="body2">
-              No thumbnail selected.
-            </Typography>
-          )}
-        </Stack>
-      </Modal>
+      />
     </>
   );
 };

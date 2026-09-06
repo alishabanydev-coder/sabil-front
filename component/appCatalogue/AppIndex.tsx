@@ -30,10 +30,14 @@ const APP_GRADIENT =
 const AppIndex = ({
   navigationButtons,
   homeVideos,
+  suggestedVideos,
+  featuredByProjectId,
   allVideos,
 }: {
   navigationButtons: NavigationButtonData[];
   homeVideos: VideoData[];
+  suggestedVideos: VideoData[];
+  featuredByProjectId: Record<string, VideoData[]>;
   allVideos: VideoData[];
 }) => {
   const [selectedNav, setSelectedNav] = useState<string>("home");
@@ -47,10 +51,18 @@ const AppIndex = ({
     return allVideos.filter((video) => video.projectId === selectedNav);
   }, [allVideos, homeVideos, selectedNav]);
 
+  const featuredVideos = useMemo(
+    () =>
+      selectedNav === "home" ? [] : featuredByProjectId[selectedNav] || [],
+    [featuredByProjectId, selectedNav]
+  );
+
   const catalogueProps = {
     navigationButtons,
     selectedVideos,
     homeVideos,
+    suggestedVideos,
+    featuredVideos,
     allVideos,
     selectedNav,
   };
@@ -87,6 +99,7 @@ const AppIndex = ({
         selectedNav={selectedNav}
         setSelectedNav={setSelectedNav}
         allVideos={allVideos}
+        suggestedVideos={suggestedVideos}
       />
 
       {isNative ? (

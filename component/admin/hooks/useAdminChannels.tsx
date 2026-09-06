@@ -35,6 +35,7 @@ export const useAdminChannels = () => {
   const [isEditingVideo, setIsEditingVideo] = useState(false);
   const [previewThumbnail, setPreviewThumbnail] = useState(false);
   const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState("");
+  const [isPublished, setIsPublished] = useState(true);
 
   const videosBySeason = useMemo(
     () =>
@@ -111,6 +112,7 @@ export const useAdminChannels = () => {
     setPreviewThumbnail(false);
     setSelectedVideo(null);
     setIsEditingVideo(false);
+    setIsPublished(true);
   }, []);
 
   const handleSelectedVideo = useCallback((video: AdminChannelVideoRecord) => {
@@ -124,6 +126,7 @@ export const useAdminChannels = () => {
     setDescription(video.description);
     setSeason(video.season.toString());
     setEpisode(video.episode.toString());
+    setIsPublished(video.isPublished !== false);
     setPreviewThumbnail(false);
   }, []);
 
@@ -162,6 +165,7 @@ export const useAdminChannels = () => {
         description: description.trim(),
         season: Number(season),
         episode: Number(episode),
+        isPublished,
       };
       const result =
         isEditingVideo && selectedVideo
@@ -204,6 +208,7 @@ export const useAdminChannels = () => {
     episodeAlreadyExists,
     handleClose,
     isEditingVideo,
+    isPublished,
     parsedEpisode,
     parsedSeason,
     season,
@@ -380,6 +385,7 @@ export const useAdminChannels = () => {
     handleToggleSeason,
     isEditing,
     isEditingVideo,
+    isPublished,
     isSubmitDisabled,
     isSubmitting,
     loading,
@@ -395,6 +401,7 @@ export const useAdminChannels = () => {
     selectedVideo,
     setDescription,
     setEpisode,
+    setIsPublished,
     setPreviewThumbnail,
     setSeason,
     setThumbnail,

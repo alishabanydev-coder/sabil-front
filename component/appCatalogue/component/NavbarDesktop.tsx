@@ -41,7 +41,7 @@ const relayoutFeaturedSwiper = (swiper: SwiperType) => {
 const NAV_SKELETON_COUNT = 4;
 
 const NavbarDesktop = ({
-  allVideos,
+  suggestedVideos,
   navigationButtons,
   selectedNav,
   setSelectedNav,
@@ -500,7 +500,7 @@ const NavbarDesktop = ({
                   observeSlideChildren
                   effect="coverflow"
                   centeredSlides
-                  loop
+                  loop={suggestedVideos.length >= 5}
                   slidesPerView={3.6}
                   watchSlidesProgress
                   onBeforeInit={(swiper) => {
@@ -551,7 +551,7 @@ const NavbarDesktop = ({
                   }}
                   onResize={(swiper) => relayoutFeaturedSwiper(swiper)}
                 >
-                  {allVideos.map((video) => (
+                  {suggestedVideos.map((video) => (
                     <SwiperSlide
                       key={video._id}
                       onClick={() => router.push(`/app/watch/${video._id}`)}

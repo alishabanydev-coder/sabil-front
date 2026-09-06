@@ -1,5 +1,5 @@
 export type AppManagementSection = {
-  name: "navBtn" | "homeVideo";
+  name: "navBtn" | "homeVideo" | "suggestedVideo" | "featuredVideo";
   title: string;
   url: string;
 };
@@ -8,6 +8,7 @@ export type AppManagementProjectRecord = {
   _id: string;
   name: string;
   thumbnail: string;
+  featuredVideoIds?: string[];
 };
 
 export type AppManagementVideoRecord = {
