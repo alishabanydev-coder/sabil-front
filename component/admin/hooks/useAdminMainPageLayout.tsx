@@ -12,9 +12,17 @@ import {
 } from "../services/mainPageLayoutApi";
 import { fetchProjects } from "../services/projectsApi";
 
-function sortHomepageItems(items: MainPageLayoutItem[]) {
+function isPublishedLayoutItem(item: MainPageLayoutItem) {
+  return item.isPublished !== false;
+}
+
+function sortHomepageItems(
+  items: MainPageLayoutItem[],
+  { publishedOnly = false }: { publishedOnly?: boolean } = {}
+) {
   return items
     .filter((item) => Boolean(item.showInHomepage))
+    .filter((item) => !publishedOnly || isPublishedLayoutItem(item))
     .sort((firstItem, secondItem) => {
       const firstOrder =
         typeof firstItem.homepageOrder === "number"
@@ -122,7 +130,9 @@ export const useAdminMainPageLayout = () => {
         );
       } else {
         setSelectedItemIds(
-          sortHomepageItems(sectionData).map((item) => item._id)
+          sortHomepageItems(sectionData, {
+            publishedOnly: section.name === "video",
+          }).map((item) => item._id)
         );
       }
       setSaveErrorMsg("");
@@ -254,13 +264,25 @@ export const useAdminMainPageLayout = () => {
     [sectionItems]
   );
 
-  const toggleItemSelection = useCallback((itemId: string) => {
-    setSelectedItemIds((currentIds) =>
-      currentIds.includes(itemId)
-        ? currentIds.filter((id) => id !== itemId)
-        : [...currentIds, itemId]
-    );
-  }, []);
+  const toggleItemSelection = useCallback(
+    (itemId: string) => {
+      if (openedSection?.name === "video") {
+        const videoItem = (sectionItems.video || []).find(
+          (item) => item._id === itemId
+        );
+        if (videoItem && !isPublishedLayoutItem(videoItem)) {
+          return;
+        }
+      }
+
+      setSelectedItemIds((currentIds) =>
+        currentIds.includes(itemId)
+          ? currentIds.filter((id) => id !== itemId)
+          : [...currentIds, itemId]
+      );
+    },
+    [openedSection?.name, sectionItems.video]
+  );
 
   const handleSave = useCallback(async () => {
     if (!openedSection) {
@@ -276,9 +298,17 @@ export const useAdminMainPageLayout = () => {
         setSaveErrorMsg("Select a project to manage catalogue order.");
         return;
       }
+      const idsToSave =
+        sectionName === "video"
+          ? selectedItemIds.filter((id) =>
+              (sectionItems.video || []).some(
+                (item) => item._id === id && isPublishedLayoutItem(item)
+              )
+            )
+          : selectedItemIds;
       const saveResult = await updateMainPageLayoutSection(
         sectionName,
-        selectedItemIds,
+        idsToSave,
         sectionName === "catalogues" ? { projectId: selectedProject?._id } : {}
       );
 
@@ -300,7 +330,13 @@ export const useAdminMainPageLayout = () => {
     } finally {
       setIsSaving(false);
     }
-  }, [handleClose, openedSection, selectedItemIds, selectedProject?._id]);
+  }, [
+    handleClose,
+    openedSection,
+    sectionItems.video,
+    selectedItemIds,
+    selectedProject?._id,
+  ]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -393,7 +429,8 @@ export const useAdminMainPageLayout = () => {
   const getSectionPreviewItems = useCallback(
     (sectionName: string) => {
       let sectionPreviewData = sortHomepageItems(
-        sectionItems[sectionName] || []
+        sectionItems[sectionName] || [],
+        { publishedOnly: sectionName === "video" }
       );
       if (sectionName === "catalogues" && selectedProject?._id) {
         sectionPreviewData = sectionPreviewData.filter(

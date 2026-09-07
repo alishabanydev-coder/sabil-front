@@ -42,7 +42,7 @@ const NavbarCapacitor = ({
         }}
       >
         <Image
-          src="/new-logo.png"
+          src="/new-logo.webp"
           alt="sabeel kids logo"
           fill
           sizes="80px"
@@ -170,7 +170,7 @@ const NavbarCapacitor = ({
         </IconButton>
 
         <Avatar
-          src="/userAvatar.png"
+          src="/userAvatar.webp"
           alt="avatar"
           sx={{
             width: 50,

@@ -16,6 +16,7 @@ export type AppManagementVideoRecord = {
   title: string;
   thumbnail: string;
   projectId: string;
+  isPublished?: boolean;
 };
 
 export type AppManagementProjectPreviewData = {
@@ -31,4 +32,5 @@ export type AppManagementModalItem = {
   title: string;
   image: string;
   projectId?: string;
+  isPublished?: boolean;
 };

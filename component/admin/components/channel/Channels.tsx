@@ -280,6 +280,7 @@ const Channels = () => {
                               }}
                               whileHover={{ y: -4, scale: 1.01 }}
                               sx={{
+                                position: "relative",
                                 width: 180,
                                 gap: 1,
                                 alignItems: "center",

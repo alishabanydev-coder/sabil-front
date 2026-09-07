@@ -11,6 +11,7 @@ export type MainPageLayoutItem = {
   homepageOrder?: number | null;
   projectId?: string;
   text?: string;
+  isPublished?: boolean;
   [key: string]: unknown;
 };
 

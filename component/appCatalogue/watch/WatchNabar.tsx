@@ -32,7 +32,7 @@ const WatchNabar = () => {
           },
         }}
       >
-        <Image src="/new-logo.png" alt="logo" width={80} height={80} />
+        <Image src="/new-logo.webp" alt="logo" width={80} height={80} />
       </Stack>
       <Stack>
         <IconButton

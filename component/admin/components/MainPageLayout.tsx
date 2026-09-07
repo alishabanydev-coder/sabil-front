@@ -324,15 +324,24 @@ const MainPageLayout = () => {
                 }}
               >
                 {modalItems.map((item) => {
-                  const isSelected = selectedItemIds.includes(item._id);
+                  const isUnpublished =
+                    openedSection?.name === "video" &&
+                    item.isPublished === false;
+                  const isSelected =
+                    !isUnpublished && selectedItemIds.includes(item._id);
                   const selectedOrder = isSelected
                     ? selectedItemIds.indexOf(item._id) + 1
                     : null;
                   return (
                     <Stack
                       key={item._id}
-                      onClick={() => toggleItemSelection(item._id)}
+                      onClick={() => {
+                        if (!isUnpublished) {
+                          toggleItemSelection(item._id);
+                        }
+                      }}
                       sx={{
+                        position: "relative",
                         width: 250,
                         height: 180,
                         p: 1,
@@ -343,8 +352,11 @@ const MainPageLayout = () => {
                               : theme.palette.divider
                           }`,
                         borderRadius: 1,
-                        cursor: "pointer",
+                        cursor: isUnpublished ? "not-allowed" : "pointer",
                         bgcolor: isSelected ? "action.selected" : "transparent",
+                        filter: isUnpublished ? "grayscale(100%)" : "none",
+                        opacity: isUnpublished ? 0.55 : 1,
+                        overflow: "hidden",
                       }}
                     >
                       {openedSection?.header ? (
@@ -355,6 +367,7 @@ const MainPageLayout = () => {
                             aspectRatio: "16 / 9",
                             objectFit: "contain",
                             borderRadius: 8,
+                            filter: isUnpublished ? "blur(1px)" : "none",
                           }}
                         />
                       ) : (
@@ -374,6 +387,7 @@ const MainPageLayout = () => {
                           checked={isSelected}
                           onClick={(event) => event.stopPropagation()}
                           onChange={() => toggleItemSelection(item._id)}
+                          disabled={isSaving || isUnpublished}
                         />
                         <Typography
                           sx={{
@@ -397,6 +411,31 @@ const MainPageLayout = () => {
                           </Typography>
                         ) : null}
                       </Stack>
+                      {isUnpublished ? (
+                        <Stack
+                          sx={{
+                            position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            textAlign: "center",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "text.secondary",
+                              fontWeight: 700,
+                            }}
+                          >
+                            Hidden from public
+                          </Typography>
+                        </Stack>
+                      ) : null}
                     </Stack>
                   );
                 })}
@@ -429,6 +468,7 @@ const MainPageLayout = () => {
           )}
         </Stack>
       </Modal>
+      
       <Menu
         anchorEl={menuElRef.current}
         open={openProjectMenu}

@@ -78,6 +78,9 @@ function normalizeSectionItem(section, item) {
     return {
       ...item,
       thumbnail: normalizeAssetUrl(item.thumbnail),
+      ...(section === "video"
+        ? { isPublished: item.isPublished !== false }
+        : {}),
       ...(section === "projects"
         ? {
             characters: Array.isArray(item.characters)

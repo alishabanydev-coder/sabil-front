@@ -126,7 +126,9 @@ const HomeManageModal = ({
                   : undefined;
               const projectLogo = project?.image || item.image;
               const projectName = project?.name || "Project";
-              const isSelected = modalSelectedIds.includes(item.id);
+              const isUnpublished = item.isPublished === false;
+              const isSelected =
+                !isUnpublished && modalSelectedIds.includes(item.id);
               const selectedOrder = isSelected
                 ? modalSelectedIds.indexOf(item.id) + 1
                 : null;
@@ -134,8 +136,13 @@ const HomeManageModal = ({
               return (
                 <Stack
                   key={item.id}
-                  onClick={() => toggleModalSelection(item.id)}
+                  onClick={() => {
+                    if (!isUnpublished) {
+                      toggleModalSelection(item.id);
+                    }
+                  }}
                   sx={{
+                    position: "relative",
                     width: 250,
                     height: 180,
                     border: (theme) =>
@@ -145,8 +152,11 @@ const HomeManageModal = ({
                           : theme.palette.divider
                       }`,
                     borderRadius: 1,
-                    cursor: "pointer",
+                    cursor: isUnpublished ? "not-allowed" : "pointer",
                     bgcolor: isSelected ? "action.selected" : "transparent",
+                    filter: isUnpublished ? "grayscale(100%)" : "none",
+                    opacity: isUnpublished ? 0.55 : 1,
+                    overflow: "hidden",
                   }}
                 >
                   <img
@@ -157,6 +167,7 @@ const HomeManageModal = ({
                       aspectRatio: "16 / 9",
                       objectFit: "contain",
                       borderRadius: 8,
+                      filter: isUnpublished ? "blur(1px)" : "none",
                     }}
                   />
                   <Stack
@@ -171,7 +182,7 @@ const HomeManageModal = ({
                       checked={isSelected}
                       onClick={(event) => event.stopPropagation()}
                       onChange={() => toggleModalSelection(item.id)}
-                      disabled={saving}
+                      disabled={saving || isUnpublished}
                     />
                     <Image
                       src={projectLogo}
@@ -205,6 +216,31 @@ const HomeManageModal = ({
                       </Typography>
                     ) : null}
                   </Stack>
+                  {isUnpublished ? (
+                    <Stack
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "text.secondary",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Hidden from public
+                      </Typography>
+                    </Stack>
+                  ) : null}
                 </Stack>
               );
             })}

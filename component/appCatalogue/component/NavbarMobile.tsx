@@ -38,7 +38,7 @@ const NavbarMobile = ({
       >
         <Image
           className="logo"
-          src="/new-logo.png"
+          src="/new-logo.webp"
           alt="sabeel kids logo"
           width={60}
           height={60}
@@ -98,7 +98,7 @@ const NavbarMobile = ({
         </IconButton>
 
         <Avatar
-          src="/userAvatar.png"
+          src="/userAvatar.webp"
           alt="avatar"
           sx={{
             width: 32,

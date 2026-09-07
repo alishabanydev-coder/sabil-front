@@ -24,7 +24,7 @@ const WatchLayout = ({ children }: { children: React.ReactNode }) => {
         backgroundImage: useGradient
           ? APP_GRADIENT
           : usePhoto
-            ? "url(/application-background.png)"
+            ? "url(/application-background.webp)"
             : "none",
         backgroundSize: "contain",
         backgroundPosition: "top",

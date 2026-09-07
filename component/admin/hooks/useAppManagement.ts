@@ -31,6 +31,16 @@ function existingRecordIds<T extends { _id: string }>(
   return selectedIds.filter((id) => existingIds.has(String(id)));
 }
 
+function isPublishedVideo(video: { isPublished?: boolean }) {
+  return video.isPublished !== false;
+}
+
+function publishedRecords<T extends { _id: string; isPublished?: boolean }>(
+  records: T[]
+) {
+  return records.filter(isPublishedVideo);
+}
+
 export const useAppManagement = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -132,7 +142,7 @@ export const useAppManagement = () => {
               Array.isArray(homeVideosResult.manualVideoIds)
                 ? homeVideosResult.manualVideoIds
                 : [],
-              loadedVideos
+              publishedRecords(loadedVideos)
             )
           );
           setAvailableVideos(loadedVideos);
@@ -148,11 +158,13 @@ export const useAppManagement = () => {
               Array.isArray(suggestedVideosResult.videoIds)
                 ? suggestedVideosResult.videoIds
                 : [],
-              loadedVideos.length > 0
-                ? loadedVideos
-                : Array.isArray(suggestedVideosResult.availableVideos)
-                  ? suggestedVideosResult.availableVideos
-                  : []
+              publishedRecords(
+                loadedVideos.length > 0
+                  ? loadedVideos
+                  : Array.isArray(suggestedVideosResult.availableVideos)
+                    ? suggestedVideosResult.availableVideos
+                    : []
+              )
             )
           );
         }
@@ -168,7 +180,10 @@ export const useAppManagement = () => {
               : [];
             nextFeaturedByProject[project._id] =
               loadedVideos.length > 0
-                ? existingRecordIds(storedFeaturedIds, loadedVideos)
+                ? existingRecordIds(
+                    storedFeaturedIds,
+                    publishedRecords(loadedVideos)
+                  )
                 : storedFeaturedIds;
           });
           setFeaturedVideoIdsByProject(nextFeaturedByProject);
@@ -220,6 +235,7 @@ export const useAppManagement = () => {
         title: item.title,
         image: item.thumbnail,
         projectId: item.projectId,
+        isPublished: item.isPublished,
       }));
     }
 
@@ -229,6 +245,7 @@ export const useAppManagement = () => {
         title: item.title,
         image: item.thumbnail,
         projectId: item.projectId,
+        isPublished: item.isPublished,
       }));
     }
 
@@ -240,6 +257,7 @@ export const useAppManagement = () => {
           title: item.title,
           image: item.thumbnail,
           projectId: item.projectId,
+          isPublished: item.isPublished,
         }));
     }
 
@@ -264,9 +282,14 @@ export const useAppManagement = () => {
     ]
   );
 
+  const publishedAvailableVideos = useMemo(
+    () => publishedRecords(availableVideos),
+    [availableVideos]
+  );
+
   const previewVideos = useMemo(() => {
     const videosMap = new Map(
-      availableVideos.map((video) => [video._id, video])
+      publishedAvailableVideos.map((video) => [video._id, video])
     );
     const previouslySelectedVideos = manualVideoIds
       .map((id) => videosMap.get(id))
@@ -275,11 +298,11 @@ export const useAppManagement = () => {
     if (isRandomVideosSelected) {
       return previouslySelectedVideos.length > 0
         ? previouslySelectedVideos
-        : availableVideos;
+        : publishedAvailableVideos;
     }
 
     return previouslySelectedVideos;
-  }, [availableVideos, isRandomVideosSelected, manualVideoIds]);
+  }, [isRandomVideosSelected, manualVideoIds, publishedAvailableVideos]);
 
   const projectById = useMemo(() => {
     const projectMap = new Map<string, AppManagementProjectPreviewData>();
@@ -316,8 +339,10 @@ export const useAppManagement = () => {
     () =>
       activeNavId === "home"
         ? []
-        : availableVideos.filter((video) => video.projectId === activeNavId),
-    [activeNavId, availableVideos]
+        : publishedAvailableVideos.filter(
+            (video) => video.projectId === activeNavId
+          ),
+    [activeNavId, publishedAvailableVideos]
   );
 
   const displayVideos =
@@ -325,7 +350,7 @@ export const useAppManagement = () => {
 
   const railVideos = useMemo(() => {
     const videosMap = new Map(
-      availableVideos.map((video) => [video._id, video])
+      publishedAvailableVideos.map((video) => [video._id, video])
     );
 
     if (activeNavId === "home") {
@@ -339,8 +364,8 @@ export const useAppManagement = () => {
       .filter((video): video is AppManagementVideoRecord => Boolean(video));
   }, [
     activeNavId,
-    availableVideos,
     featuredVideoIdsByProject,
+    publishedAvailableVideos,
     suggestedVideoIds,
   ]);
 
@@ -352,16 +377,16 @@ export const useAppManagement = () => {
     }
     if (section.name === "homeVideo") {
       setDraftManualVideoIds(
-        existingRecordIds(manualVideoIds, availableVideos)
+        existingRecordIds(manualVideoIds, publishedAvailableVideos)
       );
     }
     if (section.name === "suggestedVideo") {
       setDraftRailVideoIds(
-        existingRecordIds(suggestedVideoIds, availableVideos)
+        existingRecordIds(suggestedVideoIds, publishedAvailableVideos)
       );
     }
     if (section.name === "featuredVideo") {
-      const channelVideos = availableVideos.filter(
+      const channelVideos = publishedAvailableVideos.filter(
         (video) => video.projectId === activeNavId
       );
       setDraftRailVideoIds(
@@ -405,13 +430,17 @@ export const useAppManagement = () => {
     setDraftSelectedProjectIds(
       existingRecordIds(selectedProjectIds, availableProjects)
     );
-    setDraftManualVideoIds(existingRecordIds(manualVideoIds, availableVideos));
+    setDraftManualVideoIds(
+      existingRecordIds(manualVideoIds, publishedAvailableVideos)
+    );
     setDraftRailVideoIds(
       activeNavId === "home"
-        ? existingRecordIds(suggestedVideoIds, availableVideos)
+        ? existingRecordIds(suggestedVideoIds, publishedAvailableVideos)
         : existingRecordIds(
             featuredVideoIdsByProject[activeNavId] || [],
-            availableVideos.filter((video) => video.projectId === activeNavId)
+            publishedAvailableVideos.filter(
+              (video) => video.projectId === activeNavId
+            )
           )
     );
     setOpen(false);
@@ -454,6 +483,10 @@ export const useAppManagement = () => {
     const isSelected = modalSelectedIds.includes(id);
     if (selectedSection?.name === "navBtn") {
       handleProjectToggle(id, !isSelected);
+      return;
+    }
+    const modalItem = modalItems.find((item) => item.id === id);
+    if (modalItem && !isPublishedVideo(modalItem)) {
       return;
     }
     if (selectedSection?.name === "homeVideo") {
@@ -512,7 +545,7 @@ export const useAppManagement = () => {
       mode: isRandomVideosSelected ? "random" : "manual",
       manualVideoIds: existingRecordIds(
         draftManualVideoIds,
-        availableVideos
+        publishedAvailableVideos
       ),
     });
     setSaving(false);
@@ -562,7 +595,7 @@ export const useAppManagement = () => {
     setSuccessMsg("");
 
     const result = await updateAdminAppCatalogueSuggestedVideos({
-      videoIds: existingRecordIds(draftRailVideoIds, availableVideos),
+      videoIds: existingRecordIds(draftRailVideoIds, publishedAvailableVideos),
     });
     setSaving(false);
 
@@ -574,13 +607,13 @@ export const useAppManagement = () => {
     setSuggestedVideoIds(
       existingRecordIds(
         Array.isArray(result.videoIds) ? result.videoIds : [],
-        availableVideos
+        publishedAvailableVideos
       )
     );
     setDraftRailVideoIds(
       existingRecordIds(
         Array.isArray(result.videoIds) ? result.videoIds : [],
-        availableVideos
+        publishedAvailableVideos
       )
     );
     await revalidateAppCataloguePublicData();
@@ -598,7 +631,7 @@ export const useAppManagement = () => {
     setErrorMsg("");
     setSuccessMsg("");
 
-    const channelVideos = availableVideos.filter(
+    const channelVideos = publishedAvailableVideos.filter(
       (video) => video.projectId === activeNavId
     );
     const result = await updateAdminProjectFeaturedVideos(activeNavId, {

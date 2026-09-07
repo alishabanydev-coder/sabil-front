@@ -56,6 +56,7 @@ function normalizeVideo(video) {
   return {
     ...video,
     thumbnail: normalizeAssetUrl(video.thumbnail),
+    isPublished: video.isPublished !== false,
   };
 }
 

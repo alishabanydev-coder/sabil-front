@@ -72,7 +72,7 @@ const NavbarDesktop = ({
         position: "relative",
         width: "100%",
         aspectRatio: "1447 / 480",
-        backgroundImage: "url(/application-background.png)",
+        backgroundImage: "url(/application-background.webp)",
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -175,7 +175,7 @@ const NavbarDesktop = ({
           </Button>
 
           <Avatar
-            src="/userAvatar.png"
+            src="/userAvatar.webp"
             alt="avatar"
             sx={{
               cursor: "pointer",
@@ -217,9 +217,9 @@ const NavbarDesktop = ({
         >
           <Image
             className="logo"
-            src="/new-logo.png"
+            src="/new-logo.webp"
             alt="sabeel kids logo"
-            width={72}
+            width={72}  
             height={72}
           />
           <Stack
@@ -319,7 +319,7 @@ const NavbarDesktop = ({
             width: "100%",
             aspectRatio: "1448 / 460",
             minHeight: { sm: 260, md: 340 },
-            backgroundImage: "url(/featuredBackground.png)",
+            backgroundImage: "url(/featuredBackground.webp)",
             backgroundSize: "100% 100%",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
