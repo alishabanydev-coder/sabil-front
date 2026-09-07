@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Skeleton, Stack, Typography } from "@mui/material";
+import { Button, Divider, Skeleton, Stack, Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import type { AppManagementVideoRecord } from "@/types/admin";
@@ -38,18 +38,25 @@ const SuggestedVideosSwiper = ({
         px: 2,
         "& .swiper": {
           width: "100%",
+          py: 1.5,
         },
         "& .swiper-slide": {
           width: "auto",
           height: SLIDE_HEIGHT,
+          aspectRatio: "16 / 9",
+          overflow: "hidden",
+          borderRadius: 3,
+          boxShadow: 5,
         },
       }}
     >
-      <Stack sx={{ alignItems: "center" }}>
-        <Button variant="contained" color="primary" onClick={onAdd}>
-          {addLabel}
-        </Button>
-      </Stack>
+      <Divider flexItem sx={{ width: "95%", mx: "auto" }}>
+        <Stack sx={{ alignItems: "center" }}>
+          <Button variant="contained" color="primary" onClick={onAdd}>
+            {addLabel}
+          </Button>
+        </Stack>
+      </Divider>
 
       {loading ? (
         <Stack direction="row" sx={{ gap: 1.5, overflow: "hidden" }}>
@@ -105,10 +112,6 @@ const SuggestedVideosSwiper = ({
                 sx={{
                   position: "relative",
                   height: SLIDE_HEIGHT,
-                  aspectRatio: "16 / 9",
-                  overflow: "hidden",
-                  borderRadius: 2,
-                  boxShadow: 1,
                   cursor: "pointer",
                   "&:hover .suggested-video-name, &:focus-visible .suggested-video-name":
                     {
@@ -123,7 +126,7 @@ const SuggestedVideosSwiper = ({
                   style={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "cover",
+                    objectFit: "contain",
                     display: "block",
                   }}
                 />
@@ -138,7 +141,7 @@ const SuggestedVideosSwiper = ({
                     py: 0.75,
                     boxSizing: "border-box",
                     bgcolor: "rgba(0, 0, 0, 0.55)",
-                    transform: "translateY(100%)",
+                    transform: "translateY(102%)",
                     transition: "transform 0.3s ease",
                   }}
                 >

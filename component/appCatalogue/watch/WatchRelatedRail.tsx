@@ -10,7 +10,6 @@ import type { WatchCatalogueVideo } from "./buildWatchRelatedVideos";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
 //FIXME: add switch button to toggle between Urdo and English in videoPage and SabeelToons.
-//FIXME: add Admin panel for the Featured Videos and Swiper videos in HomePage.
 
 const SKELETON_COUNT = 6;
 const MOBILE_SKELETON_COUNT = 4;

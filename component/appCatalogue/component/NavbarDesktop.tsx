@@ -311,315 +311,322 @@ const NavbarDesktop = ({
       </Stack>
 
       {isHome && (
-      <Stack
-        sx={{
-          position: "absolute",
-          bottom: { sm: -110, md: -100, lg: -80 },
-          left: 0,
-          width: "100%",
-          aspectRatio: "1448 / 460",
-          minHeight: { sm: 260, md: 340 },
-          backgroundImage: "url(/featuredBackground.png)",
-          backgroundSize: "100% 100%",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
         <Stack
           sx={{
-            position: "relative",
+            position: "absolute",
+            bottom: { sm: -110, md: -100, lg: -80 },
+            left: 0,
             width: "100%",
             aspectRatio: "1448 / 460",
             minHeight: { sm: 260, md: 340 },
-            "& .swiper": {
-              width: "100%",
-              height: "100%",
-            },
-            "& .swiper-slide": {
+            backgroundImage: "url(/featuredBackground.png)",
+            backgroundSize: "100% 100%",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+          <Stack
+            sx={{
               position: "relative",
-              bgcolor: "#fff",
-              height: "auto",
-              aspectRatio: "16 / 9",
-              alignSelf: "center",
-              borderRadius: "14px",
-              transitionProperty: "transform, opacity",
-              overflow: "hidden",
-              border: (theme) => `1px solid ${theme.palette.secondary.main}`,
-              cursor: "pointer",
-              boxShadow: 3,
-              "& .play-button": {
-                opacity: 0,
-                visibility: "hidden",
-                borderRadius: "50%",
+              width: "100%",
+              aspectRatio: "1448 / 460",
+              minHeight: { sm: 260, md: 340 },
+              "& .swiper": {
+                width: "100%",
+                height: "100%",
+              },
+              "& .swiper-slide": {
+                position: "relative",
                 bgcolor: "#fff",
-                width: "18%",
-                aspectRatio: "1 / 1",
+                height: "auto",
+                aspectRatio: "16 / 9",
+                alignSelf: "center",
+                borderRadius: "14px",
+                transitionProperty: "transform, opacity",
+                overflow: "hidden",
+                border: (theme) => `1px solid ${theme.palette.secondary.main}`,
+                cursor: "pointer",
+                boxShadow: 3,
+                "& .play-button": {
+                  opacity: 0,
+                  visibility: "hidden",
+                  borderRadius: "50%",
+                  bgcolor: "#fff",
+                  width: "18%",
+                  aspectRatio: "1 / 1",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  border: (theme) => `5px solid ${theme.palette.primary.main}`,
+                  transition: "all 0.3s ease",
+                  boxShadow: (theme) => theme.shadows[10],
+                },
+                "&.swiper-slide-active": { boxShadow: 10 },
+                "&.swiper-slide-active .play-button": {
+                  opacity: 1,
+                  visibility: "visible",
+                },
+                "&:hover .play-button": {
+                  transform: "scale(1.05)",
+                  boxShadow: (theme) => theme.shadows[20],
+                },
+              },
+              "& .swiper-slide img": { objectFit: "contain" },
+              "& .swiper-pagination-desktop": {
+                position: "static !important",
+                inset: "auto !important",
+                width: "auto !important",
+                transform: "none !important",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                border: (theme) => `5px solid ${theme.palette.primary.main}`,
-                transition: "all 0.3s ease",
-                boxShadow: (theme) => theme.shadows[10],
               },
-              "&.swiper-slide-active": { boxShadow: 10 },
-              "&.swiper-slide-active .play-button": {
+              "& .swiper-pagination-bullet": {
+                width: 8,
+                height: 8,
+                display: "inline-block",
+                borderRadius: "50%",
+                margin: "0 4px",
+                bgcolor: "secondary.main",
                 opacity: 1,
-                visibility: "visible",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                flexShrink: 0,
               },
-              "&:hover .play-button": {
-                transform: "scale(1.05)",
-                boxShadow: (theme) => theme.shadows[20],
+              "& .swiper-pagination-bullet-active": {
+                bgcolor: "primary.main",
+                borderRadius: "14px",
+                width: 40,
+                height: 10,
               },
-            },
-            "& .swiper-slide img": { objectFit: "contain" },
-            "& .swiper-pagination-desktop": {
-              position: "static !important",
-              inset: "auto !important",
-              width: "auto !important",
-              transform: "none !important",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            },
-            "& .swiper-pagination-bullet": {
-              width: 8,
-              height: 8,
-              display: "inline-block",
-              borderRadius: "50%",
-              margin: "0 4px",
-              bgcolor: "secondary.main",
-              opacity: 1,
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              flexShrink: 0,
-            },
-            "& .swiper-pagination-bullet-active": {
-              bgcolor: "primary.main",
-              borderRadius: "14px",
-              width: 40,
-              height: 10,
-            },
-          }}
-        >
-          {isReady ? (
-            <>
-              <Box
-                ref={prevElRef}
-                className="featured-swiper-prev-desktop"
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  bottom: 0,
-                  my: "auto",
-                  left: { sm: 30, md: 40, lg: 50 },
-                  zIndex: 20,
-                  width: { sm: 35, md: 40, lg: 45 },
-                  height: { sm: 35, md: 40, lg: 45 },
-                  borderRadius: "50%",
-                  bgcolor: "secondary.main",
-                  border: "1px solid white",
-                  color: "#fff",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                    boxShadow: (t) => t.shadows[10],
-                  },
-                }}
-              >
-                <NavigateBeforeRoundedIcon
-                  sx={{ fontSize: { sm: 26, md: 34, lg: 42 } }}
-                />
-              </Box>
-
-              <Box
-                ref={nextElRef}
-                className="featured-swiper-next-desktop"
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  bottom: 0,
-                  my: "auto",
-                  right: { sm: 30, md: 40, lg: 50 },
-                  zIndex: 20,
-                  width: { sm: 35, md: 40, lg: 45 },
-                  height: { sm: 35, md: 40, lg: 45 },
-                  borderRadius: "50%",
-                  bgcolor: "secondary.main",
-                  border: "1px solid white",
-                  color: "#fff",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                    boxShadow: (t) => t.shadows[10],
-                  },
-                }}
-              >
-                <NavigateNextRoundedIcon
-                  sx={{ fontSize: { sm: 26, md: 34, lg: 42 } }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  position: "absolute",
-                  left: 0,
-                  bottom: 35,
-                  zIndex: 10,
-                }}
-              >
+            }}
+          >
+            {isReady ? (
+              <>
                 <Box
-                  ref={paginationRef}
-                  className="swiper-pagination-desktop"
-                />
-              </Box>
-              {swiperMounted ? (
-                <Swiper
-                  modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
-                  autoplay={{ delay: 2500, disableOnInteraction: false }}
-                  navigation={{
-                    nextEl: nextElRef.current,
-                    prevEl: prevElRef.current,
+                  ref={prevElRef}
+                  className="featured-swiper-prev-desktop"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    my: "auto",
+                    left: { sm: 30, md: 40, lg: 50 },
+                    zIndex: 20,
+                    width: { sm: 35, md: 40, lg: 45 },
+                    height: { sm: 35, md: 40, lg: 45 },
+                    borderRadius: "50%",
+                    bgcolor: "secondary.main",
+                    border: "1px solid white",
+                    color: "#fff",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    transition: "transform 0.3s ease",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                      boxShadow: (t) => t.shadows[10],
+                    },
                   }}
-                  pagination={{
-                    clickable: true,
-                    el: paginationRef.current,
-                  }}
-                  observer
-                  observeParents
-                  observeSlideChildren
-                  effect="coverflow"
-                  centeredSlides
-                  loop={suggestedVideos.length >= 5}
-                  slidesPerView={3.6}
-                  watchSlidesProgress
-                  onBeforeInit={(swiper) => {
-                    const navigation = swiper.params.navigation;
-                    const pagination = swiper.params.pagination;
-                    if (navigation && typeof navigation !== "boolean") {
-                      navigation.prevEl = prevElRef.current;
-                      navigation.nextEl = nextElRef.current;
-                    }
-                    if (pagination && typeof pagination !== "boolean") {
-                      pagination.el = paginationRef.current;
-                    }
-                  }}
-                  onProgress={(swiper) => {
-                    swiper.slides.forEach((slideEl) => {
-                      const progress =
-                        (slideEl as HTMLElement & { progress?: number })
-                          .progress ?? 0;
-                      const opacity = Math.min(
-                        Math.max(3 - Math.abs(progress), 0),
-                        1
-                      );
-                      slideEl.style.opacity = String(opacity);
-                    });
-                  }}
-                  coverflowEffect={{
-                    rotate: 0,
-                    stretch: "10%",
-                    depth: 350,
-                    modifier: 1,
-                    slideShadows: false,
-                  }}
-                  onSwiper={(swiper) => {
-                    const update = () => relayoutFeaturedSwiper(swiper);
-                    requestAnimationFrame(() => requestAnimationFrame(update));
-                    window.setTimeout(update, 120);
-
-                    const container = swiper.el;
-                    if (typeof ResizeObserver === "undefined" || !container) {
-                      return;
-                    }
-
-                    const observer = new ResizeObserver(() => {
-                      relayoutFeaturedSwiper(swiper);
-                    });
-                    observer.observe(container);
-                    swiper.on("destroy", () => observer.disconnect());
-                  }}
-                  onResize={(swiper) => relayoutFeaturedSwiper(swiper)}
                 >
-                  {suggestedVideos.map((video) => (
-                    <SwiperSlide
-                      key={video._id}
-                      onClick={() => router.push(`/app/watch/${video._id}`)}
-                    >
-                      <Image
-                        src={video.thumbnail}
-                        alt={video.title}
-                        fill
-                        sizes="(max-width: 1200px) 40vw, 28vw"
-                        style={{ objectFit: "contain" }}
-                      />
-                      <Stack
-                        sx={{
-                          position: "absolute",
-                          inset: 0,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Box className="play-button">
-                          <PlayArrowRoundedIcon
-                            color="secondary"
-                            sx={{ fontSize: { sm: 48, md: 64, lg: 75 } }}
-                          />
-                        </Box>
-                      </Stack>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              ) : (
+                  <NavigateBeforeRoundedIcon
+                    sx={{ fontSize: { sm: 26, md: 34, lg: 42 }, pr: 0.6 }}
+                  />
+                </Box>
+
+                <Box
+                  ref={nextElRef}
+                  className="featured-swiper-next-desktop"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    my: "auto",
+                    right: { sm: 30, md: 40, lg: 50 },
+                    zIndex: 20,
+                    width: { sm: 35, md: 40, lg: 45 },
+                    height: { sm: 35, md: 40, lg: 45 },
+                    borderRadius: "50%",
+                    bgcolor: "secondary.main",
+                    border: "1px solid white",
+                    color: "#fff",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    transition: "transform 0.3s ease",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                      boxShadow: (t) => t.shadows[10],
+                    },
+                  }}
+                >
+                  <NavigateNextRoundedIcon
+                    sx={{ fontSize: { sm: 26, md: 34, lg: 42 } }}
+                  />
+                </Box>
+
                 <Box
                   sx={{
                     width: "100%",
-                    height: "100%",
                     display: "flex",
-                    alignItems: "center",
                     justifyContent: "center",
+                    position: "absolute",
+                    left: 0,
+                    bottom: 35,
+                    zIndex: 10,
                   }}
                 >
-                  <Skeleton
-                    variant="rounded"
-                    width="70%"
-                    height="65%"
-                    sx={{ borderRadius: 3 }}
+                  <Box
+                    ref={paginationRef}
+                    className="swiper-pagination-desktop"
                   />
                 </Box>
-              )}
-            </>
-          ) : (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Skeleton
-                variant="rounded"
-                width="70%"
-                height="65%"
-                sx={{ borderRadius: 3 }}
-              />
-            </Box>
-          )}
+                {swiperMounted ? (
+                  <Swiper
+                    modules={[
+                      EffectCoverflow,
+                      Navigation,
+                      Pagination,
+                      Autoplay,
+                    ]}
+                    autoplay={{ delay: 2500, disableOnInteraction: false }}
+                    navigation={{
+                      nextEl: nextElRef.current,
+                      prevEl: prevElRef.current,
+                    }}
+                    pagination={{
+                      clickable: true,
+                      el: paginationRef.current,
+                    }}
+                    observer
+                    observeParents
+                    observeSlideChildren
+                    effect="coverflow"
+                    centeredSlides
+                    loop={suggestedVideos.length >= 5}
+                    slidesPerView={3.6}
+                    watchSlidesProgress
+                    onBeforeInit={(swiper) => {
+                      const navigation = swiper.params.navigation;
+                      const pagination = swiper.params.pagination;
+                      if (navigation && typeof navigation !== "boolean") {
+                        navigation.prevEl = prevElRef.current;
+                        navigation.nextEl = nextElRef.current;
+                      }
+                      if (pagination && typeof pagination !== "boolean") {
+                        pagination.el = paginationRef.current;
+                      }
+                    }}
+                    onProgress={(swiper) => {
+                      swiper.slides.forEach((slideEl) => {
+                        const progress =
+                          (slideEl as HTMLElement & { progress?: number })
+                            .progress ?? 0;
+                        const opacity = Math.min(
+                          Math.max(3 - Math.abs(progress), 0),
+                          1
+                        );
+                        slideEl.style.opacity = String(opacity);
+                      });
+                    }}
+                    coverflowEffect={{
+                      rotate: 0,
+                      stretch: "10%",
+                      depth: 350,
+                      modifier: 1,
+                      slideShadows: false,
+                    }}
+                    onSwiper={(swiper) => {
+                      const update = () => relayoutFeaturedSwiper(swiper);
+                      requestAnimationFrame(() =>
+                        requestAnimationFrame(update)
+                      );
+                      window.setTimeout(update, 120);
+
+                      const container = swiper.el;
+                      if (typeof ResizeObserver === "undefined" || !container) {
+                        return;
+                      }
+
+                      const observer = new ResizeObserver(() => {
+                        relayoutFeaturedSwiper(swiper);
+                      });
+                      observer.observe(container);
+                      swiper.on("destroy", () => observer.disconnect());
+                    }}
+                    onResize={(swiper) => relayoutFeaturedSwiper(swiper)}
+                  >
+                    {suggestedVideos.map((video) => (
+                      <SwiperSlide
+                        key={video._id}
+                        onClick={() => router.push(`/app/watch/${video._id}`)}
+                      >
+                        <Image
+                          src={video.thumbnail}
+                          alt={video.title}
+                          fill
+                          sizes="(max-width: 1200px) 40vw, 28vw"
+                          style={{ objectFit: "contain" }}
+                        />
+                        <Stack
+                          sx={{
+                            position: "absolute",
+                            inset: 0,
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Box className="play-button">
+                            <PlayArrowRoundedIcon
+                              color="secondary"
+                              sx={{ fontSize: { sm: 48, md: 64, lg: 75 } }}
+                            />
+                          </Box>
+                        </Stack>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                ) : (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Skeleton
+                      variant="rounded"
+                      width="70%"
+                      height="65%"
+                      sx={{ borderRadius: 3 }}
+                    />
+                  </Box>
+                )}
+              </>
+            ) : (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Skeleton
+                  variant="rounded"
+                  width="70%"
+                  height="65%"
+                  sx={{ borderRadius: 3 }}
+                />
+              </Box>
+            )}
+          </Stack>
         </Stack>
-      </Stack>
       )}
     </Stack>
   );

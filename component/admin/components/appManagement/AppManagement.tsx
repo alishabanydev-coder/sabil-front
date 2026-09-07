@@ -198,48 +198,58 @@ const AppManagement = () => {
 
           <Stack sx={{ width: "100%", flex: 1, minHeight: 0 }}>
             {activeNavId === "home" ? (
-              <Stack
-                direction="row"
-                sx={{
-                  gap: 2,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  pb: 1,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={openHomeVideosModal}
-                  disabled={isRandomVideosSelected}
+              <Divider flexItem sx={{ width: "95%", mx: "auto" }}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    gap: 2,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    pb: 1,
+                  }}
                 >
-                  Manage Home Videos
-                </Button>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isRandomVideosSelected}
-                      disabled={saving}
-                      onChange={(event) =>
-                        handleRandomModeChange(event.target.checked)
-                      }
-                    />
-                  }
-                  label="Random Videos from Database"
-                />
-              </Stack>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={openHomeVideosModal}
+                    disabled={isRandomVideosSelected}
+                  >
+                    Manage Home Videos
+                  </Button>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isRandomVideosSelected}
+                        disabled={saving}
+                        onChange={(event) =>
+                          handleRandomModeChange(event.target.checked)
+                        }
+                      />
+                    }
+                    label="Random Videos from Database"
+                  />
+                </Stack>
+              </Divider>
             ) : (
               <Stack
                 direction="row"
                 sx={{ justifyContent: "center", alignItems: "center", pb: 1 }}
               >
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  {activeProject?.name || "Project"} Videos
-                </Typography>
+                <Divider flexItem sx={{ width: "95%", mx: "auto" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      fontFamily: "Namecat",
+                      letterSpacing: 2,
+                      color: "primary.main",
+                    }}
+                  >
+                    {activeProject?.name || "Project"} Videos
+                  </Typography>
+                </Divider>
               </Stack>
             )}
-
-            <Divider flexItem sx={{ width: "95%", mx: "auto" }} />
 
             <Stack
               sx={{
