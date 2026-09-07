@@ -175,7 +175,7 @@ const NavbarDesktop = ({
           </Button>
 
           <Avatar
-            src="/userAvatar.webp"
+            src="/userAvatar.png"
             alt="avatar"
             sx={{
               cursor: "pointer",

@@ -170,7 +170,7 @@ const NavbarCapacitor = ({
         </IconButton>
 
         <Avatar
-          src="/userAvatar.webp"
+          src="/userAvatar.png"
           alt="avatar"
           sx={{
             width: 50,

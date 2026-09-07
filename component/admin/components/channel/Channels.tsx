@@ -62,8 +62,6 @@ const Channels = () => {
     videosLoading,
   } = useAdminChannels();
 
-  //FIXME: remove the Unpulished from main page layout and other parts like it's modal and view, and if a video get unpublished what should happen to order and display ?
-
   return (
     <>
       <Stack sx={{ gap: 3, height: "100%" }}>
