@@ -14,13 +14,16 @@ import {
   type ProjectPreviewMap,
 } from "@/component/appCatalogue/watch/enrichWatchRelatedVideos";
 import WatchRelatedRail from "@/component/appCatalogue/watch/WatchRelatedRail";
-import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
+import WatchPlyrPlayer from "@/component/appCatalogue/watch/WatchPlyrPlayer";
 import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import ReactPlayer from "react-player";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
+
+//FIXME: fix this back button in the native fullScreen mode
+//FIXME: when quit fullscreen mode, the player should be paused, and show the play button
+//FIXME: the play in the quit fullscreen mode is normal YOuTube play not ours
 
 const PLAYER_FLEX = 7;
 const RAIL_FLEX = 3;
@@ -55,6 +58,7 @@ const WatchPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [relatedVideos, setRelatedVideos] = useState<WatchCatalogueVideo[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
+  const [playerStarted, setPlayerStarted] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,6 +91,10 @@ const WatchPage = () => {
     return () => {
       cancelled = true;
     };
+  }, [videoId]);
+
+  useEffect(() => {
+    setPlayerStarted(false);
   }, [videoId]);
 
   useEffect(() => {
@@ -174,12 +182,8 @@ const WatchPage = () => {
         boxSizing: "border-box",
         mt: 0,
         pt: { xs: isNative ? 0 : "60px", sm: isNative ? 0 : "60px", md: 0 },
-        justifyContent: isNative
-          ? "flex-end"
-          : { xs: "flex-start", sm: "end" },
-        alignItems: isNative
-          ? "center"
-          : { xs: "stretch", sm: "end" },
+        justifyContent: isNative ? "flex-end" : { xs: "flex-start", sm: "end" },
+        alignItems: isNative ? "center" : { xs: "stretch", sm: "end" },
         flexDirection: "column",
         gap: isNative ? 0.5 : { xs: 0, md: 1 },
         overflow: "hidden",
@@ -221,9 +225,7 @@ const WatchPage = () => {
               display: "inline-flex",
               flexDirection: "column",
               alignItems: "stretch",
-              width: isNative
-                ? "auto"
-                : { xs: "100%", sm: "100%", md: "auto" },
+              width: isNative ? "auto" : { xs: "100%", sm: "100%", md: "auto" },
               height: isNative
                 ? "100%"
                 : { xs: "auto", sm: "auto", md: "100%" },
@@ -235,7 +237,9 @@ const WatchPage = () => {
             <Stack
               sx={{
                 position: "relative",
-                flex: isNative ? "0 1 auto" : { xs: "0 0 auto", sm: "0 0 auto", md: 1 },
+                flex: isNative
+                  ? "0 1 auto"
+                  : { xs: "0 0 auto", sm: "0 0 auto", md: 1 },
                 minHeight: 0,
                 width: isNative ? "auto" : "100%",
                 height: isNative
@@ -281,45 +285,19 @@ const WatchPage = () => {
                     position: "relative",
                     width: "100%",
                     height: "100%",
-                    bgcolor: "#eee",
+                    bgcolor: "#000",
                     border: "1px solid",
                     borderColor: "divider",
                     borderRadius: 4,
-                    "& .react-player__preview": {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                    },
-                    "& video, & iframe": {
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    },
+                    overflow: "hidden",
                   }}
                 >
-                  <ReactPlayer
-                    src={videoUrl}
-                    light={
-                      videoThumbnail ? (
-                        <img
-                          src={videoThumbnail}
-                          alt={video?.title || "Video"}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      ) : (
-                        true
-                      )
-                    }
-                    playIcon={<WatchPlayerPlayIcon />}
-                    previewAriaLabel={`Play ${video?.title || "video"}`}
-                    controls
-                    width="100%"
-                    height="100%"
-                    playing
+                  <WatchPlyrPlayer
+                    url={videoUrl}
+                    thumbnail={videoThumbnail}
+                    title={video?.title}
+                    isNative={isNative}
+                    onStartedChange={setPlayerStarted}
                   />
                 </Stack>
               ) : (
@@ -346,6 +324,7 @@ const WatchPage = () => {
                   position: "absolute",
                   bottom: 0,
                   left: 0,
+                  display: playerStarted ? "none" : "flex",
                   backgroundColor: "rgba(0, 0, 0, 0.3)",
                   px: 1,
                   py: { xs: 2, sm: 1 },

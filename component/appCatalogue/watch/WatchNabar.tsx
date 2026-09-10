@@ -5,6 +5,7 @@ import { ArrowBack } from "@mui/icons-material";
 import { IconButton, Stack } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { shouldIgnoreWatchNavbarBack } from "./suppressWatchNavbarBack";
 
 const WatchNabar = () => {
   const router = useRouter();
@@ -36,7 +37,24 @@ const WatchNabar = () => {
       </Stack>
       <Stack>
         <IconButton
-          onClick={() => (isNative ? router.replace("/app") : router.back())}
+          onClick={() => {
+            if (shouldIgnoreWatchNavbarBack()) {
+              return;
+            }
+
+            if (isNative) {
+              router.replace("/app");
+              return;
+            }
+
+            router.back();
+          }}
+          onPointerUp={(event) => {
+            if (shouldIgnoreWatchNavbarBack()) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+          }}
           sx={{
             bgcolor: "secondary.main",
             color: "white",

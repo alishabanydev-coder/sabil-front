@@ -1,5 +1,37 @@
 @import "plyr/dist/plyr.css";
 
+.watch-plyr {
+  width: 100%;
+  height: 100%;
+}
+
+.watch-plyr--desktop {
+  --plyr-control-icon-size: 22px;
+  --plyr-control-spacing: 12px;
+  --plyr-font-size-base: 15px;
+  --plyr-font-size-time: 14px;
+  --plyr-range-track-height: 6px;
+}
+
+.watch-plyr--native {
+  --plyr-control-icon-size: 20px;
+  --plyr-control-spacing: 10px;
+}
+
+.watch-plyr--native .plyr__control--overlaid {
+  display: none !important;
+}
+
+.watch-plyr--native .plyr--fullscreen-fallback iframe,
+.watch-plyr--native .plyr--fullscreen-fallback .plyr__video-embed,
+.watch-plyr--native .plyr--fullscreen-fallback .plyr__video-wrapper {
+  pointer-events: none !important;
+}
+
+.watch-plyr .plyr--fullscreen-fallback {
+  z-index: 10000000;
+}
+
 @font-face {
   font-family: "Bhel Puri";
   src: url("/fonts/bhel-puri/BhelPuri-BLLjB.otf") format("opentype");

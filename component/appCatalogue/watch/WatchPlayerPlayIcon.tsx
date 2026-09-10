@@ -57,7 +57,7 @@ const WatchPlayerPlayIcon = () => (
         borderColor: "#5e92fc",
         boxShadow: 10,
         transition: "transform 0.2s ease",
-        ".react-player__preview:hover &": {
+        ".react-player__preview:hover &, .watch-player-preview:hover &": {
           transform: "scale(1.08)",
         },
       }}

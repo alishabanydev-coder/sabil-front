@@ -36,6 +36,23 @@ export default function NativeAppBackButton() {
     }
 
     const listenerPromise = App.addListener("backButton", () => {
+      const fallbackFullscreen = document.querySelector(
+        ".plyr--fullscreen-fallback"
+      );
+      const fullscreenButton = fallbackFullscreen?.querySelector(
+        '[data-plyr="fullscreen"]'
+      );
+
+      if (fullscreenButton instanceof HTMLElement) {
+        fullscreenButton.click();
+        return;
+      }
+
+      if (document.fullscreenElement) {
+        void document.exitFullscreen();
+        return;
+      }
+
       const currentPath = pathnameRef.current;
 
       if (!isAppHome(currentPath)) {
