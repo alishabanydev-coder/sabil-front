@@ -36,6 +36,11 @@ export default function NativeAppBackButton() {
     }
 
     const listenerPromise = App.addListener("backButton", () => {
+      if (document.querySelector(".watch-plyr-shell--lifted")) {
+        window.dispatchEvent(new Event("watch-plyr-exit-fullscreen"));
+        return;
+      }
+
       const fallbackFullscreen = document.querySelector(
         ".plyr--fullscreen-fallback"
       );

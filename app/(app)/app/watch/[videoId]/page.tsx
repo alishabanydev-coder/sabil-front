@@ -14,7 +14,9 @@ import {
   type ProjectPreviewMap,
 } from "@/component/appCatalogue/watch/enrichWatchRelatedVideos";
 import WatchRelatedRail from "@/component/appCatalogue/watch/WatchRelatedRail";
-import WatchPlyrPlayer from "@/component/appCatalogue/watch/WatchPlyrPlayer";
+import WatchPlyrPlayer, {
+  FULLSCREEN_ANIM_MS,
+} from "@/component/appCatalogue/watch/WatchPlyrPlayer";
 import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -59,6 +61,7 @@ const WatchPage = () => {
   const [relatedVideos, setRelatedVideos] = useState<WatchCatalogueVideo[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [playerStarted, setPlayerStarted] = useState(false);
+  const [nativeBelowShift, setNativeBelowShift] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -95,6 +98,7 @@ const WatchPage = () => {
 
   useEffect(() => {
     setPlayerStarted(false);
+    setNativeBelowShift(0);
   }, [videoId]);
 
   useEffect(() => {
@@ -298,6 +302,7 @@ const WatchPage = () => {
                     title={video?.title}
                     isNative={isNative}
                     onStartedChange={setPlayerStarted}
+                    onNativeBelowShift={setNativeBelowShift}
                   />
                 </Stack>
               ) : (
@@ -417,6 +422,14 @@ const WatchPage = () => {
           flexShrink: 0,
           width: "100%",
           zIndex: 2,
+          transform: isNative
+            ? `translate3d(0, ${nativeBelowShift}px, 0)`
+            : undefined,
+          transition: isNative
+            ? `transform ${FULLSCREEN_ANIM_MS}ms ${
+                nativeBelowShift > 0 ? "ease-out" : "ease-in"
+              }`
+            : undefined,
           borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
           "&::after": {
             content: '""',
@@ -443,6 +456,14 @@ const WatchPage = () => {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
+          transform: isNative
+            ? `translate3d(0, ${nativeBelowShift}px, 0)`
+            : undefined,
+          transition: isNative
+            ? `transform ${FULLSCREEN_ANIM_MS}ms ${
+                nativeBelowShift > 0 ? "ease-out" : "ease-in"
+              }`
+            : undefined,
         }}
       >
         <WatchRelatedRail

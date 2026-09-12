@@ -9,9 +9,10 @@ import type { PointerEvent } from "react";
 type WatchPlyrFullscreenHudProps = {
   visible: boolean;
   isPlaying: boolean;
+  variant?: "fullscreen" | "inline";
   onSurfaceTap: () => void;
   onTogglePlayback: () => void;
-  onExitFullscreen: () => void;
+  onExitFullscreen?: () => void;
 };
 
 /** Plyr's default center button is ~50px. +5px on both axes. */
@@ -20,10 +21,12 @@ const CENTER_BUTTON_SIZE = 55;
 const WatchPlyrFullscreenHud = ({
   visible,
   isPlaying,
+  variant = "fullscreen",
   onSurfaceTap,
   onTogglePlayback,
   onExitFullscreen,
 }: WatchPlyrFullscreenHudProps) => {
+  const isInline = variant === "inline";
   const handleSurfacePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
@@ -39,7 +42,7 @@ const WatchPlyrFullscreenHud = ({
   const handleExitPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    onExitFullscreen();
+    onExitFullscreen?.();
   };
 
   return (
@@ -48,7 +51,7 @@ const WatchPlyrFullscreenHud = ({
       sx={{
         position: "absolute",
         inset: 0,
-        zIndex: 5,
+        zIndex: 20,
         pointerEvents: "none",
         transform: "translateZ(0)",
       }}
@@ -76,6 +79,7 @@ const WatchPlyrFullscreenHud = ({
         }}
       />
 
+      {!isInline ? (
       <IconButton
         aria-label="Exit fullscreen"
         aria-hidden={!visible}
@@ -101,6 +105,7 @@ const WatchPlyrFullscreenHud = ({
       >
         <ArrowBack sx={{ fontSize: 32 }} />
       </IconButton>
+      ) : null}
 
       <Stack
         component="button"
