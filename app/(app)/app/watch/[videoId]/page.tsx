@@ -23,10 +23,6 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
-//FIXME: fix this back button in the native fullScreen mode
-//FIXME: when quit fullscreen mode, the player should be paused, and show the play button
-//FIXME: the play in the quit fullscreen mode is normal YOuTube play not ours
-
 const PLAYER_FLEX = 7;
 const RAIL_FLEX = 3;
 
@@ -114,7 +110,7 @@ const WatchPage = () => {
       setRelatedLoading(true);
 
       const [allVideosResult, projectPreviews] = await Promise.all([
-        fetchPublicAllVideos({ showInHomepageOnly: true }),
+        fetchPublicAllVideos(),
         fetchPublicProjectPreviews(),
       ]);
 

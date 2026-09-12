@@ -248,7 +248,7 @@ export default function ChannelFeaturedRail({
                   aspectRatio: "16 / 9",
                   borderRadius: 5,
                   overflow: "hidden",
-                  bgcolor: "#fff",
+                  bgcolor: "white",
                   border: "1px solid",
                   borderColor: "divider",
                   cursor: "pointer",

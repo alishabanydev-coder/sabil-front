@@ -76,7 +76,7 @@ export function useWatchPage(videoId: string): WatchPageViewModel {
       setRelatedLoading(true);
 
       const [allVideosResult, projectPreviews] = await Promise.all([
-        fetchPublicAllVideos({ showInHomepageOnly: true }),
+        fetchPublicAllVideos(),
         fetchPublicProjectPreviews(),
       ]);
 
