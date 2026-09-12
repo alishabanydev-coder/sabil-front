@@ -1,0 +1,332 @@
+"use client";
+
+import WatchPlyrPlayer, {
+  FULLSCREEN_ANIM_MS,
+} from "@/component/appCatalogue/watch/WatchPlyrPlayer";
+import WatchRelatedRail from "@/component/appCatalogue/watch/WatchRelatedRail";
+import { useWatchPage } from "@/component/appCatalogue/watch/useWatchPage";
+import { useNativeApp } from "@/lib/capacitor/nativeApp";
+import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
+import Image from "next/image";
+
+const PLAYER_FLEX = 7;
+const RAIL_FLEX = 3;
+
+type WatchPageProps = {
+  videoId: string;
+};
+
+const WatchPage = ({ videoId }: WatchPageProps) => {
+  const isNative = useNativeApp();
+  const {
+    video,
+    status,
+    errorMessage,
+    relatedVideos,
+    relatedLoading,
+    videoUrl,
+    hasVideoUrl,
+    videoThumbnail,
+    projectName,
+    projectLogo,
+    playerStarted,
+    nativeBelowShift,
+    setPlayerStarted,
+    setNativeBelowShift,
+  } = useWatchPage(videoId);
+
+  const nativeShiftSx = isNative
+    ? {
+        transform: `translate3d(0, ${nativeBelowShift}px, 0)`,
+        transition: `transform ${FULLSCREEN_ANIM_MS}ms ${
+          nativeBelowShift > 0 ? "ease-out" : "ease-in"
+        }`,
+      }
+    : undefined;
+
+  return (
+    <Stack
+      sx={{
+        height: isNative ? "100%" : { xs: "100dvh", sm: "100dvh", md: "100vh" },
+        maxHeight: isNative
+          ? "100%"
+          : { xs: "100dvh", sm: "100dvh", md: "none" },
+        minHeight: 0,
+        boxSizing: "border-box",
+        mt: 0,
+        pt: { xs: isNative ? 0 : "60px", sm: isNative ? 0 : "60px", md: 0 },
+        justifyContent: isNative ? "flex-end" : { xs: "flex-start", sm: "end" },
+        alignItems: isNative ? "center" : { xs: "stretch", sm: "end" },
+        flexDirection: "column",
+        gap: isNative ? 0.5 : { xs: 0, md: 1 },
+        overflow: "hidden",
+      }}
+    >
+      <Stack
+        sx={{
+          flex: isNative
+            ? `${PLAYER_FLEX} 1 0`
+            : { xs: "0 0 auto", sm: `${PLAYER_FLEX} 1 0` },
+          minHeight: isNative ? 0 : { xs: "auto", sm: 0 },
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 1,
+          py: isNative ? 0 : 1,
+          overflow: isNative ? "hidden" : { xs: "visible", sm: "hidden" },
+          px: isNative ? 2 : { xs: 2, md: 0 },
+        }}
+      >
+        <Stack
+          sx={{
+            flex: isNative ? 1 : { xs: "0 0 auto", sm: 1 },
+            minHeight: isNative ? 0 : { xs: "auto", sm: 0 },
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pt: isNative ? 0.5 : 0,
+          }}
+        >
+          <Stack
+            sx={{
+              position: "relative",
+              borderRadius: isNative ? 4 : { xs: 4, md: 0 },
+              overflow: isNative ? "hidden" : { xs: "hidden", md: "visible" },
+              display: "inline-flex",
+              flexDirection: "column",
+              alignItems: "stretch",
+              width: isNative ? "auto" : { xs: "100%", sm: "100%", md: "auto" },
+              height: isNative
+                ? "100%"
+                : { xs: "auto", sm: "auto", md: "100%" },
+              maxHeight: "100%",
+              maxWidth: isNative ? "100%" : { xs: "100%", md: "80%" },
+              gap: 1,
+            }}
+          >
+            <Stack
+              sx={{
+                position: "relative",
+                flex: isNative
+                  ? "0 1 auto"
+                  : { xs: "0 0 auto", sm: "0 0 auto", md: 1 },
+                minHeight: 0,
+                width: isNative ? "auto" : "100%",
+                height: isNative
+                  ? "100%"
+                  : { xs: "auto", sm: "auto", md: "100%" },
+                maxHeight: "100%",
+                maxWidth: "100%",
+                aspectRatio: "16 / 9",
+                borderRadius: 4,
+                overflow: "hidden",
+              }}
+            >
+              {status === "loading" ? (
+                <>
+                  <Skeleton
+                    animation="wave"
+                    variant="rectangular"
+                    sx={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: 4,
+                    }}
+                  />
+                  <Stack
+                    sx={{
+                      position: "absolute",
+                      inset: 0,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <CircularProgress
+                      size={100}
+                      sx={{ color: "primary.light" }}
+                    />
+                  </Stack>
+                </>
+              ) : hasVideoUrl ? (
+                <Stack
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                    bgcolor: "#000",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 4,
+                    overflow: "hidden",
+                  }}
+                >
+                  <WatchPlyrPlayer
+                    url={videoUrl}
+                    thumbnail={videoThumbnail}
+                    title={video?.title}
+                    isNative={isNative}
+                    onStartedChange={setPlayerStarted}
+                    onNativeBelowShift={setNativeBelowShift}
+                  />
+                </Stack>
+              ) : (
+                <Stack
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    bgcolor: "black",
+                    px: 2,
+                  }}
+                >
+                  <Typography sx={{ color: "white", textAlign: "center" }}>
+                    {status === "error"
+                      ? errorMessage
+                      : "No video URL was provided for this breakdown."}
+                  </Typography>
+                </Stack>
+              )}
+
+              <Stack
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  display: playerStarted ? "none" : "flex",
+                  backgroundColor: "rgba(0, 0, 0, 0.3)",
+                  px: 1,
+                  py: { xs: 2, sm: 1 },
+                  zIndex: 200,
+                  flexDirection: "row",
+                  gap: 1,
+                  height: { xs: 36, sm: 42, md: 56 },
+                  flexShrink: 0,
+                  alignItems: "center",
+                  width: "100%",
+                  minWidth: 0,
+                  "& img": {
+                    objectFit: "contain",
+                    borderRadius: "50%",
+                    border: "1px solid",
+                    borderColor: "primary.light",
+                    width: { xs: 30, sm: 36, md: 40, lg: 45 },
+                    height: { xs: 30, sm: 36, md: 40, lg: 45 },
+                    flexShrink: 0,
+                  },
+                  "& .episode": {
+                    color: "white",
+                    fontSize: { xs: 12, sm: 14, md: 18, lg: 20 },
+                    fontWeight: 500,
+                    flexShrink: 0,
+                    whiteSpace: "nowrap",
+                  },
+                  "& .title": {
+                    fontSize: { xs: 12, sm: 14, md: 20, lg: 21 },
+                    fontWeight: 700,
+                    color: "white",
+                    flex: 1,
+                    minWidth: 0,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  },
+                }}
+              >
+                {status === "ready" ? (
+                  <>
+                    {projectLogo ? (
+                      <Image
+                        src={projectLogo}
+                        alt={projectName || "Project"}
+                        width={36}
+                        height={36}
+                      />
+                    ) : null}
+                    <Typography className="episode">
+                      {`S${video?.season}-E${video?.episode} |`}
+                    </Typography>
+                    <Typography className="title">
+                      {video?.title || "Video"}
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Skeleton
+                      animation="wave"
+                      variant="circular"
+                      sx={{
+                        width: { xs: 32, sm: 36, md: 40, lg: 44 },
+                        height: { xs: 32, sm: 36, md: 40, lg: 44 },
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Skeleton
+                      animation="wave"
+                      variant="rectangular"
+                      sx={{
+                        flex: 1,
+                        minWidth: 0,
+                        height: "100%",
+                        borderRadius: 2,
+                      }}
+                    />
+                  </>
+                )}
+              </Stack>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Stack>
+
+      <Stack
+        sx={{
+          position: "relative",
+          flexShrink: 0,
+          width: "100%",
+          zIndex: 2,
+          ...nativeShiftSx,
+          borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: isNative ? -5 : -12,
+            height: isNative ? 5 : 12,
+            pointerEvents: "none",
+            width: "100%",
+            background: (theme) =>
+              `linear-gradient(to bottom, ${theme.palette.primary.main}44, transparent)`,
+          },
+        }}
+      />
+
+      <Stack
+        sx={{
+          flex: isNative
+            ? `${RAIL_FLEX} 1 0`
+            : { xs: "1 1 0", sm: `${RAIL_FLEX} 1 0` },
+          minHeight: 0,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          ...nativeShiftSx,
+        }}
+      >
+        <WatchRelatedRail
+          isNative={isNative}
+          videos={relatedVideos}
+          isLoading={relatedLoading || status === "loading"}
+        />
+      </Stack>
+    </Stack>
+  );
+};
+
+export default WatchPage;

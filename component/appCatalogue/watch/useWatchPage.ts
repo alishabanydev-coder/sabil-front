@@ -29,6 +29,8 @@ export function useWatchPage(videoId: string): WatchPageViewModel {
   const [errorMessage, setErrorMessage] = useState("");
   const [relatedVideos, setRelatedVideos] = useState<WatchCatalogueVideo[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
+  const [playerStarted, setPlayerStarted] = useState(false);
+  const [nativeBelowShift, setNativeBelowShift] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,6 +63,11 @@ export function useWatchPage(videoId: string): WatchPageViewModel {
     return () => {
       cancelled = true;
     };
+  }, [videoId]);
+
+  useEffect(() => {
+    setPlayerStarted(false);
+    setNativeBelowShift(0);
   }, [videoId]);
 
   useEffect(() => {
@@ -148,5 +155,9 @@ export function useWatchPage(videoId: string): WatchPageViewModel {
     videoThumbnail,
     projectName,
     projectLogo,
+    playerStarted,
+    nativeBelowShift,
+    setPlayerStarted,
+    setNativeBelowShift,
   };
 }

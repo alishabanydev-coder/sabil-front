@@ -29,4 +29,8 @@ export type WatchPageViewModel = {
   videoThumbnail: string;
   projectName?: string;
   projectLogo?: string;
+  playerStarted: boolean;
+  nativeBelowShift: number;
+  setPlayerStarted: (started: boolean) => void;
+  setNativeBelowShift: (shiftY: number) => void;
 };
