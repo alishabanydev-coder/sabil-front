@@ -35,9 +35,7 @@ export async function generateMetadata({
     "Support this Sabeel Kids donation project and help bring meaningful Islamic children's content to life.";
 
   const url = `${SITE_URL}/donation/${project.slug || donationProjectId}`;
-  const image =
-    project.poster ||
-    `${SITE_URL}/icon-192.webp`;
+  const image = project.poster || `${SITE_URL}/icon-192.webp`;
 
   return {
     title,
@@ -71,6 +69,10 @@ export async function generateMetadata({
     },
   };
 }
+
+//FIXME: add project Staff
+//FIXME: add the Steps of Project
+//FIXME: Pie Chart of Porjcet expenses
 
 const DonationProjectPage = async ({ params }: PageProps) => {
   const { donationProjectId } = await params;

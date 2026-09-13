@@ -96,7 +96,7 @@ const Leftside = ({
                 height: { xs: 25, sm: 30, md: "auto" },
                 fontSize: { xs: 7, sm: 12, md: 18, lg: 20 },
                 px: { xs: 0.7, sm: 1.2, md: 2 },
-                py: { xs: 0, sm: 0.3, md: 0.7, lg: .7 },
+                py: { xs: 0, sm: 0.3, md: 0.7, lg: 1 },
                 letterSpacing: 2,
               }}
               onClick={onOpenAboutUsModal}
@@ -105,7 +105,7 @@ const Leftside = ({
             </PrimaryButton>
           ) : null}
           
-          <PrimaryButton
+          {/* <PrimaryButton
             sx={{
               fontFamily: "Namecat",
               height: { xs: 25, sm: 30, md: "auto" },
@@ -117,7 +117,7 @@ const Leftside = ({
             href={"/donation"}
           >
             Donate Now
-          </PrimaryButton>
+          </PrimaryButton> */}
         </Stack>
       </Stack>
     </Stack>

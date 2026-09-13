@@ -1,15 +1,16 @@
-import Banner from "@/component/donation/Banner";
+import DonationBanner from "@/component/donation/DonationBanner";
 import DonateNow from "@/component/donation/DonateNow";
 import FAQSection from "@/component/donation/FAQSection";
 import ProjectSection from "@/component/donation/ProjectSection";
 import { Stack } from "@mui/material";
+import Banner from "@/component/donation/Banner";
 
 const DonationPage = () => {
   return (
     <Stack
       sx={{
         direction: "rtl",
-        width: "88%",
+        width: "100%",
         minHeight: "100vh",
         mx: "auto",
         px: { xs: 2, md: 10 },
@@ -18,6 +19,7 @@ const DonationPage = () => {
         gap: 4,
       }}
     >
+      {/* <DonationBanner /> */}
       <Banner />
       <ProjectSection />
       <DonateNow />
