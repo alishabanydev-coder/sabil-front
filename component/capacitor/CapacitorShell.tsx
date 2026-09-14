@@ -51,7 +51,7 @@ export default function CapacitorShell({
     }
 
     // USB live-reload uses localhost, which Android does not count as "online".
-    // Production loads sabeelkids.com, so a real offline user still sees this screen.
+    // Production loads sabeelkids.sabeelgroup.org/app, so a real offline user still sees this screen.
     if (isUsbDevServer()) {
       const reachable = await canReachDevServer();
       setIsOffline(!reachable);

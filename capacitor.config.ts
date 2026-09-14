@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const serverUrl =
-  process.env.CAPACITOR_SERVER_URL || "https://sabeelkids.com/app";
+  process.env.CAPACITOR_SERVER_URL || "https://sabeelkids.sabeelgroup.org/app";
 
 const config: CapacitorConfig = {
   appId: "com.sabeelkids.app",
