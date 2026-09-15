@@ -36,13 +36,19 @@ import DonationDateFields from "../DonationDateFields";
 import AddSection from "./AddSection";
 import AddUpdate from "./AddUpdate";
 import AddFAQ from "./AddFAQ";
+import AddSteps from "./AddSteps";
+import AddStaff from "./AddStaff";
 import {
   hydrateUpdateRefs,
   mapFaqFromApi,
   mapSectionsFromApi,
+  mapStaffFromApi,
+  mapStepsFromApi,
   mapUpdateRefsToPayload,
   type FaqDraft,
+  type ProjectStepDraft,
   type SectionDraft,
+  type StaffMemberDraft,
   type UpdateDraft,
 } from "./donationDrafts";
 
@@ -143,7 +149,7 @@ const IOSSwitch = styled((props: SwitchProps) => (
   },
 }));
 
-type SecondaryModal = "section" | "update" | "faq" | null;
+type SecondaryModal = "section" | "update" | "faq" | "steps" | "staff" | null;
 
 const DonationModal = ({
   open,
@@ -176,6 +182,8 @@ const DonationModal = ({
   const [listOrder, setListOrder] = useState("");
   const [sections, setSections] = useState<SectionDraft[]>([]);
   const [faqs, setFaqs] = useState<FaqDraft[]>([]);
+  const [steps, setSteps] = useState<ProjectStepDraft[]>([]);
+  const [staff, setStaff] = useState<StaffMemberDraft[]>([]);
   const [updates, setUpdates] = useState<UpdateDraft[]>([]);
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -261,6 +269,8 @@ const DonationModal = ({
         );
         setSections(mapSectionsFromApi(project.sections));
         setFaqs(mapFaqFromApi(project.faq));
+        setSteps(mapStepsFromApi(project.steps));
+        setStaff(mapStaffFromApi(project.staff));
         setUpdates(
           hydrateUpdateRefs(
             project.updateRefs,
@@ -403,6 +413,8 @@ const DonationModal = ({
     setExistingPoster(null);
     setSections([]);
     setFaqs([]);
+    setSteps([]);
+    setStaff([]);
     setUpdates([]);
     setSubmitError("");
     setSecondaryModal(null);
@@ -469,6 +481,8 @@ const DonationModal = ({
         listOrder: listOrder.trim() ? Number(listOrder) : "",
         sections,
         faq: faqs,
+        steps,
+        staff,
         updateRefs: mapUpdateRefsToPayload(updates),
       };
 
@@ -817,6 +831,22 @@ const DonationModal = ({
               >
                 Add Updates
               </Button>
+
+              <Button
+                className="add-button"
+                variant="contained"
+                onClick={() => setSecondaryModal("steps")}
+              >
+                Add Steps
+              </Button>
+
+              <Button
+                className="add-button"
+                variant="contained"
+                onClick={() => setSecondaryModal("staff")}
+              >
+                Add Staff
+              </Button>
             </Stack>
 
             <Stack
@@ -1001,6 +1031,20 @@ const DonationModal = ({
         onClose={closeSecondaryModal}
         faqs={faqs}
         onFaqsChange={setFaqs}
+      />
+
+      <AddSteps
+        open={secondaryModal === "steps"}
+        onClose={closeSecondaryModal}
+        steps={steps}
+        onStepsChange={setSteps}
+      />
+
+      <AddStaff
+        open={secondaryModal === "staff"}
+        onClose={closeSecondaryModal}
+        staff={staff}
+        onStaffChange={setStaff}
       />
     </>
   );

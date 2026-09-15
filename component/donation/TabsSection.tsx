@@ -5,6 +5,7 @@ import { useState } from "react";
 import Documents from "./component/Documents";
 import Updates from "./component/Updates";
 import FAQTab from "./component/FAQTab";
+import ProjectProgress from "./component/ProjectProgress";
 import { type DonationUpdate } from "./component/UpdateCard";
 import CommentSection from "./component/CommentSection";
 
@@ -32,6 +33,21 @@ type DonationProject = {
     order: number;
   }[];
   updates?: DonationUpdate[];
+  steps?: {
+    id: string;
+    label: string;
+    status: "upcoming" | "in_progress" | "completed" | "skipped";
+    spentAmount?: number;
+    order?: number;
+  }[];
+  staff?: {
+    id: string;
+    name: string;
+    role: string;
+    photo?: string | null;
+    bio?: string | null;
+    order?: number;
+  }[];
 };
 
 const TabLayout = ({
@@ -94,6 +110,11 @@ const TabsSection = ({ projectData }: { projectData: DonationProject }) => {
         </Tabs>
       </Stack>
       <TabLayout value={value} index={0}>
+        <ProjectProgress
+          steps={projectData.steps}
+          staff={projectData.staff}
+          currency={projectData.currency}
+        />
         <Documents projectData={projectData} />
       </TabLayout>
       <TabLayout value={value} index={1}>

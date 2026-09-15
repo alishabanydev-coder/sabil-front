@@ -36,6 +36,13 @@ function normalizeDonationProjectRecord(project) {
         }))
       : [],
     faq: Array.isArray(project.faq) ? project.faq : [],
+    steps: Array.isArray(project.steps) ? project.steps : [],
+    staff: Array.isArray(project.staff)
+      ? project.staff.map((member) => ({
+          ...member,
+          photo: member.photo ? normalizeAssetUrl(member.photo) : "",
+        }))
+      : [],
     updateRefs: Array.isArray(project.updateRefs) ? project.updateRefs : [],
   };
 }
@@ -169,6 +176,14 @@ function buildDonationFormData(body = {}) {
 
   if (Array.isArray(body.faq)) {
     formData.append("faq", JSON.stringify(body.faq));
+  }
+
+  if (Array.isArray(body.steps)) {
+    formData.append("steps", JSON.stringify(body.steps));
+  }
+
+  if (Array.isArray(body.staff)) {
+    formData.append("staff", JSON.stringify(body.staff));
   }
 
   if (Array.isArray(body.updateRefs)) {

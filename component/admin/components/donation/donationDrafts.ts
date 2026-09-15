@@ -17,6 +17,29 @@ export type FaqDraft = {
   order: number;
 };
 
+export type ProjectStepStatus =
+  | "upcoming"
+  | "in_progress"
+  | "completed"
+  | "skipped";
+
+export type ProjectStepDraft = {
+  id: string;
+  label: string;
+  status: ProjectStepStatus;
+  spentAmount: number;
+  order: number;
+};
+
+export type StaffMemberDraft = {
+  id: string;
+  name: string;
+  role: string;
+  photo: string;
+  bio: string;
+  order: number;
+};
+
 export type UpdateRefType = "Blog" | "BreakDown";
 export type UpdateSource = "existing" | "new";
 
@@ -67,6 +90,44 @@ export function mapFaqFromApi(
     header: item.header ?? "",
     summary: item.summary ?? "",
     order: item.order ?? index,
+  }));
+}
+
+export function mapStepsFromApi(
+  steps: Array<{
+    id?: string;
+    label?: string;
+    status?: ProjectStepStatus;
+    spentAmount?: number;
+    order?: number;
+  }> = []
+): ProjectStepDraft[] {
+  return steps.map((step, index) => ({
+    id: step.id || `step-${index}`,
+    label: step.label ?? "",
+    status: step.status ?? "upcoming",
+    spentAmount: Number(step.spentAmount ?? 0),
+    order: step.order ?? index,
+  }));
+}
+
+export function mapStaffFromApi(
+  staff: Array<{
+    id?: string;
+    name?: string;
+    role?: string;
+    photo?: string | null;
+    bio?: string | null;
+    order?: number;
+  }> = []
+): StaffMemberDraft[] {
+  return staff.map((member, index) => ({
+    id: member.id || `staff-${index}`,
+    name: member.name ?? "",
+    role: member.role ?? "",
+    photo: member.photo ?? "",
+    bio: member.bio ?? "",
+    order: member.order ?? index,
   }));
 }
 

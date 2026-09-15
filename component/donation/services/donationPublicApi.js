@@ -52,6 +52,13 @@ function normalizePublicDonationProject(project) {
         }))
       : [],
     faq: Array.isArray(project.faq) ? project.faq : [],
+    steps: Array.isArray(project.steps) ? project.steps : [],
+    staff: Array.isArray(project.staff)
+      ? project.staff.map((member) => ({
+          ...member,
+          photo: member.photo ? normalizeAssetUrl(member.photo) : "",
+        }))
+      : [],
     updates: Array.isArray(project.updates)
       ? project.updates.map((update) => ({
           ...update,

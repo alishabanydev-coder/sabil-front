@@ -70,10 +70,6 @@ export async function generateMetadata({
   };
 }
 
-//FIXME: add project Staff
-//FIXME: add the Steps of Project
-//FIXME: Pie Chart of Porjcet expenses
-
 const DonationProjectPage = async ({ params }: PageProps) => {
   const { donationProjectId } = await params;
   const result = await fetchPublicDonationProject(donationProjectId);

@@ -67,6 +67,48 @@
   endDate: "2026-12-31T23:59:59.000Z",
   status: "ongoing" as const,
 
+  steps: [
+    {
+      id: "writing",
+      label: "Writing",
+      status: "completed" as const,
+      spentAmount: 200,
+      order: 0,
+    },
+    {
+      id: "modeling",
+      label: "Modeling",
+      status: "completed" as const,
+      spentAmount: 200,
+      order: 1,
+    },
+    {
+      id: "animating",
+      label: "Animating",
+      status: "in_progress" as const,
+      spentAmount: 0,
+      order: 2,
+    },
+    {
+      id: "editing",
+      label: "Editing",
+      status: "upcoming" as const,
+      spentAmount: 0,
+      order: 3,
+    },
+  ],
+
+  staff: [
+    {
+      id: "director",
+      name: "Sabeel Studio",
+      role: "Director",
+      photo: "/avatar1.webp",
+      bio: "Leads story, voice direction, and production.",
+      order: 0,
+    },
+  ],
+
   projectId: null,
   updateRefs: [
     {
