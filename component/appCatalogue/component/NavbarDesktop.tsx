@@ -128,7 +128,7 @@ const NavbarDesktop = ({
 
           <Button
             color="primary"
-            href="/downloads/sabeel-kids.apk"
+            href="/downloads/sabeel-kids-2.apk"
             download
             sx={{
               minWidth: { sm: 36, md: "auto" },
