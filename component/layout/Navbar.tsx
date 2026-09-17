@@ -13,7 +13,7 @@ import {
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ScondaryButton } from "../ui/ScondaryButton";
+import { DonationButton } from "../ui/DonationButton";
 
 const HOME_SCROLL_TARGET_KEY = "homeScrollTarget";
 const NAVBAR_SCROLL_OFFSET = 80;
@@ -127,127 +127,105 @@ export default function Navbar({
       component="header"
       sx={{
         position: "absolute",
+        top: { xs: 10, md: 0 },
+        right: 0,
+        zIndex: 10,
+        width: { xs: "100%", sm: "80%" },
+        maxWidth: 1283,
+        aspectRatio: "1283 / 107",
+        boxSizing: "border-box",
+        backgroundImage: "url(/navbar-background.png)",
+        backgroundSize: "100% 100%",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         display: "flex",
         flexDirection: "row",
-        gap: { xs: 1, sm: 2 },
-        justifyContent: { xs: "space-between", sm: "start" },
-        alignItems: { xs: "center", md: "center" },
-        top: { xs: 10, md: 15 },
-        left: 0,
-        zIndex: 10,
-        width: "100%",
-        px: { xs: 1, md: 8 },
+        alignItems: "center",
+        justifyContent: { xs: "space-between", sm: "flex-start" },
+        gap: { xs: 1, sm: 12 },
+        px: { xs: 1, md: 5 },
       }}
     >
-      <ScondaryButton
-        href="/sign-in"
+      <DonationButton
+        href="/donation"
         component={Link}
         sx={{
           px: { xs: 0.7, sm: 2 },
           py: { xs: 0.4, sm: 1 },
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+
+          "& img": {
+            width: 20,
+            height: 21,
+            pb: .3,
+          },
         }}
       >
+        <img src="/heart.png" alt="heart" />
+
         <Typography
           sx={{
-            fontSize: { xs: 11, md: 16, lg: 18 },
+            fontSize: { xs: 11, md: 16, lg: 16 },
             fontFamily: "Namecat",
             letterSpacing: 2,
+            color: "#000",
           }}
         >
-          SIGN IN
+          Donate
         </Typography>
-      </ScondaryButton>
+      </DonationButton>
 
-      <Stack
-        direction="row"
-        sx={{
-          display: { xs: "none", sm: "flex" },
-          alignItems: "center",
-          justifyContent: "space-between",
-          px: { xs: 2, md: 4 },
-          py: 1.5,
-          borderRadius: 999,
-          position: "relative",
-          overflow: "hidden",
-          bgcolor: (theme) => alpha(theme.palette.secondary.light, 0.45),
-          boxShadow:
-            "0 3px 0 rgba(248, 240, 240, 0.0) inset, 0 -6px 0 rgba(136, 18, 84, 0.2) inset, 0 16px 28px rgba(92, 12, 151, 0.3)",
-          backdropFilter: "blur(10px)",
-          transform: "translateY(-1px)",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            top: "-40%",
-            left: "-65%",
-            width: "45%",
-            height: "180%",
-            background:
-              "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.12) 25%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.12) 75%, transparent 100%)",
-            transform: "skewX(-22deg)",
-            transition: "left 0.75s ease",
-            pointerEvents: "none",
-          },
-          "&:hover": {
-            transform: "translateY(-2px)",
-            boxShadow:
-              "0 3px 0 rgba(248, 240, 240, 0.18) inset, 0 -6px 0 rgba(136, 18, 84, 0.24) inset, 0 20px 34px rgba(92, 12, 151, 0.36)",
-          },
-          "&:hover::before": {
-            left: "120%",
-          },
-        }}
-      >
-        <Stack direction="row" sx={{ gap: { xs: 1, md: 3 } }}>
-          {resolvedNavItems.map((item) =>
-            "href" in item ? (
-              <Typography
-                key={item.label}
-                component={Link}
-                href={item.href}
-                prefetch={false}
-                onClick={() => handleHrefClick(item.href)}
-                sx={{
-                  color: "#fff",
-                  fontSize: { xs: 12, md: 14, lg: 16 },
-                  fontFamily: "Namecat",
-                  letterSpacing: 2,
-                  textDecoration: "none",
-                  "&:hover": {
-                    color: "primary.light",
-                  },
-                }}
-              >
-                {item.label}
-              </Typography>
-            ) : (
-              <Typography
-                key={item.label}
-                component="button"
-                type="button"
-                onClick={(event) => handleSectionClick(event, item.sectionId)}
-                sx={{
-                  color: "#fff",
-                  fontSize: { xs: 12, md: 14, lg: 16 },
-                  fontFamily: "Namecat",
-                  letterSpacing: 2,
-                  textDecoration: "none",
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  "&:hover": {
-                    color: "primary.light",
-                  },
-                }}
-              >
-                {item.label}
-              </Typography>
-            )
-          )}
-        </Stack>
+      <Stack direction="row" sx={{ gap: { xs: 1, md: 5 } }}>
+        {resolvedNavItems.map((item) =>
+          "href" in item ? (
+            <Typography
+              key={item.label}
+              component={Link}
+              href={item.href}
+              prefetch={false}
+              onClick={() => handleHrefClick(item.href)}
+              sx={{
+                color: "#000",
+                fontSize: { xs: 12, md: 14, lg: 20 },
+                fontFamily: "Namecat",
+                letterSpacing: 2,
+                textDecoration: "none",
+                "&:hover": {
+                  color: "primary.light",
+                },
+              }}
+            >
+              {item.label}
+            </Typography>
+          ) : (
+            <Typography
+              key={item.label}
+              component="button"
+              type="button"
+              onClick={(event) => handleSectionClick(event, item.sectionId)}
+              sx={{
+                color: "#000",
+                fontSize: { xs: 12, md: 14, lg: 20 },
+                fontFamily: "Namecat",
+                letterSpacing: 2,
+                textDecoration: "none",
+                background: "none",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                "&:hover": {
+                  color: "primary.light",
+                },
+              }}
+            >
+              {item.label}
+            </Typography>
+          )
+        )}
       </Stack>
-
+      {/* Menu Items for mobile    */}
       <Box
         sx={{
           display: { xs: "flex", sm: "none" },

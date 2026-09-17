@@ -1,8 +1,8 @@
 ﻿import { PrimaryButton } from "@/component/ui/PrimaryButton";
+import { WhitePrimaryButton } from "@/component/ui/WhitePrimaryButton";
 import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
-import Image from "next/image";
 
-const textMd = `A\nGATEWAY\nTO THE\nFUTURE`;
+const textMd = `A TRUSTED\nGATEWAY TO\\nFUTURE`;
 const textXs = `A GATEWAY TO \n THE FUTURE`;
 
 const Leftside = ({
@@ -21,8 +21,8 @@ const Leftside = ({
         height: "90%",
         width: "30%",
         position: "absolute",
-        top: "8%",
-        left: "6%",
+        top: "5%",
+        left: "5%",
       }}
     >
       <Stack
@@ -36,46 +36,43 @@ const Leftside = ({
       >
         <Stack
           sx={{
-            width: "30%",
-            position: "relative",
-            aspectRatio: "1 / 1",
-            justifyContent: "center",
-            alignItems: "center",
-            top: { xs: "-25%", sm: "-35%" },
-            left: "-24%",
-          }}
-        >
-          <Image
-            src="/icon-192.webp"
-            alt={"logo"}
-            fill
-            style={{
-              width: "100%",
-              height: "100%",
-              marginRight: "auto",
-              marginLeft: "auto",
-            }}
-          />
-        </Stack>
-
-        <Stack
-          sx={{
             position: "absolute",
-            top: { xs: "38%", sm: "25%" },
-            left: "10%",
+            top: { xs: "38%", sm: "20%" },
+            left: "5%",
             flexDirection: "column",
+            textAlign: "start",
+            direction: "ltr",
+            "& p": {
+              fontSize: { xs: 10, sm: 14, md: 24, lg: 36, xl: 38 },
+              fontFamily: "Arco",
+              lineHeight: 1.2,
+              whiteSpace: "pre-line",
+              letterSpacing: 1,
+              fontWeight: 100,
+            },
+            "& span": {
+              pt: 2,
+              fontSize: { xs: 10, sm: 14, md: 24, lg: 20, xl: 23 },
+              fontFamily: "Namecat",
+              lineHeight: 1.2,
+              whiteSpace: "pre-line",
+              letterSpacing: 1,
+              fontWeight: 100,
+            },
           }}
         >
+          <Typography color="primary">{`A TRUSTED\nGATEWAY TO`}</Typography>
+          <Typography color={"secondary"}>{`ISLAMIC STORIES`}</Typography>
+          <Typography color="primary">{`FOR CHILDREN`}</Typography>
+
           <Typography
-            color="primary"
+            component={"span"}
             sx={{
-              fontSize: { xs: 10, sm: 14, md: 24, lg: 32, xl: 36 },
-              textAlign: "end",
-              fontFamily: "Bhel Puri",
-              whiteSpace: "pre-line",
+              unicodeBidi: "isolate",
             }}
           >
-            {isMobile ? textXs : textMd}
+            values-based We create sofe, joyful and animated content that
+            inspires faith, builds character and brings families closer.
           </Typography>
         </Stack>
 
@@ -84,40 +81,86 @@ const Leftside = ({
           sx={{
             gap: { xs: 1, sm: 2 },
             position: "absolute",
-            bottom: { xs: "14%", md: "14%" },
-            right: { xs: "-20%", md: "-5%" },
+            bottom: { xs: "14%", md: "23%" },
+            right: { xs: "-20%", md: "-10%" },
             zIndex: 100,
           }}
         >
+          <WhitePrimaryButton
+            sx={{
+              fontFamily: "Namecat",
+              height: { xs: 25, sm: 30, md: "auto" },
+              px: { xs: 0.7, sm: 1.2, md: 2 },
+              py: { xs: 0, sm: 0.3, md: 0.7, lg: 1.2 },
+              letterSpacing: 2,
+              borderRadius: 6,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 1,
+            }}
+            href={"/donation"}
+          >
+            <img
+              src="/arrow-right.png"
+              alt="arrow-right"
+              style={{
+                width: 20,
+                height: 20,
+                objectFit: "contain",
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: { xs: 10, sm: 12, md: 14, lg: 15, xl: 15 },
+                fontFamily: "Namecat",
+                color: "secondary.main",
+                letterSpacing: 2,
+                fontWeight: 100,
+              }}
+            >
+              Join Our Mission
+            </Typography>
+          </WhitePrimaryButton>
+
           {showAboutUsButton ? (
             <PrimaryButton
               sx={{
                 fontFamily: "Namecat",
                 height: { xs: 25, sm: 30, md: "auto" },
-                fontSize: { xs: 7, sm: 12, md: 18, lg: 20 },
-                px: { xs: 0.7, sm: 1.2, md: 2 },
-                py: { xs: 0, sm: 0.3, md: 0.7, lg: 1 },
+                px: { xs: 0.7, sm: 1.2, md: 2.3 },
+                py: { xs: 0, sm: 0.3, md: 0.7, lg: 1.2 },
                 letterSpacing: 2,
+                borderRadius: 6,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 1,
               }}
               onClick={onOpenAboutUsModal}
             >
-              About Us
+              <img
+                src="/arrow-right.png"
+                alt="arrow-right"
+                style={{
+                  width: 20,
+                  height: 20,
+                  objectFit: "contain",
+                }}
+              />
+              <Typography
+                sx={{
+                  fontSize: { xs: 10, sm: 12, md: 14, lg: 15, xl: 15 },
+                  fontFamily: "Namecat",
+                  color: "#fff",
+                  letterSpacing: 2,
+                  fontWeight: 100,
+                }}
+              >
+                About Us
+              </Typography>
             </PrimaryButton>
           ) : null}
-          
-          {/* <PrimaryButton
-            sx={{
-              fontFamily: "Namecat",
-              height: { xs: 25, sm: 30, md: "auto" },
-              fontSize: { xs: 7, sm: 12, md: 18, lg: 20 },
-              px: { xs: 0.7, sm: 1.2, md: 2 },
-              py: { xs: 0, sm: 0.3, md: 0.7, lg: .7 },
-              letterSpacing: 2,
-            }}
-            href={"/donation"}
-          >
-            Donate Now
-          </PrimaryButton> */}
         </Stack>
       </Stack>
     </Stack>

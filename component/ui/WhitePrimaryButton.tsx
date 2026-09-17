@@ -2,16 +2,16 @@
 
 import { Button, ButtonProps, styled } from "@mui/material";
 
-export const PrimaryButton = styled(
+export const WhitePrimaryButton = styled(
   ({ children, disableRipple, ...otherProps }: ButtonProps) => (
     <Button disableRipple={true} {...otherProps}>
       {children}
     </Button>
   )
 )(({ theme }) => ({
-  background: theme.palette.primary.main,
+  background: "#fff",
   borderRadius: 50,
-  border: `1px solid ${theme.palette.secondary.main}`,
+  border: `1px solid #b6b8ba`,
   color: theme.palette.warning.main,
   paddingRight: 20,
   paddingLeft: 20,
@@ -19,7 +19,7 @@ export const PrimaryButton = styled(
   minHeight: 0,
 
   [theme.breakpoints.up("md")]: {
-    border: `3px solid ${theme.palette.secondary.main}`,
+    border: `3px solid #b6b8ba`,
     paddingRight: 25,
     paddingLeft: 25,
   },
