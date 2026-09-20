@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   alpha,
   Box,
+  Button,
   IconButton,
   Menu,
   MenuItem,
@@ -127,10 +128,11 @@ export default function Navbar({
       component="header"
       sx={{
         position: "absolute",
-        top: { xs: 10, md: 0 },
+        top: 0,
         right: 0,
         zIndex: 10,
-        width: { xs: "100%", sm: "80%" },
+        width: { xs: "85%", sm: "80%" },
+        height: { xs: "40px", sm: "auto" },
         maxWidth: 1283,
         aspectRatio: "1283 / 107",
         boxSizing: "border-box",
@@ -142,24 +144,25 @@ export default function Navbar({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: { xs: "space-between", sm: "flex-start" },
-        gap: { xs: 1, sm: 12 },
-        px: { xs: 1, md: 5 },
+        gap: { xs: 1, sm: 3, md: 5, lg: 10, xl: 12 },
+        px: { xs: 3, sm: 2, md: 3, lg: 4, xl: 5 },
+        pl: { xs: 4, sm: 2 },
       }}
     >
       <DonationButton
         href="/donation"
         component={Link}
         sx={{
-          px: { xs: 0.7, sm: 2 },
-          py: { xs: 0.4, sm: 1 },
+          px: { xs: 1.3, sm: 1.5, md: 1.5, lg: 2.2, xl: 2.5 },
+          py: { xs: 0.8, sm: 1, md: 1.2, lg: 1.2, xl: 1.4 },
           display: "flex",
           alignItems: "center",
-          gap: 1,
+          justifyContent: "center",
+          gap: { xs: 0.5, sm: 0.3, md: 1 },
 
           "& img": {
-            width: 20,
-            height: 21,
-            pb: .3,
+            width: { xs: 10, sm: 12, md: 15, lg: 20 },
+            height: { xs: 12, sm: 12, md: 17, lg: 21 },
           },
         }}
       >
@@ -167,9 +170,10 @@ export default function Navbar({
 
         <Typography
           sx={{
-            fontSize: { xs: 11, md: 16, lg: 16 },
+            fontSize: { xs: 10, md: 12, lg: 16, xl: 20 },
             fontFamily: "Namecat",
             letterSpacing: 2,
+            lineHeight: 1,
             color: "#000",
           }}
         >
@@ -177,7 +181,14 @@ export default function Navbar({
         </Typography>
       </DonationButton>
 
-      <Stack direction="row" sx={{ gap: { xs: 1, md: 5 } }}>
+      <Stack
+        direction="row"
+        sx={{
+          gap: { xs: 2, md: 3, lg: 3, xl: 5 },
+          alignItems: "center",
+          display: { xs: "none", sm: "flex" },
+        }}
+      >
         {resolvedNavItems.map((item) =>
           "href" in item ? (
             <Typography
@@ -188,7 +199,8 @@ export default function Navbar({
               onClick={() => handleHrefClick(item.href)}
               sx={{
                 color: "#000",
-                fontSize: { xs: 12, md: 14, lg: 20 },
+                fontSize: { xs: 10, sm: 10, md: 12, lg: 18, xl: 20 },
+                fontWeight: 700,
                 fontFamily: "Namecat",
                 letterSpacing: 2,
                 textDecoration: "none",
@@ -207,11 +219,12 @@ export default function Navbar({
               onClick={(event) => handleSectionClick(event, item.sectionId)}
               sx={{
                 color: "#000",
-                fontSize: { xs: 12, md: 14, lg: 20 },
+                fontSize: { xs: 10, sm: 10, md: 12, lg: 18, xl: 20 },
                 fontFamily: "Namecat",
                 letterSpacing: 2,
                 textDecoration: "none",
                 background: "none",
+                fontWeight: 700,
                 border: "none",
                 padding: 0,
                 cursor: "pointer",
@@ -232,34 +245,50 @@ export default function Navbar({
           justifyContent: { xs: "end", md: "center" },
         }}
       >
-        <IconButton
-          aria-label="open navigation menu"
-          aria-controls={isMenuOpen ? "navbar-mobile-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={isMenuOpen ? "true" : undefined}
+        <Button
           onClick={openMenu}
           size="small"
           color="primary"
           sx={{
             zIndex: 99999,
+            minWidth: 0,
+            py: 0.5,
+            px: 1,
             borderRadius: 2,
             bgcolor: "rgba(255, 255, 255, 0.28)",
             backdropFilter: "blur(2px)",
             border: (theme) => `1px solid ${theme.palette.primary.main}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.5,
             "&:hover": {
               border: (theme) => `1px solid ${theme.palette.primary.light}`,
             },
           }}
         >
-          <MenuRoundedIcon sx={{ fontSize: { xs: 17, md: 17 } }} />
-        </IconButton>
+          <Typography
+            component="span"
+            sx={{
+              fontSize: 10,
+              fontFamily: "Namecat",
+              letterSpacing: 2,
+              lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            Menu
+          </Typography>
+          <MenuRoundedIcon sx={{ fontSize: 14 }} />
+        </Button>
         <Menu
           id="navbar-mobile-menu"
           anchorEl={menuAnchor}
           open={isMenuOpen}
           onClose={closeMenu}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          transformOrigin={{ vertical: "top", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "center" }}
           sx={{
             "& .MuiList-root-MuiMenu-list": {
               px: 1,
