@@ -10,9 +10,11 @@ import { fetchPublicMainPageLayoutItems } from "@/component/admin/services/mainP
 import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
 import { fetchPublicAboutUs } from "@/component/admin/services/aboutUsApi";
 import ProjectCatalogue from "@/component/home/projectCatalogue/ProjectCatalogue";
+import OurMission from "@/component/home/ourMission/OurMission";
 
 const sections = [
   "banner",
+  "our-mission",
   "projects",
   "catalogues",
   "breakdown",
@@ -54,6 +56,9 @@ export default async function Home() {
           bannerData={publicSectionData.banner}
           aboutUs={aboutUsResult.ok ? aboutUsResult.aboutUs : null}
         />
+      </Box>
+      <Box id="our-mission" sx={sectionAnchorSx}>
+        <OurMission />
       </Box>
       <Box id="subscription" sx={sectionAnchorSx}>
         <ProjectCatalogue publicSectionData={publicSectionData} />

@@ -1,4 +1,5 @@
-﻿import { PrimaryButton } from "@/component/ui/PrimaryButton";
+﻿import { AppButton } from "@/component/ui/AppButton";
+import { PrimaryButton } from "@/component/ui/PrimaryButton";
 import { WhitePrimaryButton } from "@/component/ui/WhitePrimaryButton";
 import { Stack, Typography } from "@mui/material";
 
@@ -13,9 +14,9 @@ const Leftside = ({
     <Stack
       sx={{
         height: "90%",
-        width: { xs: "30%", sm: "35%", md: "35%", lg: "32%", xl: "30%" },
+        width: { xs: "32%", sm: "35%", md: "35%", lg: "32%", xl: "30%" },
         position: "absolute",
-        top: "5%",
+        top: "10%",
         left: "5%",
       }}
     >
@@ -71,24 +72,28 @@ const Leftside = ({
           </Typography>
         </Stack>
 
-        {/* <Stack
+        <Stack
           direction="row"
           sx={{
+            display: { xs: "none", sm: "flex" },
             gap: { xs: 1, lg: 2 },
             position: "absolute",
-            bottom: { xs: "24%", sm: "27%", md: "23%", lg: "23%", xl: "25%" },
-            right: { xs: "-20%", sm: "-5%", md: "-10%" },
+            bottom: { xs: "28%", sm: "32%", md: "25%", lg: "25%", xl: "26%" },
+            right: { xs: "8%", sm: "8%", md: "-8%" },
             zIndex: 100,
+            justifyContent: "end",
           }}
         >
-          <WhitePrimaryButton
+          <AppButton
+            tone="white"
+            shadow="soft"
             sx={{
               fontFamily: "Namecat",
-              height: { xs: 25, sm: 30, md: "auto" },
-              px: { xs: 0.7, sm: 1.2, md: 1.5 },
+              height: { xs: 22, sm: 30, md: "auto" },
+              px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
               py: { xs: 0, sm: 0.3, md: 1, lg: 1.2 },
               letterSpacing: 2,
-              borderRadius: 6,
+              borderRadius: 8,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -103,26 +108,26 @@ const Leftside = ({
                 fontFamily: "Namecat",
                 color: "secondary.main",
                 letterSpacing: 1,
-                lineHeight: 1.2,
-
-                fontWeight: 100,
+                lineHeight: 0.1,
               },
             }}
             href={"/donation"}
           >
             <img src="/arrow-right.png" alt="arrow-right" />
             <Typography>Join Our Mission</Typography>
-          </WhitePrimaryButton>
+          </AppButton>
 
           {showAboutUsButton ? (
-            <PrimaryButton
+            <AppButton
+              tone="primary"
+              shadow="soft"
               sx={{
                 fontFamily: "Namecat",
                 height: { xs: 25, sm: 30, md: "auto" },
-                px: { xs: 0.7, sm: 1.2, md: 1.5 },
+                px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
                 py: { xs: 0, sm: 0.3, md: 1, lg: 1.2 },
                 letterSpacing: 2,
-                borderRadius: 6,
+                borderRadius: 8,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -135,19 +140,18 @@ const Leftside = ({
                 "& p": {
                   fontSize: { xs: 8, sm: 10, md: 16, lg: 20, xl: 24 },
                   fontFamily: "Namecat",
-                  color: "secondary.main",
+                  color: "#fff",
                   letterSpacing: 1,
                   lineHeight: 1.2,
-                  fontWeight: 100,
                 },
               }}
               onClick={onOpenAboutUsModal}
             >
               <img src="/arrow-right.png" alt="arrow-right" />
               <Typography>About Us</Typography>
-            </PrimaryButton>
+            </AppButton>
           ) : null}
-        </Stack> */}
+        </Stack>
       </Stack>
     </Stack>
   );

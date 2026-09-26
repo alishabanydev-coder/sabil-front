@@ -14,7 +14,7 @@ import {
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { DonationButton } from "../ui/DonationButton";
+import { AppButton } from "../ui/AppButton";
 
 const HOME_SCROLL_TARGET_KEY = "homeScrollTarget";
 const NAVBAR_SCROLL_OFFSET = 80;
@@ -149,7 +149,8 @@ export default function Navbar({
         pl: { xs: 4, sm: 2 },
       }}
     >
-      <DonationButton
+      <AppButton
+        tone="donation"
         href="/donation"
         component={Link}
         sx={{
@@ -179,7 +180,7 @@ export default function Navbar({
         >
           Donate
         </Typography>
-      </DonationButton>
+      </AppButton>
 
       <Stack
         direction="row"

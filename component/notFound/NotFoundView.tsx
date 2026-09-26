@@ -1,6 +1,6 @@
 "use client";
 
-import { ScondaryButton } from "@/component/ui/ScondaryButton";
+import { AppButton } from "@/component/ui/AppButton";
 import { Box, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 
@@ -69,9 +69,9 @@ export default function NotFoundView() {
             justifyContent: "center",
           }}
         >
-          <ScondaryButton component={Link} href="/">
+          <AppButton tone="secondary" component={Link} href="/">
             Back to Home
-          </ScondaryButton>
+          </AppButton>
           <Box
             component={Link}
             href="/app"

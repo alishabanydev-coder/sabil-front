@@ -2,7 +2,7 @@
 
 import { Stack, TextField, Typography } from "@mui/material";
 import Image from "next/image";
-import { ScondaryButton } from "@/component/ui/ScondaryButton";
+import { AppButton } from "@/component/ui/AppButton";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import FollowUsModal from "./component/LetUsCallModal";
 import { useState } from "react";
@@ -116,7 +116,8 @@ const LetUsCallYou = () => {
               />
             </Stack>
 
-            <ScondaryButton
+            <AppButton
+              tone="secondary"
               sx={{
                 width: { xs: "100%", sm: "auto" },
                 mb: 1,
@@ -149,7 +150,7 @@ const LetUsCallYou = () => {
                   sx={{ color: "primary.main", fontSize: { xs: 15, sm: 20 } }}
                 />
               </Stack>
-            </ScondaryButton>
+            </AppButton>
           </Stack>
 
           <Stack

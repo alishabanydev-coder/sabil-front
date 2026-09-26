@@ -10,6 +10,7 @@ import AboutUsModal from "./components/AboutUsModal";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
+import { Autoplay } from "swiper/modules";
 
 type BannerData = {
   createdAt: string;
@@ -68,25 +69,25 @@ const AdCard = ({ item }: { item: AdItem }) => (
         lineHeight: 1.2,
       },
       "& img": {
-        width: { xs: 60, sm: 50, md: 70, lg: 85, xl: 110 },
-        height: { xs: 60, sm: 50, md: 70, lg: 85, xl: 110 },
+        width: { xs: 45, sm: 50, md: 70, lg: 85, xl: 110 },
+        height: { xs: 45, sm: 50, md: 70, lg: 85, xl: 110 },
         objectFit: "contain",
       },
     }}
   >
     <Image src={item.img} alt={item.header} width={90} height={90} />
-    <Stack sx={{ gap: 0.6 }}>
+    <Stack sx={{ gap: { xs: 0.2, sm: 0.6 } }}>
       <Typography
         sx={{
           color: item.color,
-          fontSize: { xs: 14, sm: 13, md: 16, lg: 18, xl: 22 },
+          fontSize: { xs: 12, sm: 13, md: 16, lg: 18, xl: 22 },
           fontWeight: 700,
           letterSpacing: 1.2,
         }}
       >
         {item.header}
       </Typography>
-      <Typography sx={{ fontSize: { xs: 13, sm: 12, md: 14, lg: 16, xl: 20 } }}>
+      <Typography sx={{ fontSize: { xs: 11, sm: 12, md: 14, lg: 16, xl: 20 } }}>
         {item.body}
       </Typography>
     </Stack>
@@ -132,7 +133,7 @@ const Banner = ({
       <Stack
         sx={{
           position: "absolute",
-          bottom: { xs: "-35%", sm: "-15%", md: "-17%", lg: "-10%", xl: "-8%" },
+          bottom: { xs: "-25%", sm: "-8%", md: "-20%", lg: "-14%", xl: "-12%" },
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: { xs: "80%", sm: "auto" },
@@ -151,7 +152,11 @@ const Banner = ({
             width: { xs: "100%" },
           }}
         >
-          <Swiper slidesPerView={1}>
+          <Swiper
+            slidesPerView={1}
+            modules={[Autoplay]}
+            autoplay={{ delay: 1500, disableOnInteraction: false }}
+          >
             {AdsBox.map((item) => (
               <SwiperSlide key={item.header}>
                 <AdCard item={item} />

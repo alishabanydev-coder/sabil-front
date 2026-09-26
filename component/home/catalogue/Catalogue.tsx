@@ -5,7 +5,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-import { PrimaryButton } from "@/component/ui/PrimaryButton";
+import { AppButton } from "@/component/ui/AppButton";
 import Pagination from "../banner/components/Pagination";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -321,7 +321,7 @@ const Catalogue = ({
         </Swiper>
       </Box>
 
-      <PrimaryButton
+      <AppButton
         sx={{
           fontFamily: "Namecat",
           fontSize: { xs: 7, sm: 10, md: 20 },
@@ -334,7 +334,7 @@ const Catalogue = ({
         }}
       >
         LEARN MORE
-      </PrimaryButton>
+      </AppButton>
 
       <Stack
         sx={{

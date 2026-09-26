@@ -1,6 +1,6 @@
 "use client";
 
-import { PrimaryButton } from "@/component/ui/PrimaryButton";
+import { AppButton } from "@/component/ui/AppButton";
 import WifiOffRoundedIcon from "@mui/icons-material/WifiOffRounded";
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { useState } from "react";
@@ -177,7 +177,7 @@ export default function NativeConnectionErrorScreen({
           </Typography>
         ) : null}
 
-        <PrimaryButton
+        <AppButton
           onClick={() => void handleRetry()}
           disabled={isRetrying}
           sx={{
@@ -197,7 +197,7 @@ export default function NativeConnectionErrorScreen({
           ) : (
             "Try again"
           )}
-        </PrimaryButton>
+        </AppButton>
       </Stack>
     </Box>
   );

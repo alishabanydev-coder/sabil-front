@@ -3,7 +3,7 @@
 import { alpha, LinearProgress, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { PrimaryButton } from "@/component/ui/PrimaryButton";
+import { AppButton } from "@/component/ui/AppButton";
 
 const cardShellSx = {
   width: "100%",
@@ -163,7 +163,7 @@ const ProjectCardImage = ({
         href={`/donation/${project.slug || project._id}`}
         style={{ textDecoration: "none" }}
       >
-        <PrimaryButton sx={{ px: 1, py: 0.8 }}>
+        <AppButton sx={{ px: 1, py: 0.8 }}>
           <Typography
             variant="body1"
             sx={{
@@ -174,7 +174,7 @@ const ProjectCardImage = ({
           >
             More Details
           </Typography>
-        </PrimaryButton>
+        </AppButton>
       </Link>
     </Stack>
   </Stack>

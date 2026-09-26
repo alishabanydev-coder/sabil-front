@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import { PrimaryButton } from "@/component/ui/PrimaryButton";
+import { AppButton } from "@/component/ui/AppButton";
 import BreakdownModal from "./component/BreakdownModal";
 import { useState } from "react";
 import SeactionHeader from "@/component/ui/SectionHeader";
@@ -245,7 +245,7 @@ const BreakDown = ({
             alignItems: "center",
           }}
         >
-          <PrimaryButton
+          <AppButton
             sx={{
               fontFamily: "Namecat",
               letterSpacing: 2,
@@ -256,7 +256,7 @@ const BreakDown = ({
             }}
           >
             Donate here
-          </PrimaryButton>
+          </AppButton>
         </Stack>
       </Stack>
       <BreakdownModal

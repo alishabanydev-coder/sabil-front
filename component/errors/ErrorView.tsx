@@ -1,6 +1,6 @@
 "use client";
 
-import { ScondaryButton } from "@/component/ui/ScondaryButton";
+import { AppButton } from "@/component/ui/AppButton";
 import { Box, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -102,10 +102,12 @@ export default function ErrorView({ error, reset }: ErrorViewProps) {
             alignItems: "center",
           }}
         >
-          <ScondaryButton onClick={reset}>Try again</ScondaryButton>
-          <ScondaryButton component={Link} href="/">
+          <AppButton tone="secondary" onClick={reset}>
+            Try again
+          </AppButton>
+          <AppButton tone="secondary" component={Link} href="/">
             Back to Home
-          </ScondaryButton>
+          </AppButton>
         </Stack>
       </Stack>
     </Stack>
