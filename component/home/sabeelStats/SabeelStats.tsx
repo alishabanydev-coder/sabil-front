@@ -170,7 +170,7 @@ const TrustCard = ({ item }: { item: (typeof trustItems)[number] }) => (
 
 const SabeelStats = () => {
   return (
-    <Stack sx={{ mt: { xs: 5, md: -2 }, gap: { xs: 3, md: 5 } }}>
+    <Stack sx={{ mt: { xs: 5, md: -2 }, gap: { xs: 3, md: 5 }, mb: 2 }}>
       <Stack
         sx={{
           direction: "ltr",

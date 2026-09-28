@@ -28,21 +28,31 @@ const cardStyle = {
   position: "absolute",
   top: { xs: "18%", sm: "25%" },
   left: 0,
+  right: 0,
+  bottom: { xs: "6%", sm: "8%" },
   width: "100%",
-  height: "auto",
+  overflow: "hidden",
+  "& .swiper": {
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+    py: 3
+  },
+  "& .swiper-slide": {
+    alignSelf: "center",
+  },
   ".watch-us-card": {
     position: "relative",
     transition: "transform 300ms ease, opacity 300ms ease",
     boxShadow: "0 4px 18px rgba(0,0,0,0.9)",
     borderRadius: "25px",
-    scale: 0.9,
+    overflow: "hidden",
   },
   ".play-button-wrap": {
     display: "none",
   },
   ".swiper-slide-active .watch-us-card": {
     transitionDelay: "100ms",
-    scale: 1,
     transition: "all 360ms ease, opacity 300ms ease",
     ".play-button-wrap": {
       position: "absolute",
@@ -53,7 +63,6 @@ const cardStyle = {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      // transition: "transform 0.3s ease",
       "& .MuiIconButton-root": {
         color: "secondary.main",
       },
@@ -112,7 +121,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           alignItems: "center",
           position: "relative",
           gap: 1,
-          pt: {xs: 4, sm: 10},
+          pt: { xs: 4, sm: 12 },
         }}
       >
         <Stack
@@ -121,7 +130,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
             justifyContent: "center",
             alignItems: "center",
             position: "absolute",
-            top: {xs: '4%', sm: '8%', md: '6%'},
+            top: { xs: "4%", sm: "8%", md: "6%" },
             left: 0,
           }}
         >
@@ -134,6 +143,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
             width: "100%",
             aspectRatio: { xs: "16 / 14", sm: "16 / 6.5" },
             mt: { xs: -8, sm: -5 },
+            overflow: "hidden",
           }}
         >
           <Image
@@ -146,19 +156,33 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
             <Swiper
               modules={[Autoplay, EffectCoverflow]}
               effect="coverflow"
+              observer
+              observeParents
+              observeSlideChildren
+              centeredSlides
+              watchSlidesProgress
+              slidesPerView={3.5}
+              loop={videoData.length >= 5}
+              autoplay={{ delay: 3500, disableOnInteraction: false }}
               coverflowEffect={{
-                rotate: 40,
-                stretch: 0,
-                depth: 160,
+                rotate: 0,
+                stretch: "10%",
+                depth: 350,
                 modifier: 1,
                 slideShadows: false,
               }}
-              slidesPerView={3.5}
-              loop
-              centeredSlides
-              watchSlidesProgress
-              autoplay={{ delay: 3500, disableOnInteraction: false }}
-              spaceBetween={5}
+              onProgress={(swiper) => {
+                swiper.slides.forEach((slideEl) => {
+                  const progress =
+                    (slideEl as HTMLElement & { progress?: number }).progress ??
+                    0;
+                  const opacity = Math.min(
+                    Math.max(3 - Math.abs(progress), 0),
+                    1
+                  );
+                  slideEl.style.opacity = String(opacity);
+                });
+              }}
               breakpoints={{
                 320: {
                   slidesPerView: 1.8,
@@ -170,8 +194,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
               style={{
                 width: "100%",
                 height: "100%",
-                paddingBottom: 40,
-                paddingTop: 40,
+                paddingBottom: 36,
               }}
             >
               {videoData.map((slide) => (
@@ -181,7 +204,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
                     sx={{
                       position: "relative",
                       width: "100%",
-                      aspectRatio: "16 / 10",
+                      aspectRatio: "16 / 9",
                     }}
                   >
                     <Image
