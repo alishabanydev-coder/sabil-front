@@ -53,9 +53,9 @@ const Catalogue = ({
     <Stack
       sx={{
         width: "100%",
-        aspectRatio: { xs: "16 / 9", sm: "16 / 8" },
+        aspectRatio: { xs: "16 / 9", sm: "16 / 9" },
         position: "relative",
-        mt: 5,
+        // mt: 5,
       }}
     >
       <Image
@@ -64,94 +64,6 @@ const Catalogue = ({
         fill
         style={{ objectFit: "fill" }}
       />
-
-      {/* characters swiper */}
-      <Stack
-        sx={{
-          position: "absolute",
-          top: { xs: "3%", sm: "0%", md: "0%", lg: "3%" },
-          right: "3%",
-          width: "42%",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          px: 1,
-          zIndex: 3,
-        }}
-      >
-        <AnimatePresence mode="wait" initial={false}>
-          <Stack
-            key={`characters-${selectedProject?._id ?? "none"}`}
-            component={motion.div}
-            custom={slideDirection}
-            variants={{
-              initial: (direction: 1 | -1) => ({
-                x: direction === 1 ? -80 : 80,
-                opacity: 0,
-              }),
-              animate: { x: 0, opacity: 1 },
-              exit: (direction: 1 | -1) => ({
-                x: direction === 1 ? 80 : -80,
-                opacity: 0,
-              }),
-            }}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            sx={{
-              width: "100%",
-              height: "100%",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 1.5,
-            }}
-          >
-            {selectedProject?.characters.map((character, index) => (
-              <Box
-                key={`${character.name}-${index}`}
-                component={motion.div}
-                animate={{
-                  y: [0, index % 2 === 0 ? -10 : -8, 0],
-                  rotate: [0, index % 2 === 0 ? 2.4 : -2.2, 0],
-                  scale: 1,
-                }}
-                whileHover={{
-                  scale: 1.1,
-                  transition: { duration: 0.18, ease: "easeOut" },
-                }}
-                transition={{
-                  y: {
-                    duration: 2.2 + index * 0.2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  },
-                  rotate: {
-                    duration: 2.7 + index * 0.2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  },
-                }}
-                sx={{
-                  position: "relative",
-                  width: "28%",
-                  aspectRatio: "1 / 1",
-                  cursor: "pointer",
-                  transformOrigin: "center bottom",
-                }}
-              >
-                <Image
-                  src={character.image}
-                  alt={character.name}
-                  fill
-                  style={{ objectFit: "contain" }}
-                />
-              </Box>
-            ))}
-          </Stack>
-        </AnimatePresence>
-      </Stack>
 
       {/* Poseter Swiper */}
       <Box
@@ -162,7 +74,11 @@ const Catalogue = ({
           top: 0,
           left: 0,
           clipPath:
-            "polygon(75% 20%, 76% 20.8%, 77% 22%, 78% 24%, 85% 75%, 85% 77.1%, 84% 79.2%, 83% 80.1%, 81.5% 81%, 0 89%, 0 12%, 73% 19.1%)",
+            "polygon(75% 20%, 76% 20.8%, 77% 22%, 78% 24%, 85% 75%, 85% 77.1%, 84% 79.2%, 83% 80.1%, 81.5% 81%, 0% 89%, 0 12%, 73% 19.1%)",
+          "& .swiper, & .swiper-wrapper, & .swiper-slide": {
+            width: "100%",
+            height: "100%",
+          },
         }}
       >
         <Swiper
@@ -191,142 +107,227 @@ const Catalogue = ({
         >
           {catalogues.map((catalogue) => (
             <SwiperSlide key={catalogue._id}>
-              <Stack
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  position: "relative",
-                  alignItems: "end",
-                  justifyContent: "center",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: "85%",
-                    aspectRatio: { xs: "16 / 11.2", sm: "16 / 9.8" },
-                    borderRadius: 4,
-                    position: "relative",
-                  }}
-                >
-                  <Image
-                    src={catalogue.image}
-                    alt={catalogue._id}
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
-                </Box>
-              </Stack>
+              <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+                <Image
+                  src={catalogue.image}
+                  alt={catalogue._id}
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
+              </Box>
             </SwiperSlide>
           ))}
         </Swiper>
       </Box>
 
-      {/* Text Swiper */}
-      <Box
+      <Stack
         sx={{
-          width: "40%",
-          height: "65%",
           position: "absolute",
-          top: "15%",
+          top: "4%",
           right: 0,
+          width: { xs: "40%", lg: "39%" },
+          height: "75%",
+          gap: { xs: 1, sm: 3, md: 4, lg: 5, xl: 6 },
           clipPath:
             "polygon(100% 0%, 100% 100%, 7.5% 95%, 2.3% 62%, 11.3% 5%, 12.7% 1%, 19.5% -2%, 25.3% -3%, 30% -4%)",
         }}
       >
-        <Swiper
-          modules={[Autoplay]}
-          onSwiper={(swiper) => (catalogueRightSwiperRef.current = swiper)}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 3500, disableOnInteraction: false }}
-          allowTouchMove={false}
-          loop
-          style={{ width: "100%", height: "100%" }}
+        <Stack
+          sx={{
+            width: "90%",
+            height: "20%",
+            minHeight: 0,
+            alignItems: "center",
+            justifyContent: "center",
+            px: 0.5,
+          }}
         >
-          {catalogues.map((catalogue) => (
-            <SwiperSlide key={catalogue._id}>
-              <Stack
-                sx={{
-                  width: "80%",
-                  height: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  px: { xs: 0, md: 3 },
-                }}
-              >
-                <Stack
+          <AnimatePresence mode="wait" initial={false}>
+            <Stack
+              key={`characters-${selectedProject?._id ?? "none"}`}
+              component={motion.div}
+              custom={slideDirection}
+              variants={{
+                initial: (direction: 1 | -1) => ({
+                  x: direction === 1 ? -80 : 80,
+                  opacity: 0,
+                }),
+                animate: { x: 0, opacity: 1 },
+                exit: (direction: 1 | -1) => ({
+                  x: direction === 1 ? 80 : -80,
+                  opacity: 0,
+                }),
+              }}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              sx={{
+                width: "100%",
+                height: "100%",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-evenly",
+              }}
+            >
+              {selectedProject?.characters.map((character, index) => (
+                <Box
+                  key={`${character.name}-${index}`}
+                  component={motion.div}
+                  animate={{
+                    y: [0, index % 2 === 0 ? -6 : -4, 0],
+                    rotate: [0, index % 2 === 0 ? 2.4 : -2.2, 0],
+                    scale: 1,
+                  }}
+                  whileHover={{
+                    scale: 1.08,
+                    transition: { duration: 0.18, ease: "easeOut" },
+                  }}
+                  transition={{
+                    y: {
+                      duration: 2.2 + index * 0.2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    },
+                    rotate: {
+                      duration: 2.7 + index * 0.2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    },
+                  }}
                   sx={{
-                    width: "100%",
-                    gap: { xs: 0, sm: 0.5 },
-                    maxWidth: 360,
-                    ml: "auto",
-                    mr: { xs: 1.2, md: 0, lg: 8 },
-                    textAlign: "left",
+                    position: "relative",
+                    height: "100%",
+                    aspectRatio: "1 / 1",
+                    maxWidth: "28%",
+                    cursor: "pointer",
+                    transformOrigin: "center bottom",
+                    flexShrink: 1,
                   }}
                 >
-                  <Stack sx={{ gap: { xs: 0.5, sm: 1.5 } }}>
-                    <Typography
-                      sx={{
-                        fontSize: { xs: 10, sm: 18, md: 22, lg: 28 },
-                        fontWeight: 700,
-                        color: "primary.main",
-                        lineHeight: 1,
-                        textTransform: "uppercase",
-                        fontFamily: "Bhel Puri",
-                      }}
-                    >
-                      {selectedProject?.title}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        direction: "ltr",
-                        fontSize: { xs: 8, sm: 12, md: 14, lg: 16 },
-                        fontFamily: "Namecat",
-                        fontWeight: 400,
-                        width: "100%",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        color: "#ff3f7a",
-                        lineHeight: 1.1,
-                        textTransform: "uppercase",
-                        mb: { xs: 1.5, md: 2.2 },
-                      }}
-                    >
-                      {catalogue.header}
-                    </Typography>
-                  </Stack>
+                  <Image
+                    src={character.image}
+                    alt={character.name}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </Box>
+              ))}
+            </Stack>
+          </AnimatePresence>
+        </Stack>
 
-                  <Typography
+        <Box
+          sx={{
+            width: "100%",
+            height: "80%",
+            minHeight: 0,
+            overflow: "hidden",
+            "& .swiper, & .swiper-wrapper, & .swiper-slide": {
+              width: "100%",
+              height: "100%",
+            },
+          }}
+        >
+          <Swiper
+            modules={[Autoplay]}
+            onSwiper={(swiper) => (catalogueRightSwiperRef.current = swiper)}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 3500, disableOnInteraction: false }}
+            allowTouchMove={false}
+            loop
+            style={{ width: "100%", height: "100%" }}
+          >
+            {catalogues.map((catalogue) => (
+              <SwiperSlide key={catalogue._id}>
+                <Stack
+                  sx={{
+                    width: "88%",
+                    height: "100%",
+                    justifyContent: "start",
+                    overflow: "hidden",
+                    px: { xs: 1, sm: 1.5, md: 1 },
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <Stack
                     sx={{
-                      fontSize: { xs: 6, sm: 12, md: 16 },
-                      fontFamily: "Namecat",
-                      letterSpacing: 2,
-                      fontWeight: 400,
-                      color: "#fff",
-                      lineHeight: 1.4,
-                      textTransform: "uppercase",
-                      whiteSpace: "pre-line",
+                      width: "100%",
+                      maxHeight: "100%",
+                      gap: { xs: 0, sm: 0.5 },
+                      textAlign: "left",
                       overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 7,
                     }}
                   >
-                    {catalogue.body}
-                  </Typography>
+                    <Stack sx={{ gap: { xs: 0.5, sm: 1.5 }, minWidth: 0 }}>
+                      <Typography
+                        sx={{
+                          fontSize: { xs: 10, sm: 18, md: 22, lg: 35, xl: 42 },
+                          fontWeight: 700,
+                          color: "primary.main",
+                          lineHeight: 1,
+                          textTransform: "uppercase",
+                          fontFamily: "Bhel Puri",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {selectedProject?.title}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          direction: "ltr",
+                          fontSize: { xs: 8, sm: 12, md: 14, lg: 16, xl: 20 },
+                          fontFamily: "Namecat",
+                          fontWeight: 400,
+                          width: "100%",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          color: "#ff3f7a",
+                          lineHeight: 1.1,
+                          textTransform: "uppercase",
+                          mb: { xs: 0.8, md: 2.2 },
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {catalogue.header}
+                      </Typography>
+                    </Stack>
+
+                    <Typography
+                      sx={{
+                        fontSize: { xs: 6, sm: 11, md: 16, lg: 20, xl: 24 },
+                        fontFamily: "Namecat",
+                        letterSpacing: 2,
+                        fontWeight: 400,
+                        color: "#fff",
+                        lineHeight: 1.4,
+                        textTransform: "uppercase",
+                        whiteSpace: "pre-line",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 7,
+                      }}
+                    >
+                      {catalogue.body}
+                    </Typography>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </Box>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Box>
+      </Stack>
 
       <AppButton
         sx={{
           fontFamily: "Namecat",
-          fontSize: { xs: 7, sm: 10, md: 20 },
-          px: { xs: 0.7, md: 2 },
-          py: { xs: 0.4, md: 1 },
+          fontSize: { xs: 7, sm: 12, md: 15, lg: 18, xl: 20 },
+          px: { xs: 0.7, md: 2, lg: 2.5 },
+          py: { xs: 0.4, md: 1, lg: 1.2 },
           letterSpacing: 2,
           position: "absolute",
           bottom: { xs: "12%", sm: "15%" },
@@ -339,7 +340,7 @@ const Catalogue = ({
       <Stack
         sx={{
           position: "absolute",
-          bottom: { xs: "-5%", sm: "8%" },
+          bottom: { xs: "-5%", sm: "0%", md: "5%", lg: "5%", xl: "8%" },
           right: "40%",
         }}
       >

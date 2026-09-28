@@ -5,39 +5,49 @@ import { AppButton } from "@/component/ui/AppButton";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import { Autoplay } from "swiper/modules";
 
 const WHY_CARDS = [
   {
+    bg: "/red-why-card.png",
+    icon: "/red-heart.png",
+    color: "#FC4064",
+    title: "Positive Impact",
+    body: "building character, empathy and positivehabits that last a lifetime.",
+  },
+  {
     bg: "/blue-why-card.png",
-    title: "quality for children",
-    body: "high-quality animation and storytelling children love and parents trust",
+    icon: "/blue-star.png",
+    color: "#174ED5",
+    title: "Quality for Children",
+    body: "hight-quality animation and storytelling children love and parents trust",
   },
   {
     bg: "/green-why-card.png",
-    title: "stories that teach",
-    body: "authentic islamic stories that inspire faith and build character",
-  },
-  {
-    bg: "/red-why-card.png",
-    title: "families we serve",
-    body: "joyful content that brings families closer and builds a better tomorrow",
+    icon: "/green-leaf.png",
+    color: "#6FAA1F",
+    title: "faith at the core",
+    body: "every storyu is rooted in quran, sunnah and ahlulbayt teachings.",
   },
 ] as const;
 
 const WhyCard = ({
   bg,
+  icon,
   title,
   body,
+  color,
 }: {
   bg: string;
+  icon: string;
   title: string;
   body: string;
+  color: string;
 }) => (
   <Stack
     sx={{
-      width: "100%",
-      height: "100%",
-      minHeight: { xs: 220, sm: 200, md: 240, lg: 280, xl: 320 },
+      width: { xs: 170, sm: 200, md: 250, lg: 290, xl: 320 },
+      aspectRatio: 1.5,
       justifyContent: "center",
       alignItems: "center",
       textAlign: "center",
@@ -50,7 +60,7 @@ const WhyCard = ({
     }}
   >
     <Image
-      src="/blue-star.png"
+      src={icon}
       alt=""
       width={70}
       height={70}
@@ -58,8 +68,10 @@ const WhyCard = ({
     />
     <Typography
       sx={{
+        color: color,
         fontFamily: "Namecat",
-        fontSize: { xs: 14, sm: 12, md: 16, lg: 18, xl: 22 },
+        fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 22 },
+        letterSpacing: 1.2,
         fontWeight: 700,
         mt: 1,
       }}
@@ -69,7 +81,7 @@ const WhyCard = ({
     <Typography
       sx={{
         fontFamily: "Namecat",
-        fontSize: { xs: 11, sm: 10, md: 12, lg: 14, xl: 16 },
+        fontSize: { xs: 9, sm: 10, md: 10, lg: 12, xl: 14 },
         fontWeight: 100,
         mt: 0.5,
       }}
@@ -162,29 +174,24 @@ const OurMission = () => {
 
         <Box
           sx={{
+            display: { xs: "block", md: "none" },
             width: "100%",
-            mt: { xs: 2, md: 3 },
-            px: { xs: 0, sm: 2, md: 4, lg: 6 },
+            mt: 2,
             "& .swiper": { width: "100%" },
-            "& .swiper-slide": { height: "auto" },
+            "& .swiper-slide": {
+              height: "auto",
+              display: "flex",
+              justifyContent: "center",
+            },
           }}
         >
           <Swiper
-            slidesPerView={1.25}
+            slidesPerView={1}
             centeredSlides
             spaceBetween={12}
-            breakpoints={{
-              600: {
-                slidesPerView: 3,
-                centeredSlides: false,
-                spaceBetween: 16,
-              },
-              900: {
-                slidesPerView: 3,
-                centeredSlides: false,
-                spaceBetween: 24,
-              },
-            }}
+            modules={[Autoplay]}
+            loop={true}
+            autoplay={{ delay: 1500, disableOnInteraction: false }}
           >
             {WHY_CARDS.map((card) => (
               <SwiperSlide key={card.bg}>
@@ -193,6 +200,23 @@ const OurMission = () => {
             ))}
           </Swiper>
         </Box>
+
+        <Stack
+          direction="row"
+          sx={{
+            display: { xs: "none", md: "flex" },
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: { md: 4, lg: 5, xl: 6 },
+            mt: 3,
+            px: { md: 4, lg: 6 },
+          }}
+        >
+          {WHY_CARDS.map((card) => (
+            <WhyCard key={card.bg} {...card} />
+          ))}
+        </Stack>
       </Stack>
     </Stack>
   );

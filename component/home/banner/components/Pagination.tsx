@@ -13,7 +13,7 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
       <IconButton
         onClick={onNext}
         sx={{
-          width: { xs: 50, sm: 72 },
+          width: { xs: 50, sm: 72},
           height: { xs: 28, sm: 40 },
           borderRadius: 5,
           bgcolor: "secondary.main",
@@ -45,7 +45,7 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
         >
           <NavigateNextIcon
             sx={{
-              fontSize: { xs: 24, sm: 40 },
+              fontSize: { xs: 24, sm: 40, },
               color: "warning.main",
               position: "absolute",
               right: { xs: "5px", sm: -2.5 },

@@ -34,11 +34,11 @@ const OnSubscribtion = ({
         justifyContent: "center",
         alignItems: "center",
         gap: 2,
-        pt: 8,
+        pt: 4,
       }}
     >
-      <SeactionHeader text="ON SUBSCRIBTION" />
-      <Typography
+      {/* <SeactionHeader text="ON SUBSCRIBTION" /> */}
+      {/* <Typography
         sx={{
           color: "secondary.main",
           fontSize: { xs: 9, sm: 14 },
@@ -50,12 +50,13 @@ const OnSubscribtion = ({
         }}
       >
         A WHOLE WORLD OF AN AMAZING FEATURE AND BENEFITS FOR YOUR FAMILY
-      </Typography>
+      </Typography> */}
+
       <Stack
         direction="row"
         sx={{
-          width: { xs: "95%", sm: "80%" },
-          gap: { xs: 2, sm: 6 },
+          width: { xs: "95%", sm: "90%" },
+          gap: { xs: 2, sm: 4 },
           justifyContent: "center",
           alignItems: "center",
         }}
@@ -70,11 +71,14 @@ const OnSubscribtion = ({
               sx={{
                 position: "relative",
                 width: "100%",
-                aspectRatio: "16 / 9",
+                aspectRatio: 1.94,
                 cursor: hasCatalogue ? "pointer" : "not-allowed",
                 opacity: hasCatalogue ? 1 : 0.45,
                 filter: isSelected ? "none" : "grayscale(100%)",
                 transition: "all 0.3s ease",
+                border: (theme) =>
+                  hasCatalogue ? `4px solid #F49AC1` : "4px solid #ddd",
+                borderRadius: 3,
               }}
               onClick={() => {
                 if (!hasCatalogue) {
