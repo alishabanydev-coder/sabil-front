@@ -3,7 +3,9 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, EffectCoverflow } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import WatchUsModal from "./component/WatchUsModal";
 import { useState } from "react";
@@ -108,17 +110,29 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           width: "100%",
           justifyContent: "center",
           alignItems: "center",
+          position: "relative",
           gap: 1,
-          pt: 14,
+          pt: {xs: 4, sm: 10},
         }}
       >
-        <SeactionHeader text="Watch Us" sx={{ zIndex: 100 }} />
+        <Stack
+          sx={{
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: {xs: '4%', sm: '8%', md: '6%'},
+            left: 0,
+          }}
+        >
+          <SeactionHeader text="featured videos" sx={{ zIndex: 100 }} />
+        </Stack>
 
         <Stack
           sx={{
             position: "relative",
             width: "100%",
-            aspectRatio: { xs: "16 / 14", sm: "16 / 7" },
+            aspectRatio: { xs: "16 / 14", sm: "16 / 6.5" },
             mt: { xs: -8, sm: -5 },
           }}
         >
@@ -130,10 +144,19 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           />
           <Stack sx={cardStyle}>
             <Swiper
-              modules={[Autoplay]}
+              modules={[Autoplay, EffectCoverflow]}
+              effect="coverflow"
+              coverflowEffect={{
+                rotate: 40,
+                stretch: 0,
+                depth: 160,
+                modifier: 1,
+                slideShadows: false,
+              }}
               slidesPerView={3.5}
               loop
               centeredSlides
+              watchSlidesProgress
               autoplay={{ delay: 3500, disableOnInteraction: false }}
               spaceBetween={5}
               breakpoints={{

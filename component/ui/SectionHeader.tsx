@@ -3,7 +3,7 @@ import { SxProps, Typography } from "@mui/material";
 const SeactionHeader = ({ text, sx }: { text: string, sx?: SxProps }) => (
   <Typography
     sx={{
-      fontSize: { xs: 14, sm: 16, md: 24, lg: 32, xl: 36 },
+      fontSize: { xs: 20, sm: 30, md: 36, lg: 40, xl: 45 },
       fontWeight: "bold",
       color: "primary.main",
       fontFamily: "Bhel Puri",

@@ -11,6 +11,7 @@ import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMe
 import { fetchPublicAboutUs } from "@/component/admin/services/aboutUsApi";
 import ProjectCatalogue from "@/component/home/projectCatalogue/ProjectCatalogue";
 import OurMission from "@/component/home/ourMission/OurMission";
+import SabeelStats from "@/component/home/sabeelStats/SabeelStats";
 
 const sections = [
   "banner",
@@ -63,11 +64,14 @@ export default async function Home() {
       <Box id="subscription" sx={sectionAnchorSx}>
         <ProjectCatalogue publicSectionData={publicSectionData} />
       </Box>
-      <Box id="projects" sx={sectionAnchorSx}>
-        <BreakDown projectBreakDowns={publicSectionData.breakdown} />
+      <Box id="sabeel-stats" sx={sectionAnchorSx}>
+        <SabeelStats />
       </Box>
       <Box id="programs" sx={sectionAnchorSx}>
         <WatchUs videoData={publicSectionData.video} />
+      </Box>
+      <Box id="projects" sx={sectionAnchorSx}>
+        <BreakDown projectBreakDowns={publicSectionData.breakdown} />
       </Box>
       <Box id="about" sx={sectionAnchorSx}>
         <PeopleOpinion commentData={publicSectionData.comment} />
