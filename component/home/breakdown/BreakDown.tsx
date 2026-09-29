@@ -23,9 +23,9 @@ const cardStyle = {
   justifyContent: "center",
   alignItems: "center",
   position: "relative",
-  width: "100%",
+  width: { xs: "100%", sm: "95%" },
   minHeight: { xs: 340, md: 430 },
-  px: { xs: 1, md: 4 },
+  px: { xs: 0, md: 2 },
   overflowY: "visible",
   ".swiper": {
     width: "100%",
@@ -40,75 +40,24 @@ const cardStyle = {
     position: "relative",
     cursor: "default",
     direction: "ltr",
-    width: "100%",
-    maxWidth: 220,
-    maxHeight: 230,
-    borderRadius: "30px",
-    bgcolor: "#ececec",
-    p: 2,
-    pb: 5,
-    textAlign: "center",
-    transition: "transform 300ms ease, opacity 300ms ease",
-    transform: "scale(0.9)",
-    opacity: 0.72,
-  },
-  ".swiper-slide-prev .breakdown-card": {
-    transform: "translateX(-40px) scale(0.95)",
-    opacity: 0.92,
-  },
-  ".swiper-slide-next .breakdown-card": {
-    transform: "translateX(40px) scale(0.95)",
-    opacity: 0.92,
-  },
-  ".play-button-wrap": {
-    position: "absolute",
-    bottom: -15,
-    right: "0%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    "& .MuiIconButton-root": {
-      color: "white",
-    },
-  },
-  ".play-button": {
-    bgcolor: "primary.main",
-    borderRadius: "50%",
-    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.9)",
-  },
-  ".swiper-slide-active .breakdown-card": {
-    boxShadow: (theme) => `0px 3px 20px 1px ${theme.palette.primary.main}`,
-
-    transform: "scale(1.1) translateY(15px)",
-    opacity: 1,
-    bgcolor: "primary.main",
-    transition: "transform 300ms ease, opacity 300ms ease",
-    transitionDelay: "100ms",
-    span: {
-      color: "white",
-    },
-    P: {
-      color: "success.main",
-    },
-    "& .play-button-wrap": {
-      position: "absolute",
-      bottom: -20,
-      right: "0%",
-      width: "100%",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    ".play-button": {
-      width: 50,
-      height: 50,
-      bgcolor: "secondary.main",
-      borderRadius: "50%",
-      transform: "translateY(0)",
+    width: { xs: "88%", md: "92%" },
+    bgcolor: "#fff",
+    borderRadius: { xs: 5, md: 7 },
+    boxShadow: "0 12px 32px 10px rgba(0, 0, 0, 0.12)",
+    gap: 2,
+    pb: 2,
+    "& img": {
+      borderRadius: { xs: 5, md: 7 },
       transition: "transform 300ms ease",
-      "&:hover": {
-        transform: "translateY(-1px)",
-        boxShadow: "0px 2px 7px rgba(0, 0, 0, 0.9)",
-      },
+    },
+    "& .MuiIconButton-root": {
+      transition: "transform 300ms ease",
+    },
+    "&:hover img": {
+      transform: "scale(1.1)",
+    },
+    "&:hover .MuiIconButton-root": {
+      transform: "scale(1.2)",
     },
   },
 };
@@ -135,19 +84,20 @@ const BreakDown = ({
           justifyContent: "center",
           alignItems: "center",
           gap: 1,
-          pt: 8,
+          pt: 0,
         }}
       >
-        <SeactionHeader text={`Project BreakDown \n for kids`} />
+        <SeactionHeader text={`Behind the scenes`} />
 
         <Stack direction="row" sx={cardStyle}>
           <Swiper
             modules={[Autoplay]}
             slidesPerView={3}
             centeredSlides
-            autoplay={{ delay: 3500, disableOnInteraction: false }}
+            autoplay={{ delay: 1500, disableOnInteraction: false }}
             loop
             speed={700}
+            spaceBetween={16}
             breakpoints={{
               320: {
                 slidesPerView: 1,
@@ -171,64 +121,81 @@ const BreakDown = ({
                       position: "relative",
                       width: "100%",
                       aspectRatio: "16 / 9",
-                      borderRadius: "20px",
+                      borderRadius: { xs: "14px", md: "18px" },
                       overflow: "hidden",
-                      mb: 1,
                     }}
                   >
                     <Image
                       src={item.thumbnail}
                       alt={item.title}
                       fill
-                      style={{ objectFit: "contain" }}
+                      style={{ objectFit: "cover" }}
                     />
-                  </Stack>
-                  <Stack sx={{ gap: 1 }}>
-                    <Typography
-                      component="p"
-                      sx={{
-                        fontSize: { xs: 12, md: 22 },
-                        fontWeight: "bold",
-                        color: "primary.main",
-                        textTransform: "uppercase",
-                        lineHeight: 1,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {item.title}
-                    </Typography>
-                    <Typography
-                      component="span"
-                      sx={{
-                        fontSize: { xs: 10, md: 16 },
-                        color: "secondary.main",
-                        fontFamily: "Namecat",
-                        lineHeight: 1.1,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {item.content}
-                    </Typography>
                   </Stack>
 
                   <Stack
-                    className="play-button-wrap"
-                    sx={{ position: "relative", width: "100%" }}
+                    direction="row"
+                    sx={{
+                      alignItems: "center",
+                      gap: { xs: 1, md: 1.5 },
+                      px: 1.5,
+                    }}
                   >
                     <IconButton
-                      className="play-button"
                       onClick={() => onOpenBreakdownModal(item)}
+                      sx={{
+                        flexShrink: 0,
+                        width: { xs: 42, md: 48 },
+                        height: { xs: 42, md: 48 },
+                        bgcolor: "secondary.main",
+                        color: "#fff",
+                        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.16)",
+                        "&:hover": { bgcolor: "secondary.main" },
+                      }}
                     >
-                      <PlayArrowRoundedIcon sx={{ color: "white" }} />
+                      <PlayArrowRoundedIcon
+                        sx={{
+                          fontSize: { xs: 24, sm: 28, md: 32, lg: 36 },
+                          display: "block",
+                        }}
+                      />
                     </IconButton>
+
+                    <Stack sx={{ minWidth: 0, gap: 1 }}>
+                      <Typography
+                        component="p"
+                        sx={{
+                          fontSize: { xs: 12, md: 16 },
+                          fontWeight: 800,
+                          color: "primary.main",
+                          fontFamily: "Bhel Puri",
+                          lineHeight: 1.3,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {item.title}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontSize: { xs: 9, md: 12 },
+                          height: { xs: 18, md: 28 },
+                          color: "text.primary",
+                          fontFamily: "Namecat",
+                          lineHeight: 1.15,
+                          textTransform: "uppercase",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {item.content} asdf asdf asdf asdf asdf asdf
+                      </Typography>
+                    </Stack>
                   </Stack>
                 </Stack>
               </SwiperSlide>
