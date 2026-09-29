@@ -26,27 +26,36 @@ type VideoData = {
 
 const cardStyle = {
   position: "absolute",
-  top: { xs: "18%", sm: "25%" },
-  left: 0,
-  right: 0,
-  bottom: { xs: "6%", sm: "8%" },
+  inset: 0,
   width: "100%",
+  height: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   overflow: "hidden",
   "& .swiper": {
     width: "100%",
     height: "100%",
-    overflow: "hidden",
-    py: 3
+    overflow: "visible",
+    display: "flex",
+    alignItems: "center",
+  },
+  "& .swiper-wrapper": {
+    alignItems: "center",
   },
   "& .swiper-slide": {
     alignSelf: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   ".watch-us-card": {
     position: "relative",
     transition: "transform 300ms ease, opacity 300ms ease",
-    boxShadow: "0 4px 18px rgba(0,0,0,0.9)",
-    borderRadius: "25px",
+    boxShadow: "0 5px 32px 5px rgba(0,0,0,0.5)",
+    borderRadius: { xs: "16px", sm: "25px" },
     overflow: "hidden",
+    scale: 1.2,
   },
   ".play-button-wrap": {
     display: "none",
@@ -56,43 +65,38 @@ const cardStyle = {
     transition: "all 360ms ease, opacity 300ms ease",
     ".play-button-wrap": {
       position: "absolute",
-      bottom: { xs: -28, sm: -28 },
-      right: { xs: "15%", sm: "20%" },
-      width: { xs: 65, sm: 85 },
-      height: { xs: 65, sm: 85 },
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      width: { xs: 40, sm: 54, md: 75 },
+      height: { xs: 40, sm: 54, md: 75 },
       "& .MuiIconButton-root": {
         color: "secondary.main",
       },
     },
-    ".play-button-ring": {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      width: { xs: 56, sm: 76 },
-      height: { xs: 56, sm: 76 },
-      marginTop: { xs: "-28px", sm: "-38px" },
-      marginLeft: { xs: "-28px", sm: "-38px" },
-      borderRadius: "50%",
-      bgcolor: "rgba(255, 255, 255, 0.48)",
-      zIndex: 0,
-      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-      transition: "box-shadow 0.3s ease, transform 0.3s ease",
-    },
     ".play-button": {
       position: "relative",
       zIndex: 1,
-      width: { xs: 40, sm: 60 },
-      height: { xs: 40, sm: 60 },
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      lineHeight: 0,
+      width: "100%",
+      height: "100%",
+      minWidth: 0,
       padding: 0,
       bgcolor: "#fff",
       borderRadius: "50%",
       boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
       transition: "transform 0.3s ease",
+      "& .MuiSvgIcon-root": {
+        display: "block",
+      },
       "&:hover": {
-        transform: "scale(1.25)",
+        transform: "scale(1.1)",
         bgcolor: "#fff",
         boxShadow: "0 4px 14px rgba(0,0,0,0.3)",
       },
@@ -130,7 +134,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
             justifyContent: "center",
             alignItems: "center",
             position: "absolute",
-            top: { xs: "4%", sm: "8%", md: "6%" },
+            top: { xs: "-5%", sm: "8%", md: "8%" },
             left: 0,
           }}
         >
@@ -141,13 +145,13 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           sx={{
             position: "relative",
             width: "100%",
-            aspectRatio: { xs: "16 / 14", sm: "16 / 6.5" },
+            aspectRatio: { xs: "16 / 14", sm: "1600 / 700" },
             mt: { xs: -8, sm: -5 },
-            overflow: "hidden",
+            overflow: "visible",
           }}
         >
           <Image
-            src="/Media section.webp"
+            src="/background-featrued-video.png"
             alt="watch us"
             fill
             style={{ objectFit: "cover" }}
@@ -166,8 +170,8 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
               autoplay={{ delay: 3500, disableOnInteraction: false }}
               coverflowEffect={{
                 rotate: 0,
-                stretch: "10%",
-                depth: 350,
+                stretch: "-15%",
+                depth: 300,
                 modifier: 1,
                 slideShadows: false,
               }}
@@ -194,7 +198,6 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
               style={{
                 width: "100%",
                 height: "100%",
-                paddingBottom: 36,
               }}
             >
               {videoData.map((slide) => (
@@ -211,16 +214,15 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
                       src={slide.thumbnail}
                       alt={slide.title}
                       fill
-                      style={{ objectFit: "contain", borderRadius: "25px" }}
+                      style={{ objectFit: "contain" }}
                     />
                     <Box className="play-button-wrap">
-                      <Box className="play-button-ring" />
                       <IconButton
                         className="play-button"
                         onClick={() => onOpenWatchUsModal(slide)}
                       >
                         <PlayArrowRoundedIcon
-                          sx={{ fontSize: { xs: 36, sm: 54 } }}
+                          sx={{ fontSize: { xs: 36, sm: 48, md: 64 } }}
                         />
                       </IconButton>
                     </Box>
