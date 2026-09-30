@@ -1,19 +1,13 @@
 ﻿"use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button, Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import { Autoplay } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { Swiper, SwiperSlide } from "swiper/react";
 import EastRoundedIcon from "@mui/icons-material/EastRounded";
-
-const DEFAULT_NEWS_IMAGE = "/news1.webp";
-import Pagination from "../banner/components/Pagination";
 import SeactionHeader from "@/component/ui/SectionHeader";
 import NewsFromUsModal from "./component/NewsFromUsModal";
+
+const DEFAULT_NEWS_IMAGE = "/news1.webp";
 
 type Slide = {
   id: number | string;
@@ -38,7 +32,6 @@ type NewsFromUsProps = {
 };
 
 export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
-  const newsSwiperRef = useRef<any>(null);
   const [open, setOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<BlogDataItem | null>(null);
 
@@ -66,8 +59,9 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
           .filter((slide) => Boolean(slide.image))
       : [];
 
-  const handleNext = () => newsSwiperRef.current?.slideNext();
-  const handlePrev = () => newsSwiperRef.current?.slidePrev();
+  const previewSlides = slides.slice(0, 3);
+
+  console.log(slides);
 
   return (
     <Stack
@@ -77,26 +71,18 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
         alignItems: "center",
         gap: { xs: 1, sm: 4 },
         mt: { xs: 3, sm: 8 },
+        direction: "ltr",
       }}
     >
-      <SeactionHeader text="news from us" />
-
-      <Typography
+      <SeactionHeader
+        text="news from us"
         sx={{
-          width: "60%",
-          fontSize: { xs: 9, sm: 16 },
-          color: "success.main",
+          width: "74%",
+          textAlign: "start",
           fontFamily: "Namecat",
-          textTransform: "uppercase",
-          unicodeBidi: "plaintext",
-          letterSpacing: 1.2,
-          textAlign: "center",
+          fontSize: { xs: 22, sm: 30, md: 36, lg: 32, xl: 36 },
         }}
-      >
-        you can follow us by reciving news from sabeel kids about animation
-        production activities. seminars and other developments that our
-        supporters participates in.
-      </Typography>
+      />
 
       <Stack
         direction={"row"}
@@ -108,133 +94,170 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
           },
         }}
       >
-        <Swiper
-          modules={[Autoplay]}
-          onSwiper={(swiper) => (newsSwiperRef.current = swiper)}
-          loop
-          slidesOffsetBefore={80}
-          autoplay={{ delay: 3500, disableOnInteraction: false }}
-          style={{ width: "100%", height: "100%", direction: "ltr" }}
-          breakpoints={{
-            320: {
-              slidesPerView: 1,
-              spaceBetween: 20,
-              slidesOffsetBefore: 0,
-            },
-            610: {
-              slidesPerView: 1.3,
-              spaceBetween: 70,
-              slidesOffsetBefore: 80,
-            },
+        <Stack
+          sx={{
+            width: "93%",
+            flexDirection: { xs: "column", md: "row" },
+            mx: "auto",
+            gap: 2,
           }}
         >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.id}>
+          {/* FIXME: add the xs part to this and make it work */}
+
+          <Stack
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              gap: 1.5,
+            }}
+          >
+            {previewSlides.map((slide) => (
               <Stack
-                direction={"row"}
+                key={slide.id}
+                onClick={() => onOpen(slide.blog)}
                 sx={{
-                  width: "100%",
-                  height: "100%",
+                  flex: 1,
+                  minWidth: 0,
+                  p: 1,
+                  boxShadow: 5,
+                  borderRadius: 5,
+                  gap: 3,
+                  "&:hover": {
+                    boxShadow: 10,
+                    cursor: "pointer",
+                    transform: "translateY(-5px)",
+                  },
+                  transition: "box-shadow 0.3s ease, transform 0.3s ease",
                 }}
               >
                 <Stack
                   sx={{
                     position: "relative",
-                    width: { xs: "60%", sm: "50%" },
+                    width: "100%",
                     aspectRatio: "16 / 9",
-                    ".news-from-us-image": {
-                      objectFit: "cover",
-                      borderRadius: "30px",
-                      transform: "perspective(800px) rotateY(12deg)",
-                      scale: 0.92,
-                      transition: "all .3s ease-in",
-                      opacity: 0.8,
-                      "&:after": {
-                        background:
-                          "linear-gradient(90deg, rgba(255, 255, 255, 0.20), transparent 75%, rgba(0, 0, 0, 0.25))",
-                      },
-                    },
+                    borderRadius: 4,
+                    overflow: "hidden",
                   }}
                 >
                   <Image
                     src={slide.image}
                     alt={slide.title}
                     fill
-                    className="news-from-us-image"
+                    sizes="(max-width: 900px) 90vw, 30vw"
+                    style={{ objectFit: "cover" }}
                   />
                 </Stack>
 
-                <Stack
-                  sx={{
-                    width: "50%",
-                    alignSelf: "stretch",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                    gap: 5,
-                    py: 1,
-                    "& a": {
-                      fontSize: { xs: 8, sm: 12 },
-                      fontFamily: "Namecat",
-                      textTransform: "uppercase",
-                      letterSpacing: 1.2,
-                      textAlign: "center",
-                      textDecoration: "none",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      color: "primary.main",
-                    },
-                  }}
-                >
+                <Stack sx={{ px: 3 }}>
                   <Typography
                     sx={{
-                      width: "100%",
-                      fontSize: { xs: 10, sm: 16 },
+                      fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
                       fontFamily: "Namecat",
                       textTransform: "uppercase",
                       letterSpacing: 1.2,
+                      color: "primary.main",
                       textAlign: "start",
-                      unicodeBidi: "plaintext",
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      maxWidth: "100%",
                     }}
                   >
                     {slide.title}
                   </Typography>
-                  <Button
-                    variant="text"
-                    onClick={() => onOpen(slide.blog)}
+                  <Typography
                     sx={{
+                      fontSize: { xs: 11, sm: 12, md: 14, lg: 16, xl: 18 },
                       fontFamily: "Namecat",
-                      fontSize: { xs: 8, sm: 12 },
                       textTransform: "uppercase",
                       letterSpacing: 1.2,
-                      textAlign: "center",
-                      textDecoration: "none",
+                      color: "text.primary",
+                      textAlign: "start",
+                      lineHeight: 1.3,
+                      minHeight: "3.9em",
+                      maxWidth: "100%",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {slide.content}
+                  </Typography>
+                </Stack>
+
+                <Stack sx={{ width: "100%", px: 2, textAlign: "start" }}>
+                  <Button
+                    variant="text"
+                    disableRipple
+                    sx={{
+                      fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
+                      width: "fit-content",
+                      textTransform: "uppercase",
+                      letterSpacing: 1.2,
+                      color: "primary.main",
+                      textAlign: "start",
                       display: "flex",
                       alignItems: "center",
                       gap: 1,
-                      color: "primary.main",
-                      "&:hover": {
-                        color: "secondary.main",
-                      },
+                      fontFamily: "Namecat",
+                      fontWeight: 100,
                     }}
                   >
                     Read More
-                    <EastRoundedIcon sx={{ fontSize: { xs: 18, sm: 22 } }} />
+                    <Image
+                      src="/ping-arrow.png"
+                      alt="pink-arrow"
+                      width={35}
+                      height={16}
+                    />
                   </Button>
                 </Stack>
               </Stack>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        <Stack
-          sx={{
-            position: "absolute",
-            bottom: { xs: -50, sm: -70 },
-            right: { xs: "36%", sm: "7%" },
-          }}
-        >
-          <Pagination onNext={handlePrev} onPrev={handleNext} />
+            ))}
+          </Stack>
+
+          <Stack
+            sx={{
+              width: "auto",
+              flexShrink: 0,
+              alignSelf: "center",
+              height: "fit-content",
+            }}
+          >
+            <Button
+              disableRipple
+              sx={{
+                height: "auto",
+                minHeight: 0,
+                whiteSpace: "nowrap",
+                borderRadius: 8,
+                bgcolor: "primary.main",
+                color: "#fff",
+                textTransform: "none",
+                fontFamily: "Namecat",
+                fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
+                lineHeight: 1.15,
+                boxShadow: 5,
+                px: 3,
+                py: 2,
+                gap: 1,
+                "&:hover": {
+                  filter: "brightness(1.1)",
+                },
+              }}
+            >
+              View all Updates
+              <Image
+                src="/ping-arrow.png"
+                alt="pink-arrow"
+                width={36}
+                height={20}
+              />
+            </Button>
+          </Stack>
         </Stack>
       </Stack>
 

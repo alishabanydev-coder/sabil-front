@@ -57,7 +57,7 @@ const cardStyle = {
       transform: "scale(1.1)",
     },
     "&:hover .MuiIconButton-root": {
-      transform: "scale(1.2)",
+      transform: "scale(1.1)",
     },
   },
 };
@@ -115,7 +115,10 @@ const BreakDown = ({
           >
             {projectBreakDowns.map((item) => (
               <SwiperSlide key={item._id}>
-                <Stack className="breakdown-card">
+                <Stack
+                  className="breakdown-card"
+                  onClick={() => onOpenBreakdownModal(item)}
+                >
                   <Stack
                     sx={{
                       position: "relative",
@@ -142,11 +145,10 @@ const BreakDown = ({
                     }}
                   >
                     <IconButton
-                      onClick={() => onOpenBreakdownModal(item)}
                       sx={{
                         flexShrink: 0,
-                        width: { xs: 42, md: 48 },
-                        height: { xs: 42, md: 48 },
+                        width: { xs: 42, md: 48, lg: 52 },
+                        height: { xs: 42, md: 48, lg: 52 },
                         bgcolor: "secondary.main",
                         color: "#fff",
                         boxShadow: "0 8px 16px rgba(0, 0, 0, 0.16)",
@@ -181,8 +183,8 @@ const BreakDown = ({
                       <Typography
                         component="span"
                         sx={{
-                          fontSize: { xs: 9, md: 12 },
-                          height: { xs: 18, md: 28 },
+                          fontSize: { xs: 9, md: 12, lg: 14 },
+                          height: { xs: 18, md: 30 },
                           color: "text.primary",
                           fontFamily: "Namecat",
                           lineHeight: 1.15,
@@ -202,30 +204,8 @@ const BreakDown = ({
             ))}
           </Swiper>
         </Stack>
-
-        <Stack
-          sx={{
-            position: "absolute",
-            bottom: { xs: "-5%", md: "-8%" },
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <AppButton
-            sx={{
-              fontFamily: "Namecat",
-              letterSpacing: 2,
-              width: { xs: "auto", md: 280 },
-              fontSize: { xs: 9, md: 20 },
-              px: { xs: 1.2, md: 2 },
-              py: { xs: 0.8, md: 1 },
-            }}
-          >
-            Donate here
-          </AppButton>
-        </Stack>
       </Stack>
+
       <BreakdownModal
         open={openBreakdownModal}
         onClose={onCloseBreakdownModal}
