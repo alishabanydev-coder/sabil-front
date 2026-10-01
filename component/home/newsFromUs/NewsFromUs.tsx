@@ -108,7 +108,7 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
             sx={{
               flex: 1,
               minWidth: 0,
-              flexDirection: "row",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
               gap: 1.5,
             }}
@@ -120,10 +120,10 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                 sx={{
                   flex: 1,
                   minWidth: 0,
-                  p: 1,
+                  p: { xs: 0.5, md: 1 },
                   boxShadow: 5,
                   borderRadius: 5,
-                  gap: 3,
+                  gap: { xs: 1, md: 3 },
                   "&:hover": {
                     boxShadow: 10,
                     cursor: "pointer",
@@ -150,7 +150,7 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                   />
                 </Stack>
 
-                <Stack sx={{ px: 3 }}>
+                <Stack sx={{ px: { xs: 2, md: 3 } }}>
                   <Typography
                     sx={{
                       fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
@@ -176,24 +176,31 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                       color: "text.primary",
                       textAlign: "start",
                       lineHeight: 1.3,
-                      minHeight: "3.9em",
+                      minHeight: { xs: "1.9em", md: "3.9em" },
                       maxWidth: "100%",
                       display: "-webkit-box",
-                      WebkitLineClamp: 3,
+                      WebkitLineClamp: { xs: 2, md: 3 },
                       WebkitBoxOrient: "vertical",
                       overflow: "hidden",
                     }}
                   >
-                    {slide.content}
+                    {slide.content} asdfk jas;lkdfj;laksjdf lkasjd;flkjas;ldkfj
+                    powiejlk jweqpoiyuwepouiy poiyweroiquy weuyrqpoiupoi
                   </Typography>
                 </Stack>
 
-                <Stack sx={{ width: "100%", px: 2, textAlign: "start" }}>
+                <Stack
+                  sx={{
+                    width: "100%",
+                    px: { xs: 1, md: 2 },
+                    textAlign: "start",
+                  }}
+                >
                   <Button
                     variant="text"
                     disableRipple
                     sx={{
-                      fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
+                      fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 20 },
                       width: "fit-content",
                       textTransform: "uppercase",
                       letterSpacing: 1.2,
@@ -204,6 +211,10 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                       gap: 1,
                       fontFamily: "Namecat",
                       fontWeight: 100,
+                      "& img": {
+                        width: { xs: 20, md: 35 },
+                        height: { xs: 10, md: 16 },
+                      },
                     }}
                   >
                     Read More
@@ -241,9 +252,13 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                 fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
                 lineHeight: 1.15,
                 boxShadow: 5,
-                px: 3,
-                py: 2,
+                px: { xs: 2, md: 3 },
+                py: { xs: 1.5, md: 2 },
                 gap: 1,
+                '& img':{
+                  width: {xs: 20, md: 35},
+                  height: {xs: 10, md: 16},
+                },
                 "&:hover": {
                   filter: "brightness(1.1)",
                 },

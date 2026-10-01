@@ -12,6 +12,7 @@ import { fetchPublicAboutUs } from "@/component/admin/services/aboutUsApi";
 import ProjectCatalogue from "@/component/home/projectCatalogue/ProjectCatalogue";
 import OurMission from "@/component/home/ourMission/OurMission";
 import SabeelStats from "@/component/home/sabeelStats/SabeelStats";
+import JoinOurMission from "@/component/home/joinOurMission/JoinOurMission";
 
 const sections = [
   "banner",
@@ -78,6 +79,9 @@ export default async function Home() {
       </Box>
       <Box id="contact" sx={sectionAnchorSx}>
         <NewsFromUs blogData={publicSectionData.blog} />
+      </Box>
+      <Box id="blog" sx={sectionAnchorSx}>
+        <JoinOurMission />
       </Box>
       <FollowUs socialMediaLinks={socialMediaLinks} />
       <LetUsCallYou />
