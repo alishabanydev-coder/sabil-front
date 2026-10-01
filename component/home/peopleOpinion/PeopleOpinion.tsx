@@ -39,9 +39,9 @@ const applyOpinionMotion = (swiper: OpinionSwiper) => {
     const scale = 1.15 - distance * 0.25;
     card.style.right = "auto";
     if (isBehind) {
-      card.style.left = progress > 0 ? "-100px" : "180px";
+      card.style.left = progress > 0 ? "-10px" : "10px";
     } else {
-      card.style.left = progress > 0 ? "-10px" : "-50px";
+      card.style.left = progress > 0 ? "-15px" : "-35px";
     }
     card.style.transformOrigin =
       clamped < 0
@@ -87,10 +87,6 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
         what families, education and supporters say.
       </Typography>
 
-
-      {/* FIXME: add the xs part to this and make it work */}
-      
-
       <Stack
         sx={{
           flexDirection: "row",
@@ -103,8 +99,10 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
           ".swiper": {
             overflow: "visible",
             direction: "ltr",
-            width: { xs: "65%", md: "100%" },
+            width: { xs: "75%", sm: "80%", md: "100%" },
             mx: "auto",
+            position: "relative",
+            left: { xs: "8px", sm: "-10px", md: "5px", lg: "-5px" },
           },
           ".swiper-wrapper": {
             alignItems: "center",
@@ -201,7 +199,19 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
           onProgress={applyOpinionMotion}
           onResize={applyOpinionMotion}
           breakpoints={{
+            0: {
+              slidesPerView: 1,
+              spaceBetween: 300,
+            },
+            600: {
+              slidesPerView: 1.5,
+              spaceBetween: 50,
+            },
             900: {
+              slidesPerView: 3,
+              spaceBetween: 100,
+            },
+            1200: {
               slidesPerView: 3,
               spaceBetween: 150,
             },
@@ -226,9 +236,9 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                     background:
                       "linear-gradient(to bottom left, #FFD9C5, #FFDEDB)",
                     minHeight: { xs: 100, sm: 150 },
-                    p: 4,
-                    px: 5,
-                    borderRadius: "38px",
+                    p: { xs: 3, sm: 2.5, md: 3, lg: 3, xl: 4 },
+                    px: { xs: 3, sm: 2.5, md: 3, lg: 4, xl: 5 },
+                    borderRadius: { xs: 6, sm: 8 },
                     direction: "ltr",
                     gap: 2,
                   }}
@@ -248,8 +258,8 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                     sx={{
                       position: "relative",
                       zIndex: 1,
-                      width: { xs: 22, sm: 42 },
-                      height: { xs: 22, sm: 42 },
+                      width: { xs: 20, sm: 28, md: 36, lg: 42, xl: 48 },
+                      height: { xs: 20, sm: 28, md: 36, lg: 42, xl: 48 },
                       flexShrink: 0,
                     }}
                   >
@@ -288,7 +298,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                         whiteSpace: "normal",
                         lineHeight: 1.45,
                         minHeight: "calc(1.45em * 4)",
-                        fontSize: { xs: 14, sm: 18 },
+                        fontSize: { xs: 12, sm: 14, md: 15, lg: 17, xl: 20 },
                         fontFamily: "Namecat",
                         letterSpacing: 1,
                       }}
@@ -308,14 +318,14 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                         bgcolor: "secondary.light",
                         borderRadius: "50%",
                         border: "3px solid #fff",
-                        width: { xs: 42, sm: 55 },
-                        height: { xs: 42, sm: 55 },
+                        width: { xs: 30, sm: 36, md: 42, lg: 48, xl: 54 },
+                        height: { xs: 30, sm: 36, md: 42, lg: 48, xl: 54 },
                       }}
                     />
                     <Stack sx={{ alignItems: "start" }}>
                       <Typography
                         sx={{
-                          fontSize: { xs: 14, sm: 18 },
+                          fontSize: { xs: 12, sm: 13, md: 115, lg: 17, xl: 20 },
                           fontWeight: 600,
                           color: "#000",
                           fontFamily: "Namecat",
@@ -328,7 +338,13 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                         <Typography
                           className="opinion-role"
                           sx={{
-                            fontSize: { xs: 12, sm: 14 },
+                            fontSize: {
+                              xs: 10,
+                              sm: 12,
+                              md: 14,
+                              lg: 14,
+                              xl: 16,
+                            },
                             fontFamily: "Namecat",
                             letterSpacing: 2,
                           }}
