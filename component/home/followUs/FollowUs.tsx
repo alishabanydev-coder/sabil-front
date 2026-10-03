@@ -1,6 +1,8 @@
-﻿import { IconButton, Stack, Typography } from "@mui/material";
+﻿import { IconButton, Stack, TextField, Typography } from "@mui/material";
 import Image from "next/image";
 import SeactionHeader from "@/component/ui/SectionHeader";
+import { AppButton } from "@/component/ui/AppButton";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 
 type SocialMediaLink = {
   _id?: string;
@@ -25,91 +27,173 @@ const FollowUs = ({
 
   return (
     <Stack
-      sx={{ width: "100%", justifyContent: "center", alignItems: "center" }}
+      sx={{
+        direction: "ltr",
+        width: { xs: "96%", sm: "95%" },
+        mx: "auto",
+        flexDirection: { xs: "column", sm: "row" },
+        justifyContent: "center",
+        alignItems: "center",
+        gap: { xs: 1, sm: 2 },
+      }}
     >
       <Stack
         sx={{
-          position: "relative",
-          width: "95%",
-          aspectRatio: { xs: "16 / 13", sm: "16 / 8" },
-          mt: { xs: 8, sm: 15 },
+          width: "100%",
           justifyContent: "center",
           alignItems: "center",
+          aspectRatio: "748 / 375",
+          backgroundImage: `url(/connect-with-us.png)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      ></Stack>
+      <Stack
+        sx={{
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "start",
+          aspectRatio: "748 / 375",
+          backgroundImage: `url(/lets-talk-background.png)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
-        <Image
-          src="/follow-us.webp"
-          alt="follow us"
-          fill
-          style={{ objectFit: "fill" }}
-        />
-
         <Stack
           sx={{
-            position: "absolute",
-            top: { xs: "24%", sm: "30%" },
-            left: "11%",
+            width: { xs: "100%", md: "85%", xl: "70%" },
+            height: "100%",
             direction: "ltr",
-            gap: { xs: 1.8, sm: 3 },
-            width: "40%",
+            justifyContent: "start",
+            alignItems: "start",
+            gap: { xs: "auto", lg: 2 },
+            px: { xs: 2, sm: 4, lg: 5, xl: 6 },
+            pt: { xs: 1, sm: 2, md: 2.5, lg: 3, xl: 5 },
           }}
         >
-          <SeactionHeader
-            text="Follow Us"
-            sx={{ textAlign: "start", fontSize: { xs: 15, sm: 16, md: 24 } }}
-          />
-
           <Typography
+            variant="h6"
             sx={{
-              fontSize: { xs: 10, sm: 12, md: 24 },
-              color: "success.main",
-              fontFamily: "Namecat",
+              fontFamily: "Bhel Puri",
+              lineHeight: 1.2,
+              minHeight: 30,
+              color: "#fff",
+              fontSize: { xs: 20, sm: 24, md: 28, lg: 42, xl: 50 },
             }}
           >
-            you can follow our projects on social networks youtube, X, instagram
-            and Facebook
+            Let's Talk
           </Typography>
-          <Stack direction="row" sx={{ gap: 2, pl: 1 }}>
-            {icons.map((icon) => (
-              <IconButton
-                key={icon.id}
-                component="a"
-                href={icon.url}
-                target="_blank"
-                rel="noreferrer"
+          <Typography
+            variant="h6"
+            sx={{
+              display: { xs: "none", md: "block" },
+              fontFamily: "Namecat",
+              lineHeight: 1.2,
+              color: "#fff",
+              fontSize: { xs: 10, sm: 12, md: 14, lg: 18, xl: 22 },
+            }}
+          >
+            Have a Question or want to partner with us? We'd love to hear from
+            you.
+          </Typography>
+          <Stack
+            sx={{
+              width: "100%",
+              height: {xs:"90%", sm: "auto"},
+              gap: { xs: 0.5, sm: 1, lg: 1.5, xl: 2 },
+              zIndex: 100,
+              justifyContent: { xs: "space-between", sm: "start" },
+              py: '3%',
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#fff",
+                color: "primary.main",
+                borderRadius: 2,
+                minHeight: { xs: 30, sm: 34, md: 38 },
+                flexShrink: 0,
+                "& fieldset": {
+                  borderColor: "primary.main",
+                },
+                "&:hover fieldset": {
+                  borderColor: "primary.main",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "primary.main",
+                },
+                "& fieldset legend": {
+                  display: "none",
+                },
+              },
+              "& .MuiOutlinedInput-input, & .MuiInputBase-inputSizeSmall": {
+                color: "primary.main",
+                height: "auto",
+                paddingTop: { xs: 0.5, sm: 0.8, md: 1 },
+                paddingBottom: { xs: 0.5, sm: 0.8, md: 1 },
+                "&::placeholder": {
+                  color: "#9a9a9a",
+                  opacity: 1,
+                },
+              },
+            }}
+          >
+            <Stack
+              sx={{
+                flexDirection: "row",
+                gap: { xs: 0.5, sm: 1, lg: 1.5 },
+              }}
+            >
+              <TextField
+                placeholder="Name"
+                variant="outlined"
+                size="small"
+                fullWidth
+              />
+              <TextField
+                placeholder="Email"
+                variant="outlined"
+                size="small"
+                fullWidth
+              />
+            </Stack>
+            <Stack>
+              <TextField
+                placeholder="Email"
+                variant="outlined"
+                size="small"
+                fullWidth
+              />
+            </Stack>
+            <AppButton
+              tone="donation"
+              sx={{
+                width: "fit-content",
+                maxWidth: "100%",
+                alignSelf: "flex-start",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 1,
+                position: "relative",
+                color: "primary.main",
+                fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
+              }}
+            >
+              send Message
+              <Stack
                 sx={{
-                  width: { xs: 30, sm: 40 },
-                  height: { xs: 20, sm: 32 },
-                  position: "relative",
-                  cursor: "pointer",
+                  height: "100%",
+                  aspectRatio: "1 / 1",
+                  bgcolor: "secondary.main",
+                  borderRadius: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Image
-                  src={icon.icon}
-                  alt={icon.name}
-                  fill
-                  style={{ objectFit: "contain" }}
-                />
-              </IconButton>
-            ))}
+                <PlayArrowRoundedIcon sx={{ color: "#fff", fontSize: 18 }} />
+              </Stack>
+            </AppButton>
           </Stack>
-        </Stack>
-
-        <Stack
-          sx={{
-            position: "absolute",
-            top: { xs: "25%", sm: "10%" },
-            right: "5%",
-            width: "44%",
-            aspectRatio: "5 / 4",
-          }}
-        >
-          <Image
-            src="/follow-us-image.webp"
-            alt="follow us"
-            fill
-            style={{ objectFit: "contain" }}
-          />
         </Stack>
       </Stack>
     </Stack>

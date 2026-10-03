@@ -325,7 +325,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                     <Stack sx={{ alignItems: "start" }}>
                       <Typography
                         sx={{
-                          fontSize: { xs: 12, sm: 13, md: 115, lg: 17, xl: 20 },
+                          fontSize: { xs: 12, sm: 13, md: 15, lg: 17, xl: 20 },
                           fontWeight: 600,
                           color: "#000",
                           fontFamily: "Namecat",

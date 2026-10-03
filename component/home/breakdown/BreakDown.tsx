@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import { AppButton } from "@/component/ui/AppButton";
 import BreakdownModal from "./component/BreakdownModal";
 import { useState } from "react";
 import SeactionHeader from "@/component/ui/SectionHeader";

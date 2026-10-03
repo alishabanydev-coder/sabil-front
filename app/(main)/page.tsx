@@ -84,7 +84,7 @@ export default async function Home() {
         <JoinOurMission />
       </Box>
       <FollowUs socialMediaLinks={socialMediaLinks} />
-      <LetUsCallYou />
+      {/* <LetUsCallYou /> */}
     </Stack>
   );
 }

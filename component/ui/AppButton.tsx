@@ -11,11 +11,9 @@ type ToneStyle = {
   borderColor: string;
   color: string;
   shadow: AppButtonShadow;
-  /** Border width in px, as [mobile, desktop]. */
   borderWidth: [number, number];
-  /** Horizontal padding in px, as [mobile, desktop]. */
   paddingX: [number, number];
-  /** Breakpoint at which the desktop values kick in. */
+  paddingY: [number, number];
   breakpoint: "sm" | "md";
 };
 
@@ -47,11 +45,12 @@ const SHADOWS: Record<AppButtonShadow, { rest: string; hover: string }> = {
 
 const BASE_SHAPE: Pick<
   ToneStyle,
-  "shadow" | "borderWidth" | "paddingX" | "breakpoint"
+  "shadow" | "borderWidth" | "paddingX" | "paddingY" | "breakpoint"
 > = {
   shadow: "hard",
   borderWidth: [2, 3],
   paddingX: [20, 25],
+  paddingY: [10, 12],
   breakpoint: "md",
 };
 
@@ -126,15 +125,15 @@ export const AppButton = styled(
     color: textColor ?? style.color,
     border: `${style.borderWidth[0]}px solid ${stroke}`,
     borderRadius: 50,
-    paddingLeft: style.paddingX[0],
-    paddingRight: style.paddingX[0],
+    px: style.paddingX[0],
+    py: style.paddingY[0],
     boxShadow: shadows.rest,
     minHeight: 0,
 
     [theme.breakpoints.up(style.breakpoint)]: {
       border: `${style.borderWidth[1]}px solid ${stroke}`,
-      paddingLeft: style.paddingX[1],
-      paddingRight: style.paddingX[1],
+      px: style.paddingX[0],
+      py: style.paddingY[0],
     },
 
     "&:hover": {
