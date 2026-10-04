@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Leftside from "./components/Leftside";
@@ -34,20 +34,20 @@ type AboutUsPage = {
 const AdsBox = [
   {
     header: "Scholor Guided",
-    body: "cordent reviewed by islamic scholars",
-    img: "/scholar-ad.png",
+    body: "Content reviewed by Islamic scholars",
+    img: "/scholar-ad.webp",
     color: "#3298f1",
   },
   {
     header: "Child-Safe",
-    body: "ad age appropriate and secure",
-    img: "/child-ad.png",
+    body: "Age-Appropriate and Secure Ads",
+    img: "/child-ad.webp",
     color: "#e66803",
   },
   {
     header: "Family Focused",
-    body: "bult to steonnghen families and values",
-    img: "/family-ad.png",
+    body: "Built to strengthen families and values",
+    img: "/family-ad.webp",
     color: "#6bb435",
   },
 ];
@@ -102,6 +102,7 @@ const Banner = ({
   aboutUs: AboutUsPage | null;
 }) => {
   const [openAboutUsModal, setOpenAboutUsModal] = useState(false);
+  const bannerSwiperRef = useRef<any>(null);
   const isAboutUsPublished = Boolean(aboutUs);
   const onCloseAboutUsModal = () => setOpenAboutUsModal(false);
   const onOpenAboutUsModal = () => {
@@ -120,7 +121,7 @@ const Banner = ({
       }}
     >
       <Image
-        src="/banner-background.png"
+        src="/banner-background.webp"
         alt="some image"
         fill
         style={{ objectFit: "fill" }}
@@ -130,7 +131,7 @@ const Banner = ({
         onOpenAboutUsModal={onOpenAboutUsModal}
       />
 
-      <Stack
+      {/* <Stack
         sx={{
           position: "absolute",
           bottom: { xs: "-25%", sm: "-8%", md: "-20%", lg: "-14%", xl: "-12%" },
@@ -144,6 +145,7 @@ const Banner = ({
           p: { xs: 1.5, md: 3 },
           px: 4,
           borderRadius: { xs: 8, md: 12 },
+          zIndex: 100
         }}
       >
         <Box
@@ -177,12 +179,12 @@ const Banner = ({
             <AdCard key={item.header} item={item} />
           ))}
         </Stack>
-      </Stack>
+      </Stack> */}
 
-      {/* <Rightside
+      <Rightside
         onSwiperInit={(swiper) => (bannerSwiperRef.current = swiper)}
         bannerData={bannerData || []}
-      /> */}
+      />
 
       {isAboutUsPublished ? (
         <AboutUsModal

@@ -151,7 +151,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
           }}
         >
           <Image
-            src="/background-featrued-video.png"
+            src="/background-featrued-video.webp"
             alt="watch us"
             fill
             style={{ objectFit: "cover" }}

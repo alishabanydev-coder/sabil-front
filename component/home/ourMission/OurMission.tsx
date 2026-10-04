@@ -9,22 +9,22 @@ import { Autoplay } from "swiper/modules";
 
 const WHY_CARDS = [
   {
-    bg: "/red-why-card.png",
-    icon: "/red-heart.png",
+    bg: "/red-why-card.webp",
+    icon: "/red-heart.webp",
     color: "#FC4064",
     title: "Positive Impact",
     body: "building character, empathy and positivehabits that last a lifetime.",
   },
   {
-    bg: "/blue-why-card.png",
-    icon: "/blue-star.png",
+    bg: "/blue-why-card.webp",
+    icon: "/blue-star.webp",
     color: "#174ED5",
     title: "Quality for Children",
     body: "hight-quality animation and storytelling children love and parents trust",
   },
   {
-    bg: "/green-why-card.png",
-    icon: "/green-leaf.png",
+    bg: "/green-why-card.webp",
+    icon: "/green-leaf.webp",
     color: "#6FAA1F",
     title: "faith at the core",
     body: "every storyu is rooted in quran, sunnah and ahlulbayt teachings.",

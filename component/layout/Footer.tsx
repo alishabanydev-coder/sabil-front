@@ -39,7 +39,7 @@ export default function Footer() {
       <Stack
         sx={{
           position: "absolute",
-          top: { xs: "-30%", sm: "-20%", md: "-30%", lg: "-40%" },
+          top: { xs: "-30%", sm: "-20%", md: "-30%", lg: "-32%" },
           left: { xs: "2%", sm: "3%", md: "4%", lg: "5%" },
         }}
       >
@@ -63,7 +63,7 @@ export default function Footer() {
       <Stack
         sx={{
           position: "absolute",
-          top: { xs: "-1%", sm: "5%", md: "-5%" },
+          top: { xs: "-1%", sm: "5%", md: "0%" },
           left: { xs: "22%", sm: "24%", md: "25%" },
           zIndex: 100,
         }}

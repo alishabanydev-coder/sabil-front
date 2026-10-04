@@ -10,43 +10,43 @@ const sabeeltems = [
   {
     number: "23t+",
     title: "projects",
-    icon: "/kelaket.png",
+    icon: "/kelaket.webp",
     color: "#000000",
   },
   {
     number: "1800+",
     title: "episode",
-    icon: "/film.png",
+    icon: "/film.webp",
     color: "#0C3A97",
   },
   {
     number: "3500+",
     title: "videos",
-    icon: "/blue-youtube.png",
+    icon: "/blue-youtube.webp",
     color: "#0A79F2",
   },
   {
     number: "27M",
     title: "watch hours",
-    icon: "/green-eye.png",
+    icon: "/green-eye.webp",
     color: "#94C643",
   },
   {
     number: "350K",
     title: "subscribers",
-    icon: "/yellow-comment.png",
+    icon: "/yellow-comment.webp",
     color: "#F79B21",
   },
   {
     number: "5+",
     title: "year old journal",
-    icon: "/blue-calendar.png",
+    icon: "/blue-calendar.webp",
     color: "#00A8FF",
   },
   {
     number: "20+",
     title: "countries",
-    icon: "/blue-world.png",
+    icon: "/blue-world.webp",
     color: "#1161FF",
   },
 ];
@@ -54,24 +54,24 @@ const sabeeltems = [
 const trustItems = [
   {
     title: "Guided by Scholars",
-    icon: "/prupul-scholar.png",
+    icon: "/prupul-scholar.webp",
     description:
       "our content of shoped by a council of trusted Islamic scholars",
   },
   {
     title: "Produced in Qom",
-    icon: "/green-mosque.png",
+    icon: "/green-mosque.webp",
     description:
       "proudly created in Qom the center of islamic learning and values",
   },
   {
     title: "Professional Team",
-    icon: "/blue-team.png",
+    icon: "/blue-team.webp",
     description: "animator, writers and educators dedicated ot excellence.",
   },
   {
     title: "Child-Safe Content",
-    icon: "/pink-sheild.png",
+    icon: "/pink-sheild.webp",
     description:
       "Ad-free, coppa-compliant and designed for a safe viewing experience.",
   },

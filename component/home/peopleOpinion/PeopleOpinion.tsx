@@ -265,14 +265,14 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                   >
                     <Image
                       className="quote-icon quote-inactive"
-                      src="/pink-qout.png"
+                      src="/pink-qout.webp"
                       alt=""
                       fill
                       sizes="42px"
                     />
                     <Image
                       className="quote-icon quote-active"
-                      src="/white-qout.png"
+                      src="/white-qout.webp"
                       alt=""
                       fill
                       sizes="42px"

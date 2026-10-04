@@ -27,8 +27,8 @@ const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { label: "App", href: "/app" },
   { label: "news", sectionId: "contact" },
   { label: "People Opinions", sectionId: "about" },
-  { label: "Watch Us", sectionId: "programs" },
   { label: "BreakDown", sectionId: "projects" },
+  { label: "Watch Us", sectionId: "programs" },
   { label: "SUBSCRIBTION", sectionId: "subscription" },
 ];
 
@@ -136,7 +136,7 @@ export default function Navbar({
         maxWidth: 1283,
         aspectRatio: "1283 / 107",
         boxSizing: "border-box",
-        backgroundImage: "url(/navbar-background.png)",
+        backgroundImage: "url(/navbar-background.webp)",
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

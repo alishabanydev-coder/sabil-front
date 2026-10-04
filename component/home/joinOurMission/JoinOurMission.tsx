@@ -8,17 +8,17 @@ const content = [
   {
     title: "inspire",
     description: "young hearts",
-    src: "/join-mission-heart.png",
+    src: "/join-mission-heart.webp",
   },
   {
     title: "build ",
     description: "stronger families",
-    src: "/family-join-mission.png",
+    src: "/family-join-mission.webp",
   },
   {
     title: "protect",
     description: "their futures",
-    src: "/green-hand.png",
+    src: "/green-hand.webp",
   },
 ];
 
@@ -28,7 +28,7 @@ const JoinOurMission = () => {
       sx={{
         width: "100%",
         aspectRatio: "16/6.73",
-        backgroundImage: "url(/background-join-our-mission.png)",
+        backgroundImage: "url(/background-join-our-mission.webp)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
