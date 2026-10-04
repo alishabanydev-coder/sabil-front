@@ -22,8 +22,6 @@ const content = [
   },
 ];
 
-// FIXME: add the xs UI and BUttons for the last item and fix the empty Stack
-
 const JoinOurMission = () => {
   return (
     <Stack
@@ -38,7 +36,7 @@ const JoinOurMission = () => {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        px: { xs: "2%", md: "5%" },
+        px: { xs: "3%", md: "5%" },
       }}
     >
       <Stack
@@ -52,7 +50,7 @@ const JoinOurMission = () => {
           sx={{
             alingItems: "start",
             width: "100%",
-            height: { xs: "60%", sm: "60%" },
+            height: { xs: "65%", sm: "60%" },
             justifyContent: "space-between",
           }}
         >
@@ -64,7 +62,7 @@ const JoinOurMission = () => {
           >
             <Typography
               sx={{
-                fontSize: { xs: 14, sm: 18, md: 36, lg: 48, xl: 54 },
+                fontSize: { xs: 15, sm: 18, md: 36, lg: 48, xl: 54 },
                 fontFamily: "Arco",
                 letterSpacing: 1.2,
                 color: "primary.main",
@@ -83,7 +81,7 @@ const JoinOurMission = () => {
             <Typography
               sx={{
                 fontFamily: "Namecat",
-                fontSize: { xs: 8, sm: 14, md: 16, lg: 22, xl: 23 },
+                fontSize: { xs: 9, sm: 14, md: 16, lg: 22, xl: 23 },
               }}
             >
               Help us create content that inspires, educates and protects
@@ -110,13 +108,13 @@ const JoinOurMission = () => {
                   width: "content-fit",
                   gap: { xs: 1, md: 2 },
                   "& img": {
-                    width: { xs: 20, sm: 28, md: 35, lg: 42, xl: 50 },
-                    height: { xs: 20, sm: 28, md: 35, lg: 42, xl: 50 },
+                    width: { xs: 22, sm: 28, md: 35, lg: 42, xl: 50 },
+                    height: { xs: 22, sm: 28, md: 35, lg: 42, xl: 50 },
                     objectFit: "contain",
                   },
                   "& p": {
                     fontFamily: "Namecat",
-                    fontSize: { xs: 8, sm: 10, md: 13, lg: 15, xl: 17 },
+                    fontSize: { xs: 9, sm: 10, md: 13, lg: 15, xl: 17 },
                   },
                 }}
               >
@@ -157,7 +155,7 @@ const JoinOurMission = () => {
               },
             }}
           >
-            <AppButton tone="primary" borderColor="#9960D2">
+            <AppButton href={"/donation"} tone="primary" borderColor="#9960D2">
               sponsor a project
               <Image
                 src={"/white-arrow-right.png"}
@@ -166,7 +164,11 @@ const JoinOurMission = () => {
                 height={100}
               />
             </AppButton>
-            <AppButton bgColor="#FF4C63" borderColor="#F78C9A">
+            <AppButton
+              href={"/donation"}
+              bgColor="#FF4C63"
+              borderColor="#F78C9A"
+            >
               become a partner
               <Image
                 src={"/white-arrow-right.png"}
@@ -175,7 +177,11 @@ const JoinOurMission = () => {
                 height={100}
               />
             </AppButton>
-            <AppButton bgColor="#67B756" borderColor="#BAD465">
+            <AppButton
+              href={"/donation"}
+              bgColor="#67B756"
+              borderColor="#BAD465"
+            >
               support a series
               <Image
                 src={"/white-arrow-right.png"}

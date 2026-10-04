@@ -61,8 +61,6 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
 
   const previewSlides = slides.slice(0, 3);
 
-  console.log(slides);
-
   return (
     <Stack
       sx={{
@@ -102,8 +100,6 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
             gap: 2,
           }}
         >
-          {/* FIXME: add the xs part to this and make it work */}
-
           <Stack
             sx={{
               flex: 1,
@@ -130,6 +126,31 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                     transform: "translateY(-5px)",
                   },
                   transition: "box-shadow 0.3s ease, transform 0.3s ease",
+                  "& .read-more-button": {
+                    fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 20 },
+                    width: "fit-content",
+                    textTransform: "uppercase",
+                    letterSpacing: 1.2,
+                    color: "primary.main",
+                    textAlign: "start",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    fontFamily: "Namecat",
+                    fontWeight: 100,
+                    transition: "transform 0.3s ease",
+                    "& img": {
+                      transition: "transform 0.3s ease",
+                      width: { xs: 20, md: 35 },
+                      height: { xs: 10, md: 16 },
+                    },
+                  },
+                  "&:hover .read-more-button": {
+                    transform: "scale(1.05) translateY(-2px)",
+                  },
+                  "&:hover .arrow-icon": {
+                    transform: 'scale(1.05) translateX(3px)'
+                  },
                 }}
               >
                 <Stack
@@ -199,26 +220,11 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                   <Button
                     variant="text"
                     disableRipple
-                    sx={{
-                      fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 20 },
-                      width: "fit-content",
-                      textTransform: "uppercase",
-                      letterSpacing: 1.2,
-                      color: "primary.main",
-                      textAlign: "start",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      fontFamily: "Namecat",
-                      fontWeight: 100,
-                      "& img": {
-                        width: { xs: 20, md: 35 },
-                        height: { xs: 10, md: 16 },
-                      },
-                    }}
+                    className="read-more-button"
                   >
                     Read More
                     <Image
+                      className="arrow-icon"
                       src="/ping-arrow.png"
                       alt="pink-arrow"
                       width={35}
@@ -255,9 +261,9 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                 px: { xs: 2, md: 3 },
                 py: { xs: 1.5, md: 2 },
                 gap: 1,
-                '& img':{
-                  width: {xs: 20, md: 35},
-                  height: {xs: 10, md: 16},
+                "& img": {
+                  width: { xs: 20, md: 35 },
+                  height: { xs: 10, md: 16 },
                 },
                 "&:hover": {
                   filter: "brightness(1.1)",

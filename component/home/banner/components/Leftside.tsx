@@ -111,7 +111,18 @@ const Leftside = ({
                 lineHeight: 0.1,
               },
             }}
-            href={"/donation"}
+            onClick={() => {
+              const section = document.getElementById("blog");
+              if (!section) return;
+              const top =
+                section.getBoundingClientRect().top + window.scrollY;
+              const offset =
+                top - (window.innerHeight - section.offsetHeight) / 2;
+              window.scrollTo({
+                top: Math.max(0, offset),
+                behavior: "smooth",
+              });
+            }}
           >
             <img src="/arrow-right.png" alt="arrow-right" />
             <Typography>Join Our Mission</Typography>

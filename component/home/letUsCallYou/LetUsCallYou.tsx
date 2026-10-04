@@ -185,7 +185,6 @@ const LetUsCallYou = () => {
           </Stack>
         </Stack>
       </Stack>
-      <FollowUsModal open={open} onClose={handleClose} />
     </>
   );
 };

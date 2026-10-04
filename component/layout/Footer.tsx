@@ -25,16 +25,22 @@ export default function Footer() {
       sx={{
         position: "relative",
         width: "100%",
+        mt: { xs: 5, md: 15 },
         aspectRatio: { xs: "16 / 6", md: "16 / 5" },
       }}
     >
-      <Image src="/footer.webp" alt="some image" fill style={{ objectFit: "fill" }} />
+      <Image
+        src="/footer.webp"
+        alt="some image"
+        fill
+        style={{ objectFit: "fill" }}
+      />
 
       <Stack
         sx={{
           position: "absolute",
-          top: { xs: "-30%", sm: "-20%",md: '-30%' ,lg: "-40%" },
-          left: { xs: "2%", sm: "3%",md: '4%' ,lg: "5%" },
+          top: { xs: "-30%", sm: "-20%", md: "-30%", lg: "-40%" },
+          left: { xs: "2%", sm: "3%", md: "4%", lg: "5%" },
         }}
       >
         <Stack
@@ -59,7 +65,7 @@ export default function Footer() {
           position: "absolute",
           top: { xs: "-1%", sm: "5%", md: "-5%" },
           left: { xs: "22%", sm: "24%", md: "25%" },
-          zIndex: 100
+          zIndex: 100,
         }}
       >
         <Stack
@@ -173,7 +179,12 @@ export default function Footer() {
             },
           }}
         >
-          <Image src="/logo-skatch.webp" alt="some image" fill className="cursor-pointer" />
+          <Image
+            src="/logo-skatch.webp"
+            alt="some image"
+            fill
+            className="cursor-pointer"
+          />
         </Stack>
         <Typography
           sx={{

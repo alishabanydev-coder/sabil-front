@@ -277,7 +277,15 @@ const SabeelStats = () => {
             },
           }}
         >
-          <Swiper slidesPerView="auto" spaceBetween={12}>
+          <Swiper
+            modules={[Autoplay]}
+            rewind={true}
+            // loop={true}
+            autoplay={{ delay: 1500, disableOnInteraction: false }}
+            slidesPerView="auto"
+            spaceBetween={35}
+            centeredSlides={true}
+          >
             {trustItems.map((item) => (
               <SwiperSlide key={item.title}>
                 <TrustCard item={item} />
