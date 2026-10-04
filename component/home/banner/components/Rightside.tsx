@@ -33,7 +33,7 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
         top: "0%",
         right: 0,
         width: "71%",
-        height: "100%",
+        height: "105%",
         overflow: "hidden",
         // borderRadius: "0px 0px 0px 1000px",
       }}
@@ -42,13 +42,12 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
         sx={{
           width: "100%",
           height: "100%",
-          // backgroundColor: 'rgba(0, 0, 0, 0.5)',
           justifyContent: "center",
           clipPath:
-            "polygon(0.8% 0%, 100% 0%, 100% 72%, 31% 90%, 29% 89%, 27% 87%, 25% 85%, 23.0% 80%)",
+            "polygon(0.8% 0%, 22% 69.4%, 22.7% 71.7%, 24.1% 74.1%, 26% 75.6%, 27.7% 77.1%, 29.4% 77.9%, 35.6% 78.7%, 43.5% 79.5%, 50.9% 80.3%, 57.8% 81.1%, 63.7% 81.7%, 67.8% 81.2%, 72.1% 80.4%, 75.1% 79.6%, 77.7% 78.8%, 79.9% 78%, 82% 77.25%, 85.8% 75.63%, 89.3% 74.1%, 94% 71.7%, 96.8% 70.1%, 100% 68.4%, 100% 0%)",
         }}
       >
-        {/* <Swiper
+        <Swiper
           modules={[Autoplay]}
           onSwiper={onSwiperInit}
           pagination={{ clickable: true }}
@@ -84,7 +83,7 @@ const Rightside = ({ onSwiperInit, bannerData }: RightsideProps) => {
               </Stack>
             </SwiperSlide>
           ))}
-        </Swiper> */}
+        </Swiper>
       </Stack>
     </Box>
   );

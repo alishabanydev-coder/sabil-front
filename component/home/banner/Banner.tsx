@@ -131,10 +131,10 @@ const Banner = ({
         onOpenAboutUsModal={onOpenAboutUsModal}
       />
 
-      {/* <Stack
+      <Stack
         sx={{
           position: "absolute",
-          bottom: { xs: "-25%", sm: "-8%", md: "-20%", lg: "-14%", xl: "-12%" },
+          bottom: { xs: "-26%", sm: "-8%", md: "-20%", lg: "-14%", xl: "-12%" },
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: { xs: "80%", sm: "auto" },
@@ -142,6 +142,7 @@ const Banner = ({
           mx: "auto",
           bgcolor: "background.paper",
           border: (theme) => `4px solid ${theme.palette.secondary.main}`,
+          borderWidth: { xs: 2, sm: 3, md: 4, lg: 4, xl: 5 },
           p: { xs: 1.5, md: 3 },
           px: 4,
           borderRadius: { xs: 8, md: 12 },
@@ -179,7 +180,7 @@ const Banner = ({
             <AdCard key={item.header} item={item} />
           ))}
         </Stack>
-      </Stack> */}
+      </Stack>
 
       <Rightside
         onSwiperInit={(swiper) => (bannerSwiperRef.current = swiper)}

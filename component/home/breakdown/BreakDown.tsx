@@ -183,7 +183,7 @@ const BreakDown = ({
                         component="span"
                         sx={{
                           fontSize: { xs: 9, md: 12, lg: 14 },
-                          height: { xs: 18, md: 30 },
+                          height: "2.3em",
                           color: "text.primary",
                           fontFamily: "Namecat",
                           lineHeight: 1.15,

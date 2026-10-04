@@ -68,7 +68,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
         height: "100%",
         justifyContent: "center",
         alignItems: "center",
-        gap: 1.5,
+        gap: { xs: 0, sm: 1.5 },
         pt: 3,
         px: { xs: 2, sm: 4 },
         overflow: "hidden",
@@ -103,6 +103,8 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
             mx: "auto",
             position: "relative",
             left: { xs: "8px", sm: "-10px", md: "5px", lg: "-5px" },
+            paddingTop: { xs: "36px", sm: "72px" },
+            paddingBottom: { xs: "36px", sm: "72px" },
           },
           ".swiper-wrapper": {
             alignItems: "center",
@@ -215,11 +217,6 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
               slidesPerView: 3,
               spaceBetween: 150,
             },
-          }}
-          style={{
-            paddingTop: 72,
-            paddingBottom: 72,
-            overflow: "visible",
           }}
         >
           {commentData.map((comment) => (
