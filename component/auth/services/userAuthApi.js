@@ -2,7 +2,7 @@ import { getApiBase } from "@/lib/apiBase";
 
 const API_BASE = getApiBase();
 export const USER_TOKEN_KEY = "userToken";
-/** Matches backend JWT `expiresIn` in userAuthRoutes.js */
+/** Matches backend JWT `expiresIn` in modules/auth/auth.routes.js */
 export const USER_SESSION_DAYS = 1;
 
 function getUserAuthHeaders(json = false) {
