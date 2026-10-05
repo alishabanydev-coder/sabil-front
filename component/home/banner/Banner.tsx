@@ -146,7 +146,7 @@ const Banner = ({
           p: { xs: 1.5, md: 3 },
           px: 4,
           borderRadius: { xs: 8, md: 12 },
-          zIndex: 100
+          zIndex: 100,
         }}
       >
         <Box
