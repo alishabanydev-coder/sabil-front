@@ -5,6 +5,7 @@ import ProjectSection from "@/component/donation/ProjectSection";
 import { Stack } from "@mui/material";
 import Banner from "@/component/donation/Banner";
 import YourImpact from "@/component/donation/YourImpact";
+import PeopleOpinion from "@/component/donation/PeopleOpinion";
 
 const DonationPage = () => {
   return (
@@ -29,6 +30,7 @@ const DonationPage = () => {
       >
         <ProjectSection />
         <YourImpact />
+        <PeopleOpinion />
 
         {/* <DonateNow />
         <FAQSection /> */}

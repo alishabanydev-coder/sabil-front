@@ -37,7 +37,7 @@ const YourImpact = () => {
         borderRadius: 5,
         backgroundColor: alpha("#A0CB45", 0.1),
         px: { xs: 1.5, sm: 2 },
-        py: { xs: 3, sm: 6 },
+        py: { xs: 3, sm: 5 },
         gap: 2,
         direction: "ltr",
       }}
