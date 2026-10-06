@@ -4,6 +4,7 @@ import { Box, Button, LinearProgress, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 const INITIAL_VISIBLE_CARDS = 3;
@@ -44,17 +45,20 @@ const ProjcetCard = ({
   project: PublicDonationProjectCard;
   color: string;
 }) => {
+  const href = `/donation/${project.slug || project._id}`;
+
   return (
-    <Stack
-      sx={{
-        ...cardShellSx,
-        // boxShadow: `0 4px 16px ${alpha(color, 0.3)}`,
-        boxShadow: `0 4px 16px #ccc`,
-        "&:hover": {
-          boxShadow: `0 8px 28px ${alpha(color, 0.55)}`,
-        },
-      }}
-    >
+    <Link href={href} style={{ textDecoration: "none", color: "inherit" }}>
+      <Stack
+        sx={{
+          ...cardShellSx,
+          cursor: "pointer",
+          boxShadow: `0 4px 16px #ccc`,
+          "&:hover": {
+            boxShadow: `0 8px 28px ${alpha(color, 0.55)}`,
+          },
+        }}
+      >
       <Image
         className="project-card-image"
         src={project.poster}
@@ -158,6 +162,7 @@ const ProjcetCard = ({
         </Typography>
       </Stack>
       <Button
+        component="span"
         variant="contained"
         sx={{
           width: "fit-content",
@@ -179,6 +184,7 @@ const ProjcetCard = ({
         view project
       </Button>
     </Stack>
+    </Link>
   );
 };
 

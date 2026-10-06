@@ -68,6 +68,8 @@ export default function Navbar({
   const router = useRouter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(menuAnchor);
+  const isDonationProjectPage =
+    pathname.startsWith("/donation/") && pathname !== "/donation";
 
   const resolvedNavItems = navItems ?? resolveNavItems(pathname);
 
@@ -86,6 +88,10 @@ export default function Navbar({
 
     return () => window.clearTimeout(timeoutId);
   }, [pathname]);
+
+  if (isDonationProjectPage) {
+    return null;
+  }
 
   const openMenu = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchor(event.currentTarget);

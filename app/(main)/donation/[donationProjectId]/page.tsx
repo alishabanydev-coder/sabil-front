@@ -87,7 +87,7 @@ const DonationProjectPage = async ({ params }: PageProps) => {
         mx: "auto",
         direction: "ltr",
         gap: 3,
-        pt: { xs: 8, sm: 10, md: 12 },
+        pt: { xs: 2, sm: 3, md: 4 },
         pb: 10,
       }}
     >
