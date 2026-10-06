@@ -84,6 +84,42 @@ export async function fetchPublicComments(
   };
 }
 
+/**
+ * @param {{ limit?: number }} [options]
+ */
+export async function fetchDonationFeaturedComments({ limit = 6 } = {}) {
+  const params = new URLSearchParams({
+    limit: String(limit),
+  });
+
+  const response = await fetch(
+    `${API_BASE}/api/auth/public/comments/donation-featured?${params.toString()}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      message: data?.message || "Failed to load donation comments.",
+      comments: [],
+    };
+  }
+
+  const comments = Array.isArray(data?.comments)
+    ? data.comments.map((comment) => normalizePublicComment(comment))
+    : [];
+
+  return {
+    ok: true,
+    message: "",
+    comments,
+  };
+}
+
 export async function createPublicComment(body) {
   const token = getStoredUserToken();
   const response = await fetch(`${API_BASE}/api/auth/public/comments`, {

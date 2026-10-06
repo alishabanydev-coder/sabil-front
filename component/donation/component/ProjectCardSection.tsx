@@ -2,10 +2,11 @@
 
 import { Box, Button, LinearProgress, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 
-const INITIAL_VISIBLE_CARDS = 6;
+const INITIAL_VISIBLE_CARDS = 3;
 
 const colors = [
   "#02D3FC",
@@ -191,17 +192,32 @@ export type PublicDonationProjectCard = {
   raisedAmount?: number;
 };
 
+const CARD_EASE = [0.22, 1, 0.36, 1] as const;
+
 const ProjectCardSection = ({
   projects,
 }: {
   projects: PublicDonationProjectCard[];
 }) => {
   const [showAll, setShowAll] = useState(false);
-  const allProjects = [...projects, ...projects, ...projects];
+  const allProjects = projects;
   const visibleProjects = showAll
     ? allProjects
     : allProjects.slice(0, INITIAL_VISIBLE_CARDS);
   const hasMore = allProjects.length > INITIAL_VISIBLE_CARDS;
+
+  const handleToggleShowAll = () => {
+    if (showAll) {
+      setShowAll(false);
+      document.getElementById("donation-projects")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      return;
+    }
+
+    setShowAll(true);
+  };
 
   if (projects.length === 0) {
     return (
@@ -226,46 +242,70 @@ const ProjectCardSection = ({
           direction: "ltr",
         }}
       >
-        {visibleProjects.map((project, index) => (
-          <ProjcetCard
-            key={`${project._id}-${index}`}
-            project={project}
-            color={colors[index % colors.length]}
-          />
-        ))}
+        <AnimatePresence>
+          {visibleProjects.map((project, index) => {
+            const staggerIndex =
+              index >= INITIAL_VISIBLE_CARDS
+                ? index - INITIAL_VISIBLE_CARDS
+                : index;
+
+            return (
+              <Box
+                key={`${project._id}-${index}`}
+                component={motion.div}
+                layout
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 16 }}
+                transition={{
+                  duration: 0.4,
+                  delay: Math.min(staggerIndex, 8) * 0.08,
+                  ease: CARD_EASE,
+                }}
+              >
+                <ProjcetCard
+                  project={project}
+                  color={colors[index % colors.length]}
+                />
+              </Box>
+            );
+          })}
+        </AnimatePresence>
       </Box>
-      {hasMore && !showAll ? (
+      {hasMore ? (
         <Stack>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setShowAll(true)}
-          sx={{
-            width: "fit-content",
-            mx: "auto",
-            fontFamily: "Namecat",
-            letterSpacing: 1.2,
-            lineHeight: 1.6,
-            py: { xs: 0.8, sm: 1, md: 1, lg: 1.4, xl: 1.8 },
-            px: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
-            fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
-            borderRadius: { xs: 5, md: 8 },
-            mt: { xs: 1.5, sm: 2, md: 2.5, lg: 3, xl: 3.5 },
-            gap: { xs: 1, sm: 1.5 },
-            "& img": {
-              width: { xs: 16, sm: 18, md: 20, lg: 28, xl: 32 },
-              height: { xs: 8, sm: 10, md: 12, lg: 15, xl: 18 },
-            },
-          }}
-        >
-          view all projects
-          <Image
-            src="/arrow-right.png"
-            alt="arrow right"
-            width={20}
-            height={20}
-          />
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleToggleShowAll}
+            sx={{
+              width: "fit-content",
+              mx: "auto",
+              fontFamily: "Namecat",
+              letterSpacing: 1.2,
+              lineHeight: 1.6,
+              py: { xs: 0.8, sm: 1, md: 1, lg: 1.4, xl: 1.8 },
+              px: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
+              fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
+              borderRadius: { xs: 5, md: 8 },
+              mt: { xs: 1.5, sm: 2, md: 2.5, lg: 3, xl: 3.5 },
+              gap: { xs: 1, sm: 1.5 },
+              "& img": {
+                width: { xs: 16, sm: 18, md: 20, lg: 28, xl: 32 },
+                height: { xs: 8, sm: 10, md: 12, lg: 15, xl: 18 },
+                transform: showAll ? "rotate(180deg)" : "none",
+                transition: "transform 0.2s ease",
+              },
+            }}
+          >
+            {showAll ? "show less" : "view all projects"}
+            <Image
+              src="/arrow-right.png"
+              alt={showAll ? "arrow up" : "arrow right"}
+              width={20}
+              height={20}
+            />
+          </Button>
         </Stack>
       ) : null}
     </>

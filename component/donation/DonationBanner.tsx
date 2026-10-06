@@ -1,11 +1,11 @@
 "use client";
 
-import { Box, Stack, Typography } from "@mui/material";
-import Banner from "@/component/donation/Banner";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
 import { Autoplay } from "swiper/modules";
 import { AppButton } from "../ui/AppButton";
+import { Fragment } from "react";
 
 const CYAN_U = "#2ee6f0";
 const COSINE_DENT = 0.1;
@@ -29,22 +29,24 @@ const COSINE_CLIP_PATH = cosineRibbonPath(COSINE_DENT, COSINE_SAMPLES);
 
 const AdsBox = [
   {
-    header: "Scholor Guided",
-    body: "Content reviewed by Islamic scholars",
-    img: "/scholar-ad.webp",
-    color: "#3298f1",
+    header: "Total Donors",
+    number: "2,568",
+    img: "/total-donor.png",
   },
   {
-    header: "Child-Safe",
-    body: "Age-Appropriate and Secure Ads",
-    img: "/child-ad.webp",
-    color: "#e66803",
+    header: "Collected Donations",
+    number: "20,849",
+    img: "/hand-heart.png",
   },
   {
-    header: "Family Focused",
-    body: "Built to strengthen families and values",
-    img: "/family-ad.webp",
-    color: "#6bb435",
+    header: "Goal donation",
+    number: "500,573",
+    img: "/sibl.png",
+  },
+  {
+    header: "Total Projects",
+    number: "10 +",
+    img: "/folder.png",
   },
 ];
 
@@ -54,19 +56,20 @@ const AdCard = ({ item }: { item: AdItem }) => (
   <Stack
     sx={{
       direction: "ltr",
-      flexDirection: "row",
+      flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      gap: { xs: 2, sm: 2, md: 2 },
+      gap: { xs: 0.5, sm: 0.8, md: 1 },
       width: { xs: "100%", sm: "auto" },
+      textAlign: "center",
       "& p": {
         fontFamily: "Namecat",
         width: { xs: 150, sm: 115, md: 140, lg: 160, xl: 200 },
         lineHeight: 1.2,
       },
       "& img": {
-        width: { xs: 45, sm: 50, md: 70, lg: 85, xl: 110 },
-        height: { xs: 45, sm: 50, md: 70, lg: 85, xl: 110 },
+        width: { xs: 35, sm: 45, md: 58, lg: 72, xl: 85 },
+        height: { xs: 35, sm: 45, md: 58, lg: 72, xl: 85 },
         objectFit: "contain",
       },
     }}
@@ -75,16 +78,22 @@ const AdCard = ({ item }: { item: AdItem }) => (
     <Stack sx={{ gap: { xs: 0.2, sm: 0.6 } }}>
       <Typography
         sx={{
-          color: item.color,
-          fontSize: { xs: 12, sm: 13, md: 16, lg: 18, xl: 22 },
-          fontWeight: 700,
+          color: "#000",
+          fontSize: { xs: 8, sm: 12, md: 14, lg: 16, xl: 18 },
           letterSpacing: 1.2,
         }}
       >
         {item.header}
       </Typography>
-      <Typography sx={{ fontSize: { xs: 11, sm: 12, md: 14, lg: 16, xl: 20 } }}>
-        {item.body}
+      <Typography
+        sx={{
+          color: "primary.main",
+          fontFamily: "Arco",
+          fontWeight: 700,
+          fontSize: { xs: 14, sm: 20, md: 28, lg: 30, xl: 32 },
+        }}
+      >
+        {item.number}
       </Typography>
     </Stack>
   </Stack>
@@ -97,7 +106,6 @@ const DonationBanner = () => {
         position: "relative",
         width: "100%",
         aspectRatio: { xs: "16 / 9", sm: "16 / 7.5" },
-        // height: { xs: "25vh", sm: "30vh", md: "32vh", lg: "80vh", xl: "85vh" },
         alignItems: "center",
         justifyContent: "center",
         boxSizing: "border-box",
@@ -288,11 +296,11 @@ const DonationBanner = () => {
         sx={{
           position: "absolute",
           bottom: {
-            xs: "-30%",
-            sm: "-14.5%",
-            md: "-25%",
-            lg: "-16.2%",
-            xl: "-14%",
+            xs: "-48%",
+            sm: "-42%",
+            md: "-45%",
+            lg: "-36%",
+            xl: "-26%",
           },
           left: "50%",
           transform: "translate(-50%, -50%)",
@@ -335,8 +343,21 @@ const DonationBanner = () => {
             gap: { sm: 2, md: 4, lg: 6, xl: 8 },
           }}
         >
-          {AdsBox.map((item) => (
-            <AdCard key={item.header} item={item} />
+          {AdsBox.map((item, index) => (
+            <Fragment key={item.header}>
+              {index > 0 ? (
+                <Divider
+                  orientation="vertical"
+                  flexItem
+                  sx={{
+                    borderColor: "#ccc",
+                    borderRightWidth: { sm: 1, md: 2 },
+                    my: { sm: 0.5, md: 1 },
+                  }}
+                />
+              ) : null}
+              <AdCard item={item} />
+            </Fragment>
           ))}
         </Stack>
       </Stack>

@@ -142,7 +142,7 @@ export default function Navbar({
           px: { xs: 3, sm: 2, md: 3, lg: 4, xl: 14 },
           flexDirection: "row",
           bgcolor: "white",
-          py: { xs: 1, sm: 1.5, md: 2, lg: 3, xl: 4 },
+          py: { xs: 1.2, sm: 1.5, md: 2, lg: 3, xl: 4 },
           borderRadius: {
             xs: "0px 0px 16px 16px",
             sm: "0px 0px 20px 20px",
@@ -155,7 +155,7 @@ export default function Navbar({
           borderStyle: "solid",
           borderColor: "secondary.main",
           borderTop: "none",
-          gap: { xs: 1, sm: 1.5, md: 2, lg: 2.5, xl: 16 },
+          gap: { xs: 5, sm: 1.5, md: 2, lg: 2.5, xl: 16 },
         }}
       >
         <AppButton

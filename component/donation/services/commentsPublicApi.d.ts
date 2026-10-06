@@ -21,6 +21,14 @@ export function fetchPublicComments(
   totalPages: number;
 }>;
 
+export function fetchDonationFeaturedComments(options?: {
+  limit?: number;
+}): Promise<{
+  ok: boolean;
+  message: string;
+  comments: PublicComment[];
+}>;
+
 export function createPublicComment(body: {
   text: string;
   targetType: string;

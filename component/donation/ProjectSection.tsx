@@ -8,13 +8,14 @@ const ProjectSection = async () => {
 
   return (
     <Stack
+      id="donation-projects"
       sx={{
         direction: "ltr",
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
         gap: 2,
-        // pt: { xs: 2, md: 8 },
+        scrollMarginTop: { xs: "72px", md: "88px" },
       }}
     >
       <Stack
@@ -34,8 +35,9 @@ const ProjectSection = async () => {
           variant="h6"
           sx={{
             fontFamily: "Namecat",
-            fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
+            fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 20 },
             letterSpacing: 1.2,
+            textAlign: 'center',
           }}
 
         >
