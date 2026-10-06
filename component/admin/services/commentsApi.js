@@ -1,8 +1,36 @@
 import { handleExpiredAdminSession } from "./adminSession";
 
-import { getApiBase } from "@/lib/apiBase";
+import { getApiBase, getPublicAssetBase } from "@/lib/apiBase";
 
 const API_BASE = getApiBase();
+
+function normalizeAvatarUrl(value) {
+  if (typeof value !== "string" || !value.trim()) {
+    return "";
+  }
+
+  return value.startsWith("/uploads/")
+    ? `${getPublicAssetBase()}${value}`
+    : value;
+}
+
+function normalizeDonationPageComment(item) {
+  if (!item || typeof item !== "object") {
+    return null;
+  }
+
+  return {
+    ...item,
+    _id: typeof item._id === "string" ? item._id : String(item._id ?? ""),
+    avatar: normalizeAvatarUrl(item.avatar),
+  };
+}
+
+function normalizeDonationPageComments(items) {
+  return (Array.isArray(items) ? items : [])
+    .map(normalizeDonationPageComment)
+    .filter(Boolean);
+}
 
 function getAuthHeaders(json = false) {
   const token =
@@ -179,6 +207,94 @@ export async function updateComment(id, body, { signal } = {}) {
   return {
     ok: true,
     comment: data?.comment ?? null,
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function fetchDonationPageComments({ signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/comments/donation-page`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      items: [],
+      message: data?.message || "Failed to load donation page comments.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    items: normalizeDonationPageComments(data?.items),
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function updateDonationPageComments(orderedIds, { signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/comments/donation-page`, {
+    method: "PUT",
+    headers: getAuthHeaders(true),
+    body: JSON.stringify({
+      orderedIds: Array.isArray(orderedIds) ? orderedIds : [],
+    }),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      items: [],
+      message: data?.message || "Failed to save donation page comments.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    items: normalizeDonationPageComments(data?.items),
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function updateDonationPageComment(id, body, { signal } = {}) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/comments/${id}/donation-page`,
+    {
+      method: "PATCH",
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(body || {}),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      item: null,
+      message: data?.message || "Failed to update donation page comment.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    item: normalizeDonationPageComment(data?.item),
     message: "",
     status: response.status,
   };

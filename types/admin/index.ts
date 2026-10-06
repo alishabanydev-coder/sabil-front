@@ -38,7 +38,10 @@ export type {
 
 export { MAIN_PAGE_LAYOUT_SECTIONS } from "./mainPageLayout";
 
-export type { AdminDonationProjectRecord } from "./donation";
+export type {
+  AdminDonationCommentRecord,
+  AdminDonationProjectRecord,
+} from "./donation";
 
 export type {
   AdminChannelProjectRecord,

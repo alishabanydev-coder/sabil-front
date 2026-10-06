@@ -8,3 +8,12 @@ export type AdminDonationProjectRecord = {
   listOrder?: number | null;
   showOnDonationPage?: boolean;
 };
+
+export type AdminDonationCommentRecord = {
+  _id: string;
+  text: string;
+  username: string;
+  avatar?: string;
+  showInDonationPage?: boolean;
+  donationPageOrder?: number | null;
+};

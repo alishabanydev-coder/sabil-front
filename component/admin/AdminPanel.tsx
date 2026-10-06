@@ -26,7 +26,7 @@ import Channels from "./components/channel/Channels";
 import Blog from "./components/Blog";
 import SocialMedia from "./components/SocialMedia";
 import Comment from "./components/Comment";
-import MainPageLayout from "./components/MainPageLayout";
+import MainPageLayout from "./components/mainPageLayout/MainPageLayout";
 import AboutUs from "./components/AboutUs";
 import Catalogue from "./components/Catalogue";
 import Donation from "./components/Donation";

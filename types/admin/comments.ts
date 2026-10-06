@@ -6,6 +6,8 @@ export type CommentRecord = {
   targetType: string;
   targetId: string | null;
   parentCommentId: string | null;
+  showInDonationPage?: boolean;
+  donationPageOrder?: number | null;
   createdAt: string;
   updatedAt: string;
 };

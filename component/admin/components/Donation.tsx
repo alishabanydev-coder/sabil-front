@@ -3,27 +3,43 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
   Button,
   CircularProgress,
+  Divider,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
 import { useAdminDonation } from "../hooks/useAdminDonation";
+import CommentSelectModal from "./donation/CommentSelectModal";
+import CommentSwiper from "./donation/CommentSwiper";
 import DonationModal from "./donation/DonationModal";
 
 const Donation = () => {
   const {
+    commentsErrorMsg,
+    commentsLoading,
+    commentsModalLoading,
+    commentsOpen,
+    commentsSaveErrorMsg,
     deletingId,
+    donationComments,
     donationProjects,
     editingProjectId,
     errorMsg,
     handleAddDonation,
     handleClose,
+    handleCloseComments,
     handleDeleteDonation,
     handleEditDonation,
+    handleOpenComments,
+    handleSaveComments,
     isEditing,
+    isSavingComments,
     loadDonationProjects,
     loading,
     open,
+    selectedCommentIds,
+    selectedDonationComments,
+    toggleCommentSelection,
   } = useAdminDonation();
 
   return (
@@ -38,41 +54,39 @@ const Donation = () => {
           border: (theme) => `1px solid ${theme.palette.primary.main}`,
         }}
       >
-        <Stack
-          sx={{
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: -20,
-            right: 0,
-          }}
-        >
-          <Button
-            sx={{
-              width: 200,
-              boxShadow: (theme) =>
-                `0px 2px 12px 1px ${theme.palette.primary.main}`,
-            }}
-            variant="contained"
-            color="primary"
-            onClick={handleAddDonation}
-          >
-            Add Donation
-          </Button>
+        <Stack sx={{ width: "100%", height: "280px", overflow: "auto", pt: 1 }}>
+          <CommentSwiper
+            comments={selectedDonationComments}
+            loading={commentsLoading}
+            errorMsg={commentsErrorMsg}
+            onAdd={handleOpenComments}
+          />
         </Stack>
 
         <Stack
           sx={{
             width: "100%",
             height: "100%",
-            pt: 6,
             px: 2,
             pb: 2,
             overflow: "auto",
             gap: 1.5,
           }}
         >
+          <Divider>
+            <Button
+              sx={{
+                width: 200,
+                boxShadow: (theme) =>
+                  `0px 2px 12px 1px ${theme.palette.primary.main}`,
+              }}
+              variant="contained"
+              color="primary"
+              onClick={handleAddDonation}
+            >
+              Add Donation
+            </Button>
+          </Divider>
           {loading ? (
             <Stack sx={{ alignItems: "center", py: 4 }}>
               <CircularProgress size={28} />
@@ -101,9 +115,18 @@ const Donation = () => {
                 }}
               >
                 <Stack sx={{ gap: 0.5 }}>
-                  <Typography sx={{ fontWeight: 700 }}>{project.title}</Typography>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    {`${project.status ?? "ongoing"} · ${project.currency ?? "USD"} ${project.raisedAmount ?? 0} / ${project.goalAmount ?? 0}`}
+                  <Typography sx={{ fontWeight: 700 }}>
+                    {project.title}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    {`${project.status ?? "ongoing"} · ${
+                      project.currency ?? "USD"
+                    } ${project.raisedAmount ?? 0} / ${
+                      project.goalAmount ?? 0
+                    }`}
                     {project.listOrder ? ` · order ${project.listOrder}` : ""}
                   </Typography>
                 </Stack>
@@ -140,6 +163,19 @@ const Donation = () => {
         existingProjects={donationProjects}
         onClose={handleClose}
         onSaved={loadDonationProjects}
+      />
+
+      <CommentSelectModal
+        open={commentsOpen}
+        comments={donationComments}
+        selectedItemIds={selectedCommentIds}
+        loading={commentsModalLoading && donationComments.length === 0}
+        errorMsg={commentsErrorMsg}
+        isSaving={isSavingComments}
+        saveErrorMsg={commentsSaveErrorMsg}
+        handleClose={handleCloseComments}
+        handleSave={handleSaveComments}
+        toggleItemSelection={toggleCommentSelection}
       />
     </Stack>
   );
