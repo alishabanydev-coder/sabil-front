@@ -1,8 +1,10 @@
-﻿import TabsSection from "@/component/donation/TabsSection";
+﻿import DonationProjectBanner from "@/component/donation/DonationProjectBanner";
+import TabsSection from "@/component/donation/TabsSection";
 import TopSection from "@/component/donation/TopSection";
 import { fetchPublicDonationProject } from "@/component/donation/services/donationPublicApi";
-import { Stack } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 //base url
@@ -83,18 +85,55 @@ const DonationProjectPage = async ({ params }: PageProps) => {
   return (
     <Stack
       sx={{
+        position: "relative",
+        direction: "ltr",
         width: "100%",
         mx: "auto",
-        direction: "ltr",
         gap: 3,
-        pt: { xs: 2, sm: 3, md: 4 },
         pb: 10,
+        pt: { xs: 2, sm: 3, md: 4 },
       }}
     >
-      <TopSection projectData={projectData} />
+      <Button
+        href="/donation"
+        variant="text"
+        disableRipple
+        sx={{
+          position: "absolute",
+          flexDirection: "row",
+          top: { xs: 10, sm: 15, md: 20, lg: 25, xl: 28 },
+          left: { xs: 7, sm: 15, md: 20, lg: 25, xl: 28 },
+          alignItems: "center",
+          justifyContent: "center",
+          gap: { xs: 0.5, sm: 1 },
+          cursor: "pointer",
+          "& p": {
+            fontSize: { xs: 10, sm: 16, md: 18, lg: 20, xl: 22 },
+            fontFamily: "Namecat",
+            lineHeight: 1,
+            letterSpacing: 1,
+            color: "#00C1F2",
+          },
+          "& img": {
+            width: { xs: 12, sm: 18, md: 22, lg: 28, xl: 30 },
+            height: { xs: 8, sm: 12, md: 14, lg: 19, xl: 21 },
+            mb: 0.2,
+          },
+        }}
+      >
+        <Image
+          src={"/back-arrow.png"}
+          alt={"back to main page"}
+          width={28}
+          height={19}
+        />
+        <Typography>back to main page</Typography>
+      </Button>
+      <DonationProjectBanner projectData={projectData} />
+      {/* <TopSection projectData={projectData} />
       <Stack sx={{ width: "100%", bgcolor: "background.paper" }}>
         <TabsSection projectData={projectData} />
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 };
