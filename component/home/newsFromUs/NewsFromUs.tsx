@@ -12,6 +12,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 const DEFAULT_NEWS_IMAGE = "/news1.webp";
+const UPDATES_COLUMNS = 3;
+const UPDATES_GAP_PX = 12;
 
 type Slide = {
   id: number | string;
@@ -47,7 +49,10 @@ const UpdatesCard = ({
     onClick={() => onOpen(slide.blog)}
     sx={{
       flex: 1,
+      width: "100%",
+      maxWidth: "100%",
       minWidth: 0,
+      boxSizing: "border-box",
       p: { xs: 0.5, md: 1 },
       boxShadow: 5,
       borderRadius: 5,
@@ -103,7 +108,15 @@ const UpdatesCard = ({
       />
     </Stack>
 
-    <Stack sx={{ px: { xs: 2, md: 3 }, width: "100%", minWidth: 0 }}>
+    <Stack
+      sx={{
+        px: { xs: 2, md: 3 },
+        width: "100%",
+        minWidth: 0,
+        maxWidth: "100%",
+        overflow: "hidden",
+      }}
+    >
       <Typography
         sx={{
           fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
@@ -112,13 +125,16 @@ const UpdatesCard = ({
           letterSpacing: 1.2,
           color: "primary.main",
           textAlign: "start",
+          display: "block",
+          width: "100%",
+          minWidth: 0,
+          maxWidth: "100%",
           textOverflow: "ellipsis",
           overflow: "hidden",
           whiteSpace: "nowrap",
-          maxWidth: "100%",
         }}
       >
-        {slide.title}
+        {slide.title} sdhkajfhlksajdhfkjakjshd sh kdjhfk
       </Typography>
       <Typography
         style={{
@@ -199,7 +215,8 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
           .filter((slide) => Boolean(slide.image))
       : [];
 
-  const previewSlides = slides.slice(0, 3);
+  const previewSlides = slides.slice(0, UPDATES_COLUMNS);
+  const columnCount = Math.min(UPDATES_COLUMNS, Math.max(slides.length, 1));
 
   return (
     <Stack
@@ -229,10 +246,10 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
           position: "relative",
           ".swiper-slide": {
             height: "auto",
+            minWidth: 0,
           },
         }}
       >
-        {/* FIXME: fix the Swiper Card in the xs, and make the swiper work fix Paddings */}
         <Stack
           sx={{
             width: { xs: "100%", sm: "93%" },
@@ -245,24 +262,39 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
             sx={{
               flex: 1,
               minWidth: 0,
-              flexDirection: { xs: "row", sm: "row" },
+              flexDirection: {
+                xs: showAllUpdates ? "row" : "column",
+                md: "row",
+              },
               justifyContent: "space-between",
-              gap: 1.5,
+              gap: `${UPDATES_GAP_PX}px`,
+              px: showAllUpdates ? 0 : 2,
+              pb: showAllUpdates ? 0 : 1.5,
+              pt: showAllUpdates ? 0 : 0.5,
               "& .swiper": {
+                boxSizing: "border-box",
                 pb: 1.5,
                 pt: 0.5,
+                px: 2,
+              },
+              "& .swiper-slide": {
+                height: "auto",
+                minWidth: 0,
+                display: "flex",
+                boxSizing: "border-box",
               },
             }}
           >
             {showAllUpdates ? (
               <Swiper
                 slidesPerView={1}
-                spaceBetween={12}
+                spaceBetween={UPDATES_GAP_PX}
                 style={{ width: "100%" }}
                 breakpoints={{
-                  600: { slidesPerView: 3, spaceBetween: 12 },
-                  900: { slidesPerView: 4, spaceBetween: 16 },
-                  1536: { slidesPerView: 5, spaceBetween: 16 },
+                  600: {
+                    slidesPerView: columnCount,
+                    spaceBetween: UPDATES_GAP_PX,
+                  },
                 }}
               >
                 {slides.map((slide) => (
@@ -313,7 +345,7 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                 },
               }}
             >
-              View all Updates
+              {showAllUpdates ? "Show less" : "View all Updates"}
               <Image
                 src="/ping-arrow.png"
                 alt="pink-arrow"

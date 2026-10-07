@@ -4,8 +4,10 @@ import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
 import { Autoplay } from "swiper/modules";
+import "swiper/css";
 import { AppButton } from "../ui/AppButton";
 import { Fragment } from "react";
+import { PublicDonationProjectCard } from "./component/ProjectCardSection";
 
 const CYAN_U = "#2ee6f0";
 const COSINE_DENT = 0.1;
@@ -26,6 +28,33 @@ function cosineRibbonPath(dent: number, samples: number) {
 }
 
 const COSINE_CLIP_PATH = cosineRibbonPath(COSINE_DENT, COSINE_SAMPLES);
+const POSTER_WIDTH = 0.68;
+
+function cosineRightSlicePath(
+  dent: number,
+  samples: number,
+  sliceWidth: number
+) {
+  const start = 1 - sliceWidth;
+  const top: string[] = [];
+  const bottom: string[] = [];
+
+  for (let index = 0; index <= samples; index += 1) {
+    const localX = index / samples;
+    const bannerX = start + localX * sliceWidth;
+    const wave = dent * Math.pow(Math.sin(Math.PI * bannerX), 0.9);
+    top.push(`${localX.toFixed(5)},${wave.toFixed(5)}`);
+    bottom.push(`${localX.toFixed(5)},${(1 - dent + wave).toFixed(5)}`);
+  }
+
+  return `M ${top.join(" L ")} L ${bottom.reverse().join(" L ")} Z`;
+}
+
+const POSTER_CLIP_PATH = cosineRightSlicePath(
+  COSINE_DENT,
+  COSINE_SAMPLES,
+  POSTER_WIDTH
+);
 
 const AdsBox = [
   {
@@ -99,7 +128,12 @@ const AdCard = ({ item }: { item: AdItem }) => (
   </Stack>
 );
 
-const DonationBanner = () => {
+const DonationBanner = ({
+  projects = [],
+}: {
+  projects: PublicDonationProjectCard[];
+}) => {
+  const posters = projects.filter((project) => project.poster);
   return (
     <Stack
       sx={{
@@ -120,6 +154,12 @@ const DonationBanner = () => {
           >
             <path d={COSINE_CLIP_PATH} />
           </clipPath>
+          <clipPath
+            id="donation-banner-poster-slice"
+            clipPathUnits="objectBoundingBox"
+          >
+            <path d={POSTER_CLIP_PATH} />
+          </clipPath>
         </defs>
       </svg>
 
@@ -127,6 +167,7 @@ const DonationBanner = () => {
         sx={{
           width: "100%",
           height: "100%",
+          position: "relative",
           bgcolor: CYAN_U,
           overflow: "hidden",
           clipPath: "url(#donation-banner-cosine-u)",
@@ -139,10 +180,11 @@ const DonationBanner = () => {
           <Stack
             sx={{
               height: "90%",
-              width: { xs: "32%", sm: "35%", md: "35%", lg: "32%", xl: "30%" },
+              width: { xs: "42%", sm: "40%", md: "38%", lg: "36%", xl: "34%" },
               position: "absolute",
               top: "10%",
               left: "5%",
+              zIndex: 2,
             }}
           >
             <Stack
@@ -210,13 +252,13 @@ const DonationBanner = () => {
                   gap: { xs: 1, lg: 2 },
                   position: "absolute",
                   bottom: {
-                    xs: "28%",
-                    sm: "32%",
-                    md: "25%",
-                    lg: "25%",
-                    xl: "26%",
+                    xs: "36%",
+                    sm: "34%",
+                    md: "30%",
+                    lg: "28%",
+                    xl: "30%",
                   },
-                  right: { xs: "8%", sm: "8%", md: "-8%" },
+                  left: "5%",
                   zIndex: 100,
                   justifyContent: "end",
                 }}
@@ -287,7 +329,67 @@ const DonationBanner = () => {
               </Stack>
             </Stack>
           </Stack>
-          <Stack></Stack>
+          {posters.length > 0 ? (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                width: `${POSTER_WIDTH * 100}%`,
+                height: "100%",
+                zIndex: 1,
+                clipPath: "url(#donation-banner-poster-slice)",
+                WebkitClipPath: "url(#donation-banner-poster-slice)",
+                "& .swiper, & .swiper-wrapper, & .swiper-slide": {
+                  width: "100%",
+                  height: "100%",
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  maskImage:
+                    "linear-gradient(to right, transparent 0%, #000 32%, #000 100%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to right, transparent 0%, #000 32%, #000 100%)",
+                  maskSize: "100% 100%",
+                  WebkitMaskSize: "100% 100%",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskRepeat: "no-repeat",
+                }}
+              >
+                <Swiper
+                  modules={[Autoplay]}
+                  autoplay={{ delay: 3500, disableOnInteraction: false }}
+                  loop={posters.length > 1}
+                  style={{ width: "100%", height: "100%" }}
+                >
+                  {posters.map((project) => (
+                    <SwiperSlide key={project._id}>
+                      <Box
+                        sx={{
+                          position: "relative",
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      >
+                        <Image
+                          src={project.poster}
+                          alt={project.title}
+                          fill
+                          priority
+                          sizes="68vw"
+                          style={{ objectFit: "cover" }}
+                        />
+                      </Box>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </Box>
+            </Box>
+          ) : null}
         </Stack>
       </Stack>
 
@@ -325,7 +427,7 @@ const DonationBanner = () => {
           <Swiper
             slidesPerView={1}
             modules={[Autoplay]}
-            autoplay={{ delay: 1500, disableOnInteraction: false }}
+            autoplay={{ delay: 1000, disableOnInteraction: false }}
           >
             {AdsBox.map((item) => (
               <SwiperSlide key={item.header}>

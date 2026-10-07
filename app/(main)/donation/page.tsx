@@ -4,13 +4,18 @@ import { Stack } from "@mui/material";
 import YourImpact from "@/component/donation/YourImpact";
 import PeopleOpinion from "@/component/donation/PeopleOpinion";
 import { fetchDonationFeaturedComments } from "@/component/donation/services/commentsPublicApi";
+import { fetchPublicDonationProjects } from "@/component/donation/services/donationPublicApi";
 import JoinDonors from "@/component/donation/JoinDonors";
 
 const DonationPage = async () => {
-  const featuredCommentsResult = await fetchDonationFeaturedComments();
+  const [featuredCommentsResult, projectsResult] = await Promise.all([
+    fetchDonationFeaturedComments(),
+    fetchPublicDonationProjects(),
+  ]);
   const featuredComments = featuredCommentsResult.ok
     ? featuredCommentsResult.comments
     : [];
+  const projects = projectsResult.ok ? projectsResult.donationProjects : [];
 
   return (
     <Stack
@@ -23,7 +28,7 @@ const DonationPage = async () => {
         gap: 4,
       }}
     >
-      <DonationBanner />
+      <DonationBanner projects={projects} />
       <Stack
         sx={{
           px: { xs: 2, md: 14 },
@@ -31,7 +36,7 @@ const DonationPage = async () => {
           gap: { xs: 2, md: 4 },
         }}
       >
-        <ProjectSection />
+        <ProjectSection projects={projects} />
         <YourImpact />
         <PeopleOpinion
           comments={featuredComments}

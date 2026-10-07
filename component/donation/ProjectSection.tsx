@@ -1,11 +1,13 @@
 import { Stack, Typography } from "@mui/material";
-import ProjectCardSection from "./component/ProjectCardSection";
-import { fetchPublicDonationProjects } from "./services/donationPublicApi";
+import ProjectCardSection, {
+  type PublicDonationProjectCard,
+} from "./component/ProjectCardSection";
 
-const ProjectSection = async () => {
-  const result = await fetchPublicDonationProjects();
-  const projects = result.ok ? result.donationProjects : [];
-
+const ProjectSection = ({
+  projects,
+}: {
+  projects: PublicDonationProjectCard[];
+}) => {
   return (
     <Stack
       id="donation-projects"
