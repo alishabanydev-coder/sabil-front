@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography, type SxProps } from "@mui/material";
 import { useMemo, useRef } from "react";
 import { useScrollSpy } from "@/component/donation/hooks/useScrollSpy";
 import ImageSlider from "./ImageSlider";
@@ -58,7 +58,13 @@ const SectionImages = ({
 
 const SCROLL_SPY_OFFSET = 120;
 
-const Documents = ({ projectData }: { projectData: DonationProject }) => {
+const Documents = ({
+  projectData,
+  cardSx,
+}: {
+  projectData: DonationProject;
+  cardSx: SxProps;
+}) => {
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const sections = useMemo(
@@ -90,6 +96,7 @@ const Documents = ({ projectData }: { projectData: DonationProject }) => {
       sx={{
         flexDirection: "row",
         width: "100%",
+        gap: 2,
       }}
     >
       <Stack
@@ -97,7 +104,6 @@ const Documents = ({ projectData }: { projectData: DonationProject }) => {
           display: { xs: "none", sm: "flex" },
           width: { xs: 0, sm: 180, md: 220 },
           flexShrink: 0,
-          borderRight: "1px solid #e0e0e0",
           py: 2,
           pr: 0.5,
           gap: 1,
@@ -155,8 +161,6 @@ const Documents = ({ projectData }: { projectData: DonationProject }) => {
       <Stack
         sx={{
           flex: 1,
-          px: { xs: 0, sm: 1, md: 3 },
-          py: 2,
           gap: 4,
         }}
       >
@@ -170,9 +174,8 @@ const Documents = ({ projectData }: { projectData: DonationProject }) => {
             }}
             id={section.id}
             sx={{
-              gap: 2,
-              pb: { xs: 0, md: 5 },
               scrollMarginTop: `${SCROLL_SPY_OFFSET}px`,
+              ...cardSx,
             }}
           >
             <SectionImages

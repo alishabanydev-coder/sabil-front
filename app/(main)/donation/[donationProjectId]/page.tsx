@@ -1,13 +1,11 @@
-﻿import DonationProjectBanner from "@/component/donation/DonationProjectBanner";
-import TabsSection from "@/component/donation/TabsSection";
-import TopSection from "@/component/donation/TopSection";
+﻿import type { Metadata } from "next";
 import { fetchPublicDonationProject } from "@/component/donation/services/donationPublicApi";
 import { Button, Stack, Typography } from "@mui/material";
-import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import DonationProjectBanner from "@/component/donation/DonationProjectBanner";
+import BodySection from "@/component/donation/BodySection";
 
-//base url
 const SITE_URL = "https://sabeelkids.com";
 
 type PageProps = {
@@ -89,7 +87,7 @@ const DonationProjectPage = async ({ params }: PageProps) => {
         direction: "ltr",
         width: "100%",
         mx: "auto",
-        gap: 3,
+        gap: 10,
         pb: 10,
         pt: { xs: 2, sm: 3, md: 4 },
       }}
@@ -130,10 +128,7 @@ const DonationProjectPage = async ({ params }: PageProps) => {
         <Typography>back to main page</Typography>
       </Button>
       <DonationProjectBanner projectData={projectData} />
-      {/* <TopSection projectData={projectData} />
-      <Stack sx={{ width: "100%", bgcolor: "background.paper" }}>
-        <TabsSection projectData={projectData} />
-      </Stack> */}
+      <BodySection projectData={projectData} />
     </Stack>
   );
 };

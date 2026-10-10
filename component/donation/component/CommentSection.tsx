@@ -119,10 +119,10 @@ function getPublicCommentAuthorLabel(user: AuthUser | null) {
 }
 
 const CommentSection = ({
-  setValue,
+  setActiveTab,
   projectData,
 }: {
-  setValue: (value: number) => void;
+  setActiveTab: (value: string) => void;
   projectData: DonationProject;
 }) => {
   const [comments, setComments] = useState<PublicComment[]>([]);
@@ -378,7 +378,7 @@ const CommentSection = ({
     const isNested = depth > 0;
 
     return (
-      <Stack key={comment._id} sx={{ gap: 1 }}>
+      <Stack key={comment._id} sx={{ gap: 1, }}>
         <Stack
           sx={{
             gap: 1,
@@ -386,6 +386,8 @@ const CommentSection = ({
             borderRadius: 2,
             border: "1px solid",
             borderColor: "divider",
+            boxShadow: 3,
+
             ...(isNested
               ? {
                   ml: { xs: depth * 2, md: depth * 3 },
@@ -550,7 +552,7 @@ const CommentSection = ({
         </Stack>
 
         {replies.length > 0 ? (
-          <Stack sx={{ gap: 1 }}>
+          <Stack sx={{ gap: 1}}>
             {replies.map((reply) => renderComment(reply, depth + 1))}
           </Stack>
         ) : null}
@@ -583,7 +585,7 @@ const CommentSection = ({
             width: { xs: "100%", md: "70%" },
             order: { xs: 2, md: 1 },
             gap: 2,
-            border: "1px solid",
+            // border: "1px solid",
             borderColor: "divider",
             p: 2,
             borderRadius: 2,
@@ -805,7 +807,11 @@ const CommentSection = ({
           >
             Have a question for the creator?
           </Typography>
-          <Button variant="text" color="primary" onClick={() => setValue(2)}>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={() => setActiveTab("FAQ")}
+          >
             Check this project&apos;s FAQ
           </Button>
         </Stack>

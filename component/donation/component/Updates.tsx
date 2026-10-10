@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, type SxProps } from "@mui/material";
 import { useMemo } from "react";
 import UpdateCard, { type DonationUpdate } from "./UpdateCard";
 
@@ -30,7 +30,13 @@ type DonationProject = {
   updates?: DonationUpdate[];
 };
 
-const Updates = ({ projectData }: { projectData: DonationProject }) => {
+const Updates = ({
+  projectData,
+  cardSx,
+}: {
+  projectData: DonationProject;
+  cardSx: SxProps;
+}) => {
   const updates = useMemo(
     () =>
       [...(projectData.updates ?? [])].sort(
@@ -66,6 +72,7 @@ const Updates = ({ projectData }: { projectData: DonationProject }) => {
     >
       {updates.map((update, index) => (
         <UpdateCard
+          cardSx={cardSx}
           key={update.id}
           update={update}
           updateNumber={updates.length - index}

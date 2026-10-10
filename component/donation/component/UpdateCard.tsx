@@ -2,7 +2,7 @@
 
 import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { Avatar, Divider, Stack, Typography } from "@mui/material";
+import { Avatar, Divider, Stack, Typography, type SxProps } from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Navigation, Pagination } from "swiper/modules";
@@ -28,6 +28,7 @@ export type DonationUpdate = {
 type UpdateCardProps = {
   update: DonationUpdate;
   updateNumber: number;
+  cardSx: SxProps;
 };
 
 
@@ -161,7 +162,7 @@ const UpdateMediaSwiper = ({
 const COLLAPSED_HEIGHT = 400;
 const EXPAND_TRANSITION = "max-height 0.45s ease, box-shadow 0.3s ease";
 
-const UpdateCard = ({ update, updateNumber }: UpdateCardProps) => {
+const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -258,10 +259,7 @@ const UpdateCard = ({ update, updateNumber }: UpdateCardProps) => {
         position: "relative",
         width: "95%",
         mx: "auto",
-        border: "1px solid #e0e0e0",
-        borderRadius: 2,
-        p: 2,
-        boxShadow: isExpanded && !isCollapsing ? 4 : 2,
+        ...cardSx,
         gap: 2,
         cursor: "pointer",
         maxHeight,
