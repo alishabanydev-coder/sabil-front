@@ -12,6 +12,7 @@ import Documents from "./component/Documents";
 import Updates from "./component/Updates";
 import FAQTab from "./component/FAQTab";
 import CommentSection from "./component/CommentSection";
+import StaticTab from "./component/staticTab/StaticTab";
 
 type DonationProject = {
   _id: string;
@@ -317,7 +318,7 @@ const BodySection = ({ projectData }: { projectData: DonationProject }) => {
           <Documents projectData={projectData} cardSx={cardSx} />
         </TabLayout>
         <TabLayout value={activeTab} index="Statistics">
-          <Updates projectData={projectData} cardSx={cardSx} />
+          <StaticTab cardSx={cardSx} projectData={projectData} />
         </TabLayout>
         <TabLayout value={activeTab} index="FAQ">
           <FAQTab projectData={projectData} cardSx={cardSx} />
@@ -327,6 +328,9 @@ const BodySection = ({ projectData }: { projectData: DonationProject }) => {
             setActiveTab={setActiveTab}
             projectData={projectData}
           />
+        </TabLayout>
+        <TabLayout value={activeTab} index="Updates">
+          <Updates projectData={projectData} cardSx={cardSx} />
         </TabLayout>
       </Stack>
     </Stack>
