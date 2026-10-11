@@ -30,6 +30,8 @@ type DonationProject = {
   updates?: DonationUpdate[];
 };
 
+//FIXME: fix the SX and SM card View
+
 const Updates = ({
   projectData,
   cardSx,

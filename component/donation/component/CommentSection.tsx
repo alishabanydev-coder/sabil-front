@@ -90,6 +90,7 @@ function groupCommentsByParent(comments: PublicComment[]) {
 }
 
 const PUBLIC_COMMENT_PAGE_SIZE = 10;
+const connectorLeft = 10;
 
 function readIsAdminSession() {
   if (typeof window === "undefined") {
@@ -372,13 +373,59 @@ const CommentSection = ({
     }
   };
 
-  const renderComment = (comment: PublicComment, depth = 0) => {
+  const renderComment = (comment: PublicComment, depth = 0, isLast = true) => {
     const replies = repliesByParent.get(comment._id) ?? [];
     const isReplying = replyingToId === comment._id;
     const isNested = depth > 0;
 
     return (
-      <Stack key={comment._id} sx={{ gap: 1, }}>
+      <Stack
+        key={comment._id}
+        sx={
+          isNested
+            ? {
+                display: "grid",
+                gridTemplateColumns: { xs: "18px 1fr", md: "24px 1fr" },
+                rowGap: 1,
+              }
+            : { gap: 1 }
+        }
+      >
+        {isNested ? (
+          <Stack
+            aria-hidden
+            sx={{ gridColumn: 1, gridRow: 1, position: "relative", direction: 'ltr' }}
+          >
+            <Stack
+              sx={{
+                position: "absolute",
+                left: connectorLeft,
+                top: (theme) => theme.spacing(-1),
+                height: (theme) => `calc(50% + ${theme.spacing(1)})`,
+                width: `calc(100% - ${connectorLeft}px)`,
+                borderLeft: "2px solid",
+                borderBottom: "2px solid",
+                borderColor: "primary.light",
+                borderBottomLeftRadius: 12,
+                boxSizing: "border-box",
+                pointerEvents: "none",
+              }}
+            />
+            {!isLast ? (
+              <Stack
+                sx={{
+                  position: "absolute",
+                  left: connectorLeft,
+                  top: "50%",
+                  bottom: (theme) => theme.spacing(-1),
+                  borderLeft: "2px solid",
+                  borderColor: "primary.light",
+                  pointerEvents: "none",
+                }}
+              />
+            ) : null}
+          </Stack>
+        ) : null}
         <Stack
           sx={{
             gap: 1,
@@ -387,11 +434,11 @@ const CommentSection = ({
             border: "1px solid",
             borderColor: "divider",
             boxShadow: 3,
-
+            minWidth: 0,
             ...(isNested
               ? {
-                  ml: { xs: depth * 2, md: depth * 3 },
-                  pl: { xs: 1.5 + depth, md: 2 + depth },
+                  gridColumn: 2,
+                  gridRow: 1,
                   borderLeft: "3px solid",
                   borderLeftColor: "primary.light",
                 }
@@ -552,8 +599,34 @@ const CommentSection = ({
         </Stack>
 
         {replies.length > 0 ? (
-          <Stack sx={{ gap: 1}}>
-            {replies.map((reply) => renderComment(reply, depth + 1))}
+          <Stack
+            sx={{
+              gap: 1,
+              minWidth: 0,
+              ...(isNested ? { gridColumn: 2, gridRow: 2 } : {}),
+            }}
+          >
+            {replies.map((reply, index) =>
+              renderComment(reply, depth + 1, index === replies.length - 1),
+            )}
+          </Stack>
+        ) : null}
+        {isNested && !isLast && replies.length > 0 ? (
+          <Stack
+            aria-hidden
+            sx={{ gridColumn: 1, gridRow: 2, position: "relative" }}
+          >
+            <Stack
+              sx={{
+                position: "absolute",
+                left: connectorLeft,
+                top: 0,
+                bottom: (theme) => theme.spacing(-1),
+                borderLeft: "2px solid",
+                borderColor: "primary.light",
+                pointerEvents: "none",
+              }}
+            />
           </Stack>
         ) : null}
       </Stack>
