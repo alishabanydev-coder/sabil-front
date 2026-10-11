@@ -187,6 +187,7 @@ const Documents = ({
               <Typography
                 component="h3"
                 sx={{
+                  px: { xs: 1.5, sm: 0 },
                   fontWeight: 700,
                   fontFamily: "Namecat",
                   color: "primary.main",
@@ -201,6 +202,7 @@ const Documents = ({
             {section.text?.trim() ? (
               <Typography
                 sx={{
+                  px: { xs: 1.5, sm: 0 },
                   fontSize: { xs: 11, sm: 13, md: 15, lg: 17 },
                   lineHeight: 1.6,
                   color: "text.primary",

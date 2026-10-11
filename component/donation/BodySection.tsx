@@ -14,7 +14,30 @@ import FAQTab from "./component/FAQTab";
 import CommentSection from "./component/CommentSection";
 import StaticTab from "./component/staticTab/StaticTab";
 
-type DonationProject = {
+export type ProjectStepStatus =
+  | "upcoming"
+  | "in_progress"
+  | "completed"
+  | "skipped";
+
+export type ProjectStep = {
+  id: string;
+  label: string;
+  status: ProjectStepStatus;
+  spentAmount?: number;
+  order?: number;
+};
+
+export type DonationStaffMember = {
+  id: string;
+  name: string;
+  role: string;
+  photo?: string | null;
+  bio?: string | null;
+  order?: number;
+};
+
+export type DonationProject = {
   _id: string;
   title: string;
   slug: string;
@@ -26,6 +49,8 @@ type DonationProject = {
   currency?: "USD" | "INR" | string;
   videoUrl?: string | null;
   status: string;
+  steps?: ProjectStep[];
+  staff?: DonationStaffMember[];
 };
 
 const cardSx = {

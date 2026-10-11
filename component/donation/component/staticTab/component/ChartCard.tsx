@@ -1,33 +1,13 @@
-import { ProjectStepStatus } from "@/component/admin/components/donation/donationDrafts";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Box, Divider, Stack, SxProps, Typography } from "@mui/material";
 import { Fragment, useMemo } from "react";
+import { DonationProject } from "@/component/donation/BodySection";
 
-type DonationProject = {
-  _id: string;
-  title: string;
-  slug: string;
-  poster: string;
-  shortDescription: string;
-  goalAmount: number;
-  raisedAmount: number;
-  donorCount: number;
-  currency?: "USD" | "INR" | string;
-  videoUrl?: string | null;
-  faq?: {
-    header: string;
-    summary: string;
-    order: number;
-  }[];
-  steps?: ProjectStep[];
-};
-
-type ProjectStep = {
+type BudgetSlice = {
   id: string;
   label: string;
-  status: ProjectStepStatus;
-  spentAmount?: number;
-  order?: number;
+  value: number;
+  color: string;
 };
 
 const STEP_COLORS = [
@@ -42,13 +22,6 @@ const STEP_COLORS = [
   "#5C6CFF",
 ];
 const REMAINDER_COLOR = "#C8C8CA";
-
-type BudgetSlice = {
-  id: string;
-  label: string;
-  value: number;
-  color: string;
-};
 
 const LegendItem = ({
   slice,
@@ -81,7 +54,7 @@ const LegendItem = ({
       sx={{
         minWidth: 0,
         alignItems: "flex-start",
-        gap: { xs: 0.4, sm: 0.5, md: 0.5, lg: 0.6, xl: .8 },
+        gap: { xs: 0.4, sm: 0.5, md: 0.5, lg: 0.6, xl: 0.8 },
       }}
     >
       <Typography

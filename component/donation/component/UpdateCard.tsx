@@ -2,7 +2,13 @@
 
 import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { Avatar, Divider, Stack, Typography, type SxProps } from "@mui/material";
+import {
+  Avatar,
+  Divider,
+  Stack,
+  Typography,
+  type SxProps,
+} from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Navigation, Pagination } from "swiper/modules";
@@ -31,7 +37,6 @@ type UpdateCardProps = {
   cardSx: SxProps;
 };
 
-
 const formatUpdateDate = (value: string) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -52,8 +57,7 @@ const UpdateMediaSwiper = ({
   videoUrl?: string;
   isExpanded: boolean;
 }) => {
-  const hasVideo =
-    typeof videoUrl === "string" && videoUrl.trim().length > 0;
+  const hasVideo = typeof videoUrl === "string" && videoUrl.trim().length > 0;
   const mediaCount = (hasVideo ? 1 : 0) + images.length;
 
   if (mediaCount === 0) {
@@ -260,6 +264,7 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
         width: "95%",
         mx: "auto",
         ...cardSx,
+        px: { xs: 1.2, sm: 0 },
         gap: 2,
         cursor: "pointer",
         maxHeight,
@@ -268,90 +273,90 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
       }}
     >
       <Stack ref={contentRef} sx={{ gap: 2 }}>
-      <Stack sx={{ gap: 1 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
-            color: "text.secondary",
-          }}
-        >
-          update #{updateNumber}
-        </Typography>
-        <Typography
-          variant="h6"
-          sx={{
-            fontFamily: "Namecat",
-            letterSpacing: 1.5,
-            fontSize: { xs: 12, sm: 16, md: 18, lg: 24, xl: 28 },
-            color: "primary.main",
-          }}
-        >
-          {update.title}
-        </Typography>
-        {update.subHeader?.trim() ? (
+        <Stack sx={{ gap: 1 }}>
           <Typography
+            variant="h6"
             sx={{
               fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
               color: "text.secondary",
             }}
           >
-            {update.subHeader}
+            update #{updateNumber}
           </Typography>
-        ) : null}
-      </Stack>
+          <Typography
+            variant="h6"
+            sx={{
+              fontFamily: "Namecat",
+              letterSpacing: 1.5,
+              fontSize: { xs: 12, sm: 16, md: 18, lg: 24, xl: 28 },
+              color: "primary.main",
+            }}
+          >
+            {update.title}
+          </Typography>
+          {update.subHeader?.trim() ? (
+            <Typography
+              sx={{
+                fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
+                color: "text.secondary",
+              }}
+            >
+              {update.subHeader}
+            </Typography>
+          ) : null}
+        </Stack>
 
-      <Stack sx={{ flexDirection: "row", gap: 1 }}>
-        <Avatar
-          src={update.authorAvatar || "/avatar1.webp"}
-          sx={{
-            width: { xs: 32, sm: 40, md: 48, lg: 56, xl: 64 },
-            height: { xs: 32, sm: 40, md: 48, lg: 56, xl: 64 },
-          }}
-        />
-        <Stack>
-          <Typography
-            sx={{ fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 24 } }}
-          >
-            {update.authorName}
-          </Typography>
+        <Stack sx={{ flexDirection: "row", gap: 1 }}>
+          <Avatar
+            src={update.authorAvatar || "/avatar1.webp"}
+            sx={{
+              width: { xs: 32, sm: 40, md: 48, lg: 56, xl: 64 },
+              height: { xs: 32, sm: 40, md: 48, lg: 56, xl: 64 },
+            }}
+          />
+          <Stack>
+            <Typography
+              sx={{ fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 24 } }}
+            >
+              {update.authorName}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
+                fontWeight: 300,
+                color: "text.secondary",
+              }}
+            >
+              {formatUpdateDate(update.createdAt)}
+            </Typography>
+          </Stack>
+        </Stack>
+
+        <Divider flexItem />
+
+        <Stack sx={{ gap: 2 }}>
+          {showMedia ? (
+            <UpdateMediaSwiper
+              title={update.title}
+              images={update.images}
+              videoUrl={update.videoUrl}
+              isExpanded={isExpanded && !isCollapsing}
+            />
+          ) : null}
+
           <Typography
             sx={{
-              fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
+              fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 24 },
               fontWeight: 300,
-              color: "text.secondary",
+              width: "100%",
+              whiteSpace: "pre-wrap",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
-            {formatUpdateDate(update.createdAt)}
+            {update.content}
           </Typography>
         </Stack>
-      </Stack>
-
-      <Divider flexItem />
-
-      <Stack sx={{ gap: 2 }}>
-        {showMedia ? (
-          <UpdateMediaSwiper
-            title={update.title}
-            images={update.images}
-            videoUrl={update.videoUrl}
-            isExpanded={isExpanded && !isCollapsing}
-          />
-        ) : null}
-
-        <Typography
-          sx={{
-            fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 24 },
-            fontWeight: 300,
-            width: "100%",
-            whiteSpace: "pre-wrap",
-            overflowWrap: "anywhere",
-            wordBreak: "break-word",
-          }}
-        >
-          {update.content}
-        </Typography>
-      </Stack>
       </Stack>
 
       <Stack
