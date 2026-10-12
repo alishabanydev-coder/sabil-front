@@ -92,7 +92,6 @@ const DonationProjectBanner = ({
 }: {
   projectData: DonationProject;
 }) => {
-  console.log(projectData);
   const raisedProgress =
     projectData.goalAmount > 0
       ? Math.min(100, (projectData.raisedAmount / projectData.goalAmount) * 100)
@@ -138,7 +137,7 @@ const DonationProjectBanner = ({
           <Stack
             sx={{
               height: "90%",
-              width: { xs: "45%", sm: "40%", md: "38%", lg: "40%", xl: "45%" },
+              width: { xs: "45%", sm: "40%", md: "38%", lg: "40%", xl: "40%" },
               position: "absolute",
               top: "10%",
               left: { xs: "3%", sm: "5%" },
@@ -183,7 +182,7 @@ const DonationProjectBanner = ({
                     whiteSpace: "pre-line",
                     letterSpacing: 1,
                     fontWeight: 100,
-                    WebkitLineClamp: 4,
+                    WebkitLineClamp: { xs: 4, lg: 5, xl: 6 },
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
@@ -317,15 +316,14 @@ const DonationProjectBanner = ({
             <Typography
               sx={{
                 fontSize: { xs: 12, sm: 20, md: 30, lg: 36, xl: 38 },
-                fontWeight: 700,
-                fontFamily: "Arco",
+                fontFamily: "Namecat",
                 lineHeight: 1.2,
                 letterSpacing: 1,
                 color: "primary.main",
               }}
             >
               {`${CURRENCY_SYMBOLS[projectData.currency ?? "USD"] ?? "$"}`}
-              {projectData.raisedAmount}
+              {projectData.raisedAmount.toLocaleString("en-US")}
             </Typography>
             <Typography
               sx={{
@@ -381,17 +379,14 @@ const DonationProjectBanner = ({
             <Typography
               sx={{
                 fontSize: { xs: 12, sm: 20, md: 30, lg: 36, xl: 38 },
-
-                fontWeight: 700,
-                fontFamily: "Arco",
+                fontFamily: "Namecat",
                 lineHeight: 1.2,
                 letterSpacing: 1,
                 color: "primary.main",
               }}
             >
               {`${CURRENCY_SYMBOLS[projectData.currency ?? "USD"] ?? "$"}`}
-
-              {projectData.goalAmount}
+              {projectData.goalAmount.toLocaleString("en-US")}
             </Typography>
             <Typography
               sx={{
@@ -408,7 +403,7 @@ const DonationProjectBanner = ({
 
           <Button
             variant="contained"
-            disableRipple   
+            disableRipple
             sx={{
               bgcolor: "#FF4C62",
               color: "#fff",

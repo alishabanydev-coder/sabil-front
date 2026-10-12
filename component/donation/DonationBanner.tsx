@@ -97,8 +97,8 @@ const AdCard = ({ item }: { item: AdItem }) => (
         lineHeight: 1.2,
       },
       "& img": {
-        width: { xs: 35, sm: 45, md: 58, lg: 72, xl: 85 },
-        height: { xs: 35, sm: 45, md: 58, lg: 72, xl: 85 },
+        width: { xs: 32, sm: 40, md: 56, lg: 65, xl: 80 },
+        height: { xs: 32, sm: 40, md: 56, lg: 65, xl: 80 },
         objectFit: "contain",
       },
     }}
@@ -240,7 +240,7 @@ const DonationBanner = ({
                     unicodeBidi: "isolate",
                   }}
                 >
-                  values-based We create sofe, joyful and animated content that
+                  values-based We create safe, joyful and animated content that
                   inspires faith, builds character and brings families closer.
                 </Typography>
               </Stack>
@@ -253,10 +253,10 @@ const DonationBanner = ({
                   position: "absolute",
                   bottom: {
                     xs: "36%",
-                    sm: "34%",
-                    md: "30%",
-                    lg: "28%",
-                    xl: "30%",
+                    sm: "32%",
+                    md: "22%",
+                    lg: "25%",
+                    xl: "28%",
                   },
                   left: "5%",
                   zIndex: 100,
@@ -398,11 +398,11 @@ const DonationBanner = ({
         sx={{
           position: "absolute",
           bottom: {
-            xs: "-48%",
-            sm: "-42%",
-            md: "-45%",
-            lg: "-36%",
-            xl: "-26%",
+            xs: "-44%",
+            sm: "-40%",
+            md: "-44%",
+            lg: "-28%",
+            xl: "-17%",
           },
           left: "50%",
           transform: "translate(-50%, -50%)",
@@ -412,7 +412,7 @@ const DonationBanner = ({
           bgcolor: "background.paper",
           border: (theme) => `4px solid ${theme.palette.secondary.main}`,
           borderWidth: { xs: 2, sm: 3, md: 4, lg: 4, xl: 5 },
-          p: { xs: 1.5, md: 3 },
+          p: { xs: 1.5, md: 2 },
           px: 4,
           borderRadius: { xs: 8, md: 12 },
           zIndex: 100,

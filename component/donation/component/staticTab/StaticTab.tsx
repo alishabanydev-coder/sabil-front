@@ -3,6 +3,7 @@ import ChartCard from "./component/ChartCard";
 import StatusCard from "./component/StatusCard";
 import { DonationProject } from "../../BodySection";
 import TeamCard from "./component/TeamCard";
+import JoinDonors from "../../JoinDonors";
 
 const cardHeaderSx = {
   borderLeft: "5px solid",
@@ -38,6 +39,7 @@ const StaticTab = ({
         cardSx={cardSx}
         cardHeaderSx={cardHeaderSx}
       />
+      <JoinDonors />
     </Stack>
   );
 };

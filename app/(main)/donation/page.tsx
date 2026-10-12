@@ -37,13 +37,13 @@ const DonationPage = async () => {
         }}
       >
         <ProjectSection projects={projects} />
-        <YourImpact />
         <PeopleOpinion
           comments={featuredComments}
           errorMsg={
             featuredCommentsResult.ok ? "" : featuredCommentsResult.message
           }
         />
+        <YourImpact />
         <JoinDonors />
       </Stack>
     </Stack>

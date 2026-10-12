@@ -264,7 +264,7 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
         width: "95%",
         mx: "auto",
         ...cardSx,
-        px: { xs: 1.2, sm: 0 },
+        px: { xs: 1.2 },
         gap: 2,
         cursor: "pointer",
         maxHeight,

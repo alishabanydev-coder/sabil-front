@@ -1,6 +1,13 @@
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { Avatar, IconButton, Stack, SxProps, Typography } from "@mui/material";
+import {
+  Avatar,
+  IconButton,
+  Stack,
+  SxProps,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { Swiper as SwiperType } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -28,6 +35,7 @@ const nameSx = {
   textOverflow: "ellipsis",
   overflow: "hidden",
   whiteSpace: "nowrap",
+  cursor: "pointer",
 };
 
 const roleSx = {
@@ -40,7 +48,24 @@ const roleSx = {
   whiteSpace: "nowrap",
 };
 
-//FIXME: Add tooltip for overflowed texts
+const EllipsisText = ({ text, sx }: { text: string; sx: SxProps }) => {
+  const [tooltip, setTooltip] = useState("");
+
+  return (
+    <Tooltip title={tooltip} disableInteractive>
+      <Typography
+        sx={sx}
+        onPointerEnter={(event) => {
+          const el = event.currentTarget;
+          setTooltip(el.scrollWidth - el.clientWidth > 1 ? text : "");
+        }}
+        onPointerLeave={() => setTooltip("")}
+      >
+        {text}
+      </Typography>
+    </Tooltip>
+  );
+};
 
 const MemberSlot = ({ member }: { member: DonationStaffMember }) => (
   <Stack data-team-slot sx={slotSx}>
@@ -49,8 +74,8 @@ const MemberSlot = ({ member }: { member: DonationStaffMember }) => (
       alt={member.name}
       sx={avatarSizeSx}
     />
-    <Typography sx={nameSx}>{member.name}</Typography>
-    <Typography sx={roleSx}>{member.role}</Typography>
+    <EllipsisText text={member.name} sx={nameSx} />
+    <EllipsisText text={member.role} sx={roleSx} />
   </Stack>
 );
 

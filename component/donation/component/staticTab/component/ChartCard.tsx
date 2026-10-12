@@ -125,25 +125,43 @@ const ChartCard = ({
   cardHeaderSx: SxProps;
 }) => {
   const currencySymbol = projectData.currency === "INR" ? "₹" : "$";
-  const slices = useMemo(() => {
-    const spent = [...(projectData.steps ?? [])]
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-      .filter((step) => Number(step.spentAmount ?? 0) > 0)
-      .map((step, index) => ({
+  const { pieSlices, legendItems } = useMemo(() => {
+    const ordered = [...(projectData.steps ?? [])].sort(
+      (a, b) => (a.order ?? 0) - (b.order ?? 0)
+    );
+
+    let colorIndex = 0;
+    const legend: BudgetSlice[] = ordered.map((step) => {
+      const spentAmount = Number(step.spentAmount ?? 0);
+      if (spentAmount > 0) {
+        const slice: BudgetSlice = {
+          id: step.id,
+          label: step.label,
+          value: spentAmount,
+          color: STEP_COLORS[colorIndex % STEP_COLORS.length],
+        };
+        colorIndex += 1;
+        return slice;
+      }
+
+      return {
         id: step.id,
         label: step.label,
-        value: Number(step.spentAmount),
-        color: STEP_COLORS[index % STEP_COLORS.length],
-      }));
+        value: 0,
+        color: REMAINDER_COLOR,
+      };
+    });
 
+    const spent = legend.filter((slice) => slice.value > 0);
     const spentTotal = spent.reduce((sum, slice) => sum + slice.value, 0);
     const remaining = Math.max(
       0,
       Number(projectData.goalAmount ?? 0) - spentTotal
     );
 
+    const pie = [...spent];
     if (remaining > 0) {
-      spent.push({
+      pie.push({
         id: "remaining",
         label: "Remaining",
         value: remaining,
@@ -151,14 +169,14 @@ const ChartCard = ({
       });
     }
 
-    return spent;
+    return { pieSlices: pie, legendItems: legend };
   }, [projectData.goalAmount, projectData.steps]);
   const totalBudget =
     Number(projectData.goalAmount ?? 0) > 0
       ? Number(projectData.goalAmount)
-      : slices.reduce((sum, slice) => sum + slice.value, 0);
-  const leftLegend = slices.slice(0, Math.ceil(slices.length / 2));
-  const rightLegend = slices.slice(Math.ceil(slices.length / 2));
+      : pieSlices.reduce((sum, slice) => sum + slice.value, 0);
+  const leftLegend = legendItems.slice(0, Math.ceil(legendItems.length / 2));
+  const rightLegend = legendItems.slice(Math.ceil(legendItems.length / 2));
 
   return (
     <Stack sx={{ ...cardSx, gap: { xs: 0 }, direction: "ltr" }}>
@@ -196,7 +214,7 @@ const ChartCard = ({
           px: { xs: 1, sm: 2, md: 3 },
         }}
       >
-        {slices.length === 0 ? (
+        {legendItems.length === 0 && pieSlices.length === 0 ? (
           <Typography color="text.secondary">
             No budget breakdown yet.
           </Typography>
@@ -238,7 +256,7 @@ const ChartCard = ({
                 sx={{ width: "100%", height: "100%" }}
                 series={[
                   {
-                    data: slices,
+                    data: pieSlices,
                     outerRadius: "88%",
                     innerRadius: "56%",
                     paddingAngle: 0,
@@ -298,7 +316,7 @@ const ChartCard = ({
                 px: 2,
               }}
             >
-              {slices.map((slice, index) => (
+              {legendItems.map((slice, index) => (
                 <Fragment key={slice.id}>
                   {index > 0 ? (
                     <Divider
