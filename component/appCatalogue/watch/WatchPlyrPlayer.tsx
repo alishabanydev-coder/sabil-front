@@ -171,6 +171,8 @@ const WatchPlyrPlayer = ({
   const theme = useTheme();
   const youtubeId = getYouTubeVideoId(url);
 
+  console.log(url);
+
   const onNativeBelowShiftRef = useRef(onNativeBelowShift);
   onStartedChangeRef.current = onStartedChange;
   onNativeBelowShiftRef.current = onNativeBelowShift;
@@ -805,6 +807,8 @@ const WatchPlyrPlayer = ({
         ? createPortal(
             <WatchPlyrFullscreenHud
               variant="inline"
+              centerButtonSize={72}
+              centerIconSize={56}
               visible={hudVisible}
               isPlaying={isPlaying}
               onSurfaceTap={handleTogglePlayback}

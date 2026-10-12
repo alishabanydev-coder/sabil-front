@@ -6,11 +6,24 @@
 }
 
 .watch-plyr--desktop {
-  --plyr-control-icon-size: 22px;
+  --plyr-control-icon-size: 25px;
   --plyr-control-spacing: 12px;
   --plyr-font-size-base: 15px;
-  --plyr-font-size-time: 14px;
-  --plyr-range-track-height: 6px;
+  --plyr-font-size-time: 16px;
+  --plyr-range-track-height: 8px;
+  --plyr-range-thumb-height: 20px;
+}
+
+/* Chrome ignores the thumb variable, so size the position circle here. */
+.watch-plyr--desktop .plyr__progress input[type="range"]::-webkit-slider-thumb {
+  width: 24px;
+  height: 24px;
+  margin-top: -8px;
+}
+
+.watch-plyr--desktop .plyr__progress input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
 }
 
 @media (max-width: 899px) {
@@ -20,6 +33,18 @@
     --plyr-font-size-base: 12px;
     --plyr-font-size-time: 11px;
     --plyr-range-track-height: 4px;
+    --plyr-range-thumb-height: 16px;
+  }
+
+  .watch-plyr--desktop .plyr__progress input[type="range"]::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+    margin-top: -6px;
+  }
+
+  .watch-plyr--desktop .plyr__progress input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
   }
 
   .watch-plyr--desktop .plyr {

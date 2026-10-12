@@ -10,18 +10,23 @@ type WatchPlyrFullscreenHudProps = {
   visible: boolean;
   isPlaying: boolean;
   variant?: "fullscreen" | "inline";
+  centerButtonSize?: number;
+  centerIconSize?: number;
   onSurfaceTap: () => void;
   onTogglePlayback: () => void;
   onExitFullscreen?: () => void;
 };
 
 /** Plyr's default center button is ~50px. +5px on both axes. */
-const CENTER_BUTTON_SIZE = 55;
+const CENTER_BUTTON_SIZE = 30;
+const CENTER_ICON_SIZE = 32;
 
 const WatchPlyrFullscreenHud = ({
   visible,
   isPlaying,
   variant = "fullscreen",
+  centerButtonSize = CENTER_BUTTON_SIZE,
+  centerIconSize = CENTER_ICON_SIZE,
   onSurfaceTap,
   onTogglePlayback,
   onExitFullscreen,
@@ -119,12 +124,12 @@ const WatchPlyrFullscreenHud = ({
           top: "50%",
           left: "50%",
           zIndex: 3,
-          width: CENTER_BUTTON_SIZE,
-          height: CENTER_BUTTON_SIZE,
-          minWidth: CENTER_BUTTON_SIZE,
-          minHeight: CENTER_BUTTON_SIZE,
-          maxWidth: CENTER_BUTTON_SIZE,
-          maxHeight: CENTER_BUTTON_SIZE,
+          width: centerButtonSize,
+          height: centerButtonSize,
+          minWidth: centerButtonSize,
+          minHeight: centerButtonSize,
+          maxWidth: centerButtonSize,
+          maxHeight: centerButtonSize,
           p: 0,
           m: 0,
           border: 0,
@@ -149,9 +154,11 @@ const WatchPlyrFullscreenHud = ({
         }}
       >
         {isPlaying ? (
-          <PauseRounded sx={{ fontSize: 32, color: "common.white" }} />
+          <PauseRounded sx={{ fontSize: centerIconSize, color: "common.white" }} />
         ) : (
-          <PlayArrowRounded sx={{ fontSize: 32, color: "common.white" }} />
+          <PlayArrowRounded
+            sx={{ fontSize: centerIconSize, color: "common.white" }}
+          />
         )}
       </Stack>
     </Stack>
