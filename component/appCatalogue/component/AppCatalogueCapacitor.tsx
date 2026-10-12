@@ -182,7 +182,7 @@ export default function AppCatalogueCapacitor({
                       position: "relative",
                       height: "100%",
                       width: "100%",
-                      borderRadius: 6,
+                      borderRadius: 4,
                       boxShadow: 4,
                       cursor: "pointer",
                       bgcolor: "transparent",
@@ -209,102 +209,100 @@ export default function AppCatalogueCapacitor({
                         bgcolor: "black",
                       }}
                     >
-                    <Image
-                      className="app-catalogue-capacitor-image"
-                      src={item.thumbnail}
-                      alt={item.title}
-                      fill
-                      sizes={`${Math.round(cardWidth || 280)}px`}
-                      style={{
-                        objectFit: "cover",
-                        transition: "transform 0.3s ease",
-                      }}
-                    />
+                      <Image
+                        className="app-catalogue-capacitor-image"
+                        src={item.thumbnail}
+                        alt={item.title}
+                        fill
+                        sizes={`${Math.round(cardWidth || 280)}px`}
+                        style={{
+                          objectFit: "cover",
+                          transition: "transform 0.3s ease",
+                        }}
+                      />
 
-                    <Stack
-                      direction="row"
-                      sx={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        width: "100%",
-                        gap: 1,
-                        alignItems: "center",
-                      }}
-                    >
                       <Stack
+                        direction="row"
                         sx={{
                           width: "100%",
-                          bgcolor: "white",
-                          borderRadius: 300,
-                          boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
-                          pl: 8,
-                          pr: 1.5,
-                          position: "relative",
-                          py: 0.75,
+                          gap: 1,
+                          alignItems: "center",
                         }}
                       >
-                        <Box
-                          className="app-catalogue-capacitor-play-button"
+                        <Stack
                           sx={{
-                            position: "absolute",
-                            left: 10,
-                            top: -18,
-                            width: 44,
-                            height: 44,
-                            borderRadius: "50%",
-                            boxShadow: 5,
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            bgcolor: "white",
-                            transition: "transform 0.3s ease",
+                            bgcolor: "#F9F9F9",
+                            borderRadius: { xs: 4, sm: "0px 0px 28px 28px" },
+                            border: "3px solid #fff",
+                            boxShadow: "0px 0px 15px 10px rgba(0, 0, 0, 0.5)",
+                            width: "100%",
+                            pl: 8,
+                            pr: 1.5,
+                            position: "relative",
+                            py: 0.75,
                           }}
                         >
-                          <PlayArrowRoundedIcon
+                          <Box
+                            className="app-catalogue-capacitor-play-button"
                             sx={{
-                              fontSize: 32,
-                              color: "primary.main",
+                              position: "absolute",
+                              left: 10,
+                              top: -18,
+                              width: 44,
+                              height: 44,
+                              borderRadius: "50%",
+                              boxShadow: 5,
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              bgcolor: "white",
+                              transition: "transform 0.3s ease",
                             }}
-                          />
-                        </Box>
+                          >
+                            <PlayArrowRoundedIcon
+                              sx={{
+                                fontSize: 32,
+                                color: "primary.main",
+                              }}
+                            />
+                          </Box>
 
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            color: "primary.main",
-                            fontFamily: "Namecat",
-                            fontWeight: 700,
-                            fontSize: 14,
-                            letterSpacing: 1.5,
-                            textTransform: "uppercase",
-                            width: "100%",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            lineHeight: 1,
-                          }}
-                        >
-                          {item.title}
-                        </Typography>
-                        <Typography
-                          variant="subtitle2"
-                          sx={{
-                            width: "100%",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            color: "text.secondary",
-                            fontWeight: 300,
-                            fontFamily: "Namecat",
-                            letterSpacing: 2,
-                            fontSize: 11,
-                          }}
-                        >
-                          {projectName}
-                        </Typography>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              color: "primary.main",
+                              fontFamily: "Namecat",
+                              fontWeight: 700,
+                              fontSize: 14,
+                              letterSpacing: 1.5,
+                              textTransform: "uppercase",
+                              width: "100%",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              lineHeight: 1,
+                            }}
+                          >
+                            {item.title}
+                          </Typography>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              width: "100%",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              color: "text.secondary",
+                              fontWeight: 300,
+                              fontFamily: "Namecat",
+                              letterSpacing: 2,
+                              fontSize: 11,
+                            }}
+                          >
+                            {projectName}
+                          </Typography>
+                        </Stack>
                       </Stack>
-                    </Stack>
                     </Box>
                   </Stack>
                 </SwiperSlide>

@@ -204,8 +204,7 @@ export default function AppCataloguePage({
                   sx={{
                     position: "relative",
                     width: "100%",
-                    pb: 0.5,
-                    borderRadius: { xs: 4, sm: 8 },
+                    borderRadius: 6,
                     boxShadow: 3,
                     cursor: "pointer",
                     overflow: "hidden",
@@ -246,9 +245,6 @@ export default function AppCataloguePage({
                   <Stack
                     direction="row"
                     sx={{
-                      position: "absolute",
-                      bottom: 0,
-                      left: 0,
                       width: "100%",
                       gap: 1,
                       alignItems: "center",
@@ -265,9 +261,10 @@ export default function AppCataloguePage({
                     <Stack
                       sx={{
                         width: "100%",
-                        bgcolor: "white",
-                        borderRadius: { xs: 4, sm: 300 },
-                        boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
+                        bgcolor: "#F9F9F9",
+                        borderRadius: "0px 0px 24px 24px",
+                        border: "3px solid #fff",
+                        boxShadow: "0px 0px 15px 10px rgba(0, 0, 0, 0.5)",
                         pl: { xs: 8.5, sm: 8 },
                         position: "relative",
                         pt: { xs: 1.2, sm: 1 },
