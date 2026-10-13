@@ -209,7 +209,7 @@ const DonationBanner = ({
                   textAlign: "start",
                   direction: "ltr",
                   "& p": {
-                    fontSize: { xs: 14, sm: 16, md: 24, lg: 38, xl: 54 },
+                    fontSize: { xs: 14, sm: 16, md: 28, lg: 38, xl: 54 },
                     lineHeight: { xs: 1.3, sm: 1 },
                     whiteSpace: "pre-line",
                     fontWeight: 800,

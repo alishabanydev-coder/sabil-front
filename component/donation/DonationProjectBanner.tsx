@@ -16,10 +16,9 @@ const stackStyles = {
   textAlign: "center",
   color: "secondary.main",
   fontSize: { xs: 9, sm: 12, md: 12, lg: 16, xl: 18 },
-  lineHeight: 1.2,
+  lineHeight: { xs: 1, sm: 1.2 },
   whiteSpace: "nowrap",
-  letterSpacing: 1,
-  fontWeight: 100,
+  fontWeight: 600,
   flexShrink: 0,
 };
 
@@ -136,7 +135,7 @@ const DonationProjectBanner = ({
           <Stack
             sx={{
               height: "90%",
-              width: { xs: "45%", sm: "40%", md: "38%", lg: "40%", xl: "40%" },
+              width: { xs: "45%", sm: "30%", md: "32%", lg: "30%", xl: "28%" },
               position: "absolute",
               top: "10%",
               left: { xs: "3%", sm: "5%" },
@@ -156,7 +155,7 @@ const DonationProjectBanner = ({
                 sx={{
                   position: "absolute",
                   top: {
-                    xs: "10%",
+                    xs: "12%",
                     sm: "15%",
                     md: "16%",
                     lg: "15%",
@@ -167,23 +166,19 @@ const DonationProjectBanner = ({
                   textAlign: "start",
                   direction: "ltr",
                   "& p": {
-                    fontSize: { xs: 13, sm: 16, md: 28, lg: 36, xl: 38 },
-                    lineHeight: 1,
+                    fontSize: { xs: 14, sm: 18, md: 28, lg: 38, xl: 54 },
+                    lineHeight: { xs: 1.3, sm: 1 },
                     whiteSpace: "pre-line",
-                    letterSpacing: 1,
+                    fontWeight: 800,
+                    color: "primary.main",
                   },
                   "& span": {
                     pt: { xs: 1, lg: 2 },
-                    fontSize: { xs: 10, sm: 13, md: 18, lg: 20, xl: 22 },
-                    lineHeight: 1.1,
+                    fontSize: { xs: 9, sm: 11, md: 15, lg: 19, xl: 22 },
+                    lineHeight: 1,
                     whiteSpace: "pre-line",
                     letterSpacing: 1,
-                    fontWeight: 100,
-                    WebkitLineClamp: { xs: 4, lg: 5, xl: 6 },
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
+                    fontWeight: 500,
                   },
                 }}
               >
@@ -209,7 +204,7 @@ const DonationProjectBanner = ({
                   bottom: {
                     xs: "22%",
                     sm: "22%",
-                    md: "30%",
+                    md: "33%",
                     lg: "28%",
                     xl: "30%",
                   },
