@@ -64,17 +64,15 @@ const UpdatesCard = ({
       },
       transition: "box-shadow 0.3s ease, transform 0.3s ease",
       "& .read-more-button": {
-        fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 20 },
+        fontSize: { xs: 13, sm: 16, md: 18, lg: 20, xl: 22 },
         width: "fit-content",
         textTransform: "uppercase",
-        letterSpacing: 1.2,
         color: "primary.main",
         textAlign: "start",
         display: "flex",
         alignItems: "center",
         gap: 1,
-        fontFamily: "Namecat",
-        fontWeight: 100,
+        fontWeight: 600,
         transition: "transform 0.3s ease",
         "& img": {
           transition: "transform 0.3s ease",
@@ -119,10 +117,8 @@ const UpdatesCard = ({
     >
       <Typography
         sx={{
-          fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
-          fontFamily: "Namecat",
-          textTransform: "uppercase",
-          letterSpacing: 1.2,
+          fontSize: { xs: 14, sm: 17, md: 19, lg: 22, xl: 24 },
+          fontWeight: 700,
           color: "primary.main",
           textAlign: "start",
           display: "block",
@@ -144,10 +140,8 @@ const UpdatesCard = ({
           overflow: "hidden",
         }}
         sx={{
-          fontSize: { xs: 11, sm: 12, md: 14, lg: 16, xl: 18 },
-          fontFamily: "Namecat",
-          textTransform: "uppercase",
-          letterSpacing: 1.2,
+          fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
+          fontWeight: 500,
           color: "text.primary",
           textAlign: "start",
           lineHeight: 1.3,
@@ -233,9 +227,6 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
         text="news from us"
         sx={{
           width: "74%",
-          textAlign: "start",
-          fontFamily: "Namecat",
-          fontSize: { xs: 22, sm: 30, md: 36, lg: 32, xl: 36 },
         }}
       />
 
@@ -329,16 +320,16 @@ export default function NewsFromUs({ blogData = [] }: NewsFromUsProps) {
                 bgcolor: "primary.main",
                 color: "#fff",
                 textTransform: "none",
-                fontFamily: "Namecat",
-                fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
+                fontSize: { xs: 13, sm: 15, md: 17, lg: 19, xl: 21 },
+                fontWeight: 700,
                 lineHeight: 1.15,
                 boxShadow: 5,
                 px: { xs: 2, md: 3 },
                 py: { xs: 1.5, md: 2 },
                 gap: 1,
                 "& img": {
-                  width: { xs: 20, md: 35 },
-                  height: { xs: 10, md: 16 },
+                  width: { xs: 20, md: 34 },
+                  height: { xs: 10, md: 15 },
                 },
                 "&:hover": {
                   filter: "brightness(1.1)",

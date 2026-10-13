@@ -154,7 +154,6 @@ const ProjectProgress = ({
           <Typography
             sx={{
               fontWeight: 700,
-              fontFamily: "Namecat",
               color: "primary.main",
               letterSpacing: 1.5,
               fontSize: { xs: 12, sm: 14, md: 18 },
@@ -225,7 +224,6 @@ const ProjectProgress = ({
           <Typography
             sx={{
               fontWeight: 700,
-              fontFamily: "Namecat",
               color: "primary.main",
               letterSpacing: 1.5,
               fontSize: { xs: 12, sm: 14, md: 18 },

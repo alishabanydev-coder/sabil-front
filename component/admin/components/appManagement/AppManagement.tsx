@@ -240,7 +240,6 @@ const AppManagement = () => {
                     variant="h6"
                     sx={{
                       fontWeight: 700,
-                      fontFamily: "Namecat",
                       letterSpacing: 2,
                       color: "primary.main",
                     }}
@@ -361,7 +360,6 @@ const AppManagement = () => {
                                 whiteSpace: "nowrap",
                                 color: "text.secondary",
                                 fontWeight: 300,
-                                fontFamily: "Namecat",
                                 letterSpacing: 2,
                                 fontSize: { xs: 10, sm: 12 },
                               }}

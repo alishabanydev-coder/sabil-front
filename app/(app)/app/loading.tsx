@@ -91,7 +91,6 @@ export default function AppRouteLoading() {
       </Stack>
       <Typography
         sx={{
-          fontFamily: "Namecat",
           letterSpacing: 1.1,
           fontSize: 13,
           color: "rgba(255,255,255,0.9)",

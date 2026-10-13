@@ -105,8 +105,7 @@ const StatCard = ({ item }: { item: (typeof sabeeltems)[number] }) => (
     <Typography
       sx={{
         color: item.color,
-        fontSize: { xs: 12, sm: 15, md: 20, lg: 32, xl: 48 },
-        fontFamily: "Namecat",
+        fontSize: { xs: 12, sm: 15, md: 22, lg: 36, xl: 45 },
         fontWeight: 700,
       }}
     >
@@ -114,11 +113,11 @@ const StatCard = ({ item }: { item: (typeof sabeeltems)[number] }) => (
     </Typography>
     <Typography
       sx={{
-        fontFamily: "Namecat",
         textAlign: "center",
         lineHeight: 1,
+        fontWeight: 600,
         color: "secondary.main",
-        fontSize: { xs: 9, sm: 10, md: 12, lg: 15, xl: 22 },
+        fontSize: { xs: 9, sm: 10, md: 16, lg: 18, xl: 22 },
       }}
     >
       {item.title}
@@ -149,7 +148,6 @@ const TrustCard = ({ item }: { item: (typeof trustItems)[number] }) => (
         textAlign: "center",
         color: "primary.main",
         fontWeight: 700,
-        fontFamily: "Arco",
       }}
     >
       {item.title}
@@ -159,8 +157,7 @@ const TrustCard = ({ item }: { item: (typeof trustItems)[number] }) => (
         direction: "ltr",
         textAlign: "center",
         fontSize: { xs: 10, sm: 12, md: 14, lg: 18, xl: 19 },
-        fontWeight: 400,
-        fontFamily: "Namecat",
+        fontWeight: 500,
       }}
     >
       {item.description}
@@ -186,13 +183,12 @@ const SabeelStats = () => {
       >
         <Typography
           sx={{
-            fontSize: { xs: 20, sm: 30, md: 36, lg: 40, xl: 45 },
-            fontWeight: 700,
+            fontSize: { xs: 22, sm: 32, md: 38, lg: 42, xl: 48 },
+            fontWeight: 800,
             letterSpacing: 1.4,
             lineHeight: 1,
             color: "#fff",
             textAlign: "center",
-            fontFamily: "Namecat",
           }}
         >
           Sabeel in Number
@@ -253,13 +249,12 @@ const SabeelStats = () => {
       <Stack sx={{ gap: { xs: 1, sm: 3, md: 5 } }}>
         <Typography
           sx={{
-            fontSize: { xs: 20, sm: 30, md: 36, lg: 40, xl: 45 },
-            fontWeight: 700,
-            letterSpacing: 1.4,
-            lineHeight: 1,
+            fontSize: { xs: 20, sm: 25, md: 38, lg: 45, xl: 54 },
+            fontWeight: 800,
             color: "primary.main",
+            whiteSpace: "pre-line",
             textAlign: "center",
-            fontFamily: "Bhel Puri",
+            textTransform: "uppercase",
           }}
         >
           Built on Trust

@@ -68,8 +68,8 @@ export default function Navbar({
   const router = useRouter();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(menuAnchor);
-  const isDonationProjectPage =
-    pathname.startsWith("/donation/") && pathname !== "/donation";
+  const isDonationNav =
+    pathname === "/donation" || pathname.startsWith("/donation/");
 
   const resolvedNavItems = navItems ?? resolveNavItems(pathname);
 
@@ -88,10 +88,6 @@ export default function Navbar({
 
     return () => window.clearTimeout(timeoutId);
   }, [pathname]);
-
-  if (isDonationProjectPage) {
-    return null;
-  }
 
   const openMenu = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchor(event.currentTarget);
@@ -129,250 +125,278 @@ export default function Navbar({
     }
   };
 
+  const navigation = (
+    <>
+      <AppButton
+        tone="donation"
+        href="/donation"
+        component={Link}
+        sx={{
+          px: { xs: 1.3, sm: 1.5, md: 1.5, lg: 2.2, xl: 2.5 },
+          py: { xs: 0.8, sm: 1, md: 1.2, lg: 1.2, xl: 1.4 },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: { xs: 0.5, sm: 0.3, md: 1 },
+
+          "& img": {
+            width: { xs: 10, sm: 12, md: 15, lg: 20 },
+            height: { xs: 12, sm: 12, md: 17, lg: 21 },
+          },
+        }}
+      >
+        <img src="/heart.png" alt="heart" />
+
+        <Typography
+          sx={{
+            fontSize: { xs: 10, md: 12, lg: 16, xl: 20 },
+            fontWeight: 900,
+            lineHeight: 1,
+            color: "#000",
+          }}
+        >
+          Donate
+        </Typography>
+      </AppButton>
+
+      <Stack
+        direction="row"
+        sx={{
+          gap: { xs: 2, md: 3, lg: 3, xl: 5 },
+          alignItems: "center",
+          display: { xs: "none", sm: "flex" },
+        }}
+      >
+        {resolvedNavItems.map((item) =>
+          "href" in item ? (
+            <Typography
+              key={item.label}
+              component={Link}
+              href={item.href}
+              prefetch={false}
+              onClick={() => handleHrefClick(item.href)}
+              sx={{
+                color: "#000",
+                fontSize: { xs: 10, sm: 10, md: 12, lg: 18, xl: 20 },
+                fontWeight: 800,
+                letterSpacing: 2,
+                textDecoration: "none",
+                "&:hover": {
+                  color: "primary.light",
+                },
+              }}
+            >
+              {item.label}
+            </Typography>
+          ) : (
+            <Typography
+              key={item.label}
+              component="button"
+              type="button"
+              onClick={(event) => handleSectionClick(event, item.sectionId)}
+              sx={{
+                color: "#000",
+                fontSize: { xs: 11, sm: 12, md: 16, lg: 20, xl: 22 },
+                textDecoration: "none",
+                background: "none",
+                fontWeight: 800,
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                "&:hover": {
+                  color: "primary.light",
+                },
+              }}
+            >
+              {item.label}
+            </Typography>
+          )
+        )}
+      </Stack>
+      {/* Menu Items for mobile    */}
+      <Box
+        sx={{
+          display: { xs: "flex", sm: "none" },
+          justifyContent: { xs: "end", md: "center" },
+        }}
+      >
+        <Button
+          onClick={openMenu}
+          size="small"
+          color="primary"
+          sx={{
+            zIndex: 99999,
+            minWidth: 0,
+            py: 0.5,
+            px: 1,
+            borderRadius: 2,
+            bgcolor: "rgba(255, 255, 255, 0.28)",
+            backdropFilter: "blur(2px)",
+            border: (theme) => `1px solid ${theme.palette.primary.main}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.5,
+            "&:hover": {
+              border: (theme) => `1px solid ${theme.palette.primary.light}`,
+            },
+          }}
+        >
+          <Typography
+            component="span"
+            sx={{
+              fontSize: 10,
+              letterSpacing: 2,
+              lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            Menu
+          </Typography>
+          <MenuRoundedIcon sx={{ fontSize: 14 }} />
+        </Button>
+        <Menu
+          id="navbar-mobile-menu"
+          anchorEl={menuAnchor}
+          open={isMenuOpen}
+          onClose={closeMenu}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "center" }}
+          sx={{
+            "& .MuiList-root-MuiMenu-list": {
+              px: 1,
+              py: 0.5,
+            },
+          }}
+        >
+          {resolvedNavItems.map((item) =>
+            "href" in item ? (
+              <MenuItem
+                key={item.label}
+                component={Link}
+                href={item.href}
+                prefetch={false}
+                onClick={() => handleHrefClick(item.href, true)}
+                sx={{
+                  mt: 0.4,
+                  mx: 1,
+                  py: 0.3,
+                  fontSize: 12,
+                  minHeight: 30,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  lineHeight: 0.3,
+                  letterSpacing: 2,
+                  borderRadius: 1,
+                  backgroundColor: (theme) =>
+                    alpha(theme.palette.primary.light, 0.1),
+                  color: "text.primary",
+                  fontWeight: 400,
+                }}
+              >
+                {item.label}
+              </MenuItem>
+            ) : (
+              <MenuItem
+                key={item.label}
+                onClick={(event) =>
+                  handleSectionClick(event, item.sectionId, true)
+                }
+                sx={{
+                  mt: 0.4,
+                  mx: 1,
+                  py: 0.3,
+                  fontSize: 12,
+                  minHeight: 30,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  lineHeight: 0.3,
+                  letterSpacing: 2,
+                  borderRadius: 1,
+                  backgroundColor: (theme) =>
+                    alpha(theme.palette.primary.light, 0.1),
+                  color: "text.primary",
+                  fontWeight: 400,
+                }}
+              >
+                {item.label}
+              </MenuItem>
+            )
+          )}
+        </Menu>
+      </Box>
+    </>
+  );
+
+  if (isDonationNav) {
+    return (
+      <Box
+        component="header"
+        sx={{
+          position: "absolute",
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 100,
+        }}
+      >
+        <Stack
+          sx={{
+            mx: "auto",
+            px: { xs: 3, sm: 2, md: 3, lg: 4, xl: 14 },
+            flexDirection: "row",
+            bgcolor: "white",
+            py: { xs: 1.2, sm: 1.5, md: 2, lg: 3, xl: 4 },
+            borderRadius: {
+              xs: "0px 0px 16px 16px",
+              sm: "0px 0px 20px 20px",
+              md: "0px 0px 28px 28px",
+              lg: "0px 0px 32px 32px",
+              xl: "0px 0px 40px 40px",
+            },
+            border: (theme) => `4px solid ${theme.palette.secondary.main}`,
+            borderWidth: { xs: 2, sm: 2.5, md: 3, lg: 4, xl: 5 },
+            borderStyle: "solid",
+            borderColor: "secondary.main",
+            borderTop: "none",
+            gap: { xs: 5, sm: 1.5, md: 2, lg: 2.5, xl: 16 },
+          }}
+        >
+          {navigation}
+        </Stack>
+      </Box>
+    );
+  }
+
   return (
     <Box
       component="header"
       sx={{
         position: "absolute",
-        width: "100%",
+        top: { xs: 0, md: 0 },
+        right: 0,
+        zIndex: 10,
+        width: { xs: "78%", sm: "80%", md: "75%" },
+        aspectRatio: "1283 / 107",
+        boxSizing: "border-box",
+        backgroundImage: "url(/navbar-background.webp)",
+        backgroundSize: "100% 100%",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         display: "flex",
         flexDirection: "row",
-        justifyContent: "center",
         alignItems: "center",
-        zIndex: 100,
+        justifyContent: { xs: "space-between", sm: "space-between" },
+        pr: { xs: 3, sm: 2, md: 3, lg: 4, xl: 5 },
+        pl: { xs: 4, sm: "4%", md: "4%", lg: "5%" },
       }}
     >
-      <Stack
-        sx={{
-          mx: "auto",
-          px: { xs: 3, sm: 2, md: 3, lg: 4, xl: 14 },
-          flexDirection: "row",
-          bgcolor: "white",
-          py: { xs: 1.2, sm: 1.5, md: 2, lg: 3, xl: 4 },
-          borderRadius: {
-            xs: "0px 0px 16px 16px",
-            sm: "0px 0px 20px 20px",
-            md: "0px 0px 28px 28px",
-            lg: "0px 0px 32px 32px",
-            xl: "0px 0px 40px 40px",
-          },
-          border: (theme) => `4px solid ${theme.palette.secondary.main}`,
-          borderWidth: { xs: 2, sm: 2.5, md: 3, lg: 4, xl: 5 },
-          borderStyle: "solid",
-          borderColor: "secondary.main",
-          borderTop: "none",
-          gap: { xs: 5, sm: 1.5, md: 2, lg: 2.5, xl: 16 },
-        }}
-      >
-        <AppButton
-          tone="donation"
-          href="/donation"
-          component={Link}
-          sx={{
-            px: { xs: 1.3, sm: 1.5, md: 1.5, lg: 2.2, xl: 2.5 },
-            py: { xs: 0.8, sm: 1, md: 1.2, lg: 1.2, xl: 1.4 },
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: { xs: 0.5, sm: 0.3, md: 1 },
-
-            "& img": {
-              width: { xs: 10, sm: 12, md: 15, lg: 20 },
-              height: { xs: 12, sm: 12, md: 17, lg: 21 },
-            },
-          }}
-        >
-          <img src="/heart.png" alt="heart" />
-
-          <Typography
-            sx={{
-              fontSize: { xs: 10, md: 12, lg: 16, xl: 20 },
-              fontFamily: "Namecat",
-              letterSpacing: 2,
-              lineHeight: 1,
-              color: "#000",
-            }}
-          >
-            Donate
-          </Typography>
-        </AppButton>
-
-        <Stack
-          direction="row"
-          sx={{
-            gap: { xs: 2, md: 3, lg: 3, xl: 5 },
-            alignItems: "center",
-            display: { xs: "none", sm: "flex" },
-          }}
-        >
-          {resolvedNavItems.map((item) =>
-            "href" in item ? (
-              <Typography
-                key={item.label}
-                component={Link}
-                href={item.href}
-                prefetch={false}
-                onClick={() => handleHrefClick(item.href)}
-                sx={{
-                  color: "#000",
-                  fontSize: { xs: 10, sm: 10, md: 12, lg: 18, xl: 20 },
-                  fontWeight: 700,
-                  fontFamily: "Namecat",
-                  letterSpacing: 2,
-                  textDecoration: "none",
-                  "&:hover": {
-                    color: "primary.light",
-                  },
-                }}
-              >
-                {item.label}
-              </Typography>
-            ) : (
-              <Typography
-                key={item.label}
-                component="button"
-                type="button"
-                onClick={(event) => handleSectionClick(event, item.sectionId)}
-                sx={{
-                  color: "#000",
-                  fontSize: { xs: 10, sm: 10, md: 12, lg: 18, xl: 20 },
-                  fontFamily: "Namecat",
-                  letterSpacing: 2,
-                  textDecoration: "none",
-                  background: "none",
-                  fontWeight: 700,
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  "&:hover": {
-                    color: "primary.light",
-                  },
-                }}
-              >
-                {item.label}
-              </Typography>
-            )
-          )}
-        </Stack>
-        {/* Menu Items for mobile    */}
-        <Box
-          sx={{
-            display: { xs: "flex", sm: "none" },
-            justifyContent: { xs: "end", md: "center" },
-          }}
-        >
-          <Button
-            onClick={openMenu}
-            size="small"
-            color="primary"
-            sx={{
-              zIndex: 99999,
-              minWidth: 0,
-              py: 0.5,
-              px: 1,
-              borderRadius: 2,
-              bgcolor: "rgba(255, 255, 255, 0.28)",
-              backdropFilter: "blur(2px)",
-              border: (theme) => `1px solid ${theme.palette.primary.main}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 0.5,
-              "&:hover": {
-                border: (theme) => `1px solid ${theme.palette.primary.light}`,
-              },
-            }}
-          >
-            <Typography
-              component="span"
-              sx={{
-                fontSize: 10,
-                fontFamily: "Namecat",
-                letterSpacing: 2,
-                lineHeight: 1,
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              Menu
-            </Typography>
-            <MenuRoundedIcon sx={{ fontSize: 14 }} />
-          </Button>
-          <Menu
-            id="navbar-mobile-menu"
-            anchorEl={menuAnchor}
-            open={isMenuOpen}
-            onClose={closeMenu}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "center" }}
-            sx={{
-              "& .MuiList-root-MuiMenu-list": {
-                px: 1,
-                py: 0.5,
-              },
-            }}
-          >
-            {resolvedNavItems.map((item) =>
-              "href" in item ? (
-                <MenuItem
-                  key={item.label}
-                  component={Link}
-                  href={item.href}
-                  prefetch={false}
-                  onClick={() => handleHrefClick(item.href, true)}
-                  sx={{
-                    mt: 0.4,
-                    mx: 1,
-                    py: 0.3,
-                    fontSize: 12,
-                    minHeight: 30,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    lineHeight: 0.3,
-                    fontFamily: "Namecat",
-                    letterSpacing: 2,
-                    borderRadius: 1,
-                    backgroundColor: (theme) =>
-                      alpha(theme.palette.primary.light, 0.1),
-                    color: "text.primary",
-                    fontWeight: 400,
-                  }}
-                >
-                  {item.label}
-                </MenuItem>
-              ) : (
-                <MenuItem
-                  key={item.label}
-                  onClick={(event) =>
-                    handleSectionClick(event, item.sectionId, true)
-                  }
-                  sx={{
-                    mt: 0.4,
-                    mx: 1,
-                    py: 0.3,
-                    fontSize: 12,
-                    minHeight: 30,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    lineHeight: 0.3,
-                    fontFamily: "Namecat",
-                    letterSpacing: 2,
-                    borderRadius: 1,
-                    backgroundColor: (theme) =>
-                      alpha(theme.palette.primary.light, 0.1),
-                    color: "text.primary",
-                    fontWeight: 400,
-                  }}
-                >
-                  {item.label}
-                </MenuItem>
-              )
-            )}
-          </Menu>
-        </Box>
-      </Stack>
+      {navigation}
     </Box>
   );
 }

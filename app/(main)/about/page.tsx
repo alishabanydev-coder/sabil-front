@@ -58,7 +58,6 @@ export default async function AboutPage() {
         sx={{
           fontSize: { xs: 30, md: 54 },
           color: "primary.main",
-          fontFamily: "Bhel Puri",
           textAlign: "center",
         }}
       >

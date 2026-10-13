@@ -271,7 +271,6 @@ const AddFAQ = ({
                     <Typography
                       sx={{
                         fontWeight: 700,
-                        fontFamily: "Namecat",
                         color: "primary.main",
                         fontSize: { xs: 13, md: 15 },
                       }}

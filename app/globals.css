@@ -187,25 +187,37 @@
 }
 
 @font-face {
-  font-family: "Bhel Puri";
-  src: url("/fonts/bhel-puri/BhelPuri-BLLjB.otf") format("opentype");
+  font-family: "Baloo";
+  src: url("/fonts/Baloo2-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: "Namecat";
-  src: url("/fonts/Namecat/Namecat-Regular.ttf") format("truetype");
-  font-weight: 400;
+  font-family: "Baloo";
+  src: url("/fonts/Baloo2-Medium.ttf?v=2") format("truetype");
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: "Arco";
-  src: url("/fonts/Arco/ARCO.otf") format("opentype");
-  font-weight: 400;
+  font-family: "Baloo";
+  src: url("/fonts/Baloo2-SemiBold.ttf?v=2") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Baloo";
+  src: url("/fonts/Baloo2-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Baloo";
+  src: url("/fonts/Baloo2-ExtraBold.ttf?v=2") format("truetype");
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }

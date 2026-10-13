@@ -55,7 +55,6 @@ const Catalogue = ({
         width: "100%",
         aspectRatio: { xs: "16 / 9", sm: "16 / 9" },
         position: "relative",
-        // mt: 5,
       }}
     >
       <Image
@@ -262,12 +261,10 @@ const Catalogue = ({
                     <Stack sx={{ gap: { xs: 0.5, sm: 1.5 }, minWidth: 0 }}>
                       <Typography
                         sx={{
-                          fontSize: { xs: 10, sm: 18, md: 22, lg: 35, xl: 42 },
-                          fontWeight: 700,
+                          fontSize: { xs: 10, sm: 18, md: 22, lg: 36, xl: 42 },
+                          fontWeight: 800,
                           color: "primary.main",
                           lineHeight: 1,
-                          textTransform: "uppercase",
-                          fontFamily: "Bhel Puri",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
@@ -278,9 +275,8 @@ const Catalogue = ({
                       <Typography
                         sx={{
                           direction: "ltr",
-                          fontSize: { xs: 8, sm: 12, md: 14, lg: 16, xl: 20 },
-                          fontFamily: "Namecat",
-                          fontWeight: 400,
+                          fontSize: { xs: 14, sm: 16, md: 18, lg: 22, xl: 24 },
+                          fontWeight: 600,
                           width: "100%",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -297,10 +293,9 @@ const Catalogue = ({
 
                     <Typography
                       sx={{
-                        fontSize: { xs: 6, sm: 11, md: 16, lg: 20, xl: 24 },
-                        fontFamily: "Namecat",
+                        fontSize: { xs: 10, sm: 12, md: 16, lg: 20, xl: 22 },
                         letterSpacing: 2,
-                        fontWeight: 400,
+                        fontWeight: 500,
                         color: "#fff",
                         lineHeight: 1.4,
                         textTransform: "uppercase",
@@ -324,11 +319,12 @@ const Catalogue = ({
 
       <AppButton
         sx={{
-          fontFamily: "Namecat",
-          fontSize: { xs: 7, sm: 12, md: 15, lg: 18, xl: 20 },
+          fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
+          fontWeight: 600,
+          textAlign: "center",
+          lineHeight: 1.3,
           px: { xs: 0.7, md: 2, lg: 2.5 },
           py: { xs: 0.4, md: 1, lg: 1.2 },
-          letterSpacing: 2,
           position: "absolute",
           bottom: { xs: "12%", sm: "15%" },
           right: { xs: "7%", sm: "10%" },

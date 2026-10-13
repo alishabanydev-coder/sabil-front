@@ -99,13 +99,13 @@ const FollowUsModal = ({
         <Stack sx={{ gap: 1 }}>
           <Typography
             variant="h6"
-            sx={{ fontFamily: "Namecat", textAlign: "center", fontSize: 20, color: "primary.main" }}
+            sx={{ textAlign: "center", fontSize: 20, color: "primary.main" }}
           >
             Let Us Call You
           </Typography>
           <Typography
             variant="body1"
-            sx={{ fontFamily: "Namecat", textAlign: "center", fontSize: 12, color: "text.secondary" }}
+            sx={{ textAlign: "center", fontSize: 12, color: "text.secondary" }}
           >
             If you would like to receive information about animation and content
             production and support for Sebeel Kids, please enter your contact

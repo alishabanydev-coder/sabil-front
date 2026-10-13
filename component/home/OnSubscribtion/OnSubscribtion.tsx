@@ -37,21 +37,6 @@ const OnSubscribtion = ({
         pt: 4,
       }}
     >
-      {/* <SeactionHeader text="ON SUBSCRIBTION" /> */}
-      {/* <Typography
-        sx={{
-          color: "secondary.main",
-          fontSize: { xs: 9, sm: 14 },
-          fontFamily: "Namecat",
-          letterSpacing: 1.2,
-          textdecoreation: "uppercase",
-          width: "80%",
-          textAlign: "center",
-        }}
-      >
-        A WHOLE WORLD OF AN AMAZING FEATURE AND BENEFITS FOR YOUR FAMILY
-      </Typography> */}
-
       <Stack
         direction="row"
         sx={{

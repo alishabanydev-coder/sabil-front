@@ -128,7 +128,6 @@ export default function NativeConnectionErrorScreen({
 
         <Typography
           sx={{
-            fontFamily: "Namecat, sans-serif",
             fontSize: { xs: "3.2rem", sm: "4.5rem" },
             fontWeight: 800,
             lineHeight: 1,
@@ -142,7 +141,6 @@ export default function NativeConnectionErrorScreen({
 
         <Typography
           sx={{
-            fontFamily: '"Bhel Puri", sans-serif',
             fontWeight: 700,
             fontSize: { xs: "1.15rem", sm: "1.45rem" },
             color: "#f5f0ff",
@@ -183,7 +181,6 @@ export default function NativeConnectionErrorScreen({
           sx={{
             mt: 1.5,
             minWidth: { xs: 160, sm: 190 },
-            fontFamily: "Namecat, sans-serif",
             fontSize: { xs: 14, sm: 16 },
             letterSpacing: 1.5,
             py: { xs: 0.9, sm: 1.15 },

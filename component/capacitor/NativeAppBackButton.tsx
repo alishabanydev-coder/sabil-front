@@ -121,7 +121,6 @@ export default function NativeAppBackButton() {
       <Typography
         sx={{
           color: "#fff",
-          fontFamily: "Namecat, sans-serif",
           fontSize: { xs: 13, sm: 15 },
           letterSpacing: 1,
           whiteSpace: "nowrap",

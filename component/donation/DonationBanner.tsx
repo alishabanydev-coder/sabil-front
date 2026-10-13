@@ -92,7 +92,6 @@ const AdCard = ({ item }: { item: AdItem }) => (
       width: { xs: "100%", sm: "auto" },
       textAlign: "center",
       "& p": {
-        fontFamily: "Namecat",
         width: { xs: 150, sm: 115, md: 140, lg: 160, xl: 200 },
         lineHeight: 1.2,
       },
@@ -117,7 +116,6 @@ const AdCard = ({ item }: { item: AdItem }) => (
       <Typography
         sx={{
           color: "primary.main",
-          fontFamily: "Arco",
           fontWeight: 700,
           fontSize: { xs: 14, sm: 20, md: 28, lg: 30, xl: 32 },
         }}
@@ -212,7 +210,6 @@ const DonationBanner = ({
                   direction: "ltr",
                   "& p": {
                     fontSize: { xs: 12, sm: 14, md: 24, lg: 34, xl: 38 },
-                    fontFamily: "Arco",
                     lineHeight: 1.2,
                     whiteSpace: "pre-line",
                     letterSpacing: 1,
@@ -221,7 +218,6 @@ const DonationBanner = ({
                   "& span": {
                     pt: { xs: 1, lg: 2 },
                     fontSize: { xs: 9, sm: 10, md: 14, lg: 18, xl: 20 },
-                    fontFamily: "Namecat",
                     lineHeight: 1.2,
                     whiteSpace: "pre-line",
                     letterSpacing: 1,
@@ -267,7 +263,6 @@ const DonationBanner = ({
                   tone="white"
                   shadow="soft"
                   sx={{
-                    fontFamily: "Namecat",
                     height: { xs: 22, sm: 30, md: "auto" },
                     px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
                     py: { xs: 0, sm: 0.3, md: 1, lg: 1.5 },
@@ -284,7 +279,6 @@ const DonationBanner = ({
                     },
                     "& p": {
                       fontSize: { xs: 8, sm: 10, md: 16, lg: 18, xl: 18 },
-                      fontFamily: "Namecat",
                       color: "secondary.main",
                       letterSpacing: 1,
                       lineHeight: 0.1,
@@ -299,7 +293,6 @@ const DonationBanner = ({
                   tone="primary"
                   shadow="soft"
                   sx={{
-                    fontFamily: "Namecat",
                     height: { xs: 25, sm: 30, md: "auto" },
                     px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
                     py: { xs: 0, sm: 0.3, md: 1, lg: 1.2 },
@@ -316,7 +309,6 @@ const DonationBanner = ({
                     },
                     "& p": {
                       fontSize: { xs: 8, sm: 10, md: 16, lg: 18, xl: 18 },
-                      fontFamily: "Namecat",
                       color: "#fff",
                       letterSpacing: 1,
                       lineHeight: 1.2,

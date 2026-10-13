@@ -16,7 +16,6 @@ const stackStyles = {
   textAlign: "center",
   color: "secondary.main",
   fontSize: { xs: 9, sm: 12, md: 12, lg: 16, xl: 18 },
-  fontFamily: "Namecat",
   lineHeight: 1.2,
   whiteSpace: "nowrap",
   letterSpacing: 1,
@@ -169,7 +168,6 @@ const DonationProjectBanner = ({
                   direction: "ltr",
                   "& p": {
                     fontSize: { xs: 13, sm: 16, md: 28, lg: 36, xl: 38 },
-                    fontFamily: "Arco",
                     lineHeight: 1,
                     whiteSpace: "pre-line",
                     letterSpacing: 1,
@@ -177,7 +175,6 @@ const DonationProjectBanner = ({
                   "& span": {
                     pt: { xs: 1, lg: 2 },
                     fontSize: { xs: 10, sm: 13, md: 18, lg: 20, xl: 22 },
-                    fontFamily: "Namecat",
                     lineHeight: 1.1,
                     whiteSpace: "pre-line",
                     letterSpacing: 1,
@@ -316,7 +313,6 @@ const DonationProjectBanner = ({
             <Typography
               sx={{
                 fontSize: { xs: 12, sm: 20, md: 30, lg: 36, xl: 38 },
-                fontFamily: "Namecat",
                 lineHeight: 1.2,
                 letterSpacing: 1,
                 color: "primary.main",
@@ -328,7 +324,6 @@ const DonationProjectBanner = ({
             <Typography
               sx={{
                 fontSize: { xs: 10, sm: 13, md: 18, lg: 20, xl: 22 },
-                fontFamily: "Namecat",
                 lineHeight: 1.2,
                 whiteSpace: "pre-line",
                 letterSpacing: 1,
@@ -365,7 +360,6 @@ const DonationProjectBanner = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontFamily: "Namecat",
                 fontSize: { xs: 10, sm: 12, md: 16, lg: 20, xl: 22 },
                 lineHeight: 1,
                 zIndex: 1,
@@ -379,7 +373,6 @@ const DonationProjectBanner = ({
             <Typography
               sx={{
                 fontSize: { xs: 12, sm: 20, md: 30, lg: 36, xl: 38 },
-                fontFamily: "Namecat",
                 lineHeight: 1.2,
                 letterSpacing: 1,
                 color: "primary.main",
@@ -391,7 +384,6 @@ const DonationProjectBanner = ({
             <Typography
               sx={{
                 fontSize: { xs: 10, sm: 13, md: 18, lg: 20, xl: 22 },
-                fontFamily: "Namecat",
                 lineHeight: 1.2,
                 whiteSpace: "pre-line",
                 letterSpacing: 1,
@@ -413,7 +405,6 @@ const DonationProjectBanner = ({
               minWidth: 0,
               borderRadius: { xs: "50%", sm: 3 },
               "& p": {
-                fontFamily: "Namecat",
                 fontSize: { xs: 12, sm: 13, md: 16, lg: 19, xl: 22 },
                 lineHeight: 1.2,
                 letterSpacing: 1,

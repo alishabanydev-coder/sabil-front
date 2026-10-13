@@ -71,10 +71,10 @@ const FollowUs = ({
             <Typography
               variant="h6"
               sx={{
-                fontFamily: "Arco",
                 lineHeight: 1.2,
                 minHeight: 30,
                 color: "primary.main",
+                fontWeight: 800,
                 fontSize: { xs: 18, sm: 20, md: 28, lg: 36, xl: 45 },
               }}
             >
@@ -84,8 +84,8 @@ const FollowUs = ({
               variant="h6"
               sx={{
                 display: { xs: "block", md: "block" },
-                fontFamily: "Namecat",
                 lineHeight: 1.2,
+                fontWeight: 600,
                 color: "text.primary",
                 fontSize: { xs: 10, sm: 12, md: 14, lg: 18, xl: 22 },
               }}
@@ -144,10 +144,10 @@ const FollowUs = ({
             <Typography
               variant="h6"
               sx={{
-                fontFamily: "Bhel Puri",
-                lineHeight: 1.2,
+                lineHeight: 1,
                 minHeight: 30,
                 color: "#fff",
+                fontWeight: 800,
                 fontSize: { xs: 20, sm: 24, md: 28, lg: 42, xl: 50 },
               }}
             >
@@ -157,10 +157,10 @@ const FollowUs = ({
               variant="h6"
               sx={{
                 display: { xs: "none", md: "block" },
-                fontFamily: "Namecat",
                 lineHeight: 1.2,
                 color: "#fff",
                 fontSize: { xs: 10, sm: 12, md: 14, lg: 18, xl: 22 },
+                fontWeight: 600,
               }}
             >
               Have a Question or want to partner with us? We'd love to hear from
@@ -246,9 +246,8 @@ const FollowUs = ({
                   alignItems: "center",
                   justifyContent: "center",
                   gap: 1,
-                  letterSpacing: 1,
-                  lineHeight: 1.2,
-                  fontFamily: "Namecat",
+                  lineHeight: 1.1,
+                  fontWeight: 700,
                   position: "relative",
                   color: "primary.main",
                   fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },

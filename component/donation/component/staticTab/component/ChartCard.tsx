@@ -59,7 +59,6 @@ const LegendItem = ({
     >
       <Typography
         sx={{
-          fontFamily: "Namecat",
           lineHeight: 1.15,
           fontSize: { xs: 14, sm: 16, md: 16, lg: 22 },
           textAlign: align === "left" ? "right" : "left",
@@ -70,7 +69,6 @@ const LegendItem = ({
       </Typography>
       <Typography
         sx={{
-          fontFamily: "Namecat",
           color: "text.secondary",
           lineHeight: 1.2,
           fontSize: { xs: 12, sm: 14, md: 14, lg: 18 },
@@ -184,7 +182,6 @@ const ChartCard = ({
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "Namecat",
             color: "primary.main",
             fontWeight: 900,
             letterSpacing: 1.2,
@@ -198,7 +195,6 @@ const ChartCard = ({
             fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
             letterSpacing: 1,
             color: "text.secondary",
-            fontFamily: "Namecat",
           }}
         >
           detailed breakdown of project budget
@@ -284,7 +280,6 @@ const ChartCard = ({
               >
                 <Typography
                   sx={{
-                    fontFamily: "Namecat",
                     fontWeight: 700,
                     lineHeight: 1,
                     textAlign: "center",
@@ -297,7 +292,6 @@ const ChartCard = ({
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: "Namecat",
                     lineHeight: 1.2,
                     textAlign: "center",
                     color: "text.secondary",

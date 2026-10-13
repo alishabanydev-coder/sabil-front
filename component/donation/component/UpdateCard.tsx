@@ -286,7 +286,6 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
           <Typography
             variant="h6"
             sx={{
-              fontFamily: "Namecat",
               letterSpacing: 1.5,
               fontSize: { xs: 12, sm: 16, md: 18, lg: 24, xl: 28 },
               color: "primary.main",

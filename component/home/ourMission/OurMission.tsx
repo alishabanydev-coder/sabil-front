@@ -69,8 +69,7 @@ const WhyCard = ({
     <Typography
       sx={{
         color: color,
-        fontFamily: "Namecat",
-        fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 22 },
+        fontSize: { xs: 13, sm: 16, md: 18, lg: 20, xl: 22 },
         letterSpacing: 1.2,
         fontWeight: 700,
         mt: 1,
@@ -80,9 +79,8 @@ const WhyCard = ({
     </Typography>
     <Typography
       sx={{
-        fontFamily: "Namecat",
-        fontSize: { xs: 9, sm: 10, md: 10, lg: 12, xl: 14 },
-        fontWeight: 100,
+        fontSize: { xs: 9, sm: 10, md: 11, lg: 13, xl: 14 },
+        fontWeight: 500,
         mt: 0.5,
       }}
     >
@@ -123,10 +121,8 @@ const OurMission = () => {
           >
             <Typography
               sx={{
-                fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
-                letterSpacing: 1.4,
-                fontWeight: 100,
-                fontFamily: "Namecat",
+                fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
+                fontWeight: 600,
                 textAlign: "center",
               }}
             >
@@ -147,9 +143,8 @@ const OurMission = () => {
           <Typography
             sx={{
               fontSize: { xs: 20, sm: 25, md: 38, lg: 45, xl: 54 },
-              fontWeight: "bold",
+              fontWeight: 800,
               color: "primary.main",
-              fontFamily: "Bhel Puri",
               whiteSpace: "pre-line",
               textAlign: "center",
               textTransform: "uppercase",
@@ -162,8 +157,7 @@ const OurMission = () => {
             sx={{
               fontSize: { xs: 12, sm: 14, md: 18, lg: 20, xl: 24 },
               width: { xs: "80%", sm: "80%", md: "50%", lg: "45%", xl: "45%" },
-              fontWeight: 100,
-              fontFamily: "Namecat",
+              fontWeight: 500,
               textAlign: "center",
             }}
           >

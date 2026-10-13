@@ -32,7 +32,6 @@ export default function NotFoundView() {
             fontWeight: 800,
             lineHeight: 1,
             color: "primary.main",
-            fontFamily: "Namecat, sans-serif",
             letterSpacing: 2,
           }}
         >

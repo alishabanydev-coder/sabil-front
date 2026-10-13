@@ -140,7 +140,6 @@ const Documents = ({
                 sx={{
                   width: "100%",
                   fontWeight: isActive ? 800 : 700,
-                  fontFamily: "Namecat",
                   color: isActive ? "primary.main" : "text.secondary",
                   letterSpacing: 2,
                   textTransform: "uppercase",
@@ -189,7 +188,6 @@ const Documents = ({
                 sx={{
                   px: { xs: 1.5, sm: 0 },
                   fontWeight: 700,
-                  fontFamily: "Namecat",
                   color: "primary.main",
                   letterSpacing: 1.5,
                   fontSize: { xs: 12, sm: 14, md: 18, lg: 22 },

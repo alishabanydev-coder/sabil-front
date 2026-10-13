@@ -26,7 +26,6 @@ const ProjectSection = ({
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "Arco",
             fontSize: { xs: 24, sm: 28, md: 36, lg: 45, xl: 54 },
             color: "primary.main",
           }}
@@ -36,7 +35,6 @@ const ProjectSection = ({
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "Namecat",
             fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 20 },
             letterSpacing: 1.2,
             textAlign: 'center',

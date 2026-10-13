@@ -59,131 +59,127 @@ const ProjcetCard = ({
           },
         }}
       >
-      <Image
-        className="project-card-image"
-        src={project.poster}
-        alt={project.title}
-        width={300}
-        height={300}
-      />
+        <Image
+          className="project-card-image"
+          src={project.poster}
+          alt={project.title}
+          width={300}
+          height={300}
+        />
 
-      <Typography
-        variant="h6"
-        sx={{
-          fontFamily: "NameCat",
-          fontWeight: 900,
-          fontSize: { xs: 12, sm: 14, md: 18, lg: 20, xl: 24 },
-          letterSpacing: 1.1,
-          color: "primary.main",
-          WebkitLineClamp: 1,
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          textAlign: "center",
-        }}
-      >
-        {project.title}
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          fontFamily: "Namecat",
-          fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
-          WebkitLineClamp: 1,
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {project.slug}
-      </Typography>
-
-      <Stack
-        sx={{
-          width: "100%",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 1.4,
-          px: 1.2,
-          pt: 1,
-        }}
-      >
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 900,
+            fontSize: { xs: 12, sm: 14, md: 18, lg: 20, xl: 24 },
+            letterSpacing: 1.1,
+            color: "primary.main",
+            WebkitLineClamp: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            textAlign: "center",
+          }}
+        >
+          {project.title}
+        </Typography>
         <Typography
           variant="body1"
           sx={{
-            fontFamily: "Namecat",
             fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
-            color: "text.primary",
+            WebkitLineClamp: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
-          {((project.raisedAmount / project.goalAmount) * 100).toFixed(0)}%
+          {project.slug}
         </Typography>
-        <LinearProgress
-          value={(project.raisedAmount / project.goalAmount) * 100}
-          variant="determinate"
+
+        <Stack
           sx={{
             width: "100%",
-            height: 12,
-            borderRadius: 1.5,
-            py: "auto",
-            "&.MuiLinearProgress-colorPrimary": {
-              bgcolor: "#ccc",
-            },
-            "& .MuiLinearProgress-bar": {
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 1.4,
+            px: 1.2,
+            pt: 1,
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+              color: "text.primary",
+            }}
+          >
+            {((project.raisedAmount / project.goalAmount) * 100).toFixed(0)}%
+          </Typography>
+          <LinearProgress
+            value={(project.raisedAmount / project.goalAmount) * 100}
+            variant="determinate"
+            sx={{
+              width: "100%",
+              height: 12,
               borderRadius: 1.5,
+              py: "auto",
+              "&.MuiLinearProgress-colorPrimary": {
+                bgcolor: "#ccc",
+              },
+              "& .MuiLinearProgress-bar": {
+                borderRadius: 1.5,
+                bgcolor: color,
+              },
+            }}
+          />
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+              color: "text.primary",
+            }}
+          >
+            {(100 - (project.raisedAmount / project.goalAmount) * 100).toFixed(
+              0
+            )}
+            %
+          </Typography>
+        </Stack>
+
+        <Stack>
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+              color: "text.secondary",
+            }}
+          >
+            {project.raisedAmount} / {project.goalAmount}
+          </Typography>
+        </Stack>
+        <Button
+          component="span"
+          variant="contained"
+          sx={{
+            width: "fit-content",
+            mx: "auto",
+            mt: 1,
+            letterSpacing: 1.1,
+            py: 0.5,
+            px: 3,
+            borderRadius: 3,
+            fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+            bgcolor: color,
+            "&:hover": {
               bgcolor: color,
+              filter: "brightness(0.9)",
             },
           }}
-        />
-        <Typography
-          variant="body1"
-          sx={{
-            fontFamily: "Namecat",
-            fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
-            color: "text.primary",
-          }}
         >
-          {(100 - (project.raisedAmount / project.goalAmount) * 100).toFixed(0)}
-          %
-        </Typography>
+          view project
+        </Button>
       </Stack>
-
-      <Stack>
-        <Typography
-          variant="body1"
-          sx={{
-            fontFamily: "Namecat",
-            fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
-            color: "text.secondary",
-          }}
-        >
-          {project.raisedAmount} / {project.goalAmount}
-        </Typography>
-      </Stack>
-      <Button
-        component="span"
-        variant="contained"
-        sx={{
-          width: "fit-content",
-          mx: "auto",
-          mt: 1,
-          fontFamily: "Namecat",
-          letterSpacing: 1.1,
-          py: 0.5,
-          px: 3,
-          borderRadius: 3,
-          fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
-          bgcolor: color,
-          "&:hover": {
-            bgcolor: color,
-            filter: "brightness(0.9)",
-          },
-        }}
-      >
-        view project
-      </Button>
-    </Stack>
     </Link>
   );
 };
@@ -287,7 +283,6 @@ const ProjectCardSection = ({
             sx={{
               width: "fit-content",
               mx: "auto",
-              fontFamily: "Namecat",
               letterSpacing: 1.2,
               lineHeight: 1.6,
               py: { xs: 0.8, sm: 1, md: 1, lg: 1.4, xl: 1.8 },

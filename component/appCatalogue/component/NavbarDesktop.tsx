@@ -136,7 +136,6 @@ const NavbarDesktop = ({
               height: { sm: 36, md: 38, lg: 44 },
               borderRadius: { sm: "50%", md: 6 },
               bgcolor: "secondary.main",
-              fontFamily: "Namecat",
               letterSpacing: 1.2,
               lineHeight: 1,
               fontSize: { md: 13, lg: 14 },

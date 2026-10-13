@@ -132,7 +132,6 @@ export default function Footer() {
                   <Typography
                     sx={{
                       color: "#fff",
-                      fontFamily: "Namecat",
                       fontSize: { xs: 8, sm: 10, md: 14, lg: 20 },
                       fontWeight: 700,
                       letterSpacing: 1.2,
@@ -191,7 +190,6 @@ export default function Footer() {
             color: "#fff",
             opacity: 0.7,
             fontSize: { xs: 7, sm: 8, md: 9, lg: 11 },
-            fontFamily: "Namecat",
             textTransform: "uppercase",
             width: { xs: "60%", md: "100%" },
             letterSpacing: 1.5,

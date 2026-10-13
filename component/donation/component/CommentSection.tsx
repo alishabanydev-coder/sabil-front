@@ -640,7 +640,6 @@ const CommentSection = ({
         sx={{
           fontSize: { xs: 12, sm: 16, md: 26, lg: 28, xl: 30 },
           color: "primary.main",
-          fontFamily: "Namecat",
           fontWeight: 700,
           letterSpacing: 1.5,
           textTransform: "uppercase",

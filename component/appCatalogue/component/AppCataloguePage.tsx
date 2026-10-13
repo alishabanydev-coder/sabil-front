@@ -106,7 +106,6 @@ export default function AppCataloguePage({
             textTransform: "uppercase",
             color: "primary.main",
             letterSpacing: 1.5,
-            fontFamily: "Namecat",
           }}
         >
           Explore by theme
@@ -299,7 +298,6 @@ export default function AppCataloguePage({
                         variant="h6"
                         sx={{
                           color: "primary.main",
-                          fontFamily: "Namecat",
                           fontWeight: 700,
                           fontSize: { xs: 13, md: 14, lg: 16 },
                           letterSpacing: 1.5,
@@ -322,7 +320,6 @@ export default function AppCataloguePage({
                           whiteSpace: "nowrap",
                           color: "text.secondary",
                           fontWeight: 300,
-                          fontFamily: "Namecat",
                           letterSpacing: 2,
                           fontSize: { xs: 11, md: 11, lg: 12 },
                         }}

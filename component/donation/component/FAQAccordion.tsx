@@ -105,7 +105,6 @@ export default function FAQAccordion() {
             <Typography
               component="span"
               sx={{
-                fontFamily: "Namecat",
                 fontSize: { xs: 11, sm: 14, md: 16 },
                 fontWeight: 700,
                 color: "primary.main",

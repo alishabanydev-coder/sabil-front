@@ -53,7 +53,6 @@ const YourImpact = () => {
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "Arco",
             fontSize: { xs: 20, sm: 24, md: 32, lg: 36, xl: 42 },
             color: "primary.main",
           }}
@@ -63,7 +62,6 @@ const YourImpact = () => {
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "Namecat",
             fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
             letterSpacing: 1.2,
             textAlign: "center",
@@ -103,7 +101,6 @@ const YourImpact = () => {
             <Typography
               variant="h6"
               sx={{
-                fontFamily: "Namecat",
                 fontSize: { xs: 14, sm: 16, md: 20, lg: 22, xl: 24 },
                 lineHeight: 1.1,
                 letterSpacing: 1.2,
@@ -116,7 +113,6 @@ const YourImpact = () => {
             <Typography
               variant="body1"
               sx={{
-                fontFamily: "Namecat",
                 fontSize: { xs: 9, sm: 11, md: 14, lg: 15, xl: 16 },
                 fontWeight: 400,
                 color: "text.primary",

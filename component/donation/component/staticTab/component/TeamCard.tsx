@@ -28,7 +28,6 @@ const avatarSizeSx = {
 };
 
 const nameSx = {
-  fontFamily: "Namecat",
   fontWeight: 700,
   fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
   width: "100%",
@@ -39,7 +38,6 @@ const nameSx = {
 };
 
 const roleSx = {
-  fontFamily: "Namecat",
   color: "text.secondary",
   fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
   width: "100%",
@@ -150,7 +148,6 @@ const TeamCard = ({
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "Namecat",
             color: "primary.main",
             fontWeight: 900,
             letterSpacing: 1.2,
@@ -164,7 +161,6 @@ const TeamCard = ({
             fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
             letterSpacing: 1,
             color: "text.secondary",
-            fontFamily: "Namecat",
           }}
         >
           the passionate people behind the project
@@ -283,7 +279,6 @@ const TeamCard = ({
                 sx={{
                   ...avatarSizeSx,
                   color: "primary.main",
-                  fontFamily: "Namecat",
                   lineHeight: 1,
                   fontSize: { xs: 24, sm: 28, md: 32, lg: 40, xl: 45 },
                 }}

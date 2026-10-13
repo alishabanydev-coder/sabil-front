@@ -29,7 +29,6 @@ const SectionHeader = () => {
             fontSize: { xs: 10, sm: 14, md: 24 },
             fontWeight: 700,
             color: "primary.main",
-            fontFamily: "Bhel Puri",
             letterSpacing: 1.2,
             textTransform: "uppercase",
             textAlign: "left",

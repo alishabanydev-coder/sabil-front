@@ -57,7 +57,6 @@ const JoinDonors = () => {
       >
         <Typography
           sx={{
-            fontFamily: "Bhel Puri",
             fontSize: { xs: 12, sm: 22, md: 24, lg: 32, xl: 36 },
             color: "#fff",
           }}
@@ -69,7 +68,6 @@ const JoinDonors = () => {
             display: { xs: "none", sm: "block" },
             fontSize: { xs: 10, sm: 13, md: 15, lg: 20, xl: 22 },
             color: "#fff",
-            fontFamily: "Namecat",
             letterSpacing: 1.1,
           }}
         >
@@ -91,7 +89,6 @@ const JoinDonors = () => {
             scrollToDonationProjects();
           }}
           sx={{
-            fontFamily: "Namecat",
             color: "primary.dark",
             lineHeight: 1.4,
             fontSize: { xs: 8, sm: 16, md: 20, lg: 22, xl: 24 },

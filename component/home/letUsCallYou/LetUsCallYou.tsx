@@ -11,7 +11,6 @@ import SeactionHeader from "@/component/ui/SectionHeader";
 const whiteTextFieldStyles = {
   "& .MuiInputLabel-root": {
     color: "#fff",
-    fontFamily: "Namecat",
     fontSize: { xs: 8, sm: 11, md: 13, lg: 14 },
     letterSpacing: 1.2,
   },
@@ -26,11 +25,9 @@ const whiteTextFieldStyles = {
   },
   "& .MuiInputLabel-root.Mui-focused": {
     color: "#fff",
-    fontFamily: "Namecat",
   },
   "& .MuiInputBase-input": {
     color: "#fff",
-    fontFamily: "Namecat",
   },
   "& .MuiInput-underline:before": {
     borderBottomColor: "#fff",
@@ -44,7 +41,6 @@ const whiteTextFieldStyles = {
   "& .MuiFormHelperText-root": {
     display: { xs: "none", sm: "block" },
     color: "#fff",
-    fontFamily: "Namecat",
     fontSize: 11,
     letterSpacing: 1.5,
     fontWeight: "light",
@@ -132,7 +128,6 @@ const LetUsCallYou = () => {
               <Typography
                 sx={{
                   fontSize: { xs: 10, md: 16, lg: 18 },
-                  fontFamily: "Namecat",
                   letterSpacing: 2,
                   mt: 0.5,
                 }}
@@ -175,7 +170,6 @@ const LetUsCallYou = () => {
               sx={{
                 fontSize: { xs: 8, sm: 12, md: 18 },
                 color: "secondary.main",
-                fontFamily: "Namecat",
               }}
             >
               If you would like to receive information about animation and

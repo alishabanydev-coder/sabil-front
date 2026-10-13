@@ -76,11 +76,10 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
     >
       <Typography
         sx={{
-          fontSize: { xs: 12, sm: 14, md: 18, lg: 20, xl: 24 },
+          fontSize: { xs: 14, sm: 16, md: 20, lg: 22, xl: 25 },
           color: "text.primary",
-          fontFamily: "Namecat",
+          fontWeight: 800,
           textDecoration: "uppercase",
-          letterSpacing: 1.2,
           direction: "ltr",
         }}
       >
@@ -295,9 +294,8 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                         whiteSpace: "normal",
                         lineHeight: 1.45,
                         minHeight: "calc(1.45em * 4)",
+                        fontWeight: 500,
                         fontSize: { xs: 12, sm: 14, md: 15, lg: 17, xl: 20 },
-                        fontFamily: "Namecat",
-                        letterSpacing: 1,
                       }}
                     >
                       {comment.text}
@@ -323,9 +321,8 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                       <Typography
                         sx={{
                           fontSize: { xs: 12, sm: 13, md: 15, lg: 17, xl: 20 },
-                          fontWeight: 600,
+                          fontWeight: 700,
                           color: "#000",
-                          fontFamily: "Namecat",
                           letterSpacing: 1,
                         }}
                       >
@@ -335,6 +332,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                         <Typography
                           className="opinion-role"
                           sx={{
+                            fontWeight: 500,
                             fontSize: {
                               xs: 10,
                               sm: 12,
@@ -342,8 +340,6 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                               lg: 14,
                               xl: 16,
                             },
-                            fontFamily: "Namecat",
-                            letterSpacing: 2,
                           }}
                         >
                           {comment.targetType}

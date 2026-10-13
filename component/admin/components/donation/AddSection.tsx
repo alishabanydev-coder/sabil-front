@@ -276,7 +276,6 @@ const AddSection = ({
                   component="h3"
                   sx={{
                     fontWeight: 700,
-                    fontFamily: "Namecat",
                     color: "primary.main",
                     letterSpacing: 1.5,
                     fontSize: { xs: 14, md: 18 },

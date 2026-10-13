@@ -271,7 +271,6 @@ export default function AppCatalogueCapacitor({
                             variant="h6"
                             sx={{
                               color: "primary.main",
-                              fontFamily: "Namecat",
                               fontWeight: 700,
                               fontSize: 14,
                               letterSpacing: 1.5,
@@ -294,7 +293,6 @@ export default function AppCatalogueCapacitor({
                               whiteSpace: "nowrap",
                               color: "text.secondary",
                               fontWeight: 300,
-                              fontFamily: "Namecat",
                               letterSpacing: 2,
                               fontSize: 11,
                             }}

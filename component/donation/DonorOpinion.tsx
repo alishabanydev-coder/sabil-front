@@ -26,7 +26,6 @@ const DonorOpinion = () => {
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "Arco",
             fontSize: { xs: 20, sm: 24, md: 32, lg: 36, xl: 42 },
             color: "primary.main",
           }}

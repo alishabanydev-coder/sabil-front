@@ -73,7 +73,6 @@ const StatusCard = ({
         <Typography
           variant="h6"
           sx={{
-            fontFamily: "Namecat",
             color: "primary.main",
             fontWeight: 900,
             letterSpacing: 1.2,
@@ -87,7 +86,6 @@ const StatusCard = ({
             fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
             letterSpacing: 1,
             color: "text.secondary",
-            fontFamily: "Namecat",
           }}
         >
           track our progress in real time
@@ -181,7 +179,6 @@ const StatusCard = ({
                           fontSize: stepStatusSize,
                           letterSpacing:
                             "clamp(0.2px, calc(4cqw / var(--step-count)), 1.1px)",
-                          fontFamily: "Namecat",
                           lineHeight: 1.2,
                           overflowWrap: "anywhere",
                         }}
@@ -196,7 +193,6 @@ const StatusCard = ({
                         color: "text.primary",
                         letterSpacing:
                           "clamp(0.2px, calc(4cqw / var(--step-count)), 1.1px)",
-                        fontFamily: "Namecat",
                         lineHeight: 1.2,
                         overflowWrap: "anywhere",
                       }}

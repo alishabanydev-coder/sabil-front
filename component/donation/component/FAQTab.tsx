@@ -81,7 +81,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     marginLeft: theme.spacing(1),
   },
   [`&& .${accordionSummaryClasses.content} .MuiTypography-root`]: {
-    fontFamily: "Namecat",
     fontWeight: 700,
     fontSize: 13,
     lineHeight: 1.2,
@@ -146,7 +145,6 @@ const TabLayout = ({
                   sx={{
                     fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 19 },
                     color: "secondary.main",
-                    fontFamily: "Namecat",
                     fontWeight: 700,
                     letterSpacing: 1.5,
                     textTransform: "uppercase",
@@ -161,7 +159,6 @@ const TabLayout = ({
                   sx={{
                     fontSize: { xs: 12, sm: 16, md: 26, lg: 54, xl: 56 },
                     color: "white",
-                    fontFamily: "Arco",
                     fontWeight: 700,
                     letterSpacing: 0.9,
                     textTransform: "uppercase",
@@ -227,7 +224,6 @@ const FAQTab = ({
           sx={{
             fontSize: { xs: 12, sm: 16 },
             color: "secondary.main",
-            fontFamily: "Namecat",
             fontWeight: 700,
             letterSpacing: 1.5,
             textTransform: "uppercase",
@@ -252,7 +248,6 @@ const FAQTab = ({
                 <Typography
                   sx={{
                     fontSize: { xs: 13, sm: 15 },
-                    fontFamily: "Namecat",
                     textAlign: "start",
                   }}
                 >
@@ -291,7 +286,6 @@ const FAQTab = ({
               sx={{
                 fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 19 },
                 color: "white",
-                fontFamily: "Namecat",
                 letterSpacing: 1.2,
                 textAlign: "start",
               }}
@@ -337,7 +331,6 @@ const FAQTab = ({
                     sx={{
                       fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
                       color: "white",
-                      fontFamily: "Namecat",
                       fontWeight: 700,
                       letterSpacing: 1.5,
                       textTransform: "uppercase",

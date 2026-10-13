@@ -146,8 +146,8 @@ const BreakDown = ({
                     <IconButton
                       sx={{
                         flexShrink: 0,
-                        width: { xs: 42, md: 48, lg: 52 },
-                        height: { xs: 42, md: 48, lg: 52 },
+                        width: { xs: 42, md: 50, lg: 54, xl: 56 },
+                        height: { xs: 42, md: 50, lg: 54, xl: 56 },
                         bgcolor: "secondary.main",
                         color: "#fff",
                         boxShadow: "0 8px 16px rgba(0, 0, 0, 0.16)",
@@ -162,14 +162,13 @@ const BreakDown = ({
                       />
                     </IconButton>
 
-                    <Stack sx={{ minWidth: 0, gap: 1 }}>
+                    <Stack sx={{ minWidth: 0, gap: 0.3 }}>
                       <Typography
                         component="p"
                         sx={{
-                          fontSize: { xs: 12, md: 16 },
+                          fontSize: { xs: 12, md: 16, lg: 18, xl: 20 },
                           fontWeight: 800,
                           color: "primary.main",
-                          fontFamily: "Bhel Puri",
                           lineHeight: 1.3,
                           display: "-webkit-box",
                           WebkitLineClamp: 1,
@@ -182,10 +181,10 @@ const BreakDown = ({
                       <Typography
                         component="span"
                         sx={{
-                          fontSize: { xs: 9, md: 12, lg: 14 },
+                          fontSize: { xs: 10, md: 12, lg: 14 },
+                          fontWeight: 500,
                           height: "2.3em",
                           color: "text.primary",
-                          fontFamily: "Namecat",
                           lineHeight: 1.15,
                           textTransform: "uppercase",
                           display: "-webkit-box",

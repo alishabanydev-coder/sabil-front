@@ -99,7 +99,7 @@ const DonationProjectPage = async ({ params }: PageProps) => {
         sx={{
           position: "absolute",
           flexDirection: "row",
-          top: { xs: 10, sm: 15, md: 20, lg: 25, xl: 28 },
+          top: { xs: 70, sm: 82, md: 100, lg: 120, xl: 145 },
           left: { xs: 7, sm: 15, md: 20, lg: 25, xl: 28 },
           alignItems: "center",
           justifyContent: "center",
@@ -107,7 +107,6 @@ const DonationProjectPage = async ({ params }: PageProps) => {
           cursor: "pointer",
           "& p": {
             fontSize: { xs: 10, sm: 16, md: 18, lg: 20, xl: 22 },
-            fontFamily: "Namecat",
             lineHeight: 1,
             letterSpacing: 1,
             color: "#00C1F2",

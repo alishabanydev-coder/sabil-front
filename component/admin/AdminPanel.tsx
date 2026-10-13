@@ -353,7 +353,6 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
               sx={{
                 fontSize: 18,
                 color: "primary.main",
-                fontFamily: "Namecat",
               }}
             >
               Admin Panel
@@ -377,7 +376,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
           >
             <Typography
               component="h2"
-              sx={{ fontSize: 12, fontFamily: "Namecat" }}
+              sx={{ fontSize: 12, }}
             >
               Admin Name:
             </Typography>
@@ -386,7 +385,6 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
               sx={{
                 width: 90,
                 fontSize: 12,
-                fontFamily: "Namecat",
                 color: "secondary.main",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",

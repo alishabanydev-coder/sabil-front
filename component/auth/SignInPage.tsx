@@ -264,7 +264,6 @@ export default function SignInPage() {
             fontSize: 22,
             fontWeight: 700,
             color: theme.palette.primary.main,
-            fontFamily: "Namecat",
             letterSpacing: 1.2,
           }}
         >
@@ -303,7 +302,6 @@ export default function SignInPage() {
               fullWidth
               sx={{
                 height: 45,
-                fontFamily: "Namecat",
                 fontSize: 16,
                 letterSpacing: 1.4,
               }}
@@ -317,7 +315,6 @@ export default function SignInPage() {
               onClick={handleLogout}
               sx={{
                 height: 45,
-                fontFamily: "Namecat",
                 fontSize: 16,
                 letterSpacing: 1.4,
               }}
@@ -346,7 +343,7 @@ export default function SignInPage() {
                 size="small"
                 variant={mode === "login" ? "contained" : "outlined"}
                 onClick={() => switchMode("login")}
-                sx={{ fontFamily: "Namecat", letterSpacing: 1 }}
+                sx={{ letterSpacing: 1 }}
               >
                 Sign in
               </Button>
@@ -355,7 +352,7 @@ export default function SignInPage() {
                 size="small"
                 variant={mode === "register" ? "contained" : "outlined"}
                 onClick={() => switchMode("register")}
-                sx={{ fontFamily: "Namecat", letterSpacing: 1 }}
+                sx={{ letterSpacing: 1 }}
               >
                 Create account
               </Button>
@@ -517,7 +514,6 @@ export default function SignInPage() {
                 sx={{
                   mt: 0.5,
                   height: 45,
-                  fontFamily: "Namecat",
                   fontSize: 16,
                   letterSpacing: 1.4,
                 }}
@@ -566,7 +562,6 @@ export default function SignInPage() {
           color="primary"
           sx={{
             mx: "auto",
-            fontFamily: "Namecat",
             letterSpacing: 1,
             direction: "ltr",
             display: "flex",

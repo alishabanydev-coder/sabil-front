@@ -152,7 +152,6 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
             variant="h6"
             sx={{
               color: "primary.main",
-              fontFamily: "Namecat",
               fontWeight: 700,
               fontSize: { xs: 12, md: 14, lg: 16 },
               letterSpacing: 1.5,
@@ -175,7 +174,6 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
               whiteSpace: "nowrap",
               color: "text.secondary",
               fontWeight: 300,
-              fontFamily: "Namecat",
               letterSpacing: 2,
               fontSize: { xs: 10, md: 11, lg: 12 },
             }}

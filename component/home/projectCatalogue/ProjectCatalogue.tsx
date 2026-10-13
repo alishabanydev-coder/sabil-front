@@ -98,10 +98,8 @@ const ProjectCatalogue = ({
         >
           <Typography
             sx={{
-              fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
-              letterSpacing: 1.4,
-              fontWeight: 100,
-              fontFamily: "Namecat",
+              fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
+              fontWeight: 600,
               textAlign: "center",
             }}
           >
@@ -120,7 +118,7 @@ const ProjectCatalogue = ({
           }}
         />
       </Stack>
-      
+
       <OnSubscribtion
         projects={publicSectionData.projects}
         availableProjectIds={availableProjectIds}

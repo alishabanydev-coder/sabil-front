@@ -41,7 +41,6 @@ const PeopleOpinion = ({
         <Typography
           variant="h4"
           sx={{
-            fontFamily: "Arco",
             fontSize: { xs: 20, sm: 24, md: 32, lg: 36, xl: 42 },
             color: "primary.main",
           }}
@@ -56,7 +55,6 @@ const PeopleOpinion = ({
           sx={{
             textAlign: "center",
             color: "text.secondary",
-            fontFamily: "Namecat",
           }}
         >
           {errorMsg || "No opinions yet."}
@@ -139,7 +137,6 @@ const PeopleOpinion = ({
                       width: "100%",
                       fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
                       color: "text.primary",
-                      fontFamily: "Namecat",
                       display: "-webkit-box",
                       WebkitBoxOrient: "vertical",
                       WebkitLineClamp: 5,
@@ -175,7 +172,6 @@ const PeopleOpinion = ({
                     <Stack>
                       <Typography
                         sx={{
-                          fontFamily: "Namecat",
                           fontWeight: 700,
                           fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
                           overflow: "hidden",
@@ -188,7 +184,6 @@ const PeopleOpinion = ({
 
                       <Typography
                         sx={{
-                          fontFamily: "Namecat",
                           overflow: "hidden",
                           color: "text.secondary",
                           fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },

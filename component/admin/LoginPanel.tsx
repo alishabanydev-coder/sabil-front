@@ -335,7 +335,6 @@ export default function LoginPanel({ setIsValid }: Props) {
               component="p"
               sx={{
                 direction: "ltr",
-                fontFamily: "Namecat",
                 fontSize: 14,
                 fontWeight: 400,
                 letterSpacing: 1.2,
@@ -360,7 +359,6 @@ export default function LoginPanel({ setIsValid }: Props) {
             sx={{
               mt: 1,
               height: 45,
-              fontFamily: "Namecat",
               fontSize: 16,
               letterSpacing: 1.4,
             }}

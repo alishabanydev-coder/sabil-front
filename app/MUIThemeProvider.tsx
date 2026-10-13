@@ -13,10 +13,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 // import { faIR as DateFaIR } from "@mui/x-date-pickers/locales";
 
 const fontStack = [
-  "system-ui",
-  '"Bhel Puri"',
-  '"Namecat"',
-  '"Arco"',
+  'Baloo',
   "sans-serif",
 ].join(", ");
 

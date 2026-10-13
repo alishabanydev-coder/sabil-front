@@ -1,6 +1,4 @@
 ﻿import { AppButton } from "@/component/ui/AppButton";
-import { PrimaryButton } from "@/component/ui/PrimaryButton";
-import { WhitePrimaryButton } from "@/component/ui/WhitePrimaryButton";
 import { Stack, Typography } from "@mui/material";
 
 const Leftside = ({
@@ -14,7 +12,7 @@ const Leftside = ({
     <Stack
       sx={{
         height: "90%",
-        width: { xs: "32%", sm: "35%", md: "35%", lg: "32%", xl: "30%" },
+        width: { xs: "32%", sm: "30%" },
         position: "absolute",
         top: "10%",
         left: "5%",
@@ -32,33 +30,31 @@ const Leftside = ({
         <Stack
           sx={{
             position: "absolute",
-            top: { xs: "20%", sm: "15%", md: "16%", lg: "15%", xl: "18%" },
-            left: "5%",
+            top: { xs: "20%", sm: "15%", md: "16%", lg: "13%", xl: "12%" },
+            left: { xs: "1%", md: "5%" },
             flexDirection: "column",
             textAlign: "start",
             direction: "ltr",
             "& p": {
-              fontSize: { xs: 11, sm: 14, md: 24, lg: 34, xl: 38 },
-              fontFamily: "Arco",
-              lineHeight: 1.2,
+              fontSize: { xs: 14, sm: 16, md: 24, lg: 38, xl: 54 },
+              lineHeight: { xs: 1.3, sm: 1 },
               whiteSpace: "pre-line",
-              letterSpacing: 1,
-              fontWeight: 100,
+              fontWeight: 800,
+              color: "primary.main",
             },
             "& span": {
               pt: { xs: 1, lg: 2 },
-              fontSize: { xs: 9, sm: 10, md: 14, lg: 18, xl: 20 },
-              fontFamily: "Namecat",
-              lineHeight: 1.2,
+              fontSize: { xs: 9, sm: 10, md: 14, lg: 19, xl: 22 },
+              lineHeight: 1,
               whiteSpace: "pre-line",
               letterSpacing: 1,
-              fontWeight: 100,
+              fontWeight: 500,
             },
           }}
         >
-          <Typography color="primary">{`A TRUSTED\nGATEWAY TO`}</Typography>
-          <Typography color={"secondary"}>{`ISLAMIC STORIES`}</Typography>
-          <Typography color="primary">{`FOR CHILDREN`}</Typography>
+          <Typography>
+            A TRUSTED GATEWAY TO ISLAMIC STORIES FOR CHILDREN
+          </Typography>
 
           <Typography
             component={"span"}
@@ -78,8 +74,8 @@ const Leftside = ({
             display: { xs: "none", sm: "flex" },
             gap: { xs: 1, lg: 2 },
             position: "absolute",
-            bottom: { xs: "28%", sm: "32%", md: "25%", lg: "25%", xl: "26%" },
-            right: { xs: "8%", sm: "8%", md: "-8%" },
+            bottom: { xs: "28%", sm: "34%", md: "30%", lg: "27%", xl: "28%" },
+            right: { xs: "0%", sm: "0%", md: "-18%", lg: "0%" },
             zIndex: 100,
             justifyContent: "end",
           }}
@@ -88,11 +84,9 @@ const Leftside = ({
             tone="white"
             shadow="soft"
             sx={{
-              fontFamily: "Namecat",
               height: { xs: 22, sm: 30, md: "auto" },
               px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
               py: { xs: 0, sm: 0.3, md: 1, lg: 1.5 },
-              letterSpacing: 2,
               borderRadius: 8,
               display: "flex",
               alignItems: "center",
@@ -105,17 +99,15 @@ const Leftside = ({
               },
               "& p": {
                 fontSize: { xs: 8, sm: 10, md: 16, lg: 18, xl: 18 },
-                fontFamily: "Namecat",
                 color: "secondary.main",
-                letterSpacing: 1,
-                lineHeight: 0.1,
+                fontWeight: 600,
+                lineHeight: 1,
               },
             }}
             onClick={() => {
               const section = document.getElementById("blog");
               if (!section) return;
-              const top =
-                section.getBoundingClientRect().top + window.scrollY;
+              const top = section.getBoundingClientRect().top + window.scrollY;
               const offset =
                 top - (window.innerHeight - section.offsetHeight) / 2;
               window.scrollTo({
@@ -133,11 +125,9 @@ const Leftside = ({
               tone="primary"
               shadow="soft"
               sx={{
-                fontFamily: "Namecat",
                 height: { xs: 25, sm: 30, md: "auto" },
                 px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
                 py: { xs: 0, sm: 0.3, md: 1, lg: 1.2 },
-                letterSpacing: 2,
                 borderRadius: 8,
                 display: "flex",
                 alignItems: "center",
@@ -150,10 +140,9 @@ const Leftside = ({
                 },
                 "& p": {
                   fontSize: { xs: 8, sm: 10, md: 16, lg: 18, xl: 18 },
-                  fontFamily: "Namecat",
                   color: "#fff",
-                  letterSpacing: 1,
-                  lineHeight: 1.2,
+                  fontWeight: 500,
+                  lineHeight: 1,
                 },
               }}
               onClick={onOpenAboutUsModal}

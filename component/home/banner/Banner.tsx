@@ -64,9 +64,8 @@ const AdCard = ({ item }: { item: AdItem }) => (
       gap: { xs: 2, sm: 2, md: 2 },
       width: { xs: "100%", sm: "auto" },
       "& p": {
-        fontFamily: "Namecat",
         width: { xs: 150, sm: 115, md: 140, lg: 160, xl: 200 },
-        lineHeight: 1.2,
+        lineHeight: 1,
       },
       "& img": {
         width: { xs: 45, sm: 50, md: 70, lg: 85, xl: 110 },
@@ -80,14 +79,19 @@ const AdCard = ({ item }: { item: AdItem }) => (
       <Typography
         sx={{
           color: item.color,
-          fontSize: { xs: 12, sm: 13, md: 16, lg: 18, xl: 22 },
-          fontWeight: 700,
-          letterSpacing: 1.2,
+          fontSize: { xs: 12, sm: 14, md: 18, lg: 20, xl: 24 },
+          fontWeight: 900,
+          letterSpacing: 1,
         }}
       >
         {item.header}
       </Typography>
-      <Typography sx={{ fontSize: { xs: 11, sm: 12, md: 14, lg: 16, xl: 20 } }}>
+      <Typography
+        sx={{
+          fontSize: { xs: 11, sm: 12, md: 14, lg: 16, xl: 20 },
+          fontWeight: 500,
+        }}
+      >
         {item.body}
       </Typography>
     </Stack>
@@ -134,15 +138,14 @@ const Banner = ({
       <Stack
         sx={{
           position: "absolute",
-          bottom: { xs: "-26%", sm: "-8%", md: "-20%", lg: "-14%", xl: "-12%" },
+          bottom: { xs: "-24%", sm: "-8%", md: "-18%", lg: "-12%", xl: "-10%" },
+          boxShadow: 3,
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: { xs: "80%", sm: "auto" },
           height: "auto",
           mx: "auto",
           bgcolor: "background.paper",
-          border: (theme) => `4px solid ${theme.palette.secondary.main}`,
-          borderWidth: { xs: 2, sm: 3, md: 4, lg: 4, xl: 5 },
           p: { xs: 1.5, md: 3 },
           px: 4,
           borderRadius: { xs: 8, md: 12 },

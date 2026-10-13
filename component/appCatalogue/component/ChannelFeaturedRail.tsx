@@ -93,7 +93,6 @@ function FeaturedRailLabel({ label }: { label: string }) {
       <Typography
         sx={{
           color: "primary.main",
-          fontFamily: "Namecat",
           fontWeight: 700,
           fontSize: { sm: 12, md: 18 },
           lineHeight: 1.15,

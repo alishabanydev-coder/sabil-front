@@ -62,9 +62,8 @@ const JoinOurMission = () => {
           >
             <Typography
               sx={{
-                fontSize: { xs: 15, sm: 18, md: 36, lg: 48, xl: 54 },
-                fontFamily: "Arco",
-                letterSpacing: 1.2,
+                fontSize: { xs: 16, sm: 20, md: 38, lg: 50, xl: 56 },
+                fontWeight: 800,
                 color: "primary.main",
               }}
             >
@@ -80,8 +79,8 @@ const JoinOurMission = () => {
           >
             <Typography
               sx={{
-                fontFamily: "Namecat",
                 fontSize: { xs: 9, sm: 14, md: 16, lg: 22, xl: 23 },
+                fontWeight: 600,
               }}
             >
               Help us create content that inspires, educates and protects
@@ -113,7 +112,7 @@ const JoinOurMission = () => {
                     objectFit: "contain",
                   },
                   "& p": {
-                    fontFamily: "Namecat",
+                    fontWeight: 700,
                     fontSize: { xs: 9, sm: 10, md: 13, lg: 15, xl: 17 },
                   },
                 }}
@@ -148,10 +147,10 @@ const JoinOurMission = () => {
                 gap: { xs: 0.5, sm: 1.2 },
                 px: { xs: 1, sm: 1.5 },
                 py: { xs: 0.6, sm: 1.2 },
-                fontFamily: "Namecat",
                 fontSize: { xs: 7, sm: 8, md: 12, lg: 14, xl: 16 },
-                letterSpacing: 1.5,
                 color: "#fff",
+                lineHeight: { xs: 1, sm: 1.2, md: 1.4 },
+                fontWeight: 700,
               },
             }}
           >

@@ -42,7 +42,6 @@ export default function ErrorView({ error, reset }: ErrorViewProps) {
             fontWeight: 800,
             lineHeight: 1,
             color: "secondary.main",
-            fontFamily: "Namecat, sans-serif",
             letterSpacing: 2,
           }}
         >
