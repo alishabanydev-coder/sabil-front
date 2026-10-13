@@ -70,9 +70,8 @@ const ProjcetCard = ({
         <Typography
           variant="h6"
           sx={{
-            fontWeight: 900,
+            fontWeight: 800,
             fontSize: { xs: 12, sm: 14, md: 18, lg: 20, xl: 24 },
-            letterSpacing: 1.1,
             color: "primary.main",
             WebkitLineClamp: 1,
             overflow: "hidden",
@@ -87,6 +86,7 @@ const ProjcetCard = ({
           variant="body1"
           sx={{
             fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+            fontWeight: 600,
             WebkitLineClamp: 1,
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -111,6 +111,7 @@ const ProjcetCard = ({
             variant="body1"
             sx={{
               fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+              fontWeight: 600,
               color: "text.primary",
             }}
           >
@@ -137,6 +138,7 @@ const ProjcetCard = ({
             variant="body1"
             sx={{
               fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+              fontWeight: 600,
               color: "text.primary",
             }}
           >
@@ -152,6 +154,7 @@ const ProjcetCard = ({
             variant="body1"
             sx={{
               fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+              fontWeight: 700,
               color: "text.secondary",
             }}
           >
@@ -165,11 +168,11 @@ const ProjcetCard = ({
             width: "fit-content",
             mx: "auto",
             mt: 1,
-            letterSpacing: 1.1,
             py: 0.5,
             px: 3,
             borderRadius: 3,
             fontSize: { xs: 10, sm: 11, md: 12, lg: 15, xl: 16 },
+            fontWeight: 800,
             bgcolor: color,
             "&:hover": {
               bgcolor: color,

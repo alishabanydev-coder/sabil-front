@@ -26,8 +26,12 @@ const ProjectSection = ({
         <Typography
           variant="h4"
           sx={{
-            fontSize: { xs: 24, sm: 28, md: 36, lg: 45, xl: 54 },
+            fontSize: { xs: 20, sm: 25, md: 38, lg: 45, xl: 54 },
+            fontWeight: 800,
             color: "primary.main",
+            whiteSpace: "pre-line",
+            textAlign: "center",
+            textTransform: "uppercase",
           }}
         >
           Our Projects
@@ -36,10 +40,9 @@ const ProjectSection = ({
           variant="h6"
           sx={{
             fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 20 },
-            letterSpacing: 1.2,
-            textAlign: 'center',
+            fontWeight: 600,
+            textAlign: "center",
           }}
-
         >
           choose a project to see details, updates and how your donation is
           making impact

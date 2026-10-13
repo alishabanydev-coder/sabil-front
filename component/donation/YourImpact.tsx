@@ -53,8 +53,12 @@ const YourImpact = () => {
         <Typography
           variant="h4"
           sx={{
-            fontSize: { xs: 20, sm: 24, md: 32, lg: 36, xl: 42 },
+            fontSize: { xs: 20, sm: 25, md: 38, lg: 45, xl: 54 },
+            fontWeight: 800,
             color: "primary.main",
+            whiteSpace: "pre-line",
+            textAlign: "center",
+            textTransform: "uppercase",
           }}
         >
           Our Projects
@@ -62,8 +66,8 @@ const YourImpact = () => {
         <Typography
           variant="h6"
           sx={{
+            fontWeight: 600,
             fontSize: { xs: 12, sm: 14, md: 16, lg: 18, xl: 20 },
-            letterSpacing: 1.2,
             textAlign: "center",
           }}
         >
@@ -90,7 +94,6 @@ const YourImpact = () => {
               textAlign: "center",
               width: { xs: "48%", sm: 150, md: 180, lg: 190, xl: 200 },
               gap: 1.5,
-
               "& img": {
                 width: { xs: 65, sm: 70, md: 85, lg: 110, xl: 120 },
                 height: { xs: 65, sm: 70, md: 85, lg: 110, xl: 120 },
@@ -103,8 +106,7 @@ const YourImpact = () => {
               sx={{
                 fontSize: { xs: 14, sm: 16, md: 20, lg: 22, xl: 24 },
                 lineHeight: 1.1,
-                letterSpacing: 1.2,
-                fontWeight: 600,
+                fontWeight: 700,
                 color: "primary.main",
               }}
             >
@@ -114,7 +116,7 @@ const YourImpact = () => {
               variant="body1"
               sx={{
                 fontSize: { xs: 9, sm: 11, md: 14, lg: 15, xl: 16 },
-                fontWeight: 400,
+                fontWeight: 600,
                 color: "text.primary",
               }}
             >

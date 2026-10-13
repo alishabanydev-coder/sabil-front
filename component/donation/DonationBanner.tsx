@@ -93,11 +93,11 @@ const AdCard = ({ item }: { item: AdItem }) => (
       textAlign: "center",
       "& p": {
         width: { xs: 150, sm: 115, md: 140, lg: 160, xl: 200 },
-        lineHeight: 1.2,
+        lineHeight: 1,
       },
       "& img": {
-        width: { xs: 32, sm: 40, md: 56, lg: 65, xl: 80 },
-        height: { xs: 32, sm: 40, md: 56, lg: 65, xl: 80 },
+        width: { xs: 30, sm: 38, md: 54, lg: 60, xl: 75 },
+        height: { xs: 30, sm: 38, md: 54, lg: 60, xl: 75 },
         objectFit: "contain",
       },
     }}
@@ -107,8 +107,8 @@ const AdCard = ({ item }: { item: AdItem }) => (
       <Typography
         sx={{
           color: "#000",
+          fontWeight: 800,
           fontSize: { xs: 8, sm: 12, md: 14, lg: 16, xl: 18 },
-          letterSpacing: 1.2,
         }}
       >
         {item.header}
@@ -116,7 +116,7 @@ const AdCard = ({ item }: { item: AdItem }) => (
       <Typography
         sx={{
           color: "primary.main",
-          fontWeight: 700,
+          fontWeight: 600,
           fontSize: { xs: 14, sm: 20, md: 28, lg: 30, xl: 32 },
         }}
       >
@@ -178,7 +178,7 @@ const DonationBanner = ({
           <Stack
             sx={{
               height: "90%",
-              width: { xs: "42%", sm: "40%", md: "38%", lg: "36%", xl: "34%" },
+              width: { xs: "32%", sm: "35%", md: "38%", lg: "34%", xl: "30%" },
               position: "absolute",
               top: "10%",
               left: "5%",
@@ -198,10 +198,10 @@ const DonationBanner = ({
                 sx={{
                   position: "absolute",
                   top: {
-                    xs: "30%",
-                    sm: "15%",
-                    md: "16%",
-                    lg: "15%",
+                    xs: "32%",
+                    sm: "18%",
+                    md: "22%",
+                    lg: "18%",
                     xl: "18%",
                   },
                   left: "5%",
@@ -209,25 +209,25 @@ const DonationBanner = ({
                   textAlign: "start",
                   direction: "ltr",
                   "& p": {
-                    fontSize: { xs: 12, sm: 14, md: 24, lg: 34, xl: 38 },
-                    lineHeight: 1.2,
+                    fontSize: { xs: 14, sm: 16, md: 24, lg: 38, xl: 54 },
+                    lineHeight: { xs: 1.3, sm: 1 },
                     whiteSpace: "pre-line",
-                    letterSpacing: 1,
-                    fontWeight: 100,
+                    fontWeight: 800,
+                    color: "primary.main",
                   },
                   "& span": {
                     pt: { xs: 1, lg: 2 },
-                    fontSize: { xs: 9, sm: 10, md: 14, lg: 18, xl: 20 },
-                    lineHeight: 1.2,
+                    fontSize: { xs: 9, sm: 10, md: 14, lg: 19, xl: 22 },
+                    lineHeight: 1,
                     whiteSpace: "pre-line",
                     letterSpacing: 1,
-                    fontWeight: 100,
+                    fontWeight: 500,
                   },
                 }}
               >
-                <Typography color="primary">{`A TRUSTED\nGATEWAY TO`}</Typography>
-                <Typography color={"secondary"}>{`ISLAMIC STORIES`}</Typography>
-                <Typography color="primary">{`FOR CHILDREN`}</Typography>
+                <Typography color="primary">
+                  A TRUSTED GATEWAY TO ISLAMIC STORIES FOR CHILDREN
+                </Typography>
 
                 <Typography
                   component={"span"}
@@ -250,11 +250,11 @@ const DonationBanner = ({
                   bottom: {
                     xs: "36%",
                     sm: "32%",
-                    md: "22%",
+                    md: "24%",
                     lg: "25%",
-                    xl: "28%",
+                    xl: "24%",
                   },
-                  left: "5%",
+                  left: "3%",
                   zIndex: 100,
                   justifyContent: "end",
                 }}
@@ -266,7 +266,6 @@ const DonationBanner = ({
                     height: { xs: 22, sm: 30, md: "auto" },
                     px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
                     py: { xs: 0, sm: 0.3, md: 1, lg: 1.5 },
-                    letterSpacing: 2,
                     borderRadius: 8,
                     display: "flex",
                     alignItems: "center",
@@ -280,8 +279,8 @@ const DonationBanner = ({
                     "& p": {
                       fontSize: { xs: 8, sm: 10, md: 16, lg: 18, xl: 18 },
                       color: "secondary.main",
-                      letterSpacing: 1,
-                      lineHeight: 0.1,
+                      fontWeight: 600,
+                      lineHeight: 1,
                     },
                   }}
                 >
@@ -296,7 +295,6 @@ const DonationBanner = ({
                     height: { xs: 25, sm: 30, md: "auto" },
                     px: { xs: 0.7, sm: 1.2, md: 1.6, lg: 2 },
                     py: { xs: 0, sm: 0.3, md: 1, lg: 1.2 },
-                    letterSpacing: 2,
                     borderRadius: 8,
                     display: "flex",
                     alignItems: "center",
@@ -308,10 +306,10 @@ const DonationBanner = ({
                       objectFit: "contain",
                     },
                     "& p": {
-                      fontSize: { xs: 8, sm: 10, md: 16, lg: 18, xl: 18 },
                       color: "#fff",
-                      letterSpacing: 1,
-                      lineHeight: 1.2,
+                      fontSize: { xs: 8, sm: 10, md: 16, lg: 18, xl: 18 },
+                      fontWeight: 600,
+                      lineHeight: 1,
                     },
                   }}
                 >
@@ -390,11 +388,11 @@ const DonationBanner = ({
         sx={{
           position: "absolute",
           bottom: {
-            xs: "-44%",
-            sm: "-40%",
-            md: "-44%",
-            lg: "-28%",
-            xl: "-17%",
+            xs: "-38%",
+            sm: "-28%",
+            md: "-30%",
+            lg: "-24%",
+            xl: "-15%",
           },
           left: "50%",
           transform: "translate(-50%, -50%)",
@@ -402,8 +400,7 @@ const DonationBanner = ({
           height: "auto",
           mx: "auto",
           bgcolor: "background.paper",
-          border: (theme) => `4px solid ${theme.palette.secondary.main}`,
-          borderWidth: { xs: 2, sm: 3, md: 4, lg: 4, xl: 5 },
+          boxShadow: 3,
           p: { xs: 1.5, md: 2 },
           px: 4,
           borderRadius: { xs: 8, md: 12 },

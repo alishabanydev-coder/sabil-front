@@ -58,6 +58,7 @@ const JoinDonors = () => {
         <Typography
           sx={{
             fontSize: { xs: 12, sm: 22, md: 24, lg: 32, xl: 36 },
+            fontWeight: 800,
             color: "#fff",
           }}
         >
@@ -68,7 +69,7 @@ const JoinDonors = () => {
             display: { xs: "none", sm: "block" },
             fontSize: { xs: 10, sm: 13, md: 15, lg: 20, xl: 22 },
             color: "#fff",
-            letterSpacing: 1.1,
+            fontWeight: 600,
           }}
         >
           your support today builds a better tomorrow for thousands of children.
@@ -90,10 +91,11 @@ const JoinDonors = () => {
           }}
           sx={{
             color: "primary.dark",
-            lineHeight: 1.4,
+            lineHeight: 1.2,
             fontSize: { xs: 8, sm: 16, md: 20, lg: 22, xl: 24 },
             py: { xs: 0.2, sm: 0.3, md: 0.4, lg: 0.6, xl: 0.8 },
             px: { xs: 0.8, sm: 1.5, md: 2, lg: 2.5, xl: 3 },
+            fontWeight: 800,
           }}
         >
           Donate Now

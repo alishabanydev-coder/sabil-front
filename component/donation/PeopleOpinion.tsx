@@ -25,7 +25,8 @@ const PeopleOpinion = ({
         borderRadius: 5,
         backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.05),
         px: { xs: 1.5, sm: 2 },
-        py: { xs: 3, sm: 4 },
+        pt: { xs: 3, sm: 4 },
+        pb: { xs: 2, sm: 2 },
         gap: 2,
         direction: "ltr",
       }}
@@ -41,8 +42,12 @@ const PeopleOpinion = ({
         <Typography
           variant="h4"
           sx={{
-            fontSize: { xs: 20, sm: 24, md: 32, lg: 36, xl: 42 },
+            fontSize: { xs: 20, sm: 25, md: 38, lg: 45, xl: 54 },
+            fontWeight: 800,
             color: "primary.main",
+            whiteSpace: "pre-line",
+            textAlign: "center",
+            textTransform: "uppercase",
           }}
         >
           People's Opinion
@@ -70,7 +75,7 @@ const PeopleOpinion = ({
               flexDirection: "column",
               alignItems: "center",
               pt: 2,
-              pb: 4,
+              pb: 6,
               px: 2,
             },
             "& .swiper-wrapper": {
@@ -143,8 +148,8 @@ const PeopleOpinion = ({
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       wordBreak: "break-word",
-                      lineHeight: 1.6,
                       textAlign: "start",
+                      fontWeight: 500,
                     }}
                   >
                     {comment.text}
@@ -187,6 +192,7 @@ const PeopleOpinion = ({
                           overflow: "hidden",
                           color: "text.secondary",
                           fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
+                          fontWeight: 500,
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
                         }}
