@@ -264,7 +264,7 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
         width: "95%",
         mx: "auto",
         ...cardSx,
-        px: { xs: 1.2 },
+        px: { xs: 1.2, sm: 1.5, md: 1.8, lg: 2, xl: 2.2 },
         gap: 2,
         cursor: "pointer",
         maxHeight,
@@ -278,6 +278,7 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
             variant="h6"
             sx={{
               fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
+              fontWeight: 600,
               color: "text.secondary",
             }}
           >
@@ -286,7 +287,7 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
           <Typography
             variant="h6"
             sx={{
-              letterSpacing: 1.5,
+              fontWeight: 800,
               fontSize: { xs: 12, sm: 16, md: 18, lg: 24, xl: 28 },
               color: "primary.main",
             }}
@@ -298,6 +299,7 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
               sx={{
                 fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
                 color: "text.secondary",
+                fontWeight: 500,
               }}
             >
               {update.subHeader}
@@ -315,14 +317,17 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
           />
           <Stack>
             <Typography
-              sx={{ fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 24 } }}
+              sx={{
+                fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 24 },
+                fontWeight: 600,
+              }}
             >
               {update.authorName}
             </Typography>
             <Typography
               sx={{
                 fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
-                fontWeight: 300,
+                fontWeight: 500,
                 color: "text.secondary",
               }}
             >
@@ -346,7 +351,7 @@ const UpdateCard = ({ update, updateNumber, cardSx }: UpdateCardProps) => {
           <Typography
             sx={{
               fontSize: { xs: 11, sm: 14, md: 16, lg: 18, xl: 24 },
-              fontWeight: 300,
+              fontWeight: 500,
               width: "100%",
               whiteSpace: "pre-wrap",
               overflowWrap: "anywhere",

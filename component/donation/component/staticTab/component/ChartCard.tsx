@@ -54,11 +54,12 @@ const LegendItem = ({
       sx={{
         minWidth: 0,
         alignItems: "flex-start",
-        gap: { xs: 0.4, sm: 0.5, md: 0.5, lg: 0.6, xl: 0.8 },
+        gap: { xs: 0.4, sm: 0.3, md: 0.4, lg: 0.5, xl: 0.6 },
       }}
     >
       <Typography
         sx={{
+          fontWeight: 600,
           lineHeight: 1.15,
           fontSize: { xs: 14, sm: 16, md: 16, lg: 22 },
           textAlign: align === "left" ? "right" : "left",
@@ -73,6 +74,7 @@ const LegendItem = ({
           lineHeight: 1.2,
           fontSize: { xs: 12, sm: 14, md: 14, lg: 18 },
           textAlign: align === "left" ? "right" : "left",
+          fontWeight: 500,
         }}
       >
         {currencySymbol}
@@ -183,8 +185,7 @@ const ChartCard = ({
           variant="h6"
           sx={{
             color: "primary.main",
-            fontWeight: 900,
-            letterSpacing: 1.2,
+            fontWeight: 800,
             fontSize: { xs: 16, sm: 20, md: 24, lg: 28, xl: 30 },
           }}
         >
@@ -193,7 +194,7 @@ const ChartCard = ({
         <Typography
           sx={{
             fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
-            letterSpacing: 1,
+            fontWeight: 600,
             color: "text.secondary",
           }}
         >
@@ -295,6 +296,7 @@ const ChartCard = ({
                     lineHeight: 1.2,
                     textAlign: "center",
                     color: "text.secondary",
+                    fontWeight: 500,
                     fontSize: { xs: 12, sm: 14, md: 18, lg: 24, xl: 28 },
                   }}
                 >

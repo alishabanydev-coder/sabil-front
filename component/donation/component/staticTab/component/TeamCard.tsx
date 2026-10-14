@@ -40,6 +40,7 @@ const nameSx = {
 const roleSx = {
   color: "text.secondary",
   fontSize: { xs: 10, sm: 12, md: 14, lg: 16, xl: 18 },
+  fontWeight: 500,
   width: "100%",
   textOverflow: "ellipsis",
   overflow: "hidden",
@@ -149,7 +150,7 @@ const TeamCard = ({
           variant="h6"
           sx={{
             color: "primary.main",
-            fontWeight: 900,
+            fontWeight: 800,
             letterSpacing: 1.2,
             fontSize: { xs: 16, sm: 20, md: 24, lg: 28, xl: 30 },
           }}
@@ -159,7 +160,7 @@ const TeamCard = ({
         <Typography
           sx={{
             fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
-            letterSpacing: 1,
+            fontWeight: 600,
             color: "text.secondary",
           }}
         >
@@ -280,6 +281,7 @@ const TeamCard = ({
                   ...avatarSizeSx,
                   color: "primary.main",
                   lineHeight: 1,
+                  fontWeight: 700,          
                   fontSize: { xs: 24, sm: 28, md: 32, lg: 40, xl: 45 },
                 }}
               >

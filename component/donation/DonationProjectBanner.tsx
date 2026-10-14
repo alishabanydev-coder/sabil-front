@@ -310,6 +310,7 @@ const DonationProjectBanner = ({
                 fontSize: { xs: 12, sm: 20, md: 30, lg: 36, xl: 38 },
                 lineHeight: 1.2,
                 letterSpacing: 1,
+                fontWeight: 800,
                 color: "primary.main",
               }}
             >
@@ -321,7 +322,7 @@ const DonationProjectBanner = ({
                 fontSize: { xs: 10, sm: 13, md: 18, lg: 20, xl: 22 },
                 lineHeight: 1.2,
                 whiteSpace: "pre-line",
-                letterSpacing: 1,
+                fontWeight: 500,
               }}
             >
               Raised
@@ -355,12 +356,13 @@ const DonationProjectBanner = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                fontWeight: 500,
                 fontSize: { xs: 10, sm: 12, md: 16, lg: 20, xl: 22 },
                 lineHeight: 1,
                 zIndex: 1,
               }}
             >
-              {Math.round(raisedProgress)} %
+              {Math.round(raisedProgress)}%
             </Box>
           </Box>
 
@@ -370,6 +372,7 @@ const DonationProjectBanner = ({
                 fontSize: { xs: 12, sm: 20, md: 30, lg: 36, xl: 38 },
                 lineHeight: 1.2,
                 letterSpacing: 1,
+                fontWeight: 800,
                 color: "primary.main",
               }}
             >
@@ -381,7 +384,7 @@ const DonationProjectBanner = ({
                 fontSize: { xs: 10, sm: 13, md: 18, lg: 20, xl: 22 },
                 lineHeight: 1.2,
                 whiteSpace: "pre-line",
-                letterSpacing: 1,
+                fontWeight: 500,
               }}
             >
               Goal
@@ -402,7 +405,7 @@ const DonationProjectBanner = ({
               "& p": {
                 fontSize: { xs: 12, sm: 13, md: 16, lg: 19, xl: 22 },
                 lineHeight: 1.2,
-                letterSpacing: 1,
+                fontWeight: 800,
                 display: { xs: "none", sm: "block" },
               },
               "& svg": { fontSize: { xs: 22, sm: 18, md: 24, lg: 28, xl: 32 } },

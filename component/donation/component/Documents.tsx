@@ -102,7 +102,7 @@ const Documents = ({
       <Stack
         sx={{
           display: { xs: "none", sm: "flex" },
-          width: { xs: 0, sm: 180, md: 220 },
+          width: { xs: 0, sm: 250, md: 300 },
           flexShrink: 0,
           py: 2,
           pr: 0.5,
@@ -141,7 +141,6 @@ const Documents = ({
                   width: "100%",
                   fontWeight: isActive ? 800 : 700,
                   color: isActive ? "primary.main" : "text.secondary",
-                  letterSpacing: 2,
                   textTransform: "uppercase",
                   textAlign: "start",
                   fontSize: { xs: 10, sm: 10, md: 14, lg: 16, xl: 18 },
@@ -190,7 +189,7 @@ const Documents = ({
                   fontWeight: 700,
                   color: "primary.main",
                   letterSpacing: 1.5,
-                  fontSize: { xs: 12, sm: 14, md: 18, lg: 22 },
+                  fontSize: { xs: 12, sm: 15, md: 19, lg: 23, xl: 25 },
                 }}
               >
                 {section.header}
@@ -202,6 +201,7 @@ const Documents = ({
                 sx={{
                   px: { xs: 1.5, sm: 0 },
                   fontSize: { xs: 11, sm: 13, md: 15, lg: 17 },
+                  fontWeight: 500,
                   lineHeight: 1.6,
                   color: "text.primary",
                 }}

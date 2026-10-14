@@ -74,8 +74,7 @@ const StatusCard = ({
           variant="h6"
           sx={{
             color: "primary.main",
-            fontWeight: 900,
-            letterSpacing: 1.2,
+            fontWeight: 800,
             fontSize: { xs: 16, sm: 20, md: 24, lg: 28, xl: 30 },
           }}
         >
@@ -84,7 +83,7 @@ const StatusCard = ({
         <Typography
           sx={{
             fontSize: { xs: 14, sm: 16, md: 18, lg: 20, xl: 22 },
-            letterSpacing: 1,
+            fontWeight: 600,
             color: "text.secondary",
           }}
         >
@@ -179,6 +178,7 @@ const StatusCard = ({
                           fontSize: stepStatusSize,
                           letterSpacing:
                             "clamp(0.2px, calc(4cqw / var(--step-count)), 1.1px)",
+                          fontWeight: 600,
                           lineHeight: 1.2,
                           overflowWrap: "anywhere",
                         }}
@@ -191,6 +191,7 @@ const StatusCard = ({
                       sx={{
                         fontSize: stepLabelSize,
                         color: "text.primary",
+                        fontWeight: 800,
                         letterSpacing:
                           "clamp(0.2px, calc(4cqw / var(--step-count)), 1.1px)",
                         lineHeight: 1.2,

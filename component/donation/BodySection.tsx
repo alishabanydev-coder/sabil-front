@@ -307,8 +307,8 @@ const BodySection = ({ projectData }: { projectData: DonationProject }) => {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
-            gap: { xs: 0.5, sm: 0.7, md: 1, xl: 1.5 },
-            letterSpacing: 1,
+            gap: { xs: 0.5, sm: 0.7, md: 0.9, xl: 1.2 },
+            fontWeight: 600,
             fontSize: { xs: 12, sm: 15, md: 16, lg: 22, xl: 24 },
             "& svg": {
               width: { xs: 18, sm: 24, md: 32, lg: 36, xl: 40 },
