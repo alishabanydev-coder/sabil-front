@@ -11,9 +11,11 @@ const config: CapacitorConfig = {
     url: serverUrl,
     cleartext: serverUrl.startsWith("http://"),
     androidScheme: "https",
+    errorPath: "offline.html",
   },
   android: {
     allowMixedContent: false,
+    backgroundColor: "#12041f",
   },
   plugins: {
     SplashScreen: {
