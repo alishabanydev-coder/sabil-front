@@ -37,7 +37,6 @@ const cardStyle = {
   },
   ".breakdown-card": {
     position: "relative",
-    cursor: "default",
     direction: "ltr",
     width: { xs: "88%", md: "92%" },
     bgcolor: "#fff",
@@ -45,6 +44,7 @@ const cardStyle = {
     boxShadow: "0 12px 32px 10px rgba(0, 0, 0, 0.12)",
     gap: 2,
     pb: 2,
+    cursor: "pointer",
     "& img": {
       borderRadius: { xs: 5, md: 7 },
       transition: "transform 300ms ease",
@@ -193,7 +193,7 @@ const BreakDown = ({
                           overflow: "hidden",
                         }}
                       >
-                        {item.content} asdf asdf asdf asdf asdf asdf
+                        {item.content}
                       </Typography>
                     </Stack>
                   </Stack>

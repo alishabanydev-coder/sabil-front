@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AppButton } from "../ui/AppButton";
@@ -127,6 +128,28 @@ export default function Navbar({
 
   const navigation = (
     <>
+      <Box
+        component={Link}
+        href="/"
+        aria-label="Sabeel Kids home"
+        sx={{
+          position: "relative",
+          flexShrink: 0,
+          width: { xs: 36, sm: 44, md: 52, lg: 64 },
+          height: { xs: 36, sm: 44, md: 52, lg: 64 },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Image
+          src="/new-logo.webp"
+          alt="Sabeel Kids logo"
+          fill
+          sizes="64px"
+          style={{ objectFit: "contain" }}
+        />
+      </Box>
       <AppButton
         tone="donation"
         href="/donation"

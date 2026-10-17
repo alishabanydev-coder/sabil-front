@@ -3,6 +3,7 @@
 import { AppButton } from "@/component/ui/AppButton";
 import WifiOffRoundedIcon from "@mui/icons-material/WifiOffRounded";
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
+import Image from "next/image";
 import { useState } from "react";
 
 type NativeConnectionErrorScreenProps = {
@@ -101,11 +102,29 @@ export default function NativeConnectionErrorScreen({
       >
         <Box
           sx={{
+            position: "relative",
             width: { xs: 88, sm: 108 },
             height: { xs: 88, sm: 108 },
-            borderRadius: "28%",
-            display: "grid",
-            placeItems: "center",
+            mb: 0.5,
+          }}
+        >
+          <Image
+            src="/new-logo.webp"
+            alt="Sabeel Kids"
+            fill
+            sizes="108px"
+            style={{ objectFit: "contain" }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            width: { xs: 88, sm: 108 },
+            height: { xs: 88, sm: 108 },
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             bgcolor: "rgba(255, 255, 255, 0.06)",
             border: "2px solid rgba(223, 255, 0, 0.35)",
             boxShadow:

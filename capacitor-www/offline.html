@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -15,17 +15,18 @@
 
       html,
       body {
-        min-height: 100%;
+        height: 100%;
+        min-height: 100dvh;
       }
 
       body {
-        display: grid;
-        place-items: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 24px;
         color: #f5f0ff;
         font-family: system-ui, sans-serif;
-        background:
-          radial-gradient(
+        background: radial-gradient(
             ellipse 80% 60% at 20% 15%,
             rgba(255, 76, 99, 0.28),
             transparent 55%
@@ -48,17 +49,25 @@
         text-align: center;
       }
 
+      .logo {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 20px;
+        object-fit: contain;
+        padding-right: 10px;
+      }
+
       .icon {
         width: 96px;
         height: 96px;
         margin: 0 auto 18px;
-        display: grid;
-        place-items: center;
-        border-radius: 28%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
         border: 2px solid rgba(223, 255, 0, 0.35);
         background: rgba(255, 255, 255, 0.06);
-        box-shadow:
-          0 0 0 8px rgba(223, 255, 0, 0.06),
+        box-shadow: 0 0 0 8px rgba(223, 255, 0, 0.06),
           0 18px 40px rgba(0, 0, 0, 0.45);
       }
 
@@ -109,6 +118,7 @@
   </head>
   <body>
     <main class="card" role="alert">
+      <img class="logo" src="icon-512.webp" alt="Sabeel Kids" />
       <div class="icon" aria-hidden="true">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
           <path
@@ -128,8 +138,8 @@
       <h1>Oops!</h1>
       <h2>No connection</h2>
       <p>
-        Sabeel Kids needs the internet to open. Check Wi-Fi or mobile data,
-        then try again.
+        Sabeel Kids needs the internet to open. Check Wi-Fi or mobile data, then
+        try again.
       </p>
       <p id="hint" hidden>
         Still offline. Check the connection, then try again.

@@ -87,13 +87,9 @@ const TeamCard = ({
   cardSx: SxProps;
   cardHeaderSx: SxProps;
 }) => {
-  const staff = [
-    ...(projectData.staff ?? []),
-    ...(projectData.staff ?? []),
-    ...(projectData.staff ?? []),
-    ...(projectData.staff ?? []),
-    ...(projectData.staff ?? []),
-  ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const staff = [...(projectData.staff ?? [])].sort(
+    (a, b) => (a.order ?? 0) - (b.order ?? 0)
+  );
   const rowRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
   const [capacity, setCapacity] = useState(staff.length);
@@ -281,7 +277,7 @@ const TeamCard = ({
                   ...avatarSizeSx,
                   color: "primary.main",
                   lineHeight: 1,
-                  fontWeight: 700,          
+                  fontWeight: 700,
                   fontSize: { xs: 24, sm: 28, md: 32, lg: 40, xl: 45 },
                 }}
               >
