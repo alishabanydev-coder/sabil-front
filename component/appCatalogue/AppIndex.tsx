@@ -48,7 +48,9 @@ const AppIndex = ({
       return homeVideos;
     }
 
-    return allVideos.filter((video) => video.projectId === selectedNav);
+    return allVideos
+      .filter((video) => video.projectId === selectedNav)
+      .reverse();
   }, [allVideos, homeVideos, selectedNav]);
 
   const featuredVideos = useMemo(
