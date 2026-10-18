@@ -14,7 +14,9 @@ import type { AppCatalogueProps, NavigationButtonData } from "./navbarTypes";
 
 const CARD_SKELETON_COUNT = 4;
 const CARD_ASPECT = 16 / 9;
-const SHADOW_GUTTER = 16;
+const VERTICAL_INSET = 10;
+const TITLE_BLOCK = 56;
+const SIDE_INSET = 16;
 
 export default function AppCatalogueCapacitor({
   navigationButtons,
@@ -34,8 +36,8 @@ export default function AppCatalogueCapacitor({
     width: cardWidth || 280,
     height: "100%" as const,
     boxSizing: "border-box" as const,
-    paddingTop: SHADOW_GUTTER,
-    paddingBottom: SHADOW_GUTTER,
+    paddingTop: VERTICAL_INSET,
+    paddingBottom: VERTICAL_INSET,
     display: "flex",
     alignItems: "center",
   };
@@ -46,15 +48,31 @@ export default function AppCatalogueCapacitor({
 
     const updateSize = () => {
       const swiperEl = track.querySelector(".swiper") as HTMLElement | null;
-      const swiperHeight = swiperEl?.clientHeight || track.clientHeight;
-      setCardHeight(Math.max(0, swiperHeight - SHADOW_GUTTER * 2));
+      const swiperStyles = swiperEl ? getComputedStyle(swiperEl) : null;
+      const padTop = swiperStyles ? parseFloat(swiperStyles.paddingTop) || 0 : 0;
+      const padBottom = swiperStyles
+        ? parseFloat(swiperStyles.paddingBottom) || 0
+        : 0;
+      const swiperHeight =
+        (swiperEl?.clientHeight || track.clientHeight) - padTop - padBottom;
+      const titleEl = track.querySelector(
+        "[data-catalogue-title]"
+      ) as HTMLElement | null;
+      const titleHeight = titleEl?.offsetHeight || TITLE_BLOCK;
+      setCardHeight((current) => {
+        const next = Math.max(
+          0,
+          Math.floor(swiperHeight - VERTICAL_INSET * 2 - titleHeight)
+        );
+        return Math.abs(current - next) < 2 ? current : next;
+      });
     };
 
     updateSize();
     const observer = new ResizeObserver(updateSize);
     observer.observe(track);
     return () => observer.disconnect();
-  }, []);
+  }, [selectedVideos]);
 
   useEffect(() => {
     if (cardHeight <= 0) return;
@@ -95,12 +113,8 @@ export default function AppCatalogueCapacitor({
       ref={trackRef}
       sx={{
         width: "100%",
-        height: "70%",
+        flex: 1,
         minHeight: 0,
-        py: 1,
-        pb: "max(12px, env(safe-area-inset-bottom))",
-        // pl: "max(-10px, env(safe-area-inset-left))",
-        // pr: "max(12px, env(safe-area-inset-right))",
         "& .swiper": {
           width: "100%",
           height: "100%",
@@ -124,6 +138,8 @@ export default function AppCatalogueCapacitor({
         modules={[FreeMode]}
         slidesPerView="auto"
         spaceBetween={16}
+        slidesOffsetBefore={SIDE_INSET}
+        slidesOffsetAfter={SIDE_INSET}
         freeMode={{
           enabled: true,
           sticky: false,
@@ -180,128 +196,125 @@ export default function AppCatalogueCapacitor({
                     role="button"
                     sx={{
                       position: "relative",
-                      height: "100%",
+                      // height: "100%",
                       width: "100%",
-                      borderRadius: 4,
-                      boxShadow: 4,
+                      borderRadius: 6,
+                      boxShadow: 3,
                       cursor: "pointer",
-                      bgcolor: "transparent",
-                      transition: "all 0.3s ease",
+                      bgcolor: "white",
+                      overflow: "hidden",
                       "&:hover": {
                         boxShadow: (theme) =>
                           `0px 2px 10px 1px ${theme.palette.primary.main}`,
-                        "& .app-catalogue-capacitor-image": {
-                          transform: "scale(1.06)",
+                        "& .app-catalogue-page-image": {
+                          transition: "all 0.3s ease",
+                          transform: "scale(1.1) rotate(3deg)",
                         },
-                        "& .app-catalogue-capacitor-play-button": {
-                          transform: "scale(1.1)",
+                        "& .app-catalogue-page-play-button": {
+                          transform: "translateY(0)",
+                          scale: 1.1,
+                          transition: "all 0.3s ease",
                         },
+                        transition: "all 0.3s ease",
                       },
                     }}
                   >
                     <Box
                       sx={{
                         position: "relative",
-                        height: "100%",
                         width: "100%",
-                        borderRadius: 6,
+                        aspectRatio: "16 / 9",
                         overflow: "hidden",
-                        bgcolor: "black",
                       }}
                     >
                       <Image
-                        className="app-catalogue-capacitor-image"
+                        className="app-catalogue-page-image"
                         src={item.thumbnail}
                         alt={item.title}
                         fill
-                        sizes={`${Math.round(cardWidth || 280)}px`}
-                        style={{
-                          objectFit: "cover",
-                          transition: "transform 0.3s ease",
-                        }}
+                        style={{ objectFit: "contain" }}
                       />
-
+                    </Box>
+                    <Stack
+                      direction="row"
+                      sx={{
+                        width: "100%",
+                        gap: 1,
+                        alignItems: "center",
+                      }}
+                    >
                       <Stack
-                        direction="row"
                         sx={{
+                          bgcolor: "#F9F9F9",
+                          borderRadius: "0px 0px 24px 24px",
+                          border: "3px solid #fff",
+                          boxShadow: "0px 0px 15px 10px rgba(0, 0, 0, 0.5)",
                           width: "100%",
-                          gap: 1,
-                          alignItems: "center",
+                          pl: 8,
+                          pr: 1.5,
+                          position: "relative",
+                          pt: 0.4,
+                          flexShrink: 0,
                         }}
+                        data-catalogue-title
                       >
-                        <Stack
+                        <Box
+                          className="app-catalogue-capacitor-play-button"
                           sx={{
-                            bgcolor: "#F9F9F9",
-                            borderRadius: { xs: 4, sm: "0px 0px 28px 28px" },
-                            border: "3px solid #fff",
-                            boxShadow: "0px 0px 15px 10px rgba(0, 0, 0, 0.5)",
-                            width: "100%",
-                            pl: 8,
-                            pr: 1.5,
-                            position: "relative",
-                            py: 0.75,
+                            position: "absolute",
+                            left: 10,
+                            top: -18,
+                            width: 44,
+                            height: 44,
+                            borderRadius: "50%",
+                            boxShadow: 5,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            bgcolor: "white",
+                            transition: "transform 0.3s ease",
                           }}
                         >
-                          <Box
-                            className="app-catalogue-capacitor-play-button"
+                          <PlayArrowRoundedIcon
                             sx={{
-                              position: "absolute",
-                              left: 10,
-                              top: -18,
-                              width: 44,
-                              height: 44,
-                              borderRadius: "50%",
-                              boxShadow: 5,
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              bgcolor: "white",
-                              transition: "transform 0.3s ease",
-                            }}
-                          >
-                            <PlayArrowRoundedIcon
-                              sx={{
-                                fontSize: 32,
-                                color: "primary.main",
-                              }}
-                            />
-                          </Box>
-
-                          <Typography
-                            variant="h6"
-                            sx={{
+                              fontSize: 32,
                               color: "primary.main",
-                              fontWeight: 700,
-                              fontSize: 14,
-                              letterSpacing: 1.5,
-                              textTransform: "uppercase",
-                              width: "100%",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                              lineHeight: 1,
                             }}
-                          >
-                            {item.title}
-                          </Typography>
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              width: "100%",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                              color: "text.secondary",
-                              fontWeight: 300,
-                              letterSpacing: 2,
-                              fontSize: 11,
-                            }}
-                          >
-                            {projectName}
-                          </Typography>
-                        </Stack>
+                          />
+                        </Box>
+
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: "primary.main",
+                            fontWeight: 700,
+                            fontSize: 15,
+                            textTransform: "uppercase",
+                            width: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            lineHeight: 1,
+                          }}
+                        >
+                          {item.title}
+                        </Typography>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            width: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            color: "text.secondary",
+                            fontWeight: 800,
+                            fontSize: 12,
+                          }}
+                        >
+                          {projectName}
+                        </Typography>
                       </Stack>
-                    </Box>
+                    </Stack>
                   </Stack>
                 </SwiperSlide>
               );

@@ -168,7 +168,7 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
                     url={videoUrl}
                     thumbnail={videoThumbnail}
                     title={video?.title}
-                    isNative={isNative}
+                    isNative={true}
                     onStartedChange={setPlayerStarted}
                     onNativeBelowShift={setNativeBelowShift}
                   />

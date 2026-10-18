@@ -107,7 +107,7 @@ const NavbarCapacitor = ({
                         border: "3px solid",
                         borderColor: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.warning.main, 1)
+                            ? "#6FDBF4"
                             : alpha(theme.palette.background.paper, 1),
                       }}
                     >

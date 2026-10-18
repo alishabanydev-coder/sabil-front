@@ -154,7 +154,6 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
               color: "primary.main",
               fontWeight: 700,
               fontSize: { xs: 12, md: 14, lg: 16 },
-              letterSpacing: 1.5,
               textTransform: "uppercase",
               width: "100%",
               overflow: "hidden",
@@ -174,7 +173,6 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
               whiteSpace: "nowrap",
               color: "text.secondary",
               fontWeight: 300,
-              letterSpacing: 2,
               fontSize: { xs: 10, md: 11, lg: 12 },
             }}
           >

@@ -21,7 +21,7 @@ const ProjectSection = ({
       }}
     >
       <Stack
-        sx={{ width: "100%", justifyContent: "center", alignItems: "center" }}
+        sx={{ width: "100%", justifyContent: "center", alignItems: "center", mb: 1.5 }}
       >
         <Typography
           variant="h4"

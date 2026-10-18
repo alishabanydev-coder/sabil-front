@@ -152,12 +152,7 @@ const NavbarMobile = ({
                         backdropFilter: "blur(2px)",
                         WebkitBackdropFilter: "blur(2px)",
                         border: (theme) =>
-                          isSelected
-                            ? `3px solid ${alpha(
-                                theme.palette.warning.main,
-                                1
-                              )}`
-                            : "none",
+                          isSelected ? "3px solid #6FDBF4" : "none",
                         "& img": {
                           width: 58,
                           height: 48,

@@ -128,7 +128,7 @@ export default function Navbar({
 
   const navigation = (
     <>
-      <Box
+      {/* <Box
         component={Link}
         href="/"
         aria-label="Sabeel Kids home"
@@ -149,7 +149,7 @@ export default function Navbar({
           sizes="64px"
           style={{ objectFit: "contain" }}
         />
-      </Box>
+        </Box> */}
       <AppButton
         tone="donation"
         href="/donation"

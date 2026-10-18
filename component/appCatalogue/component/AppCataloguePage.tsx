@@ -247,14 +247,6 @@ export default function AppCataloguePage({
                       width: "100%",
                       gap: 1,
                       alignItems: "center",
-                      "& img": {
-                        width: { xs: 30, md: 46 },
-                        height: { xs: 30, md: 46 },
-                        objectFit: "contain",
-                        border: "1px solid",
-                        borderColor: "primary.main",
-                        borderRadius: "50%",
-                      },
                     }}
                   >
                     <Stack
@@ -300,7 +292,6 @@ export default function AppCataloguePage({
                           color: "primary.main",
                           fontWeight: 700,
                           fontSize: { xs: 13, md: 14, lg: 16 },
-                          letterSpacing: 1.5,
                           textTransform: "uppercase",
                           width: "100%",
                           overflow: "hidden",
@@ -319,8 +310,7 @@ export default function AppCataloguePage({
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
                           color: "text.secondary",
-                          fontWeight: 300,
-                          letterSpacing: 2,
+                          fontWeight: 800,
                           fontSize: { xs: 11, md: 11, lg: 12 },
                         }}
                       >

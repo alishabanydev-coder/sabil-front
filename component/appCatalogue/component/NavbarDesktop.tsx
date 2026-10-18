@@ -218,7 +218,7 @@ const NavbarDesktop = ({
             className="logo"
             src="/new-logo.webp"
             alt="sabeel kids logo"
-            width={72}  
+            width={72}
             height={72}
           />
           <Stack
@@ -258,7 +258,7 @@ const NavbarDesktop = ({
                         border: "3px solid",
                         borderColor: (theme) =>
                           isSelected
-                            ? alpha(theme.palette.warning.main, 1)
+                            ? "#6FDBF4"
                             : alpha(theme.palette.background.paper, 1),
                         transition: "all 0.3s ease",
                         "& img": {
@@ -271,7 +271,7 @@ const NavbarDesktop = ({
                           WebkitBackdropFilter: "blur(2px)",
                           borderColor: (theme) =>
                             isSelected
-                              ? alpha(theme.palette.warning.main, 0.8)
+                              ? "#6FDBF4"
                               : alpha(theme.palette.background.paper, 0.2),
                           bgcolor: (theme) =>
                             isSelected
