@@ -78,27 +78,108 @@
     display: none !important;
   }
 
-  .watch-plyr .plyr__menu__container {
+  .watch-plyr--desktop .plyr__menu__container {
+    --plyr-font-size-base: 13px;
+    --plyr-font-size-menu: 13px;
+    --plyr-range-track-height: 4px;
+    --plyr-range-thumb-height: 14px;
     right: 0;
     max-width: min(260px, calc(100vw - 24px));
-    max-height: min(168px, calc((100vw - 32px) * 9 / 16 - 64px));
+    max-height: min(220px, calc((100vw - 32px) * 9 / 16 - 48px));
   }
 
-  .watch-plyr .plyr__menu__container > div {
-    max-height: min(168px, calc((100vw - 32px) * 9 / 16 - 64px));
+  .watch-plyr--desktop .plyr__menu__container > div {
+    max-height: min(220px, calc((100vw - 32px) * 9 / 16 - 48px));
     overflow-x: hidden !important;
     overflow-y: auto !important;
   }
 
-  .watch-plyr .plyr__menu__container .plyr__control {
-    padding-top: 3px;
-    padding-bottom: 3px;
+  .watch-plyr--desktop .plyr__menu__container .plyr__control {
+    padding: 6px 10px;
   }
 }
 
+/* Phone app player. Change these to resize the bar. */
 .watch-plyr--native {
-  --plyr-control-icon-size: 20px;
+  --plyr-control-icon-size: 35px;
   --plyr-control-spacing: 10px;
+  --plyr-font-size-base: 16px;
+  --plyr-font-size-time: 20px;
+  --plyr-range-track-height: 15px;
+  --plyr-range-thumb-height: 10px;
+}
+
+.watch-plyr--native .plyr__progress input[type="range"]::-webkit-slider-thumb {
+  width: 32px;
+  height: 32px;
+  margin-top: -9px;
+}
+
+.watch-plyr--native .plyr__progress input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+}
+
+/* Settings menu type and volume slider, separate from the timeline. */
+@media (min-width: 900px) {
+  .watch-plyr--desktop .plyr__menu__container {
+    --plyr-font-size-base: 15px;
+    --plyr-font-size-menu: 15px;
+    --plyr-range-track-height: 4px;
+    --plyr-range-thumb-height: 14px;
+  }
+
+  .watch-plyr--desktop .plyr__menu__container .plyr__control {
+    padding: 7px 12px;
+  }
+}
+
+.watch-plyr--native .plyr__menu__container {
+  --plyr-font-size-base: 18px;
+  --plyr-font-size-menu: 18px;
+  --plyr-range-track-height: 6px;
+  --plyr-range-thumb-height: 18px;
+  right: 0;
+  max-width: min(320px, calc(100vw - 24px));
+  max-height: min(420px, 62vh);
+}
+
+.watch-plyr--native .plyr__menu__container > div {
+  max-height: min(420px, 62vh);
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.watch-plyr--native .plyr__menu__container .plyr__control {
+  padding: 8px 14px;
+}
+
+.watch-plyr .plyr__menu__container .plyr__control--forward {
+  padding-right: 32px;
+}
+
+.watch-plyr .plyr__menu__container .plyr__control--back {
+  padding-left: 40px;
+}
+
+.watch-plyr .plyr__menu__container .plyr__menu__value {
+  margin-right: 0;
+}
+
+.watch-plyr .plyr__menu__container .plyr__control[role="menuitemradio"] {
+  padding-left: 12px;
+}
+
+.watch-plyr .plyr__menu__container .plyr__control[role="menuitemradio"]::before {
+  width: 16px;
+  height: 16px;
+  margin-right: 12px;
+}
+
+.watch-plyr .plyr__menu__container .plyr__control[role="menuitemradio"]::after {
+  width: 6px;
+  height: 6px;
+  left: 17px;
 }
 
 .watch-plyr--native .plyr__control--overlaid {
@@ -180,10 +261,71 @@
   font-size: var(--plyr-font-size-base, 13px);
 }
 
+.watch-plyr--native .watch-plyr-volume-setting {
+  display: flex;
+  gap: 12px;
+  padding: 8px 14px 12px;
+}
+
 .watch-plyr-volume-setting input[type="range"] {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex: 1 1 140px;
+  width: 140px;
+  height: 20px;
+  min-width: 120px;
   accent-color: var(--plyr-color-main, #5c0c97);
+}
+
+.watch-plyr--native .watch-plyr-volume-setting input[type="range"] {
+  height: 24px;
+}
+
+.watch-plyr .plyr--video .watch-plyr-volume-setting input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background-color: #c5c8ce;
+}
+
+.watch-plyr .watch-plyr-volume-setting input[type="range"]::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  /* background: #5f6670; */
+}
+
+.watch-plyr .plyr--video .watch-plyr-volume-setting input[type="range"]::-moz-range-track {
+  height: 4px;
+  background-color: #c5c8ce;
+}
+
+.watch-plyr .watch-plyr-volume-setting input[type="range"]::-moz-range-progress {
+  height: 4px;
+  background-color: #8b919a;
+}
+
+.watch-plyr .watch-plyr-volume-setting input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #5f6670;
+}
+
+.watch-plyr--native .plyr--video .watch-plyr-volume-setting input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background-color: #c5c8ce;
+}
+
+.watch-plyr--native .watch-plyr-volume-setting input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+}
+
+.watch-plyr--native .watch-plyr-volume-setting input[type="range"]::-moz-range-track,
+.watch-plyr--native .watch-plyr-volume-setting input[type="range"]::-moz-range-progress {
+  height: 6px;
+}
+
+.watch-plyr--native .watch-plyr-volume-setting input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
 }
 
 @font-face {

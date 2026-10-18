@@ -34,6 +34,10 @@ export const PLYR_DESKTOP_CONTROLS = [
   "fullscreen",
 ] as const;
 
+/** Center play/pause button on the phone, after playback starts. */
+export const NATIVE_PLAY_BUTTON_SIZE = 66;
+export const NATIVE_PLAY_ICON_SIZE = 56;
+
 /** Compact bar for the Capacitor app. Volume is system-level on phones. */
 export const PLYR_NATIVE_CONTROLS = [
   "play",
@@ -793,6 +797,8 @@ const WatchPlyrPlayer = ({
       {isNative && isFullscreen && plyrRoot
         ? createPortal(
             <WatchPlyrFullscreenHud
+              centerButtonSize={NATIVE_PLAY_BUTTON_SIZE}
+              centerIconSize={NATIVE_PLAY_ICON_SIZE}
               visible={hudVisible}
               isPlaying={isPlaying}
               onSurfaceTap={handleHudSurfaceTap}
@@ -822,6 +828,8 @@ const WatchPlyrPlayer = ({
         ? createPortal(
             <WatchPlyrFullscreenHud
               variant="inline"
+              centerButtonSize={NATIVE_PLAY_BUTTON_SIZE}
+              centerIconSize={NATIVE_PLAY_ICON_SIZE}
               visible={hudVisible}
               isPlaying={isPlaying}
               onSurfaceTap={handleInlineSurfaceTap}

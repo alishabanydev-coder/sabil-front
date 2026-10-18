@@ -115,7 +115,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
           sx={{
             width: "100%",
             bgcolor: "white",
-            borderRadius: 2,
+            borderRadius: 0,
             boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
             pl: isNative ? 5 : { xs: 7, sm: 7 },
             position: "relative",
@@ -152,7 +152,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
             variant="h6"
             sx={{
               color: "primary.main",
-              fontWeight: 700,
+              fontWeight: 800,
               fontSize: { xs: 12, md: 14, lg: 16 },
               textTransform: "uppercase",
               width: "100%",
@@ -172,7 +172,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
               color: "text.secondary",
-              fontWeight: 300,
+              fontWeight: 800,
               fontSize: { xs: 10, md: 11, lg: 12 },
             }}
           >
