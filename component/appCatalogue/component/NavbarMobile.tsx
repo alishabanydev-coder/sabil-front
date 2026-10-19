@@ -57,7 +57,7 @@ const NavbarMobile = ({
         }}
       >
         <IconButton
-          href="/downloads/sabeel-kids-2.apk"
+          href="/downloads/sabeel-kids.apk"
           download
           sx={{
             width: 32,
