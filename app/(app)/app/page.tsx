@@ -1,4 +1,4 @@
-import AppCataloguePage from "@/component/appCatalogue/component/AppCataloguePage";
+import AppCataloguePage from "@/component/appCatalogue/component/appCatalogue/AppCataloguePage";
 import Navbar from "@/component/appCatalogue/component/Navbar";
 import { fetchPublicAllVideos } from "@/component/admin/services/mainPageLayoutApi";
 import {

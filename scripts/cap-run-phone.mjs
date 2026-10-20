@@ -52,10 +52,9 @@ if (!target) {
 }
 
 console.log(`Installing on ${target}`);
-execSync(
-  `npx cap run android --no-sync --target ${target} --forwardPorts 3000:3000`,
-  {
-    stdio: "inherit",
-    env: process.env,
-  }
-);
+// Do not pass --forwardPorts. native-run deletes that adb reverse when this
+// command exits, which drops the tunnel and the phone shows offline.html.
+execSync(`npx cap run android --no-sync --target ${target}`, {
+  stdio: "inherit",
+  env: process.env,
+});

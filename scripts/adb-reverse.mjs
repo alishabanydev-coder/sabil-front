@@ -30,4 +30,6 @@ console.log("Forwarding ports through USB...");
 run("reverse tcp:3000 tcp:3000");
 run("reverse tcp:5000 tcp:5000");
 
-console.log("Done. Phone localhost:3000 -> PC:3000, localhost:5000 -> PC:5000");
+console.log(
+  "Done. Phone 127.0.0.1:3000 -> PC:3000, 127.0.0.1:5000 -> PC:5000"
+);

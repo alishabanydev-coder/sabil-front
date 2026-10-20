@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Stack } from "@mui/material";
-import AppCataloguePage from "./component/AppCataloguePage";
-import AppCatalogueCapacitor from "./component/AppCatalogueCapacitor";
+import AppCataloguePage from "./component/appCatalogue/AppCataloguePage";
+import AppCatalogueCapacitor from "./component/appCatalogue/AppCatalogueCapacitor";
 import Navbar from "./component/Navbar";
 import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
 
