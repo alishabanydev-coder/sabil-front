@@ -2,13 +2,31 @@
 
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { alpha, Avatar, IconButton, Skeleton, Stack } from "@mui/material";
+import { alpha, IconButton, Skeleton, Stack } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
 import { useNavbarController } from "./useNavbarController";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import type { NavbarProps } from "./navbarTypes";
+import "swiper/css";
 
 const NAV_SKELETON_COUNT = 4;
+
+const IconButtonSx = {
+  width: 50,
+  height: 50,
+  p: 0,
+  color: "#fff",
+  bgcolor: "secondary.main",
+  border: "1px solid",
+  borderColor: "#fff",
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+  "& svg": {
+    fontSize: 30,
+  },
+  "&:hover": {
+    bgcolor: "secondary.light",
+  },
+};
 
 const NavbarCapacitor = ({
   navigationButtons,
@@ -150,33 +168,13 @@ const NavbarCapacitor = ({
           alignItems: "center",
         }}
       >
-        <IconButton
-          onClick={handleLogout}
-          sx={{
-            width: 50,
-            height: 50,
-            p: 0,
-            color: "#fff",
-            bgcolor: "secondary.main",
-            border: "1px solid",
-            borderColor: "#fff",
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
-            "&:hover": {
-              bgcolor: "secondary.light",
-            },
-          }}
-        >
-          <LogoutIcon sx={{ fontSize: 22 }} />
+        <IconButton sx={IconButtonSx}>
+          <SearchRoundedIcon />
         </IconButton>
 
-        <Avatar
-          src="/userAvatar.png"
-          alt="avatar"
-          sx={{
-            width: 50,
-            height: 50,
-          }}
-        />
+        <IconButton onClick={handleLogout} sx={IconButtonSx}>
+          <LogoutIcon sx={{ fontSize: 22 }} />
+        </IconButton>
       </Stack>
     </Stack>
   );

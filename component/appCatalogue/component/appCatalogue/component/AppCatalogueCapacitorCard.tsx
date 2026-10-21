@@ -123,6 +123,8 @@ function GradientIcon({
   return <Icon style={{ fill: `url(#${id})` }} />;
 }
 
+//FiXME: fix the on click Card and not White Space
+
 export default function AppCatalogueCapacitorCard({
   video,
 }: {

@@ -2,15 +2,7 @@
 
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {
-  alpha,
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  Skeleton,
-  Stack,
-} from "@mui/material";
+import { alpha, Box, Button, IconButton, Skeleton, Stack } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -24,11 +16,12 @@ import {
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
 import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { useNavbarController } from "./useNavbarController";
+import type { NavbarProps } from "./navbarTypes";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
-import { useNavbarController } from "./useNavbarController";
-import type { NavbarProps } from "./navbarTypes";
 
 const relayoutFeaturedSwiper = (swiper: SwiperType) => {
   if (swiper.destroyed) return;
@@ -98,34 +91,6 @@ const NavbarDesktop = ({
             zIndex: 120,
           }}
         >
-          <IconButton
-            onClick={handleLogout}
-            sx={{
-              width: { sm: 36, md: 38, lg: 44 },
-              height: { sm: 36, md: 38, lg: 44 },
-              p: 0,
-              color: "#fff",
-              bgcolor: "secondary.main",
-              border: "1px solid",
-              borderColor: "#fff",
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                bgcolor: "secondary.main",
-                borderColor: "#fff",
-                transform: "translateY(-1px)",
-                boxShadow:
-                  "0 4px 8px rgba(0, 0, 0, 0.2), " +
-                  "2px 2px 4px 0 rgba(0, 0, 0, 0.3), " +
-                  "-2px -2px 4px 0 rgba(0, 0, 0, 0.2), " +
-                  "inset -4px -4px 6px 0 rgba(255, 255, 255, 0), " +
-                  "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.3)",
-              },
-            }}
-          >
-            <LogoutIcon sx={{ fontSize: { sm: 20, md: 20, lg: 24 } }} />
-          </IconButton>
-
           <Button
             color="primary"
             href="/downloads/sabeel-kids.apk"
@@ -173,15 +138,21 @@ const NavbarDesktop = ({
             </Box>
           </Button>
 
-          <Avatar
-            src="/userAvatar.png"
-            alt="avatar"
+          <IconButton
+            // onClick={handleLogout}
             sx={{
-              cursor: "pointer",
               width: { sm: 36, md: 38, lg: 44 },
               height: { sm: 36, md: 38, lg: 44 },
+              p: 0,
+              color: "#fff",
+              bgcolor: "secondary.main",
+              border: "1px solid",
+              borderColor: "#fff",
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
               transition: "all 0.3s ease",
               "&:hover": {
+                bgcolor: "secondary.main",
+                borderColor: "#fff",
                 transform: "translateY(-1px)",
                 boxShadow:
                   "0 4px 8px rgba(0, 0, 0, 0.2), " +
@@ -191,7 +162,37 @@ const NavbarDesktop = ({
                   "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.3)",
               },
             }}
-          />
+          >
+            <SearchRoundedIcon />
+          </IconButton>
+
+          <IconButton
+            onClick={handleLogout}
+            sx={{
+              width: { sm: 36, md: 38, lg: 44 },
+              height: { sm: 36, md: 38, lg: 44 },
+              p: 0,
+              color: "#fff",
+              bgcolor: "secondary.main",
+              border: "1px solid",
+              borderColor: "#fff",
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                bgcolor: "secondary.main",
+                borderColor: "#fff",
+                transform: "translateY(-1px)",
+                boxShadow:
+                  "0 4px 8px rgba(0, 0, 0, 0.2), " +
+                  "2px 2px 4px 0 rgba(0, 0, 0, 0.3), " +
+                  "-2px -2px 4px 0 rgba(0, 0, 0, 0.2), " +
+                  "inset -4px -4px 6px 0 rgba(255, 255, 255, 0), " +
+                  "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.3)",
+              },
+            }}
+          >
+            <LogoutIcon sx={{ fontSize: { sm: 20, md: 20, lg: 24 } }} />
+          </IconButton>
         </Stack>
 
         <Stack

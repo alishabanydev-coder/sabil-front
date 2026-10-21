@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { alpha, Avatar, IconButton, Skeleton, Stack, Box } from "@mui/material";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
+import { alpha, IconButton, Skeleton, Stack, Box } from "@mui/material";
 import { useNavbarController } from "./useNavbarController";
 import type { NavbarProps } from "./navbarTypes";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
 
 const NAV_SKELETON_COUNT = 4;
 
@@ -57,6 +58,29 @@ const NavbarMobile = ({
         }}
       >
         <IconButton
+          // onClick={handleLogout}
+          sx={{
+            width: 32,
+            height: 32,
+            p: 0,
+            color: "#fff",
+            bgcolor: "secondary.main",
+            border: "1px solid",
+            borderColor: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+            '& svg': {
+              fontSize: 22
+            },
+            "&:hover": {
+              bgcolor: "secondary.main",
+              borderColor: "#fff",
+            },
+          }}
+        >
+          <SearchRoundedIcon />
+        </IconButton>
+
+        <IconButton
           href="/downloads/sabeel-kids.apk"
           download
           sx={{
@@ -96,15 +120,6 @@ const NavbarMobile = ({
         >
           <LogoutIcon sx={{ fontSize: 18 }} />
         </IconButton>
-
-        <Avatar
-          src="/userAvatar.png"
-          alt="avatar"
-          sx={{
-            width: 32,
-            height: 32,
-          }}
-        />
       </Stack>
 
       <Stack

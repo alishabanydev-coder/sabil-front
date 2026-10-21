@@ -12,7 +12,7 @@ import AppCatalogueCapacitorCard from "./component/AppCatalogueCapacitorCard";
 
 const CARD_SKELETON_COUNT = 4;
 const CARD_ASPECT = 16 / 9;
-const VERTICAL_INSET = 10;
+const VERTICAL_INSET = 8;
 const TITLE_BLOCK = 56;
 const SIDE_INSET = 16;
 
