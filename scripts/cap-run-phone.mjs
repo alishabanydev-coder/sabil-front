@@ -35,11 +35,24 @@ function getPhoneTarget() {
   return target;
 }
 
+function tunnelIsUp() {
+  const listed = execSync(`"${adb}" reverse --list`, { encoding: "utf8" });
+  return listed.includes("tcp:3000") && listed.includes("tcp:5000");
+}
+
+function ensureReverse() {
+  execSync("node scripts/adb-reverse.mjs", {
+    stdio: "inherit",
+    env: process.env,
+  });
+  if (!tunnelIsUp()) {
+    throw new Error(
+      "USB port forward did not stick. Unplug the phone, accept the USB debugging prompt, and run this again."
+    );
+  }
+}
+
 execSync("node scripts/cap-sync-phone.mjs", {
-  stdio: "inherit",
-  env: process.env,
-});
-execSync("node scripts/adb-reverse.mjs", {
   stdio: "inherit",
   env: process.env,
 });
@@ -51,6 +64,8 @@ if (!target) {
   );
 }
 
+ensureReverse();
+
 console.log(`Installing on ${target}`);
 // Do not pass --forwardPorts. native-run deletes that adb reverse when this
 // command exits, which drops the tunnel and the phone shows offline.html.
@@ -58,3 +73,11 @@ execSync(`npx cap run android --no-sync --target ${target}`, {
   stdio: "inherit",
   env: process.env,
 });
+
+// The app is already open here. Install can still drop adb reverse on the
+// way out, which cuts off a session that just booted. Put the tunnel back
+// and leave that process running.
+if (!tunnelIsUp()) {
+  console.log("Install cleared the USB tunnel. Restoring it for the open app.");
+  ensureReverse();
+}

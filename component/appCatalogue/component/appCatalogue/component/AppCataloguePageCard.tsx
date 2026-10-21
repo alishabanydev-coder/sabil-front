@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import type { VideoData } from "../../navbarTypes";
@@ -54,21 +55,21 @@ const stackIcon = {
   px: 1.4,
   pl: 0.5,
   borderRadius: 6,
-  height: 48,
+  height: { xs: 40, sm: 45, lg: 48 },
 
   "& svg": {
-    fontSize: 28,
+    fontSize: { xs: 20, sm: 24, lg: 28 },
   },
   "& p": {
     color: "text.primary",
     fontWeight: 800,
-    fontSize: 15,
+    fontSize: { xs: 12, sm: 14, lg: 15 },
     lineHeight: 1,
   },
   "& span": {
     color: "text.secondary",
     fontWeight: 800,
-    fontSize: 13,
+    fontSize: { xs: 10, sm: 12, lg: 13 },
     lineHeight: 1,
   },
 };
@@ -191,9 +192,9 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         sx={{
           position: "absolute",
           left: "50%",
-          top: { xs: -24, sm: "calc(50% - 68px)" },
-          width: { xs: 50, sm: 72 },
-          height: { xs: 50, sm: 72 },
+          top: { xs: "calc(50% - 60px)", sm: "calc(50% - 68px)" },
+          width: { xs: 64, sm: 72 },
+          height: { xs: 64, sm: 72 },
           transform: "translateX(-50%)",
         }}
       >
@@ -237,7 +238,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         >
           <PlayArrowRoundedIcon
             sx={{
-              fontSize: { xs: 40, md: 24, lg: 34, xl: 64 },
+              fontSize: { xs: 54, md: 32, lg: 54, xl: 64 },
               color: "primary.main",
             }}
           />
@@ -261,14 +262,14 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
             boxShadow: "0px 0px 15px 10px rgba(0, 0, 0, 0.5)",
             justifyContent: "center",
             position: "relative",
-            pt: { xs: 1.2, sm: 1 },
-            pb: { xs: 0.8, sm: 0 },
+            pt: { xs: 1, sm: 1 },
+            pb: { xs: 0, sm: 0 },
           }}
         >
           <Stack
             sx={{
               flexDirection: "row",
-              gap: 1.5,
+              gap: { xs: 0.5, sm: 1, lg: 1.5 },
               mt: -1,
               justifyContent: "center",
             }}
@@ -298,7 +299,9 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
                   />
                 </Stack>
                 <Stack sx={{ flexDirection: "column" }}>
-                  <Typography sx={{ fontSize: 12, lineHeight: 1 }}>
+                  <Typography
+                  // sx={{ fontSize: { xs: 10, sm: 11, lg: 12 }, lineHeight: 1 }}
+                  >
                     {stat.number}
                   </Typography>
                   <Typography component="span">{stat.label}</Typography>

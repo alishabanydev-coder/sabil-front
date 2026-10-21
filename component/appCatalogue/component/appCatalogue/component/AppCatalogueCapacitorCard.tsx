@@ -4,6 +4,7 @@ import {
   alpha,
   Box,
   Button,
+  keyframes,
   Stack,
   Typography,
   type SvgIconProps,
@@ -15,12 +16,14 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
+import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import type { VideoData } from "../../navbarTypes";
 
 type GradientStat = {
   number: string;
   icon: ElementType<SvgIconProps>;
   color: [string, string];
+  label: string;
 };
 
 const gradientColor: GradientStat[] = [
@@ -28,26 +31,31 @@ const gradientColor: GradientStat[] = [
     number: "856",
     icon: BookmarkOutlinedIcon,
     color: ["#0F70E3", "#044CD4"],
+    label: "save",
   },
-  { number: "2.1k", icon: FavoriteRoundedIcon, color: ["#FB5C73", "#FB2C5C"] },
+  {
+    number: "2.1k",
+    icon: FavoriteRoundedIcon,
+    color: ["#FB5C73", "#FB2C5C"],
+    label: "likes",
+  },
   {
     number: "12.4k",
     icon: VisibilityRoundedIcon,
     color: ["#7E4DDE", "#6C32C9"],
+    label: "views",
   },
 ];
-
-//FIXME: make this card like the catalogue page card
 
 const stackIcon = {
   flexDirection: "row",
   my: 0.5,
   gap: 0.5,
   alignItems: "center",
-  pr: 1,
-  pl: 0.3,
-  height: 32,
-  borderRadius: 4,
+  px: 1.4,
+  pl: 0.5,
+  borderRadius: 6,
+  height: 40,
 
   "& svg": {
     fontSize: 20,
@@ -55,16 +63,27 @@ const stackIcon = {
   "& p": {
     color: "text.primary",
     fontWeight: 800,
-    fontSize: 14,
+    fontSize: 12,
     lineHeight: 1,
   },
   "& span": {
     color: "text.secondary",
     fontWeight: 800,
-    fontSize: 11,
+    fontSize: 10,
     lineHeight: 1,
   },
 };
+
+const playButtonWave = keyframes`
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+`;
 
 function StatGradientDefs({ videoId }: { videoId: string }) {
   return (
@@ -111,50 +130,120 @@ export default function AppCatalogueCapacitorCard({
 }) {
   const router = useRouter();
 
+  const watchVideo = () => {
+    router.push(`/app/watch/${video._id}`);
+  };
+
   return (
     <Stack
-      onClick={() => router.push(`/app/watch/${video._id}`)}
+      tabIndex={0}
+      role="button"
+      aria-label={`Watch ${video.title}`}
+      onClick={watchVideo}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          router.push(`/app/watch/${video._id}`);
+          watchVideo();
         }
       }}
-      tabIndex={0}
-      role="button"
       sx={{
         position: "relative",
         width: "100%",
         borderRadius: 6,
         boxShadow: 3,
-        cursor: "pointer",
-        bgcolor: "white",
         overflow: "hidden",
-        "&:hover": {
+        bgcolor: "white",
+        cursor: "pointer",
+        transition: "all 0.35s ease",
+
+        "&:hover, &:focus-visible": {
           boxShadow: (theme) =>
             `0px 2px 10px 1px ${theme.palette.primary.main}`,
-          "& .app-catalogue-page-image": {
-            transition: "all 0.3s ease",
+        },
+
+        "&:hover .app-catalogue-page-image, &:focus-visible .app-catalogue-page-image":
+          {
             transform: "scale(1.1) rotate(3deg)",
           },
-          "& .app-catalogue-page-play-button": {
-            transform: "translateY(0)",
-            scale: 1.1,
-            transition: "all 0.3s ease",
+
+        "&:hover .app-catalogue-page-play-button, &:focus-visible .app-catalogue-page-play-button":
+          {
+            bgcolor: alpha("#fff", 0.85),
+            transform: "scale(1.1)",
           },
-          transition: "all 0.3s ease",
+
+        "&:hover .app-catalogue-play-wave, &:focus-visible .app-catalogue-play-wave":
+          {
+            animation: `${playButtonWave} 1.45s ease-out infinite`,
+          },
+
+        "&:hover .app-catalogue-play-wave-late, &:focus-visible .app-catalogue-play-wave-late":
+          {
+            animationDelay: "0.5s",
+          },
+
+        "&:focus-visible": {
+          outline: "2px solid",
+          outlineColor: "primary.main",
+          outlineOffset: "-2px",
+        },
+
+        "@media (prefers-reduced-motion: reduce)": {
+          "&:hover .app-catalogue-page-image, &:focus-visible .app-catalogue-page-image":
+            {
+              transform: "none",
+            },
+
+          "&:hover .app-catalogue-page-play-button, &:focus-visible .app-catalogue-page-play-button":
+            {
+              transform: "none",
+            },
+
+          "&:hover .app-catalogue-play-wave, &:focus-visible .app-catalogue-play-wave":
+            {
+              animation: "none",
+            },
         },
       }}
     >
       <StatGradientDefs videoId={video._id} />
+
+      {/* Thumbnail */}
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          aspectRatio: "16 / 9",
+          overflow: "hidden",
+        }}
+      >
+        <Image
+          className="app-catalogue-page-image"
+          src={video.thumbnail}
+          alt={video.title}
+          fill
+          sizes="(max-width: 600px) 100vw, 50vw"
+          style={{
+            objectFit: "contain",
+            transition: "transform 0.3s ease",
+          }}
+        />
+      </Box>
+
+      {/* Centered play button */}
       <Box
         sx={{
           position: "absolute",
           left: "50%",
-          top: { xs: -24, sm: "calc(50% - 68px)" },
-          width: { xs: 50, sm: 72 },
-          height: { xs: 50, sm: 72 },
+          top: {
+            xs: "calc(50% - 60px)",
+            sm: "calc(50% - 60px)",
+          },
+          width: { xs: 64, sm: 72 },
+          height: { xs: 64, sm: 72 },
           transform: "translateX(-50%)",
+          zIndex: 2,
+          pointerEvents: "none",
         }}
       >
         {[
@@ -179,6 +268,7 @@ export default function AppCatalogueCapacitorCard({
             }}
           />
         ))}
+
         <Box
           className="app-catalogue-page-play-button"
           sx={{
@@ -192,33 +282,19 @@ export default function AppCatalogueCapacitorCard({
             justifyContent: "center",
             alignItems: "center",
             bgcolor: alpha("#fff", 0.7),
-            cursor: "pointer",
+            transition: "all 0.3s ease",
           }}
         >
           <PlayArrowRoundedIcon
             sx={{
-              fontSize: { xs: 40, md: 24, lg: 34, xl: 64 },
+              fontSize: { xs: 54, sm: 54 },
               color: "primary.main",
             }}
           />
         </Box>
       </Box>
-      <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "16 / 9",
-          overflow: "hidden",
-        }}
-      >
-        <Image
-          className="app-catalogue-page-image"
-          src={video.thumbnail}
-          alt={video.title}
-          fill
-          style={{ objectFit: "contain" }}
-        />
-      </Box>
+
+      {/* Stats */}
       <Stack
         direction="row"
         sx={{
@@ -229,38 +305,41 @@ export default function AppCatalogueCapacitorCard({
       >
         <Stack
           sx={{
+            width: "100%",
             bgcolor: "#F9F9F9",
             borderRadius: "0px 0px 24px 24px",
             border: "3px solid #fff",
             boxShadow: "0px 0px 15px 10px rgba(0, 0, 0, 0.5)",
-            width: "100%",
-            pl: 7,
-            pr: 1.5,
+            justifyContent: "center",
             position: "relative",
-            pt: 0.4,
-            flexShrink: 0,
+            pt: 0.8,
+            pb: 0,
           }}
-          data-catalogue-title
         >
           <Stack
             sx={{
               flexDirection: "row",
-              gap: 0.8,
-              mt: -0.5,
-              ml: -0.5,
+              gap: 0.5,
+              mt: -1,
+              justifyContent: "center",
             }}
           >
             {gradientColor.map((stat, index) => (
               <Button
-                key={index}
+                key={stat.label}
+                disableRipple
+                disableFocusRipple
+                disableTouchRipple
+                disableElevation
                 sx={{
                   ...stackIcon,
-                  backgroundColor: alpha(stat.color[0], 0.15),
+                  minWidth: 0,
+                  border: `2px solid ${alpha(stat.color[0], 0.2)}`,
                 }}
               >
                 <Stack
                   sx={{
-                    p: 0.45,
+                    p: 0.6,
                     borderRadius: "50%",
                     bgcolor: alpha(stat.color[0], 0.2),
                   }}
@@ -270,10 +349,10 @@ export default function AppCatalogueCapacitorCard({
                     id={`capacitor-stat-gradient-${video._id}-${index}`}
                   />
                 </Stack>
+
                 <Stack sx={{ flexDirection: "column" }}>
-                  <Typography sx={{ fontSize: 12, lineHeight: 1 }}>
-                    {stat.number}
-                  </Typography>
+                  <Typography>{stat.number}</Typography>
+                  <Typography component="span">{stat.label}</Typography>
                 </Stack>
               </Button>
             ))}
