@@ -192,9 +192,9 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         sx={{
           position: "absolute",
           left: "50%",
-          top: { xs: "calc(50% - 60px)", sm: "calc(50% - 68px)" },
-          width: { xs: 64, sm: 72 },
-          height: { xs: 64, sm: 72 },
+          top: { xs: "calc(50% - 60px)", sm: "calc(50% - 60px)", lg: "calc(50% - 68px)" },
+          width: { xs: 64, sm: 68, lg: 75 },
+          height: { xs: 64, sm: 68, lg: 75 },
           transform: "translateX(-50%)",
         }}
       >
@@ -238,7 +238,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         >
           <PlayArrowRoundedIcon
             sx={{
-              fontSize: { xs: 54, md: 32, lg: 54, xl: 64 },
+              fontSize: { xs: 54, md: 48, lg: 54, xl: 64 },
               color: "primary.main",
             }}
           />

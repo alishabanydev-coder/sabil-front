@@ -41,8 +41,8 @@ const NavbarMobile = ({
           className="logo"
           src="/new-logo.webp"
           alt="sabeel kids logo"
-          width={60}
-          height={60}
+          width={70}
+          height={70}
         />
       </Stack>
 
@@ -60,16 +60,16 @@ const NavbarMobile = ({
         <IconButton
           // onClick={handleLogout}
           sx={{
-            width: 32,
-            height: 32,
+            width: 35,
+            height: 35,
             p: 0,
             color: "#fff",
             bgcolor: "secondary.main",
             border: "1px solid",
             borderColor: "#fff",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
-            '& svg': {
-              fontSize: 22
+            "& svg": {
+              fontSize: 23,
             },
             "&:hover": {
               bgcolor: "secondary.main",
@@ -84,41 +84,47 @@ const NavbarMobile = ({
           href="/downloads/sabeel-kids.apk"
           download
           sx={{
-            width: 32,
-            height: 32,
+            width: 35,
+            height: 35,
             p: 0,
             color: "#fff",
             bgcolor: "secondary.main",
             border: "1px solid",
             borderColor: "#fff",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+            "& svg": {
+              fontSize: 21,
+            },
             "&:hover": {
               bgcolor: "secondary.main",
               borderColor: "#fff",
             },
           }}
         >
-          <FileDownloadIcon sx={{ fontSize: 18 }} />
+          <FileDownloadIcon />
         </IconButton>
 
         <IconButton
           onClick={handleLogout}
           sx={{
-            width: 32,
-            height: 32,
+            width: 35,
+            height: 35,
             p: 0,
             color: "#fff",
             bgcolor: "secondary.main",
             border: "1px solid",
             borderColor: "#fff",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
+            "& svg": {
+              fontSize: 21,
+            },
             "&:hover": {
               bgcolor: "secondary.main",
               borderColor: "#fff",
             },
           }}
         >
-          <LogoutIcon sx={{ fontSize: 18 }} />
+          <LogoutIcon />
         </IconButton>
       </Stack>
 

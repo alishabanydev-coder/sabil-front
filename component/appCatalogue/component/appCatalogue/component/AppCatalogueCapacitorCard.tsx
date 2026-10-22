@@ -141,13 +141,6 @@ export default function AppCatalogueCapacitorCard({
       tabIndex={0}
       role="button"
       aria-label={`Watch ${video.title}`}
-      onClick={watchVideo}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          watchVideo();
-        }
-      }}
       sx={{
         position: "relative",
         width: "100%",
@@ -212,6 +205,13 @@ export default function AppCatalogueCapacitorCard({
 
       {/* Thumbnail */}
       <Box
+        onClick={watchVideo}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            watchVideo();
+          }
+        }}
         sx={{
           position: "relative",
           width: "100%",

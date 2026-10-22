@@ -196,17 +196,14 @@ const NavbarDesktop = ({
         </Stack>
 
         <Stack
-          direction="row"
           sx={{
-            gap: 1,
-            width: { sm: "94%", md: "96%", lg: "98%" },
-            pt: { sm: 7, md: 6 },
-            mx: "auto",
-            alignItems: "center",
-            zIndex: 110,
+            position: "absolute",
+            top: 20,
+            left: { md: 32, lg: 38, xl: 45 },
             "& .logo": {
-              width: { sm: 90, md: 140, lg: 165 },
-              height: { sm: 85, md: 130, lg: 150 },
+              zIndex: 115,
+              width: { md: 130, lg: 155, xl: 165 },
+              height: { md: 120, lg: 145, xl: 150 },
               cursor: "pointer",
               transition: "all 0.3s ease",
               "&:hover": {
@@ -217,11 +214,25 @@ const NavbarDesktop = ({
         >
           <Image
             className="logo"
-            src="/new-logo.webp"
-            alt="sabeel kids logo"
-            width={72}
-            height={72}
+            src="/icon-512.webp"
+            alt="Sabeel Kids logo"
+            width={100}
+            height={100}
+            sizes="(max-width: 600px) 90px, (max-width: 900px) 140px, 165px"
           />
+        </Stack>
+
+        <Stack
+          direction="row"
+          sx={{
+            gap: 1,
+            width: { sm: "94%", md: "96%", lg: "98%" },
+            pt: { sm: 7, md: 6 },
+            mx: "auto",
+            alignItems: "center",
+            zIndex: 110,
+          }}
+        >
           <Stack
             sx={{
               width: "100%",
@@ -230,8 +241,8 @@ const NavbarDesktop = ({
               justifyContent: "center",
               alignItems: "center",
               gap: { sm: 0.8, md: 1.2, lg: 2 },
-              pt: 1,
-              pr: { sm: 8, md: 17, lg: 19 },
+              pt: { sm: 1, md: 2, lg: 2.8, xl: 3 },
+              // pr: { sm: 8, md: 17, lg: 19 },
             }}
           >
             {navigationButtons.length > 0
