@@ -5,8 +5,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import DonationProjectBanner from "@/component/donation/DonationProjectBanner";
 import BodySection from "@/component/donation/BodySection";
-
-const SITE_URL = "https://sabeelkids.com";
+import { SITE_URL } from "@/lib/site";
 
 type PageProps = {
   params: Promise<{ donationProjectId: string }>;

@@ -37,7 +37,21 @@ const nextConfig: NextConfig = {
   ],
   images: {
     dangerouslyAllowLocalIP: true,
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [buildImageRemotePattern()],
+  },
+  async headers() {
+    return [
+      {
+        source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400",
+          },
+        ],
+      },
+    ];
   },
 };
 

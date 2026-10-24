@@ -71,9 +71,6 @@ const AppIndex = ({
   };
 
   if (displayMode === "pending") {
-    // Same loader as app/(app)/app/loading.tsx so the browser sees one
-    // continuous loader from data fetching through hydration. On native the
-    // Capacitor splash covers this phase (see CapacitorShell).
     return <AppRouteLoader />;
   }
 

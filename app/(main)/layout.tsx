@@ -1,8 +1,7 @@
 import Footer from "@/component/layout/Footer";
 import Navbar from "@/component/layout/Navbar";
 import type { Metadata } from "next";
-
-const SITE_URL = "https://sabeelkids.com";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Sabeel Kids | Islamic Kids Streaming and Learning",

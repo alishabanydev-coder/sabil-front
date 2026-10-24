@@ -1,12 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 
-/**
- * Full-screen loader for the /app route.
- * Used by `app/(app)/app/loading.tsx` while server data is fetching, and by
- * `AppIndex` while the client resolves the display mode, so the user sees one
- * continuous loader instead of loader -> blank -> app.
- */
 export default function AppRouteLoader() {
   return (
     <Stack

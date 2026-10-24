@@ -6,6 +6,15 @@ import PeopleOpinion from "@/component/donation/PeopleOpinion";
 import { fetchDonationFeaturedComments } from "@/component/donation/services/commentsPublicApi";
 import { fetchPublicDonationProjects } from "@/component/donation/services/donationPublicApi";
 import JoinDonors from "@/component/donation/JoinDonors";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Donate | Sabeel Kids",
+  description: "Support Sabeel Kids donation projects.",
+  alternates: {
+    canonical: "/donation",
+  },
+};
 
 const DonationPage = async () => {
   const [featuredCommentsResult, projectsResult] = await Promise.all([

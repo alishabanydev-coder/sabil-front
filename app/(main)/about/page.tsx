@@ -1,5 +1,13 @@
 import { Box, Stack, Typography } from "@mui/material";
+import type { Metadata } from "next";
 import { fetchPublicAboutUs } from "@/component/admin/services/aboutUsApi";
+
+export const metadata: Metadata = {
+  title: "About | Sabeel Kids",
+  alternates: {
+    canonical: "/about",
+  },
+};
 
 function getYouTubeEmbedUrl(videoUrl: string) {
   if (!videoUrl) {

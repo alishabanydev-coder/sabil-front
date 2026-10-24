@@ -8,6 +8,22 @@ import {
   fetchPublicAppCatalogueSuggestedVideos,
 } from "@/component/admin/services/appManagementApi";
 import AppIndex from "@/component/appCatalogue/AppIndex";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/app",
+  },
+  openGraph: {
+    title: "Sabeel Kids Catalogue App",
+    description:
+      "Watch Sabeel Kids films and series in the catalogue.",
+    url: "/app",
+    siteName: "Sabeel Kids",
+    locale: "en_US",
+    type: "website",
+  },
+};
 
 type VideoData = {
   _id: string;

@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: "Sabeel Kids Catalogue App",
   description:
     "App-style landscape catalogue experience for Sabeel Kids with horizontal movie rails.",
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function AppShellLayout({

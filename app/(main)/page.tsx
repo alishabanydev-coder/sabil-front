@@ -13,6 +13,13 @@ import ProjectCatalogue from "@/component/home/projectCatalogue/ProjectCatalogue
 import OurMission from "@/component/home/ourMission/OurMission";
 import SabeelStats from "@/component/home/sabeelStats/SabeelStats";
 import JoinOurMission from "@/component/home/joinOurMission/JoinOurMission";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 const sections = [
   "banner",

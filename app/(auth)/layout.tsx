@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Sign in | Sabeel Kids",
   description: "Sign in or create an account on Sabeel Kids.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function AuthLayout({

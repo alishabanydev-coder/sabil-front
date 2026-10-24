@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "./ThemeContext";
 import MUIThemeProvider from "./MUIThemeProvider";
 import { fetchPublicSocialMediaLinks } from "@/component/admin/services/socialMediaApi";
-
-const SITE_URL = "https://sabeelkids.com";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Sabeel Kids | Joyful Islamic Streaming for Children",
   description:
     "Sabeel Kids is a streaming platform for children featuring Sabeel Group animations, blogs, and project breakdowns. We create high-quality content in an Islamic atmosphere to teach values through joyful entertainment.",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     ],
     apple: "/icon-192.webp",
   },
-    authors: [{ name: "Sabeel Group", url: "https://sabeelkids.com" }],
+    authors: [{ name: "Sabeel Group", url: SITE_URL }],
   creator: "Sabeel Group",
   publisher: "Sabeel Kids",
   openGraph: {
@@ -78,7 +78,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="en" dir="rtl">
       <body>
         <script
           type="application/ld+json"
