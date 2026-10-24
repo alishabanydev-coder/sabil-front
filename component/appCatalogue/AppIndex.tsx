@@ -5,6 +5,7 @@ import { Stack } from "@mui/material";
 import AppCataloguePage from "./component/appCatalogue/AppCataloguePage";
 import AppCatalogueCapacitor from "./component/appCatalogue/AppCatalogueCapacitor";
 import Navbar from "./component/Navbar";
+import AppRouteLoader from "./component/AppRouteLoader";
 import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
 
 type NavigationButtonData = {
@@ -70,17 +71,10 @@ const AppIndex = ({
   };
 
   if (displayMode === "pending") {
-    return (
-      <Stack
-        aria-hidden
-        sx={{
-          width: "100%",
-          height: "100dvh",
-          overflow: "hidden",
-          bgcolor: "#12041f",
-        }}
-      />
-    );
+    // Same loader as app/(app)/app/loading.tsx so the browser sees one
+    // continuous loader from data fetching through hydration. On native the
+    // Capacitor splash covers this phase (see CapacitorShell).
+    return <AppRouteLoader />;
   }
 
   const isNative = displayMode === "native";
