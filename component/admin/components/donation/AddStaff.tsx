@@ -4,7 +4,10 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import OutboxIcon from "@mui/icons-material/Outbox";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import {
+  Box,
   Button,
   Divider,
   IconButton,
@@ -41,6 +44,8 @@ const AddStaff = ({
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [photo, setPhoto] = useState("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoError, setPhotoError] = useState("");
   const [bio, setBio] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -55,23 +60,74 @@ const AddStaff = ({
       setName("");
       setRole("");
       setPhoto("");
+      setPhotoFile(null);
+      setPhotoError("");
       setBio("");
     }
   }, [open, staff]);
+
+  const savedPhotoForEdit = () =>
+    editingId
+      ? localStaff.find((member) => member.id === editingId)?.photo
+      : undefined;
+
+  const revokeIfUnsavedBlob = (url: string) => {
+    if (!url.startsWith("blob:") || url === savedPhotoForEdit()) {
+      return;
+    }
+
+    URL.revokeObjectURL(url);
+  };
 
   const resetForm = () => {
     setEditingId(null);
     setName("");
     setRole("");
     setPhoto("");
+    setPhotoFile(null);
+    setPhotoError("");
     setBio("");
   };
 
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setPhotoError("Photo must be an image file.");
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      setPhotoError("Photo must be 8 MB or smaller.");
+      return;
+    }
+
+    revokeIfUnsavedBlob(photo);
+    setPhotoError("");
+    setPhotoFile(file);
+    setPhoto(URL.createObjectURL(file));
+  };
+
+  const handleRemovePhoto = () => {
+    revokeIfUnsavedBlob(photo);
+    setPhoto("");
+    setPhotoFile(null);
+    setPhotoError("");
+  };
+
   const handleStartEdit = (member: StaffMemberDraft) => {
+    revokeIfUnsavedBlob(photo);
     setEditingId(member.id);
     setName(member.name);
     setRole(member.role);
     setPhoto(member.photo);
+    setPhotoFile(member.photoFile ?? null);
+    setPhotoError("");
     setBio(member.bio);
     setShowForm(true);
   };
@@ -84,15 +140,24 @@ const AddStaff = ({
     const nextMember = {
       name: name.trim(),
       role: role.trim(),
-      photo: photo.trim(),
+      photo,
+      photoFile: photoFile ?? undefined,
       bio: bio.trim(),
     };
 
     if (editingId) {
       setLocalStaff((prev) =>
-        prev.map((member) =>
-          member.id === editingId ? { ...member, ...nextMember } : member
-        )
+        prev.map((member) => {
+          if (member.id !== editingId) {
+            return member;
+          }
+
+          if (member.photo.startsWith("blob:") && member.photo !== photo) {
+            URL.revokeObjectURL(member.photo);
+          }
+
+          return { ...member, ...nextMember };
+        })
       );
     } else {
       setLocalStaff((prev) =>
@@ -157,7 +222,13 @@ const AddStaff = ({
                     gap: 1,
                   }}
                 >
-                  <Stack sx={{ flexDirection: "row", alignItems: "center", gap: 0.5 }}>
+                  <Stack
+                    sx={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 0.5,
+                    }}
+                  >
                     <IconButton
                       size="small"
                       disabled={index === 0}
@@ -190,6 +261,19 @@ const AddStaff = ({
                     >
                       <ArrowDownwardIcon fontSize="small" />
                     </IconButton>
+                    {member.photo ? (
+                      <Box
+                        component="img"
+                        src={member.photo}
+                        alt=""
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 1,
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : null}
                     <Stack>
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         {member.name}
@@ -200,16 +284,36 @@ const AddStaff = ({
                     </Stack>
                   </Stack>
                   <Stack sx={{ flexDirection: "row" }}>
-                    <IconButton size="small" onClick={() => handleStartEdit(member)}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleStartEdit(member)}
+                    >
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
                     <IconButton
                       size="small"
-                      onClick={() =>
+                      onClick={() => {
+                        if (
+                          editingId === member.id &&
+                          photo.startsWith("blob:") &&
+                          photo !== member.photo
+                        ) {
+                          URL.revokeObjectURL(photo);
+                        }
+
+                        if (member.photo.startsWith("blob:")) {
+                          URL.revokeObjectURL(member.photo);
+                        }
+
+                        if (editingId === member.id) {
+                          resetForm();
+                          setShowForm(false);
+                        }
+
                         setLocalStaff((prev) =>
                           reindex(prev.filter((item) => item.id !== member.id))
-                        )
-                      }
+                        );
+                      }}
                     >
                       <DeleteOutlineIcon fontSize="small" />
                     </IconButton>
@@ -233,13 +337,55 @@ const AddStaff = ({
                 onChange={(event) => setRole(event.target.value)}
                 fullWidth
               />
-              <TextField
-                label="Photo URL"
-                value={photo}
-                onChange={(event) => setPhoto(event.target.value)}
-                helperText="Optional. Use an uploaded image path or public URL."
-                fullWidth
-              />
+
+              <Stack sx={{ flexDirection: "row", alignItems: "center", gap: 1}}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<OutboxIcon />}
+                  sx={{ height: 50 }}
+                  fullWidth
+                >
+                  {photo ? "Change Photo" : "Upload Photo"}
+                  <input
+                    hidden
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                  />
+                </Button>
+                {photoError ? (
+                  <Typography variant="caption" color="error">
+                    {photoError}
+                  </Typography>
+                ) : null}
+                {photo ? (
+                  <Stack
+                    sx={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 0,
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={photo}
+                      alt="Staff photo preview"
+                      sx={{
+                        width: 54,
+                        height: 54,
+                        borderRadius: 1,
+                        objectFit: "cover",
+                        border: (theme) => `1px solid ${theme.palette.divider}`,
+                      }}
+                    />
+                    <IconButton color="inherit" onClick={handleRemovePhoto}>
+                      <DeleteOutlinedIcon fontSize="small" color="error" />
+                    </IconButton>
+                  </Stack>
+                ) : null}
+              </Stack>
+
               <TextField
                 label="Bio"
                 value={bio}
@@ -248,10 +394,17 @@ const AddStaff = ({
                 minRows={2}
                 fullWidth
               />
-              <Stack sx={{ flexDirection: "row", justifyContent: "flex-end", gap: 1 }}>
+              <Stack
+                sx={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  gap: 1,
+                }}
+              >
                 <Button
                   color="inherit"
                   onClick={() => {
+                    revokeIfUnsavedBlob(photo);
                     resetForm();
                     setShowForm(false);
                   }}
@@ -282,7 +435,9 @@ const AddStaff = ({
         </Stack>
 
         <Divider flexItem />
-        <Stack sx={{ flexDirection: "row", justifyContent: "flex-end", gap: 1 }}>
+        <Stack
+          sx={{ flexDirection: "row", justifyContent: "flex-end", gap: 1 }}
+        >
           <Button variant="outlined" onClick={onClose}>
             Cancel
           </Button>

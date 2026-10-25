@@ -116,7 +116,7 @@ const AdCard = ({ item }: { item: AdItem }) => (
       <Typography
         sx={{
           color: "primary.main",
-          fontWeight: 600,
+          fontWeight: 700,
           fontSize: { xs: 14, sm: 20, md: 28, lg: 30, xl: 32 },
         }}
       >
@@ -400,7 +400,7 @@ const DonationBanner = ({
           height: "auto",
           mx: "auto",
           bgcolor: "background.paper",
-          boxShadow: 3,
+          boxShadow: 4,
           p: { xs: 1.5, md: 2 },
           px: 4,
           borderRadius: { xs: 8, md: 12 },

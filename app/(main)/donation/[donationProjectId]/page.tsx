@@ -98,21 +98,22 @@ const DonationProjectPage = async ({ params }: PageProps) => {
         sx={{
           position: "absolute",
           flexDirection: "row",
-          top: { xs: 70, sm: 82, md: 100, lg: 120, xl: 145 },
-          left: { xs: 7, sm: 15, md: 20, lg: 25, xl: 28 },
+          top: { xs: 12, sm: 20, md: 28, lg: 34, xl: 38 },
+          left: { xs: 5, sm: 14, md: 20, lg: 25, xl: 28 },
           alignItems: "center",
           justifyContent: "center",
           gap: { xs: 0.5, sm: 1 },
           cursor: "pointer",
+          zIndex: 105,
           "& p": {
-            fontSize: { xs: 10, sm: 16, md: 18, lg: 20, xl: 22 },
+            fontSize: { xs: 0, sm: 14, md: 18, lg: 20, xl: 22 },
+            fontWeight: 800,
             lineHeight: 1,
-            letterSpacing: 1,
             color: "#00C1F2",
           },
           "& img": {
-            width: { xs: 12, sm: 18, md: 22, lg: 28, xl: 30 },
-            height: { xs: 8, sm: 12, md: 14, lg: 19, xl: 21 },
+            width: { xs: 30, sm: 18, md: 22, lg: 25, xl: 30 },
+            height: { xs: 14, sm: 12, md: 14, lg: 15, xl: 21 },
             mb: 0.2,
           },
         }}

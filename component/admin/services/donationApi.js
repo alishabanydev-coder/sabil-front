@@ -99,6 +99,62 @@ function buildSectionsPayload(sections = []) {
   return { payload, sectionImages };
 }
 
+function storedUploadPath(url) {
+  if (typeof url !== "string") {
+    return "";
+  }
+
+  const trimmed = url.trim();
+  if (!trimmed || trimmed.startsWith("blob:") || trimmed.startsWith("data:")) {
+    return "";
+  }
+
+  const assetBase = getPublicAssetBase();
+  let assetPath = trimmed;
+
+  if (trimmed.startsWith(assetBase)) {
+    assetPath = trimmed.slice(assetBase.length);
+  } else if (trimmed.startsWith(API_BASE)) {
+    assetPath = trimmed.slice(API_BASE.length);
+  } else if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    try {
+      assetPath = new URL(trimmed).pathname;
+    } catch {
+      return "";
+    }
+  }
+
+  return assetPath.startsWith("/uploads/") ? assetPath : "";
+}
+
+function buildStaffPayload(staff = []) {
+  const staffPhotos = [];
+  const payload = staff.map((member, index) => {
+    const nextMember = {
+      id: member.id,
+      name: member.name,
+      role: member.role,
+      bio: typeof member.bio === "string" ? member.bio : "",
+      order: typeof member.order === "number" ? member.order : index,
+    };
+
+    if (member.photoFile instanceof File) {
+      const photoFileIndex = staffPhotos.length;
+      staffPhotos.push(member.photoFile);
+      return { ...nextMember, photoFileIndex };
+    }
+
+    const photo = storedUploadPath(member.photo);
+    if (photo) {
+      return { ...nextMember, photo };
+    }
+
+    return nextMember;
+  });
+
+  return { payload, staffPhotos };
+}
+
 function buildDonationFormData(body = {}) {
   const formData = new FormData();
 
@@ -183,7 +239,11 @@ function buildDonationFormData(body = {}) {
   }
 
   if (Array.isArray(body.staff)) {
-    formData.append("staff", JSON.stringify(body.staff));
+    const { payload, staffPhotos } = buildStaffPayload(body.staff);
+    formData.append("staff", JSON.stringify(payload));
+    staffPhotos.forEach((file) => {
+      formData.append("staffPhotos", file);
+    });
   }
 
   if (Array.isArray(body.updateRefs)) {

@@ -35,6 +35,7 @@ const nameSx = {
   overflow: "hidden",
   whiteSpace: "nowrap",
   cursor: "pointer",
+  lineHeight: 1,
 };
 
 const roleSx = {
@@ -45,6 +46,7 @@ const roleSx = {
   textOverflow: "ellipsis",
   overflow: "hidden",
   whiteSpace: "nowrap",
+  lineHeight: 1,
 };
 
 const EllipsisText = ({ text, sx }: { text: string; sx: SxProps }) => {

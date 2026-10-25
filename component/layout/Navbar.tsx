@@ -128,28 +128,6 @@ export default function Navbar({
 
   const navigation = (
     <>
-      {/* <Box
-        component={Link}
-        href="/"
-        aria-label="Sabeel Kids home"
-        sx={{
-          position: "relative",
-          flexShrink: 0,
-          width: { xs: 36, sm: 44, md: 52, lg: 64 },
-          height: { xs: 36, sm: 44, md: 52, lg: 64 },
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Image
-          src="/new-logo.webp"
-          alt="Sabeel Kids logo"
-          fill
-          sizes="64px"
-          style={{ objectFit: "contain" }}
-        />
-        </Box> */}
       <AppButton
         tone="donation"
         href="/donation"
@@ -185,7 +163,7 @@ export default function Navbar({
       <Stack
         direction="row"
         sx={{
-          gap: { xs: 2, md: 3, lg: 3, xl: 5 },
+          gap: { xs: 2, md: 3, lg: 3.5, xl: 5 },
           alignItems: "center",
           display: { xs: "none", sm: "flex" },
         }}
@@ -202,7 +180,6 @@ export default function Navbar({
                 color: "#000",
                 fontSize: { xs: 10, sm: 10, md: 12, lg: 18, xl: 20 },
                 fontWeight: 800,
-                letterSpacing: 2,
                 textDecoration: "none",
                 "&:hover": {
                   color: "primary.light",
@@ -371,10 +348,11 @@ export default function Navbar({
         <Stack
           sx={{
             mx: "auto",
-            px: { xs: 3, sm: 2, md: 3, lg: 4, xl: 14 },
+            px: { xs: 2.5, sm: 3.2, md: 4, lg: 6, xl: 10 },
             flexDirection: "row",
             bgcolor: "white",
-            py: { xs: 1.2, sm: 1.5, md: 2, lg: 3, xl: 4 },
+            py: { xs: 1, sm: 1.4, md: 1.5, lg: 2.5, xl: 3 },
+            boxShadow: 4,
             borderRadius: {
               xs: "0px 0px 16px 16px",
               sm: "0px 0px 20px 20px",
@@ -382,11 +360,6 @@ export default function Navbar({
               lg: "0px 0px 32px 32px",
               xl: "0px 0px 40px 40px",
             },
-            border: (theme) => `4px solid ${theme.palette.secondary.main}`,
-            borderWidth: { xs: 2, sm: 2.5, md: 3, lg: 4, xl: 5 },
-            borderStyle: "solid",
-            borderColor: "secondary.main",
-            borderTop: "none",
             gap: { xs: 5, sm: 1.5, md: 2, lg: 2.5, xl: 16 },
           }}
         >

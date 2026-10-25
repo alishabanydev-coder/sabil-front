@@ -36,6 +36,7 @@ export type StaffMemberDraft = {
   name: string;
   role: string;
   photo: string;
+  photoFile?: File;
   bio: string;
   order: number;
 };

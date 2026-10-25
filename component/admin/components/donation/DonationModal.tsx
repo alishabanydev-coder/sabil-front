@@ -340,6 +340,8 @@ const DonationModal = ({
     return () => controller.abort();
   }, []);
 
+  console.log(staff);
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
     setImage(file);
@@ -602,7 +604,7 @@ const DonationModal = ({
                       size="small"
                       aria-label="Remove poster"
                     >
-                      <CloseIcon fontSize="small" />
+                      <CloseIcon fontSize="small" color={"error"} />
                     </IconButton>
                   </>
                 ) : (
@@ -813,7 +815,7 @@ const DonationModal = ({
                 variant="contained"
                 onClick={() => setSecondaryModal("section")}
               >
-                Add Sections
+                Add Sections ({sections.length})
               </Button>
 
               <Button
@@ -821,7 +823,7 @@ const DonationModal = ({
                 variant="contained"
                 onClick={() => setSecondaryModal("faq")}
               >
-                Add FAQs
+                Add FAQs ({faqs.length})
               </Button>
 
               <Button
@@ -829,7 +831,7 @@ const DonationModal = ({
                 variant="contained"
                 onClick={() => setSecondaryModal("update")}
               >
-                Add Updates
+                Add Updates ({updates.length})
               </Button>
 
               <Button
@@ -837,7 +839,7 @@ const DonationModal = ({
                 variant="contained"
                 onClick={() => setSecondaryModal("steps")}
               >
-                Add Steps
+                Add Steps ({steps.length})
               </Button>
 
               <Button
@@ -845,7 +847,7 @@ const DonationModal = ({
                 variant="contained"
                 onClick={() => setSecondaryModal("staff")}
               >
-                Add Staff
+                Add Staff ({staff.length})
               </Button>
             </Stack>
 
@@ -951,7 +953,7 @@ const DonationModal = ({
                   },
                 }}
               />
-              
+
               <FormControlLabel
                 control={
                   <IOSSwitch
@@ -1001,7 +1003,9 @@ const DonationModal = ({
                 variant="contained"
                 color="primary"
                 fullWidth
-                disabled={isSubmitting || isLoadingProject || isListOrderDuplicate}
+                disabled={
+                  isSubmitting || isLoadingProject || isListOrderDuplicate
+                }
                 onClick={() => void handleSubmit()}
               >
                 {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}

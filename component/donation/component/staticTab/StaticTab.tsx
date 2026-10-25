@@ -34,11 +34,13 @@ const StaticTab = ({
         cardSx={cardSx}
         cardHeaderSx={cardHeaderSx}
       />
-      <TeamCard
-        projectData={projectData}
-        cardSx={cardSx}
-        cardHeaderSx={cardHeaderSx}
-      />
+      {projectData.staff && projectData.staff.length > 0 && (
+        <TeamCard
+          projectData={projectData}
+          cardSx={cardSx}
+          cardHeaderSx={cardHeaderSx}
+        />
+      )}
       <JoinDonors />
     </Stack>
   );
