@@ -37,6 +37,11 @@ function appendChannelVideoForm(formData, body) {
       return;
     }
 
+    if (Array.isArray(value)) {
+      formData.append(key, JSON.stringify(value));
+      return;
+    }
+
     formData.append(key, value);
   });
 }
@@ -693,3 +698,175 @@ export async function deleteProject(id, { signal } = {}) {
     status: response.status,
   };
 }
+
+export async function fetchConnectedYouTubeChannels({ signal } = {}) {
+  const response = await fetch(`${API_BASE}/api/admin/channels/youtube/channels`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+    signal,
+  });
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      oauthConfigured: false,
+      redirectUri: "",
+      channels: [],
+      message: data?.message || "Failed to load connected YouTube channels.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    oauthConfigured: Boolean(data?.oauthConfigured),
+    redirectUri: data?.redirectUri || "",
+    channels: Array.isArray(data?.channels) ? data.channels : [],
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function startYouTubeOAuth({ signal } = {}) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/youtube/oauth/start`,
+    {
+      method: "GET",
+      headers: getAuthHeaders(),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      authUrl: "",
+      message: data?.message || "Failed to start YouTube OAuth.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    authUrl: data?.authUrl || "",
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function disconnectYouTubeChannel(
+  youtubeChannelId,
+  { signal } = {}
+) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/youtube/channels/${encodeURIComponent(
+      youtubeChannelId
+    )}`,
+    {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      message: data?.message || "Failed to disconnect YouTube channel.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    message: data?.message || "YouTube channel disconnected.",
+    status: response.status,
+  };
+}
+
+export async function fetchYouTubeVideoDetails(videoUrl, { signal } = {}) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/youtube/fetch-video`,
+    {
+      method: "POST",
+      headers: getAuthHeaders(true),
+      body: JSON.stringify({ url: videoUrl }),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      videoDetails: null,
+      message: data?.message || "Failed to fetch video details from YouTube.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    videoDetails: data?.videoDetails || null,
+    message: "",
+    status: response.status,
+  };
+}
+
+export async function syncProjectVideosFromYouTube(
+  projectId,
+  { overwriteText = false, signal } = {}
+) {
+  const response = await fetch(
+    `${API_BASE}/api/admin/channels/projects/${projectId}/videos/sync-youtube`,
+    {
+      method: "POST",
+      headers: getAuthHeaders(true),
+      body: JSON.stringify({ overwriteText }),
+      signal,
+    }
+  );
+  const data = await readJson(response);
+
+  if (!response.ok) {
+    handleExpiredAdminSession(response.status);
+
+    return {
+      ok: false,
+      syncedCount: 0,
+      failedCount: 0,
+      errors: [],
+      videos: [],
+      message: data?.message || "Failed to sync project videos from YouTube.",
+      status: response.status,
+    };
+  }
+
+  return {
+    ok: true,
+    syncedCount: Number(data?.syncedCount) || 0,
+    failedCount: Number(data?.failedCount) || 0,
+    errors: Array.isArray(data?.errors) ? data.errors : [],
+    videos: Array.isArray(data?.videos)
+      ? data.videos.map((video) => ({
+          ...video,
+          thumbnail: normalizeAssetUrl(video.thumbnail),
+          isPublished: video.isPublished !== false,
+        }))
+      : [],
+    message: data?.message || "Synced videos from YouTube.",
+    status: response.status,
+  };
+}
+

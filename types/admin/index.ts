@@ -46,6 +46,8 @@ export type {
 export type {
   AdminChannelProjectRecord,
   AdminChannelVideoRecord,
+  ConnectedYouTubeChannelRecord,
+  YouTubeVideoFetchedDetails,
 } from "./channels";
 
 export type { AdminCatalogueRecord } from "./catalogue";

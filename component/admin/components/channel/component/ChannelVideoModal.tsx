@@ -2,6 +2,8 @@ import {
   Button,
   ButtonGroup,
   Checkbox,
+  Chip,
+  CircularProgress,
   FormControlLabel,
   Modal,
   Stack,
@@ -13,20 +15,25 @@ import { channelModalStyle } from "./channelModalStyle";
 
 type ChannelVideoModalProps = {
   activeThumbnailPreviewUrl: string;
+  commentCount: number;
   description: string;
   episode: string;
   episodeAlreadyExists: boolean;
   handleClose: () => void;
   handleDelete: () => void;
+  handleFetchFromYouTube: () => void;
   handleSubmit: () => void;
   isEditing: boolean;
   isEditingVideo: boolean;
+  isFetchingYouTube: boolean;
   isPublished: boolean;
   isSubmitDisabled: boolean;
   isSubmitting: boolean;
+  likeCount: number;
   open: boolean;
   parsedEpisode: number;
   parsedSeason: number;
+  parsedTags: string[];
   season: string;
   selectedVideo: AdminChannelVideoRecord | null;
   setDescription: (value: string) => void;
@@ -34,31 +41,41 @@ type ChannelVideoModalProps = {
   setIsPublished: (value: boolean) => void;
   setPreviewThumbnail: (value: boolean) => void;
   setSeason: (value: string) => void;
+  setTagsInput: (value: string) => void;
   setThumbnail: (file: File | null) => void;
   setTitle: (value: string) => void;
   setVideoUrl: (value: string) => void;
   submitErrorMsg: string;
+  tagsInput: string;
   thumbnail: File | null;
   title: string;
   videoUrl: string;
+  viewCount: number;
+  youTubeFetchErrorMsg: string;
+  youTubeFetchStatusMsg: string;
 };
 
 const ChannelVideoModal = ({
   activeThumbnailPreviewUrl,
+  commentCount,
   description,
   episode,
   episodeAlreadyExists,
   handleClose,
   handleDelete,
+  handleFetchFromYouTube,
   handleSubmit,
   isEditing,
   isEditingVideo,
+  isFetchingYouTube,
   isPublished,
   isSubmitDisabled,
   isSubmitting,
+  likeCount,
   open,
   parsedEpisode,
   parsedSeason,
+  parsedTags,
   season,
   selectedVideo,
   setDescription,
@@ -66,13 +83,18 @@ const ChannelVideoModal = ({
   setIsPublished,
   setPreviewThumbnail,
   setSeason,
+  setTagsInput,
   setThumbnail,
   setTitle,
   setVideoUrl,
   submitErrorMsg,
+  tagsInput,
   thumbnail,
   title,
   videoUrl,
+  viewCount,
+  youTubeFetchErrorMsg,
+  youTubeFetchStatusMsg,
 }: ChannelVideoModalProps) => {
   return (
     <Modal
@@ -81,7 +103,14 @@ const ChannelVideoModal = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Stack sx={channelModalStyle}>
+      <Stack
+        sx={{
+          ...channelModalStyle,
+          width: 460,
+          maxHeight: "90vh",
+          overflowY: "auto",
+        }}
+      >
         <Stack sx={{ width: "100%", gap: 2 }}>
           <Typography
             component="h2"
@@ -90,6 +119,41 @@ const ChannelVideoModal = ({
             {isEditing ? "Edit Video" : "Add Video"}
           </Typography>
 
+          <Stack direction="row" sx={{ gap: 1, alignItems: "flex-end" }}>
+            <TextField
+              variant="standard"
+              label="Video URL"
+              value={videoUrl}
+              onChange={(event) => setVideoUrl(event.target.value)}
+              fullWidth
+              placeholder="Paste YouTube URL or enter video URL"
+            />
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              disabled={!videoUrl.trim() || isFetchingYouTube || isSubmitting}
+              onClick={handleFetchFromYouTube}
+              sx={{ whiteSpace: "nowrap", minWidth: 135, height: 34 }}
+            >
+              {isFetchingYouTube ? (
+                <CircularProgress size={16} sx={{ mr: 1 }} />
+              ) : null}
+              {isFetchingYouTube ? "Fetching..." : "Fetch YouTube"}
+            </Button>
+          </Stack>
+
+          {youTubeFetchStatusMsg ? (
+            <Typography color="success.main" variant="caption">
+              {youTubeFetchStatusMsg}
+            </Typography>
+          ) : null}
+          {youTubeFetchErrorMsg ? (
+            <Typography color="error" variant="caption">
+              {youTubeFetchErrorMsg}
+            </Typography>
+          ) : null}
+
           <TextField
             variant="standard"
             label="Title"
@@ -97,15 +161,6 @@ const ChannelVideoModal = ({
             onChange={(event) => setTitle(event.target.value)}
             fullWidth
             placeholder="Enter title"
-          />
-
-          <TextField
-            variant="standard"
-            label="Video URL"
-            value={videoUrl}
-            onChange={(event) => setVideoUrl(event.target.value)}
-            fullWidth
-            placeholder="Enter video url"
           />
 
           <ButtonGroup size="small" aria-label="Thumbnail actions">
@@ -151,6 +206,59 @@ const ChannelVideoModal = ({
             rows={4}
             placeholder="Enter description"
           />
+
+          <TextField
+            label="Tags (comma-separated, auto-filled from YouTube)"
+            value={tagsInput}
+            onChange={(event) => setTagsInput(event.target.value)}
+            fullWidth
+            size="small"
+            placeholder="e.g. kids, stories, cartoons"
+          />
+
+          {parsedTags.length > 0 ? (
+            <Stack
+              direction="row"
+              sx={{ gap: 0.75, flexWrap: "wrap", maxHeight: 84, overflowY: "auto" }}
+            >
+              {parsedTags.map((tag) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  size="small"
+                  onDelete={() => {
+                    const nextTags = parsedTags.filter((item) => item !== tag);
+                    setTagsInput(nextTags.join(", "));
+                  }}
+                />
+              ))}
+            </Stack>
+          ) : null}
+
+          {viewCount > 0 || likeCount > 0 || commentCount > 0 ? (
+            <Stack
+              direction="row"
+              sx={{
+                gap: 1.5,
+                justifyContent: "space-between",
+                px: 1.5,
+                py: 0.75,
+                borderRadius: 1,
+                bgcolor: "action.hover",
+              }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                Views: <strong>{viewCount.toLocaleString()}</strong>
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Likes: <strong>{likeCount.toLocaleString()}</strong>
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Comments: <strong>{commentCount.toLocaleString()}</strong>
+              </Typography>
+            </Stack>
+          ) : null}
+
           <Stack direction="row" sx={{ gap: 2 }}>
             <TextField
               label="Season"

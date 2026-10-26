@@ -2,6 +2,7 @@
 
 import {
   Button,
+  Chip,
   CircularProgress,
   Divider,
   IconButton,
@@ -18,26 +19,37 @@ import ChannelVideoModal from "./component/ChannelVideoModal";
 const Channels = () => {
   const {
     activeThumbnailPreviewUrl,
+    commentCount,
+    connectedYouTubeChannels,
     description,
     episode,
     episodeAlreadyExists,
     errorMsg,
     handleClose,
+    handleConnectYouTube,
     handleDelete,
+    handleDisconnectYouTubeChannel,
+    handleFetchFromYouTube,
     handleOpen,
     handleSelectProject,
     handleSelectedVideo,
     handleSubmit,
+    handleSyncProjectVideosFromYouTube,
     handleToggleSeason,
+    isConnectingYouTube,
     isEditing,
     isEditingVideo,
+    isFetchingYouTube,
     isPublished,
     isSubmitDisabled,
     isSubmitting,
+    isSyncingProjectVideos,
+    likeCount,
     loading,
     open,
     parsedEpisode,
     parsedSeason,
+    parsedTags,
     previewThumbnail,
     projects,
     season,
@@ -50,23 +62,30 @@ const Channels = () => {
     setIsPublished,
     setPreviewThumbnail,
     setSeason,
+    setTagsInput,
     setThumbnail,
     setTitle,
     setVideoUrl,
     submitErrorMsg,
+    tagsInput,
     thumbnail,
     title,
     videoUrl,
     videosBySeason,
     videosErrorMsg,
     videosLoading,
+    viewCount,
+    youTubeBannerErrorMsg,
+    youTubeBannerMsg,
+    youTubeFetchErrorMsg,
+    youTubeFetchStatusMsg,
   } = useAdminChannels();
 
   return (
     <>
-      <Stack sx={{ gap: 3, height: "100%" }}>
-        <Stack sx={{ gap: 0.5, width: "100%", height: "115px" }}>
-          <Stack direction="row" sx={{ gap: 0.5 }}>
+      <Stack sx={{ gap: 2.5, height: "100%" }}>
+        <Stack sx={{ gap: 1, width: "100%" }}>
+          <Stack direction="row" sx={{ gap: 0.5, alignItems: "center" }}>
             <Typography component="h2" sx={{ fontSize: 22, fontWeight: 700 }}>
               Channels
             </Typography>
@@ -130,6 +149,73 @@ const Channels = () => {
                 </Stack>
               )}
             </Stack>
+          </Stack>
+
+          <Stack
+            direction="row"
+            sx={{
+              gap: 1.5,
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              px: 1,
+            }}
+          >
+            <Stack
+              direction="row"
+              sx={{ gap: 1, flexWrap: "wrap", alignItems: "center" }}
+            >
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                disabled={isConnectingYouTube}
+                onClick={handleConnectYouTube}
+              >
+                {isConnectingYouTube ? "Opening Google..." : "Connect YouTube"}
+              </Button>
+
+              {selectedProject ? (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="secondary"
+                  disabled={
+                    isSyncingProjectVideos ||
+                    connectedYouTubeChannels.length === 0
+                  }
+                  onClick={handleSyncProjectVideosFromYouTube}
+                >
+                  {isSyncingProjectVideos
+                    ? "Syncing Videos..."
+                    : "Sync Project Videos from YouTube"}
+                </Button>
+              ) : null}
+
+              {connectedYouTubeChannels.map((channel) => (
+                <Chip
+                  key={channel.youtubeChannelId}
+                  label={`YT: ${channel.channelTitle}`}
+                  size="small"
+                  color="success"
+                  variant="outlined"
+                  onDelete={() =>
+                    handleDisconnectYouTubeChannel(channel.youtubeChannelId)
+                  }
+                />
+              ))}
+            </Stack>
+
+            {youTubeBannerMsg ? (
+              <Typography color="success.main" variant="caption">
+                {youTubeBannerMsg}
+              </Typography>
+            ) : null}
+            {youTubeBannerErrorMsg ? (
+              <Typography color="error" variant="caption">
+                {youTubeBannerErrorMsg}
+              </Typography>
+            ) : null}
           </Stack>
         </Stack>
 
@@ -365,20 +451,25 @@ const Channels = () => {
 
       <ChannelVideoModal
         activeThumbnailPreviewUrl={activeThumbnailPreviewUrl}
+        commentCount={commentCount}
         description={description}
         episode={episode}
         episodeAlreadyExists={episodeAlreadyExists}
         handleClose={handleClose}
         handleDelete={handleDelete}
+        handleFetchFromYouTube={handleFetchFromYouTube}
         handleSubmit={handleSubmit}
         isEditing={isEditing}
         isEditingVideo={isEditingVideo}
+        isFetchingYouTube={isFetchingYouTube}
         isPublished={isPublished}
         isSubmitDisabled={isSubmitDisabled}
         isSubmitting={isSubmitting}
+        likeCount={likeCount}
         open={open}
         parsedEpisode={parsedEpisode}
         parsedSeason={parsedSeason}
+        parsedTags={parsedTags}
         season={season}
         selectedVideo={selectedVideo}
         setDescription={setDescription}
@@ -386,19 +477,24 @@ const Channels = () => {
         setIsPublished={setIsPublished}
         setPreviewThumbnail={setPreviewThumbnail}
         setSeason={setSeason}
+        setTagsInput={setTagsInput}
         setThumbnail={setThumbnail}
         setTitle={setTitle}
         setVideoUrl={setVideoUrl}
         submitErrorMsg={submitErrorMsg}
+        tagsInput={tagsInput}
         thumbnail={thumbnail}
         title={title}
         videoUrl={videoUrl}
+        viewCount={viewCount}
+        youTubeFetchErrorMsg={youTubeFetchErrorMsg}
+        youTubeFetchStatusMsg={youTubeFetchStatusMsg}
       />
 
       <ChannelThumbnailPreviewModal
         activeThumbnailPreviewUrl={activeThumbnailPreviewUrl}
-        open={previewThumbnail}
-        onClose={() => setPreviewThumbnail(false)}
+        previewThumbnail={previewThumbnail}
+        setPreviewThumbnail={setPreviewThumbnail}
       />
     </>
   );
