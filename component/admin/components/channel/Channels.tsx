@@ -493,8 +493,8 @@ const Channels = () => {
 
       <ChannelThumbnailPreviewModal
         activeThumbnailPreviewUrl={activeThumbnailPreviewUrl}
-        previewThumbnail={previewThumbnail}
-        setPreviewThumbnail={setPreviewThumbnail}
+        open={previewThumbnail}
+        onClose={() => setPreviewThumbnail(false)}
       />
     </>
   );
