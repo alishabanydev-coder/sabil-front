@@ -20,27 +20,27 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import type { VideoData } from "../../navbarTypes";
 
 type GradientStat = {
-  number: string;
+  number: number;
   icon: ElementType<SvgIconProps>;
   color: [string, string];
   label: string;
 };
 
-const gradientColor: GradientStat[] = [
+const gradientColor = (video: VideoData): GradientStat[] => [
   {
-    number: "856",
+    number: 0,
     icon: BookmarkBorderOutlinedIcon,
     color: ["#0F70E3", "#044CD4"],
     label: "save",
   },
   {
-    number: "2.1k",
+    number: video.likeCount,
     icon: FavoriteBorderRoundedIcon,
     color: ["#FB5C73", "#FB2C5C"],
     label: "likes",
   },
   {
-    number: "12.4k",
+    number: video.viewCount,
     icon: VisibilityRoundedIcon,
     color: ["#7E4DDE", "#6C32C9"],
     label: "views",
@@ -85,7 +85,8 @@ const playButtonWave = keyframes`
   }
 `;
 
-function StatGradientDefs({ videoId }: { videoId: string }) {
+function StatGradientDefs({ videoId, video }: { videoId: string; video: VideoData }) {
+  const stats = gradientColor(video);
   return (
     <svg
       aria-hidden
@@ -95,7 +96,7 @@ function StatGradientDefs({ videoId }: { videoId: string }) {
       style={{ position: "absolute" }}
     >
       <defs>
-        {gradientColor.map((stat, index) => (
+        {stats.map((stat, index) => (
           <linearGradient
             key={stat.number}
             id={`page-stat-gradient-${videoId}-${index}`}
@@ -125,7 +126,7 @@ function GradientIcon({
 
 export default function AppCataloguePageCard({ video }: { video: VideoData }) {
   const router = useRouter();
-
+  console.log(video);
   return (
     <Stack
       tabIndex={0}
@@ -162,7 +163,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         transition: "all 0.35s ease",
       }}
     >
-      <StatGradientDefs videoId={video._id} />
+      <StatGradientDefs videoId={video._id} video={video} />
       <Stack
         onClick={() => router.push(`/app/watch/${video._id}`)}
         onKeyDown={(event) => {
@@ -192,7 +193,11 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         sx={{
           position: "absolute",
           left: "50%",
-          top: { xs: "calc(50% - 60px)", sm: "calc(50% - 60px)", lg: "calc(50% - 68px)" },
+          top: {
+            xs: "calc(50% - 60px)",
+            sm: "calc(50% - 60px)",
+            lg: "calc(50% - 68px)",
+          },
           width: { xs: 64, sm: 68, lg: 75 },
           height: { xs: 64, sm: 68, lg: 75 },
           transform: "translateX(-50%)",
@@ -274,7 +279,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
               justifyContent: "center",
             }}
           >
-            {gradientColor.map((stat, index) => (
+            {gradientColor(video).map((stat, index) => (
               <Button
                 key={index}
                 disableRipple
@@ -299,11 +304,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
                   />
                 </Stack>
                 <Stack sx={{ flexDirection: "column" }}>
-                  <Typography
-                  // sx={{ fontSize: { xs: 10, sm: 11, lg: 12 }, lineHeight: 1 }}
-                  >
-                    {stat.number}
-                  </Typography>
+                  <Typography>{stat.number}</Typography>
                   <Typography component="span">{stat.label}</Typography>
                 </Stack>
               </Button>

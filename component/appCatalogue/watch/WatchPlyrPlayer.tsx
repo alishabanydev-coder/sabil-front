@@ -3,7 +3,8 @@
 import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import WatchPlyrFullscreenHud from "@/component/appCatalogue/watch/WatchPlyrFullscreenHud";
 import { suppressWatchNavbarBack } from "@/component/appCatalogue/watch/suppressWatchNavbarBack";
-import { Stack, Typography, useTheme } from "@mui/material";
+import VideocamOffOutlined from "@mui/icons-material/VideocamOffOutlined";
+import { CircularProgress, Stack, Typography, useTheme } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -166,12 +167,18 @@ const WatchPlyrPlayer = ({
   const onStartedChangeRef = useRef(onStartedChange);
   const isPlayingRef = useRef(false);
   const isPlaybackActiveRef = useRef(false);
+  const hasPlayedRef = useRef(false);
+  const hasFrameRef = useRef(false);
+  const unavailableRef = useRef(false);
   const hudHideTimeoutRef = useRef<number | null>(null);
   const [started, setStarted] = useState(false);
   const [plyrRoot, setPlyrRoot] = useState<HTMLElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hudVisible, setHudVisible] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [isUnavailable, setIsUnavailable] = useState(false);
+  const [hasFrame, setHasFrame] = useState(false);
   const theme = useTheme();
   const youtubeId = getYouTubeVideoId(url);
 
@@ -223,29 +230,6 @@ const WatchPlyrPlayer = ({
   revealHudRef.current = revealHud;
   const scheduleHudHideRef = useRef(scheduleHudHide);
   scheduleHudHideRef.current = scheduleHudHide;
-
-  const concealHud = useCallback(() => {
-    if (!isPlayingRef.current) {
-      return;
-    }
-
-    clearHudHide();
-    setHudVisible(false);
-    playerRef.current?.toggleControls(false);
-  }, [clearHudHide]);
-
-  const handleHudSurfaceTap = useCallback(() => {
-    if (hudVisible) {
-      concealHud();
-      return;
-    }
-
-    revealHud();
-  }, [hudVisible, concealHud, revealHud]);
-
-  const handleInlineSurfaceTap = useCallback(() => {
-    setHudVisible((visible) => !visible);
-  }, []);
 
   const handleTogglePlayback = useCallback(() => {
     const player = playerRef.current;
@@ -442,9 +426,14 @@ const WatchPlyrPlayer = ({
   }, []);
 
   const beginPlayback = useCallback(() => {
+    if (unavailableRef.current) {
+      return;
+    }
+
     const player = playerRef.current;
     pendingStartRef.current = true;
     markStarted();
+    setShowSpinner(true);
 
     if (!player) {
       return;
@@ -461,6 +450,9 @@ const WatchPlyrPlayer = ({
     pendingStartRef.current = false;
     isPlayingRef.current = false;
     isPlaybackActiveRef.current = false;
+    hasPlayedRef.current = false;
+    hasFrameRef.current = false;
+    unavailableRef.current = false;
     fsPhaseRef.current = "idle";
     isFullscreenRef.current = false;
     clearHudHide();
@@ -471,6 +463,9 @@ const WatchPlyrPlayer = ({
     setIsPlaying(false);
     setHudVisible(false);
     setPlyrRoot(null);
+    setShowSpinner(false);
+    setIsUnavailable(false);
+    setHasFrame(false);
   }, [url, clearHudHide, clearShellInlineStyles]);
 
   useEffect(() => {
@@ -623,10 +618,30 @@ const WatchPlyrPlayer = ({
           setHudVisible(true);
         }
       });
+      player.on("timeupdate", () => {
+        if (
+          hasFrameRef.current ||
+          unavailableRef.current ||
+          !player ||
+          player.currentTime <= 0.05
+        ) {
+          return;
+        }
+
+        hasFrameRef.current = true;
+        setHasFrame(true);
+        if (!unavailableRef.current) {
+          setShowSpinner(false);
+        }
+      });
       player.on("playing", () => {
+        hasPlayedRef.current = true;
         isPlaybackActiveRef.current = true;
         isPlayingRef.current = true;
         setIsPlaying(true);
+        if (!unavailableRef.current && hasFrameRef.current) {
+          setShowSpinner(false);
+        }
         if (isNative && isFullscreenRef.current) {
           scheduleHudHideRef.current();
         } else if (!isNative) {
@@ -636,12 +651,22 @@ const WatchPlyrPlayer = ({
       player.on("waiting", () => {
         isPlaybackActiveRef.current = false;
         clearHudHide();
+        if (
+          startedRef.current &&
+          isPlayingRef.current &&
+          !unavailableRef.current
+        ) {
+          setShowSpinner(true);
+        }
       });
       player.on("pause", () => {
         isPlayingRef.current = false;
         isPlaybackActiveRef.current = false;
         clearHudHide();
         setIsPlaying(false);
+        if (hasPlayedRef.current && !unavailableRef.current) {
+          setShowSpinner(false);
+        }
         setHudVisible(true);
         if (isFullscreenRef.current || player?.fullscreen.active) {
           revealHudRef.current();
@@ -652,6 +677,7 @@ const WatchPlyrPlayer = ({
         isPlaybackActiveRef.current = false;
         clearHudHide();
         setIsPlaying(false);
+        setShowSpinner(false);
         setHudVisible(true);
         if (isNative && isFullscreenRef.current) {
           exitAppFullscreenRef.current();
@@ -666,12 +692,29 @@ const WatchPlyrPlayer = ({
 
         setHudVisible(true);
       });
+      player.on("error", () => {
+        unavailableRef.current = true;
+        isPlayingRef.current = false;
+        isPlaybackActiveRef.current = false;
+        clearHudHide();
+        setIsPlaying(false);
+        setShowSpinner(false);
+        setIsUnavailable(true);
+      });
 
       playerRef.current = player;
       tryStartFromGesture();
     };
 
-    void setup();
+    void setup().catch(() => {
+      if (cancelled) {
+        return;
+      }
+
+      unavailableRef.current = true;
+      setShowSpinner(false);
+      setIsUnavailable(true);
+    });
 
     return () => {
       cancelled = true;
@@ -686,6 +729,24 @@ const WatchPlyrPlayer = ({
       container.innerHTML = "";
     };
   }, [youtubeId, isNative, markStarted, clearHudHide]);
+
+  const cover =
+    thumbnail && !hasFrame && !isUnavailable ? (
+      <img
+        src={thumbnail}
+        alt=""
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 4,
+          pointerEvents: "none",
+          transform: "translateZ(0)",
+        }}
+      />
+    ) : null;
 
   if (!youtubeId) {
     return (
@@ -756,10 +817,67 @@ const WatchPlyrPlayer = ({
               },
             }}
           />
+          {cover && !plyrRoot ? cover : null}
+          {showSpinner && !isUnavailable ? (
+            <Stack
+              sx={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 30,
+                alignItems: "center",
+                justifyContent: "center",
+                pointerEvents: "none",
+              }}
+            >
+              <CircularProgress
+                size={90}
+                thickness={4}
+                disableShrink
+                aria-label="Loading video"
+                sx={{
+                  color: "primary.light",
+                  "& .MuiCircularProgress-circle": {
+                    strokeLinecap: "round",
+                    animation: "none",
+                  },
+                }}
+              />
+            </Stack>
+          ) : null}
+          {isUnavailable ? (
+            <Stack
+              role="status"
+              sx={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 30,
+                alignItems: "center",
+                justifyContent: "center",
+                pointerEvents: "none",
+              }}
+            >
+              <Stack
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1,
+                  px: 2.5,
+                  py: 2,
+                  borderRadius: 2,
+                  bgcolor: "rgba(0, 0, 0, 0.72)",
+                }}
+              >
+                <VideocamOffOutlined sx={{ fontSize: 48, color: "white" }} />
+                <Typography sx={{ color: "white", textAlign: "center" }}>
+                  Video is not available
+                </Typography>
+              </Stack>
+            </Stack>
+          ) : null}
         </Stack>
       </Stack>
 
-      {!started ? (
+      {!started && !isUnavailable ? (
         <Stack
           className="watch-player-preview"
           component="button"
@@ -782,17 +900,13 @@ const WatchPlyrPlayer = ({
             WebkitAppearance: "none",
             font: "inherit",
             color: "inherit",
-            "& img": {
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            },
           }}
         >
-          {thumbnail ? <img src={thumbnail} alt={title || "Video"} /> : null}
           <WatchPlayerPlayIcon />
         </Stack>
       ) : null}
+
+      {cover && plyrRoot ? createPortal(cover, plyrRoot) : null}
 
       {isNative && isFullscreen && plyrRoot
         ? createPortal(
@@ -801,7 +915,7 @@ const WatchPlyrPlayer = ({
               centerIconSize={NATIVE_PLAY_ICON_SIZE}
               visible={hudVisible}
               isPlaying={isPlaying}
-              onSurfaceTap={handleHudSurfaceTap}
+              onSurfaceTap={handleTogglePlayback}
               onTogglePlayback={handleTogglePlayback}
               onExitFullscreen={handleExitFullscreen}
             />,
@@ -832,7 +946,7 @@ const WatchPlyrPlayer = ({
               centerIconSize={NATIVE_PLAY_ICON_SIZE}
               visible={hudVisible}
               isPlaying={isPlaying}
-              onSurfaceTap={handleInlineSurfaceTap}
+              onSurfaceTap={handleTogglePlayback}
               onTogglePlayback={handleTogglePlayback}
             />,
             plyrRoot

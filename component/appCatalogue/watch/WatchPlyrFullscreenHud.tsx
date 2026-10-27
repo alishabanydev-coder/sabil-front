@@ -64,7 +64,7 @@ const WatchPlyrFullscreenHud = ({
       <Stack
         component="button"
         type="button"
-        aria-label={visible ? "Hide player controls" : "Show player controls"}
+        aria-label={isPlaying ? "Pause" : "Play"}
         onPointerDown={handleSurfacePointerDown}
         sx={{
           position: "absolute",

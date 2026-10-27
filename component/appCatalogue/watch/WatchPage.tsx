@@ -7,7 +7,6 @@ import WatchRelatedRail from "@/component/appCatalogue/watch/WatchRelatedRail";
 import { useWatchPage } from "@/component/appCatalogue/watch/useWatchPage";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
 import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
-import Image from "next/image";
 
 const PLAYER_FLEX = 7;
 const RAIL_FLEX = 3;
@@ -27,11 +26,7 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
     videoUrl,
     hasVideoUrl,
     videoThumbnail,
-    projectName,
-    projectLogo,
-    playerStarted,
     nativeBelowShift,
-    setPlayerStarted,
     setNativeBelowShift,
   } = useWatchPage(videoId);
 
@@ -169,7 +164,6 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
                     thumbnail={videoThumbnail}
                     title={video?.title}
                     isNative={true}
-                    onStartedChange={setPlayerStarted}
                     onNativeBelowShift={setNativeBelowShift}
                   />
                 </Stack>
@@ -191,93 +185,6 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
                   </Typography>
                 </Stack>
               )}
-
-              <Stack
-                sx={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  display: playerStarted ? "none" : "flex",
-                  backgroundColor: "rgba(0, 0, 0, 0.3)",
-                  px: 1,
-                  py: { xs: 2, sm: 1 },
-                  zIndex: 200,
-                  flexDirection: "row",
-                  gap: 1,
-                  height: { xs: 36, sm: 42, md: 56 },
-                  flexShrink: 0,
-                  alignItems: "center",
-                  width: "100%",
-                  minWidth: 0,
-                  "& img": {
-                    objectFit: "contain",
-                    borderRadius: "50%",
-                    border: "1px solid",
-                    borderColor: "primary.light",
-                    width: { xs: 30, sm: 36, md: 40, lg: 45 },
-                    height: { xs: 30, sm: 36, md: 40, lg: 45 },
-                    flexShrink: 0,
-                  },
-                  "& .episode": {
-                    color: "white",
-                    fontSize: { xs: 12, sm: 14, md: 18, lg: 20 },
-                    fontWeight: 500,
-                    flexShrink: 0,
-                    whiteSpace: "nowrap",
-                  },
-                  "& .title": {
-                    fontSize: { xs: 12, sm: 14, md: 20, lg: 21 },
-                    fontWeight: 700,
-                    color: "white",
-                    flex: 1,
-                    minWidth: 0,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  },
-                }}
-              >
-                {status === "ready" ? (
-                  <>
-                    {projectLogo ? (
-                      <Image
-                        src={projectLogo}
-                        alt={projectName || "Project"}
-                        width={36}
-                        height={36}
-                      />
-                    ) : null}
-                    <Typography className="episode">
-                      {`S${video?.season}-E${video?.episode} |`}
-                    </Typography>
-                    <Typography className="title">
-                      {video?.title || "Video"}
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <Skeleton
-                      animation="wave"
-                      variant="circular"
-                      sx={{
-                        width: { xs: 32, sm: 36, md: 40, lg: 44 },
-                        height: { xs: 32, sm: 36, md: 40, lg: 44 },
-                        flexShrink: 0,
-                      }}
-                    />
-                    <Skeleton
-                      animation="wave"
-                      variant="rectangular"
-                      sx={{
-                        flex: 1,
-                        minWidth: 0,
-                        height: "100%",
-                        borderRadius: 2,
-                      }}
-                    />
-                  </>
-                )}
-              </Stack>
             </Stack>
           </Stack>
         </Stack>

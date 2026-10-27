@@ -13,6 +13,9 @@ export type VideoData = {
   thumbnail: string;
   season?: number;
   episode?: number;
+  likeCount?: number;
+  viewCount?: number;
+  commentCount?: number;
 };
 
 export type NavbarProps = {

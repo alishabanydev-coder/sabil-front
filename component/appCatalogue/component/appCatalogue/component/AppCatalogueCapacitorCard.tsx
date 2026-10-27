@@ -14,33 +14,32 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
-import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import type { VideoData } from "../../navbarTypes";
 
 type GradientStat = {
-  number: string;
+  number: number;
   icon: ElementType<SvgIconProps>;
   color: [string, string];
   label: string;
 };
 
-const gradientColor: GradientStat[] = [
+const gradientColor = (video: VideoData): GradientStat[] => [
   {
-    number: "856",
-    icon: BookmarkOutlinedIcon,
+    number: 0,
+    icon: BookmarkBorderOutlinedIcon,
     color: ["#0F70E3", "#044CD4"],
     label: "save",
   },
   {
-    number: "2.1k",
-    icon: FavoriteRoundedIcon,
+    number: video.likeCount,
+    icon: FavoriteBorderRoundedIcon,
     color: ["#FB5C73", "#FB2C5C"],
     label: "likes",
   },
   {
-    number: "12.4k",
+    number: video.viewCount,
     icon: VisibilityRoundedIcon,
     color: ["#7E4DDE", "#6C32C9"],
     label: "views",
@@ -85,7 +84,8 @@ const playButtonWave = keyframes`
   }
 `;
 
-function StatGradientDefs({ videoId }: { videoId: string }) {
+function StatGradientDefs({ videoId, video }: { videoId: string; video: VideoData }) {
+  const stats = gradientColor(video);
   return (
     <svg
       aria-hidden
@@ -95,9 +95,9 @@ function StatGradientDefs({ videoId }: { videoId: string }) {
       style={{ position: "absolute" }}
     >
       <defs>
-        {gradientColor.map((stat, index) => (
+        {stats.map((stat, index) => (
           <linearGradient
-            key={stat.number}
+            key={stat.label}
             id={`capacitor-stat-gradient-${videoId}-${index}`}
             x1="0"
             y1="0"
@@ -149,6 +149,9 @@ export default function AppCatalogueCapacitorCard({
         overflow: "hidden",
         bgcolor: "white",
         cursor: "pointer",
+        WebkitTapHighlightColor: "transparent",
+        userSelect: "none",
+        WebkitUserSelect: "none",
         transition: "all 0.35s ease",
 
         "&:hover, &:focus-visible": {
@@ -201,7 +204,7 @@ export default function AppCatalogueCapacitorCard({
         },
       }}
     >
-      <StatGradientDefs videoId={video._id} />
+      <StatGradientDefs videoId={video._id} video={video} />
 
       {/* Thumbnail */}
       <Box
@@ -326,7 +329,7 @@ export default function AppCatalogueCapacitorCard({
               justifyContent: "center",
             }}
           >
-            {gradientColor.map((stat, index) => (
+            {gradientColor(video).map((stat, index) => (
               <Button
                 key={stat.label}
                 disableRipple

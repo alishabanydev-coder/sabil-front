@@ -351,7 +351,8 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
             <Typography
               component="h1"
               sx={{
-                fontSize: 18,
+                fontSize: 20,
+                fontWeight: 800,
                 color: "primary.main",
               }}
             >
@@ -362,7 +363,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
           <Stack
             direction="row"
             sx={{
-              width: "95%",
+              width: "98%",
               alignItems: "center",
               justifyContent: "space-between",
               direction: "ltr",
@@ -374,21 +375,19 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
               zIndex: 1,
             }}
           >
-            <Typography
-              component="h2"
-              sx={{ fontSize: 12, }}
-            >
+            <Typography component="h2" sx={{ fontSize: 12, fontWeight: 800 }}>
               Admin Name:
             </Typography>
             <Typography
               component="h2"
               sx={{
                 width: 90,
-                fontSize: 12,
+                fontSize: 13,
                 color: "secondary.main",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
+                fontWeight: 800,
               }}
             >
               {adminName}
