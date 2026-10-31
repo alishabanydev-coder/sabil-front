@@ -10,6 +10,10 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchDonationProjects } from "../services/donationApi";
 import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
+import {
   createSiteUser,
   createSiteUserDonation,
   deleteDonation,
@@ -197,6 +201,7 @@ export const useAdminUsers = () => {
     const result = await fetchDonationProjects({ signal });
     if (!result.ok) {
       setIsFetchingDonationProjects(false);
+      notifyAdminError(result.message || "Failed to load donation projects.");
       return;
     }
 
@@ -218,6 +223,7 @@ export const useAdminUsers = () => {
       if (!result.ok) {
         setLoading(false);
         setErrorMsg(result.message);
+        notifyAdminError(result.message || "Failed to load users.");
         return;
       }
 
@@ -236,6 +242,7 @@ export const useAdminUsers = () => {
 
     if (!result.ok) {
       setDonationsErrorMsg(result.message);
+      notifyAdminError(result.message || "Failed to load donations.");
       setUserDonations([]);
       return;
     }
@@ -346,9 +353,11 @@ export const useAdminUsers = () => {
 
       if (!result.ok) {
         setDonationsErrorMsg(result.message);
+        notifyAdminError(result.message || "Failed to delete donation.");
         return;
       }
 
+      notifyAdminSuccess("Donation deleted.");
       setDonationsErrorMsg("");
       await refreshUserDonations();
     },
@@ -377,9 +386,11 @@ export const useAdminUsers = () => {
 
       if (!result.ok) {
         setErrorMsg(result.message);
+        notifyAdminError(result.message || "Failed to deactivate user.");
         return;
       }
 
+      notifyAdminSuccess("User deactivated.");
       setRows((currentRows) => currentRows.filter((row) => row.id !== user.id));
     },
     [editOpen, handleCloseEdit, selectedUserId]
@@ -444,10 +455,13 @@ export const useAdminUsers = () => {
     setIsSubmitting(false);
 
     if (!result.ok) {
-      setSubmitErrorMsg(result.message);
+      const message = result.message || "Failed to update user.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
+    notifyAdminSuccess("User updated.");
     handleCloseEdit();
     await loadUsers();
   }, [
@@ -477,10 +491,13 @@ export const useAdminUsers = () => {
     setIsCreatingUser(false);
 
     if (!result.ok) {
-      setAddUserErrorMsg(result.message);
+      const message = result.message || "Failed to create user.";
+      setAddUserErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
+    notifyAdminSuccess("User created.");
     handleCloseAddUser();
     await loadUsers();
   }, [
@@ -512,10 +529,13 @@ export const useAdminUsers = () => {
     setIsAddingDonation(false);
 
     if (!result.ok) {
-      setAddDonationErrorMsg(result.message);
+      const message = result.message || "Failed to add donation.";
+      setAddDonationErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
+    notifyAdminSuccess("Donation added.");
     handleCloseAddDonation();
     setEditPanel("donations");
     await refreshUserDonations();
@@ -547,10 +567,13 @@ export const useAdminUsers = () => {
     setIsUpdatingDonation(false);
 
     if (!result.ok) {
-      setEditDonationErrorMsg(result.message);
+      const message = result.message || "Failed to update donation.";
+      setEditDonationErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
+    notifyAdminSuccess("Donation updated.");
     handleCloseEditDonation();
     setEditPanel("donations");
     await refreshUserDonations();

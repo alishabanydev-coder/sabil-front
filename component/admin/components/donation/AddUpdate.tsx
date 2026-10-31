@@ -24,6 +24,10 @@ import { secondaryModalSlotProps } from "./secondaryModalBackdrop";
 import ImageSlider from "@/component/donation/component/ImageSlider";
 import { fetchBlogs, createBlog, updateBlog } from "../../services/blogApi";
 import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../../snackbar/notifyAdmin";
+import {
   fetchBreakdowns,
   createBreakdown,
   updateBreakdown,
@@ -448,9 +452,13 @@ const AddUpdate = ({
             });
 
             if (!result.ok || !result.blog) {
-              setSubmitError(result.message || "Failed to update blog.");
+              const message = result.message || "Failed to update blog.";
+              setSubmitError(message);
+              notifyAdminError(message);
               return;
             }
+
+            notifyAdminSuccess("Blog updated.");
 
             setLocalUpdates((prev) =>
               prev.map((update) =>
@@ -469,9 +477,13 @@ const AddUpdate = ({
             });
 
             if (!result.ok || !result.blog) {
-              setSubmitError(result.message || "Failed to create blog.");
+              const message = result.message || "Failed to create blog.";
+              setSubmitError(message);
+              notifyAdminError(message);
               return;
             }
+
+            notifyAdminSuccess("Blog created.");
 
             if (editingId) {
               setLocalUpdates((prev) =>
@@ -503,9 +515,13 @@ const AddUpdate = ({
             });
 
             if (!result.ok || !result.breakdown) {
-              setSubmitError(result.message || "Failed to update breakdown.");
+              const message = result.message || "Failed to update breakdown.";
+              setSubmitError(message);
+              notifyAdminError(message);
               return;
             }
+
+            notifyAdminSuccess("Breakdown updated.");
 
             setLocalUpdates((prev) =>
               prev.map((update) =>
@@ -528,9 +544,13 @@ const AddUpdate = ({
             });
 
             if (!result.ok || !result.breakdown) {
-              setSubmitError(result.message || "Failed to create breakdown.");
+              const message = result.message || "Failed to create breakdown.";
+              setSubmitError(message);
+              notifyAdminError(message);
               return;
             }
+
+            notifyAdminSuccess("Breakdown created.");
 
             if (editingId) {
               setLocalUpdates((prev) =>

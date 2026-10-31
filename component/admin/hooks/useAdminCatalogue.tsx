@@ -7,6 +7,10 @@ import {
   fetchProjects,
   updateChannelCatalogue,
 } from "../services/projectsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 export const useAdminCatalogue = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -114,7 +118,9 @@ export const useAdminCatalogue = () => {
       };
 
       if (!isEditing && !thumbnailFile) {
-        setSubmitErrorMsg("Catalogue image is required.");
+        const message = "Catalogue image is required.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
       const result =
@@ -127,7 +133,13 @@ export const useAdminCatalogue = () => {
           : await createChannelCatalogue(projectId.trim(), payload);
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message =
+          result.message ||
+          (isEditing
+            ? "Failed to update catalogue."
+            : "Failed to create catalogue.");
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -143,15 +155,17 @@ export const useAdminCatalogue = () => {
         );
       }
 
+      notifyAdminSuccess(isEditing ? "Catalogue updated." : "Catalogue created.");
       handleCancel();
     } catch (error) {
-      setSubmitErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
           : isEditing
             ? "Failed to update catalogue."
-            : "Failed to create catalogue."
-      );
+            : "Failed to create catalogue.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -180,7 +194,9 @@ export const useAdminCatalogue = () => {
       );
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to delete catalogue.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -189,11 +205,13 @@ export const useAdminCatalogue = () => {
           (catalogue) => catalogue._id !== editingCatalogueId
         )
       );
+      notifyAdminSuccess("Catalogue deleted.");
       handleCancel();
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to delete catalogue."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to delete catalogue.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -230,6 +248,7 @@ export const useAdminCatalogue = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load catalogues.");
           return;
         }
 
@@ -240,9 +259,10 @@ export const useAdminCatalogue = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load catalogues."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load catalogues.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 
@@ -261,6 +281,7 @@ export const useAdminCatalogue = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load projects.");
           return;
         }
 
@@ -271,9 +292,10 @@ export const useAdminCatalogue = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load Projects."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load Projects.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 

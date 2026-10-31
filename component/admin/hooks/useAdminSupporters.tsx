@@ -5,6 +5,10 @@ import ReadOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createUser, deleteUser, fetchUsers } from "../services/usersApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 function mapSupporterRow(user: any): SupporterRecord {
   return {
@@ -51,6 +55,7 @@ export const useAdminSupporters = () => {
     if (!result.ok) {
       setLoading(false);
       setErrorMsg(result.message);
+      notifyAdminError(result.message || "Failed to load supporters.");
       return;
     }
 
@@ -106,7 +111,9 @@ export const useAdminSupporters = () => {
       .filter(Boolean);
 
     if (!normalizedUsername || !normalizedMessage) {
-      setSubmitErrorMsg("Username and message are required.");
+      const message = "Username and message are required.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -122,18 +129,22 @@ export const useAdminSupporters = () => {
       });
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to create user.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
       if (result.user) {
         setRows((currentRows) => [mapSupporterRow(result.user), ...currentRows]);
       }
+      notifyAdminSuccess("Supporter added.");
       handleClose();
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to create user."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to create user.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -148,9 +159,11 @@ export const useAdminSupporters = () => {
     const result = await deleteUser(user._id);
     if (!result.ok) {
       setErrorMsg(result.message);
+      notifyAdminError(result.message || "Failed to delete user.");
       return;
     }
 
+    notifyAdminSuccess("Supporter deleted.");
     setRows((currentRows) => currentRows.filter((row) => row._id !== user._id));
   }, []);
 

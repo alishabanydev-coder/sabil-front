@@ -16,6 +16,10 @@ import {
   syncProjectVideosFromYouTube,
   updateChannelVideo,
 } from "../services/projectsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 function normalizeTagList(input: string[] | string | undefined): string[] {
   if (Array.isArray(input)) {
@@ -55,15 +59,11 @@ export const useAdminChannels = () => {
   const [youtubeVideoId, setYoutubeVideoId] = useState("");
   const [youtubeChannelId, setYoutubeChannelId] = useState("");
   const [isFetchingYouTube, setIsFetchingYouTube] = useState(false);
-  const [youTubeFetchStatusMsg, setYouTubeFetchStatusMsg] = useState("");
-  const [youTubeFetchErrorMsg, setYouTubeFetchErrorMsg] = useState("");
   const [connectedYouTubeChannels, setConnectedYouTubeChannels] = useState<
     ConnectedYouTubeChannelRecord[]
   >([]);
   const [isConnectingYouTube, setIsConnectingYouTube] = useState(false);
   const [isSyncingProjectVideos, setIsSyncingProjectVideos] = useState(false);
-  const [youTubeBannerMsg, setYouTubeBannerMsg] = useState("");
-  const [youTubeBannerErrorMsg, setYouTubeBannerErrorMsg] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [season, setSeason] = useState("");
   const [episode, setEpisode] = useState("");
@@ -78,6 +78,9 @@ export const useAdminChannels = () => {
   const [isEditingVideo, setIsEditingVideo] = useState(false);
   const [previewThumbnail, setPreviewThumbnail] = useState(false);
   const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState("");
+  const [fetchedPosterPath, setFetchedPosterPath] = useState("");
+  const [fetchedPosterUrl, setFetchedPosterUrl] = useState("");
+  const [fetchedPosterSourceUrl, setFetchedPosterSourceUrl] = useState("");
   const [isPublished, setIsPublished] = useState(true);
 
   const parsedTags = useMemo(() => normalizeTagList(tagsInput), [tagsInput]);
@@ -119,15 +122,26 @@ export const useAdminChannels = () => {
     [parsedEpisode, parsedSeason, selectedVideo?._id, videos]
   );
 
+  const matchedFetchedPosterPath =
+    fetchedPosterPath && fetchedPosterSourceUrl === videoUrl.trim()
+      ? fetchedPosterPath
+      : "";
+  const matchedFetchedPosterUrl = matchedFetchedPosterPath
+    ? fetchedPosterUrl
+    : "";
+
   const activeThumbnailPreviewUrl =
-    thumbnailPreviewUrl || selectedVideo?.thumbnail || "";
+    thumbnailPreviewUrl ||
+    matchedFetchedPosterUrl ||
+    selectedVideo?.thumbnail ||
+    "";
 
   const isSubmitDisabled = useMemo(
     () =>
       isSubmitting ||
       !title.trim() ||
       !videoUrl.trim() ||
-      (!thumbnail && !selectedVideo?.thumbnail) ||
+      (!thumbnail && !matchedFetchedPosterPath && !selectedVideo?.thumbnail) ||
       !description.trim() ||
       !season ||
       !episode ||
@@ -137,6 +151,7 @@ export const useAdminChannels = () => {
       episode,
       episodeAlreadyExists,
       isSubmitting,
+      matchedFetchedPosterPath,
       season,
       selectedVideo?.thumbnail,
       thumbnail,
@@ -156,13 +171,14 @@ export const useAdminChannels = () => {
     setCommentCount(0);
     setYoutubeVideoId("");
     setYoutubeChannelId("");
-    setYouTubeFetchStatusMsg("");
-    setYouTubeFetchErrorMsg("");
     setSeason("");
     setEpisode("");
     setSubmitErrorMsg("");
     setIsEditing(false);
     setPreviewThumbnail(false);
+    setFetchedPosterPath("");
+    setFetchedPosterUrl("");
+    setFetchedPosterSourceUrl("");
     setSelectedVideo(null);
     setIsEditingVideo(false);
     setIsPublished(true);
@@ -176,6 +192,9 @@ export const useAdminChannels = () => {
     setTitle(video.title);
     setVideoUrl(video.url);
     setThumbnail(null);
+    setFetchedPosterPath("");
+    setFetchedPosterUrl("");
+    setFetchedPosterSourceUrl("");
     setDescription(video.description);
     setTagsInput(Array.isArray(video.tags) ? video.tags.join(", ") : "");
     setViewCount(Number(video.viewCount) || 0);
@@ -183,8 +202,6 @@ export const useAdminChannels = () => {
     setCommentCount(Number(video.commentCount) || 0);
     setYoutubeVideoId(video.youtubeVideoId || "");
     setYoutubeChannelId(video.youtubeChannelId || "");
-    setYouTubeFetchStatusMsg("");
-    setYouTubeFetchErrorMsg("");
     setSeason(video.season.toString());
     setEpisode(video.episode.toString());
     setIsPublished(video.isPublished !== false);
@@ -206,21 +223,27 @@ export const useAdminChannels = () => {
       const result = await fetchConnectedYouTubeChannels();
       if (result.ok) {
         setConnectedYouTubeChannels(result.channels);
+      } else {
+        notifyAdminError(
+          result.message || "Failed to load connected YouTube channels."
+        );
       }
-    } catch {
-      // Ignore background errors
+    } catch (error) {
+      notifyAdminError(
+        error instanceof Error
+          ? error.message
+          : "Failed to load connected YouTube channels."
+      );
     }
   }, []);
 
   const handleConnectYouTube = useCallback(async () => {
     setIsConnectingYouTube(true);
-    setYouTubeBannerErrorMsg("");
-    setYouTubeBannerMsg("");
 
     try {
       const result = await startYouTubeOAuth();
       if (!result.ok || !result.authUrl) {
-        setYouTubeBannerErrorMsg(
+        notifyAdminError(
           result.message || "Failed to start YouTube connection."
         );
         return;
@@ -236,8 +259,9 @@ export const useAdminChannels = () => {
         "ConnectYouTubeOAuth",
         `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
       );
+      notifyAdminSuccess("Google sign-in opened. Finish connecting in the popup.");
     } catch (error) {
-      setYouTubeBannerErrorMsg(
+      notifyAdminError(
         error instanceof Error
           ? error.message
           : "Failed to start YouTube connection."
@@ -249,22 +273,21 @@ export const useAdminChannels = () => {
 
   const handleDisconnectYouTubeChannel = useCallback(
     async (channelId: string) => {
-      setYouTubeBannerErrorMsg("");
-      setYouTubeBannerMsg("");
-
       try {
         const result = await disconnectYouTubeChannel(channelId);
         if (!result.ok) {
-          setYouTubeBannerErrorMsg(result.message);
+          notifyAdminError(
+            result.message || "Failed to disconnect YouTube channel."
+          );
           return;
         }
 
         setConnectedYouTubeChannels((current) =>
           current.filter((ch) => ch.youtubeChannelId !== channelId)
         );
-        setYouTubeBannerMsg(result.message);
+        notifyAdminSuccess(result.message || "YouTube channel disconnected.");
       } catch (error) {
-        setYouTubeBannerErrorMsg(
+        notifyAdminError(
           error instanceof Error
             ? error.message
             : "Failed to disconnect YouTube channel."
@@ -276,18 +299,19 @@ export const useAdminChannels = () => {
 
   const handleFetchFromYouTube = useCallback(async () => {
     if (!videoUrl.trim()) {
-      setYouTubeFetchErrorMsg("Please enter a YouTube video URL first.");
+      notifyAdminError("Please enter a YouTube video URL first.");
       return;
     }
 
     setIsFetchingYouTube(true);
-    setYouTubeFetchErrorMsg("");
-    setYouTubeFetchStatusMsg("");
 
     try {
-      const result = await fetchYouTubeVideoDetails(videoUrl.trim());
+      const sourceUrl = videoUrl.trim();
+      const result = await fetchYouTubeVideoDetails(sourceUrl, {
+        previousPoster: fetchedPosterPath,
+      });
       if (!result.ok || !result.videoDetails) {
-        setYouTubeFetchErrorMsg(
+        notifyAdminError(
           result.message || "Failed to fetch video details from YouTube."
         );
         return;
@@ -308,13 +332,25 @@ export const useAdminChannels = () => {
       setCommentCount(Number(details.commentCount) || 0);
       setYoutubeVideoId(details.youtubeVideoId || "");
       setYoutubeChannelId(details.youtubeChannelId || "");
+      if (details.thumbnailPath) {
+        setThumbnail(null);
+        setFetchedPosterPath(details.thumbnailPath);
+        setFetchedPosterUrl(details.thumbnail || "");
+        setFetchedPosterSourceUrl(sourceUrl);
+      }
 
+      const tagCount = Array.isArray(details.tags) ? details.tags.length : 0;
       const ownerNote = details.matchedOwnerChannel
-        ? `Fetched from "${details.youtubeChannelTitle}" (${details.tags.length} tag(s)).`
+        ? `Fetched from "${details.youtubeChannelTitle}" (${tagCount} tag(s)).`
         : `Fetched public details from "${details.youtubeChannelTitle}". Connect this video's channel to also fetch private tags.`;
-      setYouTubeFetchStatusMsg(ownerNote);
+      const posterNote = details.thumbnailPath
+        ? " Poster saved as WebP."
+        : details.posterError
+          ? ` Poster was not saved (${details.posterError}).`
+          : "";
+      notifyAdminSuccess(`${ownerNote}${posterNote}`);
     } catch (error) {
-      setYouTubeFetchErrorMsg(
+      notifyAdminError(
         error instanceof Error
           ? error.message
           : "Failed to fetch video details from YouTube."
@@ -322,31 +358,33 @@ export const useAdminChannels = () => {
     } finally {
       setIsFetchingYouTube(false);
     }
-  }, [videoUrl]);
+  }, [fetchedPosterPath, videoUrl]);
 
   const handleSyncProjectVideosFromYouTube = useCallback(async () => {
     if (!selectedProject) {
-      setYouTubeBannerErrorMsg("Please select a project first.");
+      notifyAdminError("Please select a project first.");
       return;
     }
 
     setIsSyncingProjectVideos(true);
-    setYouTubeBannerErrorMsg("");
-    setYouTubeBannerMsg("");
 
     try {
       const result = await syncProjectVideosFromYouTube(selectedProject);
       if (!result.ok) {
-        setYouTubeBannerErrorMsg(result.message);
+        notifyAdminError(
+          result.message || "Failed to sync project videos from YouTube."
+        );
         return;
       }
 
       if (Array.isArray(result.videos)) {
         setVideos(result.videos);
       }
-      setYouTubeBannerMsg(result.message);
+      notifyAdminSuccess(
+        result.message || "Synced project videos from YouTube."
+      );
     } catch (error) {
-      setYouTubeBannerErrorMsg(
+      notifyAdminError(
         error instanceof Error
           ? error.message
           : "Failed to sync project videos from YouTube."
@@ -358,7 +396,9 @@ export const useAdminChannels = () => {
 
   const handleSubmit = useCallback(async () => {
     if (!selectedProject) {
-      setSubmitErrorMsg("Please select a project first.");
+      const message = "Please select a project first.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -366,9 +406,9 @@ export const useAdminChannels = () => {
     setSubmitErrorMsg("");
 
     if (episodeAlreadyExists) {
-      setSubmitErrorMsg(
-        `Season ${parsedSeason}, episode ${parsedEpisode} already exists.`
-      );
+      const message = `Season ${parsedSeason}, episode ${parsedEpisode} already exists.`;
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       setIsSubmitting(false);
       return;
     }
@@ -377,7 +417,8 @@ export const useAdminChannels = () => {
       const videoPayload = {
         title: title.trim(),
         url: videoUrl.trim(),
-        thumbnail: thumbnail || selectedVideo?.thumbnail,
+        thumbnail:
+          thumbnail || matchedFetchedPosterPath || selectedVideo?.thumbnail,
         description: description.trim(),
         season: Number(season),
         episode: Number(episode),
@@ -399,7 +440,9 @@ export const useAdminChannels = () => {
           : await createChannelVideo(selectedProject, videoPayload);
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to save video.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -416,11 +459,13 @@ export const useAdminChannels = () => {
         );
       }
 
+      notifyAdminSuccess(isEditingVideo ? "Video updated." : "Video added.");
       handleClose();
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to create video."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to create video.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -433,6 +478,7 @@ export const useAdminChannels = () => {
     isEditingVideo,
     isPublished,
     likeCount,
+    matchedFetchedPosterPath,
     parsedEpisode,
     parsedSeason,
     parsedTags,
@@ -449,12 +495,16 @@ export const useAdminChannels = () => {
 
   const handleDelete = useCallback(async () => {
     if (!selectedProject) {
-      setSubmitErrorMsg("Please select a project first.");
+      const message = "Please select a project first.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
     if (!selectedVideo) {
-      setSubmitErrorMsg("Please select a video first.");
+      const message = "Please select a video first.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -468,18 +518,22 @@ export const useAdminChannels = () => {
       );
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to delete video.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
       setVideos((currentVideos) =>
         currentVideos.filter((video) => video._id !== selectedVideo._id)
       );
+      notifyAdminSuccess("Video deleted.");
       handleClose();
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to delete video."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to delete video.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -487,8 +541,6 @@ export const useAdminChannels = () => {
 
   const handleSelectProject = useCallback((projectId: string | null) => {
     setSelectedProject(projectId);
-    setYouTubeBannerMsg("");
-    setYouTubeBannerErrorMsg("");
   }, []);
 
   const handleToggleSeason = useCallback((seasonNumber: number) => {
@@ -507,13 +559,12 @@ export const useAdminChannels = () => {
       }
 
       if (payload.ok) {
-        setYouTubeBannerErrorMsg("");
-        setYouTubeBannerMsg(
+        notifyAdminSuccess(
           payload.message || `Connected YouTube channel "${payload.title}".`
         );
         loadConnectedYouTubeChannels();
       } else {
-        setYouTubeBannerErrorMsg(
+        notifyAdminError(
           payload.message || "Failed to connect YouTube channel."
         );
       }
@@ -543,6 +594,7 @@ export const useAdminChannels = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load projects.");
           return;
         }
 
@@ -553,9 +605,10 @@ export const useAdminChannels = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load projects."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load projects.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 
@@ -592,6 +645,7 @@ export const useAdminChannels = () => {
         if (!result.ok) {
           setVideos([]);
           setVideosErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load videos.");
           return;
         }
 
@@ -603,9 +657,10 @@ export const useAdminChannels = () => {
 
         setVideos([]);
         setVideosLoading(false);
-        setVideosErrorMsg(
-          error instanceof Error ? error.message : "Failed to load videos."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load videos.";
+        setVideosErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 
@@ -655,6 +710,7 @@ export const useAdminChannels = () => {
     isSyncingProjectVideos,
     likeCount,
     loading,
+    hasFetchedPoster: Boolean(matchedFetchedPosterPath),
     open,
     parsedEpisode,
     parsedSeason,
@@ -684,9 +740,5 @@ export const useAdminChannels = () => {
     videosErrorMsg,
     videosLoading,
     viewCount,
-    youTubeBannerErrorMsg,
-    youTubeBannerMsg,
-    youTubeFetchErrorMsg,
-    youTubeFetchStatusMsg,
   };
 };

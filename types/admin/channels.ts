@@ -43,6 +43,9 @@ export type YouTubeVideoFetchedDetails = {
   likeCount: number;
   commentCount: number;
   thumbnailUrl?: string;
+  thumbnail?: string;
+  thumbnailPath?: string;
+  posterError?: string;
   publishedAt?: string | null;
   matchedOwnerChannel: boolean;
 };

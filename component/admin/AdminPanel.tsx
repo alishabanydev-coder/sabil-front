@@ -32,6 +32,7 @@ import Catalogue from "./components/Catalogue";
 import Donation from "./components/Donation";
 import Supporters from "./components/Supporters";
 import Users from "./components/Users";
+import AdminNoticeBar from "./snackbar/AdminNoticeBar";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -468,6 +469,7 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
           </Box>
         )}
       </Stack>
+      <AdminNoticeBar />
     </Stack>
   );
 };

@@ -793,13 +793,40 @@ export async function disconnectYouTubeChannel(
   };
 }
 
-export async function fetchYouTubeVideoDetails(videoUrl, { signal } = {}) {
+function normalizeFetchedYouTubeDetails(details) {
+  if (!details || typeof details !== "object") {
+    return null;
+  }
+
+  const thumbnailPath =
+    typeof details.thumbnail === "string" &&
+    details.thumbnail.startsWith("/uploads/video-thumbnails/") &&
+    details.thumbnail.endsWith(".webp")
+      ? details.thumbnail
+      : "";
+
+  return {
+    ...details,
+    thumbnailPath,
+    thumbnail: thumbnailPath ? normalizeAssetUrl(thumbnailPath) : "",
+    posterError:
+      typeof details.posterError === "string" ? details.posterError : "",
+  };
+}
+
+export async function fetchYouTubeVideoDetails(
+  videoUrl,
+  { signal, previousPoster = "" } = {}
+) {
   const response = await fetch(
     `${API_BASE}/api/admin/channels/youtube/fetch-video`,
     {
       method: "POST",
       headers: getAuthHeaders(true),
-      body: JSON.stringify({ url: videoUrl }),
+      body: JSON.stringify({
+        url: videoUrl,
+        ...(previousPoster ? { previousPoster } : {}),
+      }),
       signal,
     }
   );
@@ -818,7 +845,7 @@ export async function fetchYouTubeVideoDetails(videoUrl, { signal } = {}) {
 
   return {
     ok: true,
-    videoDetails: data?.videoDetails || null,
+    videoDetails: normalizeFetchedYouTubeDetails(data?.videoDetails),
     message: "",
     status: response.status,
   };

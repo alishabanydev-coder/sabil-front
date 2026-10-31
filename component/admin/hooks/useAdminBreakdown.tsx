@@ -7,6 +7,10 @@ import {
   updateBreakdown,
 } from "../services/breakdownApi";
 import { fetchProjects } from "../services/projectsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 export const useAdminBreakdown = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -98,7 +102,9 @@ export const useAdminBreakdown = () => {
       const result = await deleteBreakdown(editingBreakdownId);
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to delete breakdown.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -107,11 +113,13 @@ export const useAdminBreakdown = () => {
           (breakdown) => breakdown._id !== editingBreakdownId
         )
       );
+      notifyAdminSuccess("Breakdown deleted.");
       handleCancel();
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to delete breakdown."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to delete breakdown.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -131,7 +139,9 @@ export const useAdminBreakdown = () => {
       };
 
       if (!isEditing && !thumbnailFile) {
-        setSubmitErrorMsg("Breakdown thumbnail is required.");
+        const message = "Breakdown thumbnail is required.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -141,7 +151,13 @@ export const useAdminBreakdown = () => {
           : await createBreakdown(payload);
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message =
+          result.message ||
+          (isEditing
+            ? "Failed to update breakdown."
+            : "Failed to create breakdown.");
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -157,15 +173,19 @@ export const useAdminBreakdown = () => {
         );
       }
 
+      notifyAdminSuccess(
+        isEditing ? "Breakdown updated." : "Breakdown created."
+      );
       handleCancel();
     } catch (error) {
-      setSubmitErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
           : isEditing
             ? "Failed to update breakdown."
-            : "Failed to create breakdown."
-      );
+            : "Failed to create breakdown.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -198,6 +218,7 @@ export const useAdminBreakdown = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load breakdowns.");
           return;
         }
 
@@ -208,9 +229,12 @@ export const useAdminBreakdown = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load breakdowns."
-        );
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to load breakdowns.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 
@@ -229,6 +253,7 @@ export const useAdminBreakdown = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load projects.");
           return;
         }
 
@@ -239,9 +264,10 @@ export const useAdminBreakdown = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load Projects."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load Projects.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 

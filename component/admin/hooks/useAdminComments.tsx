@@ -12,6 +12,10 @@ import {
   fetchComments,
   updateComment,
 } from "../services/commentsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 import { fetchBlogs } from "../services/blogApi";
 import { fetchDonationProjects } from "../services/donationApi";
 import {
@@ -83,6 +87,7 @@ export const useAdminComments = () => {
       if (!result.ok) {
         setLoading(false);
         setErrorMsg(result.message);
+        notifyAdminError(result.message || "Failed to load comments.");
         return;
       }
 
@@ -375,7 +380,9 @@ export const useAdminComments = () => {
           : await createComment(body);
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to save comment.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -399,17 +406,21 @@ export const useAdminComments = () => {
         await loadComments();
       }
 
+      notifyAdminSuccess(
+        modalMode === "edit" ? "Comment updated." : "Comment created."
+      );
       setOpen(false);
       setModalMode("add");
       resetForm();
     } catch (error) {
-      setSubmitErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
           : modalMode === "edit"
             ? "Failed to update comment."
-            : "Failed to create comment."
-      );
+            : "Failed to create comment.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -441,9 +452,11 @@ export const useAdminComments = () => {
       const result = await deleteComment(comment._id);
       if (!result.ok) {
         setErrorMsg(result.message);
+        notifyAdminError(result.message || "Failed to delete comment.");
         return;
       }
 
+      notifyAdminSuccess("Comment deleted.");
       setRows((currentRows) =>
         currentRows
           .filter((row) => row._id !== comment._id)

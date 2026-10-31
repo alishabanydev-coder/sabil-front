@@ -15,6 +15,10 @@ import {
   updateAdmin,
 } from "../services/adminsApi";
 import { fetchProjects } from "../services/projectsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 function getRecordId(record: { _id?: string; id?: string } | string) {
   return typeof record === "string" ? record : record._id || record.id || "";
@@ -72,7 +76,10 @@ export const useAdminAdmins = () => {
 
     if (result.ok) {
       setAdmins(result.admins);
+      return;
     }
+
+    notifyAdminError(result.message || "Failed to load admins.");
   }, []);
 
   const loadProjects = useCallback(async () => {
@@ -80,7 +87,10 @@ export const useAdminAdmins = () => {
 
     if (result.ok) {
       setProjects(result.projects);
+      return;
     }
+
+    notifyAdminError(result.message || "Failed to load projects.");
   }, []);
 
   const handleAddAdmin = useCallback(() => {
@@ -150,19 +160,20 @@ export const useAdminAdmins = () => {
 
     const u = userName.trim();
     if (!u || (!isEditing && !adminPassword)) {
-      setFormError(
-        isEditing
-          ? "Username is required."
-          : "Username and password are required."
-      );
+      const message = isEditing
+        ? "Username is required."
+        : "Username and password are required.";
+      setFormError(message);
+      notifyAdminError(message);
       return;
     }
 
     if (adminRole === "admin") {
       if (adminPermissions.length === 0) {
-        setFormError(
-          "For role admin, select at least one tab for full CRUD access."
-        );
+        const message =
+          "For role admin, select at least one tab for full CRUD access.";
+        setFormError(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -170,7 +181,9 @@ export const useAdminAdmins = () => {
         adminPermissions.includes("channels") &&
         adminProjectIds.length === 0
       ) {
-        setFormError("Select at least one project for channel access.");
+        const message = "Select at least one project for channel access.";
+        setFormError(message);
+        notifyAdminError(message);
         return;
       }
     }
@@ -203,12 +216,15 @@ export const useAdminAdmins = () => {
 
     if (!result.ok) {
       setFormError(result.message);
+      notifyAdminError(result.message || "Failed to save admin.");
       return;
     }
 
-    setFormSuccess(
-      isEditing ? "Updated successfully." : "Created successfully."
-    );
+    const successMessage = isEditing
+      ? "Updated successfully."
+      : "Created successfully.";
+    setFormSuccess(successMessage);
+    notifyAdminSuccess(successMessage);
     setIsFormOpen(false);
     setOpen(false);
     reset();
@@ -230,7 +246,9 @@ export const useAdminAdmins = () => {
     async (admin: AdminAccountRecord) => {
       const id = admin._id || admin.id;
       if (!id) {
-        setFormError("Admin id is missing.");
+        const message = "Admin id is missing.";
+        setFormError(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -247,11 +265,13 @@ export const useAdminAdmins = () => {
 
       if (!result.ok) {
         setFormError(result.message);
+        notifyAdminError(result.message || "Failed to delete admin.");
         return;
       }
 
       setAdmins((prev) => prev.filter((item) => (item._id || item.id) !== id));
       setFormSuccess("Deleted successfully.");
+      notifyAdminSuccess("Deleted successfully.");
       if (editingAdminId === id) {
         setIsFormOpen(false);
         reset();

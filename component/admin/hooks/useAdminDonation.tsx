@@ -12,6 +12,10 @@ import {
   fetchDonationProjects,
   revalidateDonationProjectsPublicCache,
 } from "../services/donationApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 function sortDonationComments(items: AdminDonationCommentRecord[]) {
   return items
@@ -60,17 +64,19 @@ export const useAdminDonation = () => {
       if (!result.ok) {
         setDonationProjects([]);
         setErrorMsg(result.message);
+        notifyAdminError(result.message || "Failed to load donation projects.");
         return;
       }
 
       setDonationProjects(result.donationProjects);
     } catch (error) {
       setDonationProjects([]);
-      setErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
-          : "Failed to load donation projects."
-      );
+          : "Failed to load donation projects.";
+      setErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setLoading(false);
     }
@@ -96,6 +102,7 @@ export const useAdminDonation = () => {
             setDonationComments([]);
           }
           setCommentsErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load donation comments.");
           return null;
         }
 
@@ -109,11 +116,12 @@ export const useAdminDonation = () => {
         if (!forModal) {
           setDonationComments([]);
         }
-        setCommentsErrorMsg(
+        const message =
           error instanceof Error
             ? error.message
-            : "Failed to load donation comments."
-        );
+            : "Failed to load donation comments.";
+        setCommentsErrorMsg(message);
+        notifyAdminError(message);
         return null;
       } finally {
         if (!signal?.aborted) {
@@ -205,19 +213,21 @@ export const useAdminDonation = () => {
       const result = await updateDonationPageComments(selectedCommentIds);
 
       if (!result.ok) {
-        setCommentsSaveErrorMsg(
-          result.message || "Failed to save comment selection."
-        );
+        const message = result.message || "Failed to save comment selection.";
+        setCommentsSaveErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
       setDonationComments(result.items);
+      notifyAdminSuccess("Donation comments saved.");
       setCommentsOpen(false);
       setSelectedCommentIds([]);
     } catch (error) {
-      setCommentsSaveErrorMsg(
-        error instanceof Error ? error.message : "Failed to save comments."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to save comments.";
+      setCommentsSaveErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSavingComments(false);
     }
@@ -233,9 +243,11 @@ export const useAdminDonation = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to delete donation project.");
           return;
         }
 
+        notifyAdminSuccess("Donation project deleted.");
         await revalidateDonationProjectsPublicCache();
         await loadDonationProjects();
       } finally {

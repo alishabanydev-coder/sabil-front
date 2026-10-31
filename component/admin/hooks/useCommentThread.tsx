@@ -6,6 +6,10 @@ import {
   fetchCommentThread,
   updateComment,
 } from "../services/commentsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 type UseCommentThreadParams = {
   open: boolean;
@@ -118,11 +122,13 @@ export const useCommentThread = ({
       });
 
       if (!result.ok) {
+        const message = result.message || "Failed to load comments.";
+        notifyAdminError(message);
         if (!append) {
           setThread([]);
-          setErrorMsg(result.message);
+          setErrorMsg(message);
         } else {
-          setActionError(result.message);
+          setActionError(message);
         }
 
         if (append) {
@@ -248,7 +254,9 @@ export const useCommentThread = ({
     const normalizedText = editText.trim();
 
     if (!normalizedText) {
-      setActionError("Text is required.");
+      const message = "Text is required.";
+      setActionError(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -266,10 +274,13 @@ export const useCommentThread = ({
     setIsSubmitting(false);
 
     if (!result.ok) {
-      setActionError(result.message);
+      const message = result.message || "Failed to update comment.";
+      setActionError(message);
+      notifyAdminError(message);
       return;
     }
 
+    notifyAdminSuccess("Comment updated.");
     resetActionState();
     await loadThreadPage(false);
     onThreadChanged?.();
@@ -292,7 +303,9 @@ export const useCommentThread = ({
     const normalizedUsername = replyUsername.trim();
 
     if (!normalizedText || !normalizedUsername) {
-      setActionError("Text and username are required.");
+      const message = "Text and username are required.";
+      setActionError(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -310,10 +323,13 @@ export const useCommentThread = ({
     setIsSubmitting(false);
 
     if (!result.ok) {
-      setActionError(result.message);
+      const message = result.message || "Failed to create comment.";
+      setActionError(message);
+      notifyAdminError(message);
       return;
     }
 
+    notifyAdminSuccess("Reply added.");
     resetActionState();
     await loadThreadPage(false);
     onThreadChanged?.();
@@ -344,10 +360,13 @@ export const useCommentThread = ({
       setIsSubmitting(false);
 
       if (!result.ok) {
-        setActionError(result.message);
+        const message = result.message || "Failed to delete comment.";
+        setActionError(message);
+        notifyAdminError(message);
         return;
       }
 
+      notifyAdminSuccess("Comment deleted.");
       resetActionState();
       await loadThreadPage(false);
       onThreadChanged?.();

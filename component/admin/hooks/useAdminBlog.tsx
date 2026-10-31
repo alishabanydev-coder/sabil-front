@@ -6,6 +6,10 @@ import {
   fetchBlogs,
   updateBlog,
 } from "../services/blogApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 export const useAdminBlog = () => {
   const [open, setOpen] = useState(false);
@@ -61,7 +65,9 @@ export const useAdminBlog = () => {
     const normalizedVideoUrl = videoUrl.trim();
 
     if (!normalizedTitle || !normalizedContent) {
-      setSubmitErrorMsg("Title and content are required.");
+      const message = "Title and content are required.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -87,7 +93,11 @@ export const useAdminBlog = () => {
           });
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message =
+          result.message ||
+          (editingBlog ? "Failed to update blog." : "Failed to create blog.");
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -102,15 +112,17 @@ export const useAdminBlog = () => {
           setBlogs((currentBlogs) => [result.blog, ...currentBlogs]);
         }
       }
+      notifyAdminSuccess(editingBlog ? "Blog updated." : "Blog created.");
       handleClose();
     } catch (error) {
-      setSubmitErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
           : editingBlog
             ? "Failed to update blog."
-            : "Failed to create blog."
-      );
+            : "Failed to create blog.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -175,17 +187,21 @@ export const useAdminBlog = () => {
         const result = await deleteBlog(blog._id);
 
         if (!result.ok) {
-          setErrorMsg(result.message);
+          const message = result.message || "Failed to delete blog.";
+          setErrorMsg(message);
+          notifyAdminError(message);
           return;
         }
 
         setBlogs((currentBlogs) =>
           currentBlogs.filter((blogItem) => blogItem._id !== blog._id)
         );
+        notifyAdminSuccess("Blog deleted.");
       } catch (error) {
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to delete blog."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to delete blog.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     },
     [isSubmitting]
@@ -252,6 +268,7 @@ export const useAdminBlog = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load blogs.");
           return;
         }
 
@@ -262,9 +279,10 @@ export const useAdminBlog = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load blogs."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load blogs.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 

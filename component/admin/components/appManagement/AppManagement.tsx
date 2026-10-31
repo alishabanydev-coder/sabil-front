@@ -1,6 +1,5 @@
 ﻿import AddIcon from "@mui/icons-material/Add";
 import {
-  Alert,
   alpha,
   Button,
   Checkbox,
@@ -8,7 +7,6 @@ import {
   Divider,
   FormControlLabel,
   Skeleton,
-  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
@@ -22,12 +20,9 @@ const AppManagement = () => {
     activeNavId,
     activeProject,
     displayVideos,
-    errorMsg,
     handleCloseModal,
-    handleErrorSnackbarClose,
     handleHomeImageFileChange,
     handleRandomModeChange,
-    handleSuccessSnackbarClose,
     homeImage,
     isRandomVideosSelected,
     loading,
@@ -44,33 +39,11 @@ const AppManagement = () => {
     selectedProjects,
     selectedSection,
     setActiveNavId,
-    successMsg,
     toggleModalSelection,
   } = useAppManagement();
 
   return (
     <Stack>
-      <Snackbar
-        open={Boolean(errorMsg)}
-        autoHideDuration={5000}
-        onClose={handleErrorSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert severity="error" onClose={handleErrorSnackbarClose}>
-          {errorMsg}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={Boolean(successMsg)}
-        autoHideDuration={3000}
-        onClose={handleSuccessSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert severity="success" onClose={handleSuccessSnackbarClose}>
-          {successMsg}
-        </Alert>
-      </Snackbar>
-
       <Stack
         sx={{
           position: "relative",

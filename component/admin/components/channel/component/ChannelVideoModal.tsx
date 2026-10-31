@@ -19,6 +19,7 @@ type ChannelVideoModalProps = {
   description: string;
   episode: string;
   episodeAlreadyExists: boolean;
+  hasFetchedPoster: boolean;
   handleClose: () => void;
   handleDelete: () => void;
   handleFetchFromYouTube: () => void;
@@ -51,8 +52,6 @@ type ChannelVideoModalProps = {
   title: string;
   videoUrl: string;
   viewCount: number;
-  youTubeFetchErrorMsg: string;
-  youTubeFetchStatusMsg: string;
 };
 
 const ChannelVideoModal = ({
@@ -61,6 +60,7 @@ const ChannelVideoModal = ({
   description,
   episode,
   episodeAlreadyExists,
+  hasFetchedPoster,
   handleClose,
   handleDelete,
   handleFetchFromYouTube,
@@ -93,8 +93,6 @@ const ChannelVideoModal = ({
   title,
   videoUrl,
   viewCount,
-  youTubeFetchErrorMsg,
-  youTubeFetchStatusMsg,
 }: ChannelVideoModalProps) => {
   return (
     <Modal
@@ -143,17 +141,6 @@ const ChannelVideoModal = ({
             </Button>
           </Stack>
 
-          {youTubeFetchStatusMsg ? (
-            <Typography color="success.main" variant="caption">
-              {youTubeFetchStatusMsg}
-            </Typography>
-          ) : null}
-          {youTubeFetchErrorMsg ? (
-            <Typography color="error" variant="caption">
-              {youTubeFetchErrorMsg}
-            </Typography>
-          ) : null}
-
           <TextField
             variant="standard"
             label="Title"
@@ -167,15 +154,19 @@ const ChannelVideoModal = ({
             <Button
               component="label"
               variant={
-                thumbnail || selectedVideo?.thumbnail ? "contained" : "outlined"
+                thumbnail || hasFetchedPoster || selectedVideo?.thumbnail
+                  ? "contained"
+                  : "outlined"
               }
               color="primary"
             >
               {thumbnail
                 ? thumbnail.name
-                : isEditingVideo
-                ? "Change Thumbnail"
-                : "Select Thumbnail"}
+                : hasFetchedPoster
+                  ? "YouTube poster.webp"
+                  : isEditingVideo
+                    ? "Change Thumbnail"
+                    : "Select Thumbnail"}
               <input
                 hidden
                 type="file"

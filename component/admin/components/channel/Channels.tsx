@@ -26,6 +26,7 @@ const Channels = () => {
     episodeAlreadyExists,
     errorMsg,
     handleClose,
+    hasFetchedPoster,
     handleConnectYouTube,
     handleDelete,
     handleDisconnectYouTubeChannel,
@@ -75,10 +76,6 @@ const Channels = () => {
     videosErrorMsg,
     videosLoading,
     viewCount,
-    youTubeBannerErrorMsg,
-    youTubeBannerMsg,
-    youTubeFetchErrorMsg,
-    youTubeFetchStatusMsg,
   } = useAdminChannels();
 
   return (
@@ -171,8 +168,13 @@ const Channels = () => {
                 color="primary"
                 disabled={isConnectingYouTube}
                 onClick={handleConnectYouTube}
+                startIcon={
+                  isConnectingYouTube ? (
+                    <CircularProgress size={14} color="inherit" />
+                  ) : undefined
+                }
               >
-                {isConnectingYouTube ? "Opening Google..." : "Connect YouTube"}
+                Connect YouTube
               </Button>
 
               {selectedProject ? (
@@ -185,10 +187,13 @@ const Channels = () => {
                     connectedYouTubeChannels.length === 0
                   }
                   onClick={handleSyncProjectVideosFromYouTube}
+                  startIcon={
+                    isSyncingProjectVideos ? (
+                      <CircularProgress size={14} color="inherit" />
+                    ) : undefined
+                  }
                 >
-                  {isSyncingProjectVideos
-                    ? "Syncing Videos..."
-                    : "Sync Project Videos from YouTube"}
+                  Sync Project Videos from YouTube
                 </Button>
               ) : null}
 
@@ -205,17 +210,6 @@ const Channels = () => {
                 />
               ))}
             </Stack>
-
-            {youTubeBannerMsg ? (
-              <Typography color="success.main" variant="caption">
-                {youTubeBannerMsg}
-              </Typography>
-            ) : null}
-            {youTubeBannerErrorMsg ? (
-              <Typography color="error" variant="caption">
-                {youTubeBannerErrorMsg}
-              </Typography>
-            ) : null}
           </Stack>
         </Stack>
 
@@ -456,6 +450,7 @@ const Channels = () => {
         episode={episode}
         episodeAlreadyExists={episodeAlreadyExists}
         handleClose={handleClose}
+        hasFetchedPoster={hasFetchedPoster}
         handleDelete={handleDelete}
         handleFetchFromYouTube={handleFetchFromYouTube}
         handleSubmit={handleSubmit}
@@ -487,8 +482,6 @@ const Channels = () => {
         title={title}
         videoUrl={videoUrl}
         viewCount={viewCount}
-        youTubeFetchErrorMsg={youTubeFetchErrorMsg}
-        youTubeFetchStatusMsg={youTubeFetchStatusMsg}
       />
 
       <ChannelThumbnailPreviewModal

@@ -25,6 +25,10 @@ import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import { fetchProjects } from "../../services/projectsApi";
 import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../../snackbar/notifyAdmin";
+import {
   createDonationProject,
   fetchDonationProject,
   revalidateDonationProjectsPublicCache,
@@ -315,6 +319,7 @@ const DonationModal = ({
         if (!result.ok) {
           setProjects([]);
           setProjectsError(result.message);
+          notifyAdminError(result.message || "Failed to load projects.");
           return;
         }
 
@@ -325,9 +330,10 @@ const DonationModal = ({
         }
 
         setProjects([]);
-        setProjectsError(
-          error instanceof Error ? error.message : "Failed to load projects."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load projects.";
+        setProjectsError(message);
+        notifyAdminError(message);
       } finally {
         if (!controller.signal.aborted) {
           setProjectsLoading(false);
@@ -494,10 +500,15 @@ const DonationModal = ({
           : await createDonationProject(payload);
 
       if (!result.ok) {
-        setSubmitError(result.message || "Failed to save donation project.");
+        const message = result.message || "Failed to save donation project.";
+        setSubmitError(message);
+        notifyAdminError(message);
         return;
       }
 
+      notifyAdminSuccess(
+        isEditing ? "Donation project updated." : "Donation project created."
+      );
       await revalidateDonationProjectsPublicCache();
 
       resetForm();

@@ -5,6 +5,10 @@ import {
   fetchBanners,
   uploadBanner,
 } from "../services/bannerApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 export const useAdminBanner = () => {
   const [open, setOpen] = useState(false);
@@ -40,7 +44,9 @@ export const useAdminBanner = () => {
 
   const handleSubmit = useCallback(async () => {
     if (!poster) {
-      setSubmitErrorMsg("Please select a poster image.");
+      const message = "Please select a poster image.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -54,18 +60,22 @@ export const useAdminBanner = () => {
       });
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to upload banner.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
       if (result.banner) {
         setBanners((currentBanners) => [result.banner, ...currentBanners]);
       }
+      notifyAdminSuccess("Banner uploaded.");
       handleClose();
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to upload banner."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to upload banner.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -79,17 +89,21 @@ export const useAdminBanner = () => {
       const result = await deleteBannerById(bannerId);
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to delete banner.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
       setBanners((currentBanners) =>
         currentBanners.filter((bannerItem) => bannerItem._id !== bannerId)
       );
+      notifyAdminSuccess("Banner deleted.");
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to delete banner."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to delete banner.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -113,6 +127,7 @@ export const useAdminBanner = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load banners.");
           return;
         }
 
@@ -123,9 +138,10 @@ export const useAdminBanner = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load banner."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load banner.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 

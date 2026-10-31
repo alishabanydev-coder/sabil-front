@@ -9,6 +9,10 @@ import {
   fetchProjects,
   updateProject,
 } from "../services/projectsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 function createCharacterDraft(): AdminProjectCharacterFormRecord {
   return {
@@ -47,6 +51,7 @@ export const useAdminProjects = () => {
     }
 
     setFormError(result.message);
+    notifyAdminError(result.message || "Failed to load projects.");
   }, []);
 
   useEffect(() => {
@@ -122,7 +127,9 @@ export const useAdminProjects = () => {
     );
 
     if (hasInvalidCharacter) {
-      setFormError("Each character must include both name and image.");
+      const message = "Each character must include both name and image.";
+      setFormError(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -140,14 +147,15 @@ export const useAdminProjects = () => {
 
     if (!result.ok) {
       setFormError(result.message);
+      notifyAdminError(result.message || "Failed to save project.");
       return;
     }
 
-    setFormSuccess(
-      editingProjectId
-        ? "Project updated successfully."
-        : "Project uploaded successfully."
-    );
+    const successMessage = editingProjectId
+      ? "Project updated successfully."
+      : "Project uploaded successfully.";
+    setFormSuccess(successMessage);
+    notifyAdminSuccess(successMessage);
     resetForm();
     await loadProjects();
   }, [
@@ -231,7 +239,9 @@ export const useAdminProjects = () => {
       const id = project._id || project.id;
 
       if (!id) {
-        setFormError("Project id is missing.");
+        const message = "Project id is missing.";
+        setFormError(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -246,11 +256,13 @@ export const useAdminProjects = () => {
 
       if (!result.ok) {
         setFormError(result.message);
+        notifyAdminError(result.message || "Failed to delete project.");
         return;
       }
 
       setProjects((prev) => prev.filter((item) => (item._id || item.id) !== id));
       setFormSuccess("Project deleted successfully.");
+      notifyAdminSuccess("Project deleted successfully.");
 
       if (editingProjectId === id) {
         resetForm();

@@ -7,6 +7,10 @@ import {
   revalidateSocialMediaPublicCache,
   updateSocialMediaLink,
 } from "../services/socialMediaApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 export const useAdminSocialMedia = () => {
   const [open, setOpen] = useState(false);
@@ -57,12 +61,16 @@ export const useAdminSocialMedia = () => {
     const normalizedUrl = url.trim();
 
     if (!normalizedName || !normalizedUrl) {
-      setSubmitErrorMsg("Name and URL are required.");
+      const message = "Name and URL are required.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
     if (!editingSocialMedia && !logo) {
-      setSubmitErrorMsg("Logo is required.");
+      const message = "Logo is required.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -84,7 +92,13 @@ export const useAdminSocialMedia = () => {
           });
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message =
+          result.message ||
+          (editingSocialMedia
+            ? "Failed to update social media link."
+            : "Failed to create social media link.");
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -107,15 +121,21 @@ export const useAdminSocialMedia = () => {
         }
       }
 
+      notifyAdminSuccess(
+        editingSocialMedia
+          ? "Social media link updated."
+          : "Social media link created."
+      );
       resetForm();
     } catch (error) {
-      setSubmitErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
           : editingSocialMedia
             ? "Failed to update social media link."
-            : "Failed to create social media link."
-      );
+            : "Failed to create social media link.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -139,7 +159,9 @@ export const useAdminSocialMedia = () => {
     try {
       const result = await deleteSocialMediaLink(editingSocialMedia._id);
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to delete social media link.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -148,13 +170,15 @@ export const useAdminSocialMedia = () => {
       setSocialMedias((currentItems) =>
         currentItems.filter((item) => item._id !== editingSocialMedia._id)
       );
+      notifyAdminSuccess("Social media link deleted.");
       resetForm();
     } catch (error) {
-      setSubmitErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
-          : "Failed to delete social media link."
-      );
+          : "Failed to delete social media link.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -175,6 +199,7 @@ export const useAdminSocialMedia = () => {
 
       if (!result.ok) {
         setErrorMsg(result.message);
+        notifyAdminError(result.message || "Failed to load social media links.");
         return;
       }
 
@@ -185,11 +210,12 @@ export const useAdminSocialMedia = () => {
       }
 
       setLoading(false);
-      setErrorMsg(
+      const message =
         error instanceof Error
           ? error.message
-          : "Failed to load social media links."
-      );
+          : "Failed to load social media links.";
+      setErrorMsg(message);
+      notifyAdminError(message);
     }
   }, []);
 

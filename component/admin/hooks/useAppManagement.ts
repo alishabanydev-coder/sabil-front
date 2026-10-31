@@ -5,7 +5,11 @@
   AppManagementSection,
   AppManagementVideoRecord,
 } from "@/types/admin";
-import { useEffect, useMemo, useState, type SyntheticEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 import {
   fetchAdminAppCatalogueHomeVideos,
   fetchAdminAppCatalogueNavigationButtons,
@@ -31,6 +35,18 @@ function existingRecordIds<T extends { _id: string }>(
   return selectedIds.filter((id) => existingIds.has(String(id)));
 }
 
+function reportAdminError(message: string) {
+  if (message.trim()) {
+    notifyAdminError(message);
+  }
+}
+
+function reportAdminSuccess(message: string) {
+  if (message.trim()) {
+    notifyAdminSuccess(message);
+  }
+}
+
 function isPublishedVideo(video: { isPublished?: boolean }) {
   return video.isPublished !== false;
 }
@@ -45,8 +61,6 @@ export const useAppManagement = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [isRandomVideosSelected, setIsRandomVideosSelected] = useState(true);
   const [homeImage, setHomeImage] = useState("/home.webp");
   const [homeImageRaw, setHomeImageRaw] = useState("/home.webp");
@@ -84,7 +98,7 @@ export const useAppManagement = () => {
 
     const loadData = async () => {
       setLoading(true);
-      setErrorMsg("");
+      reportAdminError("");
       try {
         const [navResult, homeVideosResult, suggestedVideosResult] =
           await Promise.all([
@@ -102,7 +116,7 @@ export const useAppManagement = () => {
         }
 
         if (!navResult.ok) {
-          setErrorMsg(
+          reportAdminError(
             navResult.message || "Failed to load navigation settings."
           );
         } else {
@@ -132,7 +146,7 @@ export const useAppManagement = () => {
           : [];
 
         if (!homeVideosResult.ok) {
-          setErrorMsg(
+          reportAdminError(
             homeVideosResult.message || "Failed to load home videos settings."
           );
         } else {
@@ -149,7 +163,7 @@ export const useAppManagement = () => {
         }
 
         if (!suggestedVideosResult.ok) {
-          setErrorMsg(
+          reportAdminError(
             suggestedVideosResult.message || "Failed to load suggested videos."
           );
         } else {
@@ -195,7 +209,7 @@ export const useAppManagement = () => {
             : (error as { name?: string })?.name === "AbortError";
 
         if (!isAbortError && !controller.signal.aborted) {
-          setErrorMsg("Failed to load app management settings.");
+          reportAdminError("Failed to load app management settings.");
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -398,8 +412,8 @@ export const useAppManagement = () => {
     }
     setOpen(true);
     setSelectedSection(section);
-    setSuccessMsg("");
-    setErrorMsg("");
+    reportAdminSuccess("");
+    reportAdminError("");
   };
 
   const openNavigationModal = () => {
@@ -503,8 +517,8 @@ export const useAppManagement = () => {
 
   const handleSaveNavigation = async () => {
     setSaving(true);
-    setErrorMsg("");
-    setSuccessMsg("");
+    reportAdminError("");
+    reportAdminSuccess("");
 
     const result = await updateAdminAppCatalogueNavigationButtons({
       projectIds: existingRecordIds(
@@ -517,7 +531,7 @@ export const useAppManagement = () => {
     setSaving(false);
 
     if (!result.ok) {
-      setErrorMsg(result.message || "Failed to save navigation settings.");
+      reportAdminError(result.message || "Failed to save navigation settings.");
       return;
     }
 
@@ -531,15 +545,15 @@ export const useAppManagement = () => {
       Array.isArray(result.selectedProjectIds) ? result.selectedProjectIds : []
     );
     await revalidateAppCataloguePublicData();
-    setSuccessMsg("Navigation settings saved.");
+    reportAdminSuccess("Navigation settings saved.");
     setOpen(false);
     setSelectedSection(null);
   };
 
   const handleSaveHomeVideos = async () => {
     setSaving(true);
-    setErrorMsg("");
-    setSuccessMsg("");
+    reportAdminError("");
+    reportAdminSuccess("");
 
     const result = await updateAdminAppCatalogueHomeVideos({
       mode: isRandomVideosSelected ? "random" : "manual",
@@ -551,7 +565,7 @@ export const useAppManagement = () => {
     setSaving(false);
 
     if (!result.ok) {
-      setErrorMsg(result.message || "Failed to save home videos settings.");
+      reportAdminError(result.message || "Failed to save home videos settings.");
       return;
     }
 
@@ -584,15 +598,15 @@ export const useAppManagement = () => {
     }
 
     await revalidateAppCataloguePublicData();
-    setSuccessMsg("Home videos settings saved.");
+    reportAdminSuccess("Home videos settings saved.");
     setOpen(false);
     setSelectedSection(null);
   };
 
   const handleSaveSuggestedVideos = async () => {
     setSaving(true);
-    setErrorMsg("");
-    setSuccessMsg("");
+    reportAdminError("");
+    reportAdminSuccess("");
 
     const result = await updateAdminAppCatalogueSuggestedVideos({
       videoIds: existingRecordIds(draftRailVideoIds, publishedAvailableVideos),
@@ -600,7 +614,7 @@ export const useAppManagement = () => {
     setSaving(false);
 
     if (!result.ok) {
-      setErrorMsg(result.message || "Failed to save suggested videos.");
+      reportAdminError(result.message || "Failed to save suggested videos.");
       return;
     }
 
@@ -617,7 +631,7 @@ export const useAppManagement = () => {
       )
     );
     await revalidateAppCataloguePublicData();
-    setSuccessMsg("Suggested videos saved.");
+    reportAdminSuccess("Suggested videos saved.");
     setOpen(false);
     setSelectedSection(null);
   };
@@ -628,8 +642,8 @@ export const useAppManagement = () => {
     }
 
     setSaving(true);
-    setErrorMsg("");
-    setSuccessMsg("");
+    reportAdminError("");
+    reportAdminSuccess("");
 
     const channelVideos = publishedAvailableVideos.filter(
       (video) => video.projectId === activeNavId
@@ -640,7 +654,7 @@ export const useAppManagement = () => {
     setSaving(false);
 
     if (!result.ok) {
-      setErrorMsg(result.message || "Failed to save featured videos.");
+      reportAdminError(result.message || "Failed to save featured videos.");
       return;
     }
 
@@ -654,7 +668,7 @@ export const useAppManagement = () => {
     }));
     setDraftRailVideoIds(savedIds);
     await revalidateAppCataloguePublicData();
-    setSuccessMsg("Featured videos saved.");
+    reportAdminSuccess("Featured videos saved.");
     setOpen(false);
     setSelectedSection(null);
   };
@@ -680,7 +694,7 @@ export const useAppManagement = () => {
   const handleRandomModeChange = async (checked: boolean) => {
     setIsRandomVideosSelected(checked);
     setSaving(true);
-    setErrorMsg("");
+    reportAdminError("");
 
     const result = await updateAdminAppCatalogueHomeVideos({
       mode: checked ? "random" : "manual",
@@ -690,12 +704,12 @@ export const useAppManagement = () => {
 
     if (!result.ok) {
       setIsRandomVideosSelected(!checked);
-      setErrorMsg(result.message || "Failed to update random mode.");
+      reportAdminError(result.message || "Failed to update random mode.");
       return;
     }
 
     await revalidateAppCataloguePublicData();
-    setSuccessMsg("Home videos mode updated.");
+    reportAdminSuccess("Home videos mode updated.");
     setOpen(false);
   };
 
@@ -710,36 +724,13 @@ export const useAppManagement = () => {
     setHomeImage(URL.createObjectURL(file));
   };
 
-  const handleErrorSnackbarClose = (
-    _: Event | SyntheticEvent,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setErrorMsg("");
-  };
-
-  const handleSuccessSnackbarClose = (
-    _: Event | SyntheticEvent,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSuccessMsg("");
-  };
-
   return {
     activeNavId,
     activeProject,
     displayVideos,
-    errorMsg,
     handleCloseModal,
-    handleErrorSnackbarClose,
     handleHomeImageFileChange,
     handleRandomModeChange,
-    handleSuccessSnackbarClose,
     homeImage,
     isRandomVideosSelected,
     loading,
@@ -756,7 +747,6 @@ export const useAppManagement = () => {
     selectedProjects,
     selectedSection,
     setActiveNavId,
-    successMsg,
     toggleModalSelection,
   };
 };

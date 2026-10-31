@@ -1,6 +1,10 @@
 import type { AdminAboutUsRecord } from "@/types/admin";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchAboutUs, updateAboutUs } from "../services/aboutUsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 type AboutUsFormSnapshot = {
   videoUrl: string;
@@ -71,6 +75,7 @@ export const useAdminAboutUs = () => {
         setLoading(false);
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load About Us.");
           return;
         }
 
@@ -92,11 +97,12 @@ export const useAdminAboutUs = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
+        const message =
           error instanceof Error
             ? error.message
-            : "Failed to load About Us content."
-        );
+            : "Failed to load About Us content.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 
@@ -111,7 +117,9 @@ export const useAdminAboutUs = () => {
     const normalizedMessage = message.trim();
 
     if (!normalizedVideoUrl || !normalizedTitle || !normalizedMessage) {
-      setSubmitErrorMsg("Video URL, title, and message are required.");
+      const message = "Video URL, title, and message are required.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
       return;
     }
 
@@ -127,7 +135,9 @@ export const useAdminAboutUs = () => {
       });
 
       if (!result.ok) {
-        setSubmitErrorMsg(result.message);
+        const message = result.message || "Failed to save About Us content.";
+        setSubmitErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -141,10 +151,14 @@ export const useAdminAboutUs = () => {
           setSavedSnapshot,
         });
       }
+      notifyAdminSuccess("About Us saved.");
     } catch (error) {
-      setSubmitErrorMsg(
-        error instanceof Error ? error.message : "Failed to save About Us content."
-      );
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to save About Us content.";
+      setSubmitErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSubmitting(false);
     }

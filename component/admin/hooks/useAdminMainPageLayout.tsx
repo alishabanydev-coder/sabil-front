@@ -11,6 +11,10 @@ import {
   updateMainPageLayoutSection,
 } from "../services/mainPageLayoutApi";
 import { fetchProjects } from "../services/projectsApi";
+import {
+  notifyAdminError,
+  notifyAdminSuccess,
+} from "../snackbar/notifyAdmin";
 
 function isPublishedLayoutItem(item: MainPageLayoutItem) {
   return item.isPublished !== false;
@@ -147,7 +151,9 @@ export const useAdminMainPageLayout = () => {
       const currentSectionItems = sectionItems[sectionName] || [];
       const deletedItem = currentSectionItems.find((item) => item._id === itemId);
       if (!deletedItem) {
-        setSaveErrorMsg("Item not found.");
+        const message = "Item not found.";
+        setSaveErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -157,9 +163,10 @@ export const useAdminMainPageLayout = () => {
       });
 
       if (!removeResult.ok) {
-        setSaveErrorMsg(
-          removeResult.message || "Failed to remove item from homepage."
-        );
+        const message =
+          removeResult.message || "Failed to remove item from homepage.";
+        setSaveErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -181,9 +188,10 @@ export const useAdminMainPageLayout = () => {
           }
         );
         if (!reorderResult.ok) {
-          setSaveErrorMsg(
-            reorderResult.message || "Failed to reorder catalogue items."
-          );
+          const message =
+            reorderResult.message || "Failed to reorder catalogue items.";
+          setSaveErrorMsg(message);
+          notifyAdminError(message);
           return;
         }
 
@@ -194,6 +202,7 @@ export const useAdminMainPageLayout = () => {
         setSelectedItemIds((currentIds) =>
           currentIds.filter((id) => id !== itemId)
         );
+        notifyAdminSuccess("Removed from homepage.");
         return;
       }
 
@@ -227,9 +236,10 @@ export const useAdminMainPageLayout = () => {
 
         const failedReorder = reorderResults.find((result) => !result.ok);
         if (failedReorder) {
-          setSaveErrorMsg(
-            failedReorder.message || "Failed to reorder homepage items."
-          );
+          const message =
+            failedReorder.message || "Failed to reorder homepage items.";
+          setSaveErrorMsg(message);
+          notifyAdminError(message);
           return;
         }
       }
@@ -260,6 +270,7 @@ export const useAdminMainPageLayout = () => {
       setSelectedItemIds((currentIds) =>
         currentIds.filter((id) => id !== itemId)
       );
+      notifyAdminSuccess("Removed from homepage.");
     },
     [sectionItems]
   );
@@ -295,7 +306,9 @@ export const useAdminMainPageLayout = () => {
     try {
       const sectionName = openedSection.name;
       if (sectionName === "catalogues" && !selectedProject?._id) {
-        setSaveErrorMsg("Select a project to manage catalogue order.");
+        const message = "Select a project to manage catalogue order.";
+        setSaveErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
       const idsToSave =
@@ -313,7 +326,9 @@ export const useAdminMainPageLayout = () => {
       );
 
       if (!saveResult.ok) {
-        setSaveErrorMsg(saveResult.message || "Failed to save selection.");
+        const message = saveResult.message || "Failed to save selection.";
+        setSaveErrorMsg(message);
+        notifyAdminError(message);
         return;
       }
 
@@ -322,11 +337,13 @@ export const useAdminMainPageLayout = () => {
         [sectionName]: saveResult.items,
       }));
 
+      notifyAdminSuccess("Homepage selection saved.");
       handleClose();
     } catch (error) {
-      setSaveErrorMsg(
-        error instanceof Error ? error.message : "Failed to save item."
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to save item.";
+      setSaveErrorMsg(message);
+      notifyAdminError(message);
     } finally {
       setIsSaving(false);
     }
@@ -356,6 +373,7 @@ export const useAdminMainPageLayout = () => {
 
         if (!result.ok) {
           setErrorMsg(result.message);
+          notifyAdminError(result.message || "Failed to load Projects.");
           return;
         }
 
@@ -366,9 +384,10 @@ export const useAdminMainPageLayout = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
-          error instanceof Error ? error.message : "Failed to load Projects."
-        );
+        const message =
+          error instanceof Error ? error.message : "Failed to load Projects.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       }
     }
 
@@ -391,7 +410,10 @@ export const useAdminMainPageLayout = () => {
 
         const failedResult = results.find((result) => !result.ok);
         if (failedResult) {
-          setErrorMsg(failedResult.message || "Failed to load section data.");
+          const message =
+            failedResult.message || "Failed to load section data.";
+          setErrorMsg(message);
+          notifyAdminError(message);
           return;
         }
 
@@ -408,11 +430,12 @@ export const useAdminMainPageLayout = () => {
         }
 
         setLoading(false);
-        setErrorMsg(
+        const message =
           error instanceof Error
             ? error.message
-            : "Failed to load main page layout data."
-        );
+            : "Failed to load main page layout data.";
+        setErrorMsg(message);
+        notifyAdminError(message);
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
