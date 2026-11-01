@@ -19,6 +19,7 @@ export type AdminChannelVideoRecord = {
   viewCount?: number;
   likeCount?: number;
   commentCount?: number;
+  duration?: number;
   youtubeVideoId?: string;
   youtubeChannelId?: string;
 };
@@ -42,6 +43,7 @@ export type YouTubeVideoFetchedDetails = {
   viewCount: number;
   likeCount: number;
   commentCount: number;
+  duration?: number;
   thumbnailUrl?: string;
   thumbnail?: string;
   thumbnailPath?: string;

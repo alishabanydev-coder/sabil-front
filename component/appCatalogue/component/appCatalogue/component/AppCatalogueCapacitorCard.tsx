@@ -17,6 +17,7 @@ import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import type { VideoData } from "../../navbarTypes";
+import { compactStat } from "./compactStat";
 
 type GradientStat = {
   number: number;
@@ -356,7 +357,7 @@ export default function AppCatalogueCapacitorCard({
                 </Stack>
 
                 <Stack sx={{ flexDirection: "column" }}>
-                  <Typography>{stat.number}</Typography>
+                  <Typography>{compactStat(stat.number)}</Typography>
                   <Typography component="span">{stat.label}</Typography>
                 </Stack>
               </Button>

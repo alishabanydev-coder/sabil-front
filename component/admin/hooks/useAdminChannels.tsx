@@ -56,6 +56,7 @@ export const useAdminChannels = () => {
   const [viewCount, setViewCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [youtubeVideoId, setYoutubeVideoId] = useState("");
   const [youtubeChannelId, setYoutubeChannelId] = useState("");
   const [isFetchingYouTube, setIsFetchingYouTube] = useState(false);
@@ -169,6 +170,7 @@ export const useAdminChannels = () => {
     setViewCount(0);
     setLikeCount(0);
     setCommentCount(0);
+    setDuration(0);
     setYoutubeVideoId("");
     setYoutubeChannelId("");
     setSeason("");
@@ -200,6 +202,7 @@ export const useAdminChannels = () => {
     setViewCount(Number(video.viewCount) || 0);
     setLikeCount(Number(video.likeCount) || 0);
     setCommentCount(Number(video.commentCount) || 0);
+    setDuration(Number(video.duration) || 0);
     setYoutubeVideoId(video.youtubeVideoId || "");
     setYoutubeChannelId(video.youtubeChannelId || "");
     setSeason(video.season.toString());
@@ -330,6 +333,7 @@ export const useAdminChannels = () => {
       setViewCount(Number(details.viewCount) || 0);
       setLikeCount(Number(details.likeCount) || 0);
       setCommentCount(Number(details.commentCount) || 0);
+      setDuration(Number(details.duration) || 0);
       setYoutubeVideoId(details.youtubeVideoId || "");
       setYoutubeChannelId(details.youtubeChannelId || "");
       if (details.thumbnailPath) {
@@ -427,6 +431,7 @@ export const useAdminChannels = () => {
         viewCount,
         likeCount,
         commentCount,
+        duration,
         youtubeVideoId,
         youtubeChannelId,
       };
@@ -472,6 +477,7 @@ export const useAdminChannels = () => {
   }, [
     commentCount,
     description,
+    duration,
     episode,
     episodeAlreadyExists,
     handleClose,
@@ -685,6 +691,7 @@ export const useAdminChannels = () => {
     activeThumbnailPreviewUrl,
     commentCount,
     connectedYouTubeChannels,
+    duration,
     description,
     episode,
     episodeAlreadyExists,

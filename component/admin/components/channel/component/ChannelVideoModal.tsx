@@ -13,10 +13,25 @@ import {
 import type { AdminChannelVideoRecord } from "@/types/admin";
 import { channelModalStyle } from "./channelModalStyle";
 
+function formatVideoDuration(totalSeconds: number) {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainder = seconds % 60;
+  const padded = (value: number) => String(value).padStart(2, "0");
+
+  if (hours > 0) {
+    return `${hours}:${padded(minutes)}:${padded(remainder)}`;
+  }
+
+  return `${minutes}:${padded(remainder)}`;
+}
+
 type ChannelVideoModalProps = {
   activeThumbnailPreviewUrl: string;
   commentCount: number;
   description: string;
+  duration: number;
   episode: string;
   episodeAlreadyExists: boolean;
   hasFetchedPoster: boolean;
@@ -58,6 +73,7 @@ const ChannelVideoModal = ({
   activeThumbnailPreviewUrl,
   commentCount,
   description,
+  duration,
   episode,
   episodeAlreadyExists,
   hasFetchedPoster,
@@ -226,7 +242,7 @@ const ChannelVideoModal = ({
             </Stack>
           ) : null}
 
-          {viewCount > 0 || likeCount > 0 || commentCount > 0 ? (
+          {viewCount > 0 || likeCount > 0 || commentCount > 0 || duration > 0 ? (
             <Stack
               direction="row"
               sx={{
@@ -246,6 +262,9 @@ const ChannelVideoModal = ({
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 Comments: <strong>{commentCount.toLocaleString()}</strong>
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Duration: <strong>{formatVideoDuration(duration)}</strong>
               </Typography>
             </Stack>
           ) : null}

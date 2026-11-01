@@ -21,6 +21,7 @@ const Channels = () => {
     activeThumbnailPreviewUrl,
     commentCount,
     connectedYouTubeChannels,
+    duration,
     description,
     episode,
     episodeAlreadyExists,
@@ -447,6 +448,7 @@ const Channels = () => {
         activeThumbnailPreviewUrl={activeThumbnailPreviewUrl}
         commentCount={commentCount}
         description={description}
+        duration={duration}
         episode={episode}
         episodeAlreadyExists={episodeAlreadyExists}
         handleClose={handleClose}
