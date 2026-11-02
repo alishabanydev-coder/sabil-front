@@ -361,15 +361,16 @@ const NavbarDesktop = ({
                 "& .play-button": {
                   opacity: 0,
                   visibility: "hidden",
+                  overflow: "hidden",
                   borderRadius: "50%",
                   bgcolor: "#fff",
-                  width: "18%",
+                  p: { sm: 0.8, md: 0.6, lg: 0.4 },
                   aspectRatio: "1 / 1",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                   border: (theme) => `5px solid ${theme.palette.primary.main}`,
-                  transition: "all 0.3s ease",
+                  transition: "all 0.25s ease",
                   boxShadow: (theme) => theme.shadows[10],
                 },
                 "&.swiper-slide-active": { boxShadow: 10 },
@@ -379,6 +380,7 @@ const NavbarDesktop = ({
                 },
                 "&:hover .play-button": {
                   transform: "scale(1.05)",
+                  overflow: "hidden",
                   boxShadow: (theme) => theme.shadows[20],
                 },
               },
@@ -592,7 +594,9 @@ const NavbarDesktop = ({
                           <Box className="play-button">
                             <PlayArrowRoundedIcon
                               color="secondary"
-                              sx={{ fontSize: { sm: 48, md: 64, lg: 75 } }}
+                              sx={{
+                                fontSize: { sm: 48, md: 64, lg: 70, xl: 86 },
+                              }}
                             />
                           </Box>
                         </Stack>

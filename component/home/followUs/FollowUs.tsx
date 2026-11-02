@@ -109,8 +109,8 @@ const FollowUs = ({
                   <Image
                     src={item.icon}
                     alt={item.name}
-                    width={24}
-                    height={24}
+                    width={100}
+                    height={100}
                   />
                 </IconButton>
               ))}
