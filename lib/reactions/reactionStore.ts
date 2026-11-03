@@ -87,7 +87,10 @@ export function setReactionActive(
   }
 
   if (!active && exists) {
-    writeIds(type, ids.filter((id) => id !== videoId));
+    writeIds(
+      type,
+      ids.filter((id) => id !== videoId)
+    );
     return;
   }
 

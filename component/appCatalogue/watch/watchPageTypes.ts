@@ -9,6 +9,7 @@ export type VideoDetails = {
   episode?: number;
   season?: number;
   thumbnail?: string;
+  duration?: number;
   likeCount?: number;
   localLikeCount?: number;
   saveCount?: number;

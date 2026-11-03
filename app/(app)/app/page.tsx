@@ -14,8 +14,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Sabeel Kids Catalogue App",
-    description:
-      "Watch Sabeel Kids films and series in the catalogue.",
+    description: "Watch Sabeel Kids films and series in the catalogue.",
     url: "/app",
     siteName: "Sabeel Kids",
     locale: "en_US",

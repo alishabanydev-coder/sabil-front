@@ -162,6 +162,8 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
                 >
                   <WatchPlyrPlayer
                     url={videoUrl}
+                    videoId={video?._id || videoId}
+                    duration={video?.duration}
                     thumbnail={videoThumbnail}
                     title={video?.title}
                     isNative={true}

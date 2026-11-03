@@ -11,6 +11,7 @@ export type VideoData = {
   projectId: string;
   title: string;
   thumbnail: string;
+  duration?: number;
   season?: number;
   episode?: number;
   likeCount?: number;

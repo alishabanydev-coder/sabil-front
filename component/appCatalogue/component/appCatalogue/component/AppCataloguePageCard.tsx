@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import type { VideoData } from "../../navbarTypes";
 import CatalogueVideoStats from "./CatalogueVideoStats";
+import VideoProgressBar from "./VideoProgressBar";
 
 const playButtonWave = keyframes`
   0% {
@@ -79,6 +80,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
           fill
           style={{ objectFit: "contain" }}
         />
+        <VideoProgressBar videoId={video._id} duration={video.duration} />
       </Stack>
 
       <Box

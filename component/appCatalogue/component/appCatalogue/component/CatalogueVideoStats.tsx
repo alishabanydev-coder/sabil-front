@@ -328,27 +328,6 @@ export default function CatalogueVideoStats({
           ))}
         </defs>
       </svg>
-      {stats.map((stat, index) =>
-        stat.kind === "view" ? (
-          <ViewStatButton
-            key={stat.kind}
-            videoId={videoId}
-            variant={variant}
-            stat={stat}
-            index={index}
-            count={counts.view}
-          />
-        ) : (
-          <ReactionStatButton
-            key={stat.kind}
-            videoId={videoId}
-            variant={variant}
-            stat={stat}
-            index={index}
-            count={counts[stat.kind]}
-          />
-        )
-      )}
     </>
   );
 }

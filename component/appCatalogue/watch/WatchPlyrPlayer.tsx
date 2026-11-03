@@ -3,6 +3,12 @@
 import WatchPlayerPlayIcon from "@/component/appCatalogue/watch/WatchPlayerPlayIcon";
 import WatchPlyrFullscreenHud from "@/component/appCatalogue/watch/WatchPlyrFullscreenHud";
 import { suppressWatchNavbarBack } from "@/component/appCatalogue/watch/suppressWatchNavbarBack";
+import {
+  getProgress,
+  isWatched,
+  markWatched,
+  setProgress,
+} from "@/lib/reactions/playlistStore";
 import VideocamOffOutlined from "@mui/icons-material/VideocamOffOutlined";
 import { CircularProgress, Stack, Typography, useTheme } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -12,6 +18,11 @@ const HUD_HIDE_MS = 5000;
 const DESKTOP_HUD_HIDE_MS = 4000;
 const DESKTOP_FULLSCREEN_HUD_HIDE_MS = 4000;
 export const FULLSCREEN_ANIM_MS = 380;
+const WATCHED_AFTER_SECONDS = 30;
+const PROGRESS_SAVE_EVERY_SECONDS = 5;
+const SEEK_GAP_SECONDS = 1.5;
+const RESUME_MIN_SECONDS = 5;
+const FINISHED_RATIO = 0.9;
 
 type PlyrPlayer = import("plyr");
 
@@ -139,6 +150,8 @@ function injectPlyrVolumeSetting(player: PlyrPlayer) {
 
 type WatchPlyrPlayerProps = {
   url: string;
+  videoId?: string;
+  duration?: number;
   thumbnail?: string;
   title?: string;
   isNative: boolean;
@@ -146,8 +159,12 @@ type WatchPlyrPlayerProps = {
   onNativeBelowShift?: (shiftY: number) => void;
 };
 
+// test this on capacitor and other views, see it shouldnt have the reaction buttons next to it.
+
 const WatchPlyrPlayer = ({
   url,
+  videoId,
+  duration,
   thumbnail,
   title,
   isNative,
@@ -171,6 +188,13 @@ const WatchPlyrPlayer = ({
   const hasFrameRef = useRef(false);
   const unavailableRef = useRef(false);
   const hudHideTimeoutRef = useRef<number | null>(null);
+  const videoIdRef = useRef(videoId);
+  const durationRef = useRef(duration);
+  const lastTickRef = useRef(0);
+  const playedRef = useRef(0);
+  const lastSavedPlayedRef = useRef(0);
+  const markedWatchedRef = useRef(false);
+  const resumedRef = useRef(false);
   const [started, setStarted] = useState(false);
   const [plyrRoot, setPlyrRoot] = useState<HTMLElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -181,12 +205,142 @@ const WatchPlyrPlayer = ({
   const [hasFrame, setHasFrame] = useState(false);
   const theme = useTheme();
   const youtubeId = getYouTubeVideoId(url);
-
-  console.log(url);
+  videoIdRef.current = videoId;
+  durationRef.current = duration;
 
   const onNativeBelowShiftRef = useRef(onNativeBelowShift);
   onStartedChangeRef.current = onStartedChange;
   onNativeBelowShiftRef.current = onNativeBelowShift;
+
+  const mediaDuration = useCallback((player: PlyrPlayer) => {
+    return (
+      Number(durationRef.current) ||
+      Number(player.duration) ||
+      getProgress(videoIdRef.current || "")?.duration ||
+      0
+    );
+  }, []);
+
+  const tryResume = useCallback(
+    (player: PlyrPlayer) => {
+      if (resumedRef.current) {
+        return;
+      }
+
+      const id = videoIdRef.current?.trim();
+      if (!id) {
+        return;
+      }
+
+      const saved = getProgress(id);
+      if (!saved) {
+        resumedRef.current = true;
+        return;
+      }
+
+      const length = mediaDuration(player);
+      if (length <= 0) {
+        return;
+      }
+
+      if (
+        saved.position > RESUME_MIN_SECONDS &&
+        saved.position < length * FINISHED_RATIO
+      ) {
+        player.currentTime = saved.position;
+      }
+
+      resumedRef.current = true;
+    },
+    [mediaDuration]
+  );
+
+  const flushProgress = useCallback(
+    (player: PlyrPlayer | null, ended = false) => {
+      const id = videoIdRef.current?.trim();
+      if (!id || !player) {
+        return;
+      }
+
+      const now = Number(player.currentTime) || 0;
+      const length = mediaDuration(player);
+
+      if (ended) {
+        markWatched(id);
+        markedWatchedRef.current = true;
+        setProgress(
+          id,
+          length > 0 ? length : now,
+          length || now,
+          playedRef.current
+        );
+        lastSavedPlayedRef.current = playedRef.current;
+        return;
+      }
+
+      if (now > 0) {
+        setProgress(id, now, length, playedRef.current);
+        lastSavedPlayedRef.current = playedRef.current;
+      }
+    },
+    [mediaDuration]
+  );
+
+  const trackPlayback = useCallback(
+    (player: PlyrPlayer) => {
+      const id = videoIdRef.current?.trim();
+      if (!id || unavailableRef.current) {
+        return;
+      }
+
+      const now = Number(player.currentTime) || 0;
+      if (player.paused || player.seeking || !isPlaybackActiveRef.current) {
+        lastTickRef.current = now;
+        return;
+      }
+
+      const lastTick = lastTickRef.current;
+      const delta = lastTick === 0 ? 0 : now - lastTick;
+      lastTickRef.current = now;
+
+      if (delta > 0 && delta <= SEEK_GAP_SECONDS) {
+        playedRef.current += delta;
+      }
+
+      if (
+        playedRef.current >= WATCHED_AFTER_SECONDS &&
+        !markedWatchedRef.current
+      ) {
+        markWatched(id);
+        markedWatchedRef.current = true;
+      }
+
+      if (
+        playedRef.current - lastSavedPlayedRef.current >=
+        PROGRESS_SAVE_EVERY_SECONDS
+      ) {
+        setProgress(id, now, mediaDuration(player), playedRef.current);
+        lastSavedPlayedRef.current = playedRef.current;
+      }
+    },
+    [mediaDuration]
+  );
+
+  useEffect(() => {
+    const saved = videoId ? getProgress(videoId) : null;
+    lastTickRef.current = 0;
+    playedRef.current = saved?.played || 0;
+    lastSavedPlayedRef.current = playedRef.current;
+    const alreadyWatched = Boolean(
+      videoId &&
+        (isWatched(videoId) || playedRef.current >= WATCHED_AFTER_SECONDS)
+    );
+    markedWatchedRef.current = alreadyWatched;
+    if (videoId && alreadyWatched) {
+      markWatched(videoId);
+    }
+    resumedRef.current = false;
+  }, [videoId]);
 
   const clearHudHide = useCallback(() => {
     if (hudHideTimeoutRef.current !== null) {
@@ -563,6 +717,7 @@ const WatchPlyrPlayer = ({
         setPlyrRoot(player?.elements.container ?? null);
         if (player) {
           injectPlyrVolumeSetting(player);
+          tryResume(player);
         }
         tryStartFromGesture();
       });
@@ -634,11 +789,21 @@ const WatchPlyrPlayer = ({
           setShowSpinner(false);
         }
       });
+      player.on("timeupdate", () => {
+        if (!player || unavailableRef.current) {
+          return;
+        }
+
+        trackPlayback(player);
+      });
       player.on("playing", () => {
         hasPlayedRef.current = true;
         isPlaybackActiveRef.current = true;
         isPlayingRef.current = true;
         setIsPlaying(true);
+        if (player) {
+          tryResume(player);
+        }
         if (!unavailableRef.current && hasFrameRef.current) {
           setShowSpinner(false);
         }
@@ -671,6 +836,9 @@ const WatchPlyrPlayer = ({
         if (isFullscreenRef.current || player?.fullscreen.active) {
           revealHudRef.current();
         }
+        if (player) {
+          flushProgress(player);
+        }
       });
       player.on("ended", () => {
         isPlayingRef.current = false;
@@ -679,6 +847,9 @@ const WatchPlyrPlayer = ({
         setIsPlaying(false);
         setShowSpinner(false);
         setHudVisible(true);
+        if (player) {
+          flushProgress(player, true);
+        }
         if (isNative && isFullscreenRef.current) {
           exitAppFullscreenRef.current();
         } else if (!isNative && player?.fullscreen.active) {
@@ -706,6 +877,11 @@ const WatchPlyrPlayer = ({
       tryStartFromGesture();
     };
 
+    const onPageHide = () => {
+      flushProgress(player);
+    };
+    window.addEventListener("pagehide", onPageHide);
+
     void setup().catch(() => {
       if (cancelled) {
         return;
@@ -718,9 +894,11 @@ const WatchPlyrPlayer = ({
 
     return () => {
       cancelled = true;
+      window.removeEventListener("pagehide", onPageHide);
       if (syncDesktopFullscreen) {
         document.removeEventListener("fullscreenchange", syncDesktopFullscreen);
       }
+      flushProgress(player);
       playerRef.current = null;
       setPlyrRoot(null);
       setIsFullscreen(false);
@@ -728,7 +906,15 @@ const WatchPlyrPlayer = ({
       player?.destroy();
       container.innerHTML = "";
     };
-  }, [youtubeId, isNative, markStarted, clearHudHide]);
+  }, [
+    youtubeId,
+    isNative,
+    markStarted,
+    clearHudHide,
+    tryResume,
+    trackPlayback,
+    flushProgress,
+  ]);
 
   const cover =
     thumbnail && !hasFrame && !isUnavailable ? (
