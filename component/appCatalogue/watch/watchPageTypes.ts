@@ -1,6 +1,7 @@
 import type { WatchCatalogueVideo } from "./buildWatchRelatedVideos";
 
 export type VideoDetails = {
+  _id?: string;
   title?: string;
   description?: string;
   url?: string;
@@ -8,6 +9,10 @@ export type VideoDetails = {
   episode?: number;
   season?: number;
   thumbnail?: string;
+  likeCount?: number;
+  localLikeCount?: number;
+  saveCount?: number;
+  viewCount?: number;
 };
 
 export type ProjectDetails = {

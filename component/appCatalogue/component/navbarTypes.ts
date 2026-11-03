@@ -14,6 +14,8 @@ export type VideoData = {
   season?: number;
   episode?: number;
   likeCount?: number;
+  localLikeCount?: number;
+  saveCount?: number;
   viewCount?: number;
   commentCount?: number;
 };

@@ -1,78 +1,11 @@
 "use client";
 
-import {
-  alpha,
-  Box,
-  Button,
-  keyframes,
-  Stack,
-  Typography,
-  type SvgIconProps,
-} from "@mui/material";
-import { type ElementType } from "react";
+import { alpha, Box, keyframes, Stack } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import type { VideoData } from "../../navbarTypes";
-import { compactStat } from "./compactStat";
-
-type GradientStat = {
-  number: number;
-  icon: ElementType<SvgIconProps>;
-  color: [string, string];
-  label: string;
-};
-
-const gradientColor = (video: VideoData): GradientStat[] => [
-  {
-    number: 0,
-    icon: BookmarkBorderOutlinedIcon,
-    color: ["#0F70E3", "#044CD4"],
-    label: "save",
-  },
-  {
-    number: video.likeCount,
-    icon: FavoriteBorderRoundedIcon,
-    color: ["#FB5C73", "#FB2C5C"],
-    label: "likes",
-  },
-  {
-    number: video.viewCount,
-    icon: VisibilityRoundedIcon,
-    color: ["#7E4DDE", "#6C32C9"],
-    label: "views",
-  },
-];
-
-const stackIcon = {
-  flexDirection: "row",
-  my: 0.5,
-  gap: 0.5,
-  alignItems: "center",
-  px: 1.4,
-  pl: 0.5,
-  borderRadius: 6,
-  height: 40,
-
-  "& svg": {
-    fontSize: 20,
-  },
-  "& p": {
-    color: "text.primary",
-    fontWeight: 800,
-    fontSize: 12,
-    lineHeight: 1,
-  },
-  "& span": {
-    color: "text.secondary",
-    fontWeight: 800,
-    fontSize: 10,
-    lineHeight: 1,
-  },
-};
+import CatalogueVideoStats from "./CatalogueVideoStats";
 
 const playButtonWave = keyframes`
   0% {
@@ -84,47 +17,6 @@ const playButtonWave = keyframes`
     opacity: 0;
   }
 `;
-
-function StatGradientDefs({ videoId, video }: { videoId: string; video: VideoData }) {
-  const stats = gradientColor(video);
-  return (
-    <svg
-      aria-hidden
-      focusable={false}
-      width={0}
-      height={0}
-      style={{ position: "absolute" }}
-    >
-      <defs>
-        {stats.map((stat, index) => (
-          <linearGradient
-            key={stat.label}
-            id={`capacitor-stat-gradient-${videoId}-${index}`}
-            x1="0"
-            y1="0"
-            x2="0"
-            y2="1"
-          >
-            <stop offset="0%" stopColor={stat.color[0]} />
-            <stop offset="100%" stopColor={stat.color[1]} />
-          </linearGradient>
-        ))}
-      </defs>
-    </svg>
-  );
-}
-
-function GradientIcon({
-  icon: Icon,
-  id,
-}: {
-  icon: ElementType<SvgIconProps>;
-  id: string;
-}) {
-  return <Icon style={{ fill: `url(#${id})` }} />;
-}
-
-//FiXME: fix the on click Card and not White Space
 
 export default function AppCatalogueCapacitorCard({
   video,
@@ -205,7 +97,6 @@ export default function AppCatalogueCapacitorCard({
         },
       }}
     >
-      <StatGradientDefs videoId={video._id} video={video} />
 
       {/* Thumbnail */}
       <Box
@@ -330,38 +221,7 @@ export default function AppCatalogueCapacitorCard({
               justifyContent: "center",
             }}
           >
-            {gradientColor(video).map((stat, index) => (
-              <Button
-                key={stat.label}
-                disableRipple
-                disableFocusRipple
-                disableTouchRipple
-                disableElevation
-                sx={{
-                  ...stackIcon,
-                  minWidth: 0,
-                  border: `2px solid ${alpha(stat.color[0], 0.2)}`,
-                }}
-              >
-                <Stack
-                  sx={{
-                    p: 0.6,
-                    borderRadius: "50%",
-                    bgcolor: alpha(stat.color[0], 0.2),
-                  }}
-                >
-                  <GradientIcon
-                    icon={stat.icon}
-                    id={`capacitor-stat-gradient-${video._id}-${index}`}
-                  />
-                </Stack>
-
-                <Stack sx={{ flexDirection: "column" }}>
-                  <Typography>{compactStat(stat.number)}</Typography>
-                  <Typography component="span">{stat.label}</Typography>
-                </Stack>
-              </Button>
-            ))}
+            <CatalogueVideoStats video={video} variant="capacitor" />
           </Stack>
         </Stack>
       </Stack>

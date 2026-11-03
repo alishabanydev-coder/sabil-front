@@ -1,79 +1,11 @@
 "use client";
 
-import {
-  alpha,
-  Box,
-  Button,
-  keyframes,
-  Stack,
-  Typography,
-  type SvgIconProps,
-} from "@mui/material";
-import { type ElementType } from "react";
+import { alpha, Box, keyframes, Stack } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import type { VideoData } from "../../navbarTypes";
-import { compactStat } from "./compactStat";
-
-type GradientStat = {
-  number: number;
-  icon: ElementType<SvgIconProps>;
-  color: [string, string];
-  label: string;
-};
-
-const gradientColor = (video: VideoData): GradientStat[] => [
-  {
-    number: 0,
-    icon: BookmarkBorderOutlinedIcon,
-    color: ["#0F70E3", "#044CD4"],
-    label: "save",
-  },
-  {
-    number: video.likeCount,
-    icon: FavoriteBorderRoundedIcon,
-    color: ["#FB5C73", "#FB2C5C"],
-    label: "likes",
-  },
-  {
-    number: video.viewCount,
-    icon: VisibilityRoundedIcon,
-    color: ["#7E4DDE", "#6C32C9"],
-    label: "views",
-  },
-];
-
-const stackIcon = {
-  flexDirection: "row",
-  my: 0.5,
-  gap: 0.5,
-  alignItems: "center",
-  px: 1.4,
-  pl: 0.5,
-  borderRadius: 6,
-  height: { xs: 40, sm: 45, lg: 48 },
-
-  "& svg": {
-    fontSize: { xs: 20, sm: 24, lg: 28 },
-  },
-  "& p": {
-    color: "text.primary",
-    fontWeight: 800,
-    fontSize: { xs: 12, sm: 14, lg: 15 },
-    lineHeight: 1,
-  },
-  "& span": {
-    color: "text.secondary",
-    fontWeight: 800,
-    fontSize: { xs: 10, sm: 12, lg: 13 },
-    lineHeight: 1,
-  },
-};
+import CatalogueVideoStats from "./CatalogueVideoStats";
 
 const playButtonWave = keyframes`
   0% {
@@ -86,48 +18,8 @@ const playButtonWave = keyframes`
   }
 `;
 
-function StatGradientDefs({ videoId, video }: { videoId: string; video: VideoData }) {
-  const stats = gradientColor(video);
-  return (
-    <svg
-      aria-hidden
-      focusable={false}
-      width={0}
-      height={0}
-      style={{ position: "absolute" }}
-    >
-      <defs>
-        {stats.map((stat, index) => (
-          <linearGradient
-            key={stat.number}
-            id={`page-stat-gradient-${videoId}-${index}`}
-            x1="0"
-            y1="0"
-            x2="0"
-            y2="1"
-          >
-            <stop offset="0%" stopColor={stat.color[0]} />
-            <stop offset="100%" stopColor={stat.color[1]} />
-          </linearGradient>
-        ))}
-      </defs>
-    </svg>
-  );
-}
-
-function GradientIcon({
-  icon: Icon,
-  id,
-}: {
-  icon: ElementType<SvgIconProps>;
-  id: string;
-}) {
-  return <Icon style={{ fill: `url(#${id})` }} />;
-}
-
 export default function AppCataloguePageCard({ video }: { video: VideoData }) {
   const router = useRouter();
-  console.log(video);
   return (
     <Stack
       tabIndex={0}
@@ -164,7 +56,6 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         transition: "all 0.35s ease",
       }}
     >
-      <StatGradientDefs videoId={video._id} video={video} />
       <Stack
         onClick={() => router.push(`/app/watch/${video._id}`)}
         onKeyDown={(event) => {
@@ -280,36 +171,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
               justifyContent: "center",
             }}
           >
-            {gradientColor(video).map((stat, index) => (
-              <Button
-                key={index}
-                disableRipple
-                disableFocusRipple
-                disableTouchRipple
-                disableElevation
-                sx={{
-                  ...stackIcon,
-                  border: `2px solid ${alpha(stat.color[0], 0.2)}`,
-                }}
-              >
-                <Stack
-                  sx={{
-                    p: 0.6,
-                    borderRadius: "50%",
-                    bgcolor: alpha(stat.color[0], 0.2),
-                  }}
-                >
-                  <GradientIcon
-                    icon={stat.icon}
-                    id={`page-stat-gradient-${video._id}-${index}`}
-                  />
-                </Stack>
-                <Stack sx={{ flexDirection: "column" }}>
-                  <Typography>{compactStat(stat.number)}</Typography>
-                  <Typography component="span">{stat.label}</Typography>
-                </Stack>
-              </Button>
-            ))}
+            <CatalogueVideoStats video={video} variant="page" />
           </Stack>
         </Stack>
       </Stack>

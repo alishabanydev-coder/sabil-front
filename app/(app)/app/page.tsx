@@ -1,5 +1,4 @@
-import AppCataloguePage from "@/component/appCatalogue/component/appCatalogue/AppCataloguePage";
-import Navbar from "@/component/appCatalogue/component/Navbar";
+import type { Metadata } from "next";
 import { fetchPublicAllVideos } from "@/component/admin/services/mainPageLayoutApi";
 import {
   fetchPublicAppCatalogueFeaturedVideos,
@@ -8,7 +7,6 @@ import {
   fetchPublicAppCatalogueSuggestedVideos,
 } from "@/component/admin/services/appManagementApi";
 import AppIndex from "@/component/appCatalogue/AppIndex";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   alternates: {
