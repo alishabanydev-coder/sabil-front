@@ -37,7 +37,7 @@ export default function VideoProgressBar({
         position: "absolute",
         left: 0,
         right: 0,
-        bottom: 0,
+        top: -5,
         height: 4,
         zIndex: 3,
         bgcolor: "rgba(0, 0, 0, 0.35)",
@@ -48,7 +48,7 @@ export default function VideoProgressBar({
         sx={{
           height: "100%",
           width: `${finished ? 100 : percent}%`,
-          bgcolor: finished ? "success.main" : "primary.main",
+          bgcolor: finished ? "success.main" : "red",
         }}
       />
     </Box>

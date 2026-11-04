@@ -20,7 +20,7 @@ import {
 import { type ElementType, type MouseEvent } from "react";
 import { compactStat } from "./compactStat";
 
-type StatVariant = "page" | "capacitor" | "watch";
+type StatVariant = "page" | "capacitor";
 type ReactionKind = "save" | "like" | "view";
 
 type StatConfig = {
@@ -108,32 +108,6 @@ const BUTTON_SX: Record<StatVariant, SxProps<Theme>> = {
       lineHeight: 1,
     },
   },
-  watch: {
-    flexDirection: "row",
-    gap: 0.5,
-    alignItems: "center",
-    px: 1.2,
-    pl: 0.4,
-    borderRadius: 6,
-    height: 36,
-    minWidth: 0,
-    bgcolor: "rgba(255, 255, 255, 0.92)",
-    "& svg": {
-      fontSize: 18,
-    },
-    "& p": {
-      color: "text.primary",
-      fontWeight: 800,
-      fontSize: 12,
-      lineHeight: 1,
-    },
-    "& span": {
-      color: "text.secondary",
-      fontWeight: 800,
-      fontSize: 10,
-      lineHeight: 1,
-    },
-  },
 };
 
 function GradientIcon({
@@ -174,6 +148,8 @@ function ViewStatButton({
         ...BUTTON_SX[variant],
         border: `2px solid ${alpha(stat.color[0], 0.2)}`,
         pointerEvents: "none",
+        bgcolor: '#fff',
+        zIndex: 100,
       }}
     >
       <Stack
@@ -239,6 +215,10 @@ function ReactionStatButton({
         ...BUTTON_SX[variant],
         border: `2px solid ${alpha(stat.color[0], 0.2)}`,
         opacity: reaction.pending ? 0.75 : 1,
+        overflow: "hidden",
+        bgcolor: reaction.active ? alpha(stat.color[0], 0.2) : "#fff",
+        zIndex: 100,
+
         "&.Mui-disabled": {
           color: "inherit",
         },
@@ -249,7 +229,7 @@ function ReactionStatButton({
           position: "relative",
           p: 0.6,
           borderRadius: "50%",
-          bgcolor: alpha(stat.color[0], 0.2),
+          bgcolor: !reaction.active && alpha(stat.color[0], 0.2),
         }}
       >
         {reaction.pending ? (
@@ -261,7 +241,6 @@ function ReactionStatButton({
                 fontSize: {
                   page: { xs: 20, sm: 24, lg: 28 },
                   capacitor: 20,
-                  watch: 18,
                 }[variant],
               },
               "& .MuiCircularProgress-circle": {
@@ -284,19 +263,14 @@ function ReactionStatButton({
 export default function CatalogueVideoStats({
   video,
   variant,
-  showViews = true,
 }: {
   video: Pick<
     VideoData,
     "_id" | "localLikeCount" | "likeCount" | "saveCount" | "viewCount"
   >;
   variant: StatVariant;
-  showViews?: boolean;
 }) {
   const videoId = video._id;
-  const stats = showViews
-    ? STATS
-    : STATS.filter((stat) => stat.kind !== "view");
   const counts: Record<ReactionKind, number> = {
     save: Number(video.saveCount) || 0,
     like: (Number(video.localLikeCount) || 0) + (Number(video.likeCount) || 0),
@@ -313,7 +287,7 @@ export default function CatalogueVideoStats({
         style={{ position: "absolute" }}
       >
         <defs>
-          {stats.map((stat, index) => (
+          {STATS.map((stat, index) => (
             <linearGradient
               key={stat.kind}
               id={`${variant}-stat-gradient-${videoId}-${index}`}
@@ -328,6 +302,27 @@ export default function CatalogueVideoStats({
           ))}
         </defs>
       </svg>
+      {STATS.map((stat, index) =>
+        stat.kind === "view" ? (
+          <ViewStatButton
+            key={stat.kind}
+            videoId={videoId}
+            variant={variant}
+            stat={stat}
+            index={index}
+            count={counts.view}
+          />
+        ) : (
+          <ReactionStatButton
+            key={stat.kind}
+            videoId={videoId}
+            variant={variant}
+            stat={stat}
+            index={index}
+            count={counts[stat.kind]}
+          />
+        )
+      )}
     </>
   );
 }

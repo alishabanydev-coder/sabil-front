@@ -80,7 +80,6 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
           fill
           style={{ objectFit: "contain" }}
         />
-        <VideoProgressBar videoId={video._id} duration={video.duration} />
       </Stack>
 
       <Box
@@ -167,12 +166,14 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         >
           <Stack
             sx={{
+              position: 'relative',
               flexDirection: "row",
               gap: { xs: 0.5, sm: 1, lg: 1.5 },
               mt: -1,
               justifyContent: "center",
             }}
           >
+            <VideoProgressBar videoId={video._id} duration={video.duration} />
             <CatalogueVideoStats video={video} variant="page" />
           </Stack>
         </Stack>

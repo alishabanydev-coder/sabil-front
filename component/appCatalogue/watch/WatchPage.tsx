@@ -1,6 +1,5 @@
 "use client";
 
-import CatalogueVideoStats from "@/component/appCatalogue/component/appCatalogue/component/CatalogueVideoStats";
 import WatchPlyrPlayer, {
   FULLSCREEN_ANIM_MS,
 } from "@/component/appCatalogue/watch/WatchPlyrPlayer";
@@ -192,34 +191,6 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
           </Stack>
         </Stack>
       </Stack>
-
-      {status === "ready" && videoId ? (
-        <Stack
-          direction="row"
-          sx={{
-            flexShrink: 0,
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 0.75,
-            px: 2,
-            py: 0.5,
-            zIndex: 2,
-            ...nativeShiftSx,
-          }}
-        >
-          <CatalogueVideoStats
-            video={{
-              _id: video?._id || videoId,
-              likeCount: video?.likeCount,
-              localLikeCount: video?.localLikeCount,
-              saveCount: video?.saveCount,
-            }}
-            variant="watch"
-            showViews={false}
-          />
-        </Stack>
-      ) : null}
 
       <Stack
         sx={{
