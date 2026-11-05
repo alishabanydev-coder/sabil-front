@@ -2,6 +2,11 @@
 
 import { useVideoReaction } from "@/component/appCatalogue/hooks/useVideoReaction";
 import type { VideoData } from "@/component/appCatalogue/component/navbarTypes";
+import {
+  getReactionsSnapshot,
+  getViewTotal,
+  subscribeReactions,
+} from "@/lib/reactions/reactionStore";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
@@ -17,7 +22,7 @@ import {
   type SxProps,
   type Theme,
 } from "@mui/material";
-import { type ElementType, type MouseEvent } from "react";
+import { type ElementType, type MouseEvent, useSyncExternalStore } from "react";
 import { compactStat } from "./compactStat";
 
 type StatVariant = "page" | "capacitor";
@@ -134,6 +139,8 @@ function ViewStatButton({
   count: number;
 }) {
   const gradientId = `${variant}-stat-gradient-${videoId}-${index}`;
+  useSyncExternalStore(subscribeReactions, getReactionsSnapshot, () => 0);
+  const displayCount = getViewTotal(videoId, count);
 
   return (
     <Button
@@ -148,7 +155,7 @@ function ViewStatButton({
         ...BUTTON_SX[variant],
         border: `2px solid ${alpha(stat.color[0], 0.2)}`,
         pointerEvents: "none",
-        bgcolor: '#fff',
+        bgcolor: "#fff",
         zIndex: 100,
       }}
     >
@@ -162,7 +169,7 @@ function ViewStatButton({
         <GradientIcon icon={stat.idleIcon} id={gradientId} />
       </Stack>
       <Stack sx={{ flexDirection: "column" }}>
-        <Typography>{compactStat(count)}</Typography>
+        <Typography>{compactStat(displayCount)}</Typography>
         <Typography component="span">{stat.label}</Typography>
       </Stack>
     </Button>
@@ -266,7 +273,12 @@ export default function CatalogueVideoStats({
 }: {
   video: Pick<
     VideoData,
-    "_id" | "localLikeCount" | "likeCount" | "saveCount" | "viewCount"
+    | "_id"
+    | "localLikeCount"
+    | "likeCount"
+    | "saveCount"
+    | "viewCount"
+    | "appViewCount"
   >;
   variant: StatVariant;
 }) {
@@ -274,7 +286,7 @@ export default function CatalogueVideoStats({
   const counts: Record<ReactionKind, number> = {
     save: Number(video.saveCount) || 0,
     like: (Number(video.localLikeCount) || 0) + (Number(video.likeCount) || 0),
-    view: Number(video.viewCount) || 0,
+    view: (Number(video.viewCount) || 0) + (Number(video.appViewCount) || 0),
   };
 
   return (

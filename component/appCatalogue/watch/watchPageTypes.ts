@@ -14,6 +14,7 @@ export type VideoDetails = {
   localLikeCount?: number;
   saveCount?: number;
   viewCount?: number;
+  appViewCount?: number
 };
 
 export type ProjectDetails = {

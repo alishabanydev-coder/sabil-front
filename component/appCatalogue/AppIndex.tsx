@@ -1,12 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Stack } from "@mui/material";
 import AppCataloguePage from "./component/appCatalogue/AppCataloguePage";
 import AppCatalogueCapacitor from "./component/appCatalogue/AppCatalogueCapacitor";
 import Navbar from "./component/Navbar";
 import AppRouteLoader from "./component/AppRouteLoader";
 import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
+import {
+  getStoredCatalogueNav,
+  persistCatalogueNav,
+} from "@/lib/catalogueNav";
 
 type NavigationButtonData = {
   id: string;
@@ -41,8 +45,21 @@ const AppIndex = ({
   featuredByProjectId: Record<string, VideoData[]>;
   allVideos: VideoData[];
 }) => {
-  const [selectedNav, setSelectedNav] = useState<string>("home");
+  const [selectedNav, setSelectedNavState] = useState<string>("home");
   const displayMode = useAppDisplayMode();
+  const allowedNavIds = useMemo(
+    () => navigationButtons.map((button) => button.id),
+    [navigationButtons]
+  );
+
+  useLayoutEffect(() => {
+    setSelectedNavState(getStoredCatalogueNav(allowedNavIds));
+  }, [allowedNavIds]);
+
+  const setSelectedNav = (nav: string) => {
+    persistCatalogueNav(nav);
+    setSelectedNavState(nav);
+  };
 
   const selectedVideos = useMemo(() => {
     if (selectedNav === "home") {

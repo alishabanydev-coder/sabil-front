@@ -57,6 +57,8 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         transition: "all 0.35s ease",
       }}
     >
+      <VideoProgressBar videoId={video._id} duration={video.duration} />
+
       <Stack
         onClick={() => router.push(`/app/watch/${video._id}`)}
         onKeyDown={(event) => {
@@ -166,14 +168,13 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         >
           <Stack
             sx={{
-              position: 'relative',
+              position: "relative",
               flexDirection: "row",
               gap: { xs: 0.5, sm: 1, lg: 1.5 },
               mt: -1,
               justifyContent: "center",
             }}
           >
-            <VideoProgressBar videoId={video._id} duration={video.duration} />
             <CatalogueVideoStats video={video} variant="page" />
           </Stack>
         </Stack>

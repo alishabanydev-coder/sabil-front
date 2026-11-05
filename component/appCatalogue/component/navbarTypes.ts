@@ -19,6 +19,7 @@ export type VideoData = {
   saveCount?: number;
   viewCount?: number;
   commentCount?: number;
+  appViewCount?: number;
 };
 
 export type NavbarProps = {

@@ -13,6 +13,7 @@ const counts: Record<ReactionType, Map<string, number>> = {
   like: new Map(),
   save: new Map(),
 };
+const viewTotals = new Map<string, number>();
 
 let version = 0;
 
@@ -150,5 +151,23 @@ export function setReactionPending(
   } else {
     pendingKeys.delete(key);
   }
+  emit();
+}
+
+export function getViewTotal(videoId: string, fallback: number) {
+  if (!videoId) {
+    return Math.max(0, fallback);
+  }
+
+  const stored = viewTotals.get(videoId);
+  return stored === undefined ? Math.max(0, fallback) : stored;
+}
+
+export function setViewTotal(videoId: string, count: number) {
+  if (!videoId) {
+    return;
+  }
+
+  viewTotals.set(videoId, Math.max(0, Number(count) || 0));
   emit();
 }

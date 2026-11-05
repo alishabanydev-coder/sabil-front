@@ -1,12 +1,12 @@
 "use client";
 
+import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 import WatchPlyrPlayer, {
   FULLSCREEN_ANIM_MS,
 } from "@/component/appCatalogue/watch/WatchPlyrPlayer";
 import WatchRelatedRail from "@/component/appCatalogue/watch/WatchRelatedRail";
 import { useWatchPage } from "@/component/appCatalogue/watch/useWatchPage";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
-import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 
 const PLAYER_FLEX = 7;
 const RAIL_FLEX = 3;

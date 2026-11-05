@@ -9,16 +9,21 @@ import {
   markWatched,
   setProgress,
 } from "@/lib/reactions/playlistStore";
+import { setViewTotal } from "@/lib/reactions/reactionStore";
 import VideocamOffOutlined from "@mui/icons-material/VideocamOffOutlined";
 import { CircularProgress, Stack, Typography, useTheme } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { countAppView } from "../services/reactionsApi";
 
 const HUD_HIDE_MS = 5000;
 const DESKTOP_HUD_HIDE_MS = 4000;
 const DESKTOP_FULLSCREEN_HUD_HIDE_MS = 4000;
 export const FULLSCREEN_ANIM_MS = 380;
 const WATCHED_AFTER_SECONDS = 30;
+const FIRST_VIEW_SECONDS = 30;
+const REWATCH_VIEW_SECONDS = 45;
+const REWATCH_START_MAX_SECONDS = 10;
 const PROGRESS_SAVE_EVERY_SECONDS = 5;
 const SEEK_GAP_SECONDS = 1.5;
 const RESUME_MIN_SECONDS = 5;
@@ -194,6 +199,11 @@ const WatchPlyrPlayer = ({
   const playedRef = useRef(0);
   const lastSavedPlayedRef = useRef(0);
   const markedWatchedRef = useRef(false);
+  const isRewatchRef = useRef(false);
+  const firstViewPostedRef = useRef(false);
+  const rewatchFromStartRef = useRef(false);
+  const sessionRewatchPlayedRef = useRef(0);
+  const rewatchViewPostedRef = useRef(false);
   const resumedRef = useRef(false);
   const [started, setStarted] = useState(false);
   const [plyrRoot, setPlyrRoot] = useState<HTMLElement | null>(null);
@@ -286,6 +296,14 @@ const WatchPlyrPlayer = ({
     [mediaDuration]
   );
 
+  const postAppView = useCallback((id: string) => {
+    void countAppView(id).then((result) => {
+      if (result.ok) {
+        setViewTotal(id, result.count);
+      }
+    });
+  }, []);
+
   const trackPlayback = useCallback(
     (player: PlyrPlayer) => {
       const id = videoIdRef.current?.trim();
@@ -294,17 +312,28 @@ const WatchPlyrPlayer = ({
       }
 
       const now = Number(player.currentTime) || 0;
+      const lastTick = lastTickRef.current;
+      const delta = lastTick === 0 ? 0 : now - lastTick;
+      const seeked = delta < 0 || delta > SEEK_GAP_SECONDS;
+      const inRewatchStart =
+        now <= REWATCH_START_MAX_SECONDS && !player.seeking;
+
+      if (isRewatchRef.current && inRewatchStart) {
+        if (!rewatchFromStartRef.current || seeked) {
+          rewatchFromStartRef.current = true;
+          sessionRewatchPlayedRef.current = 0;
+        }
+      }
+
       if (player.paused || player.seeking || !isPlaybackActiveRef.current) {
         lastTickRef.current = now;
         return;
       }
 
-      const lastTick = lastTickRef.current;
-      const delta = lastTick === 0 ? 0 : now - lastTick;
       lastTickRef.current = now;
-
-      if (delta > 0 && delta <= SEEK_GAP_SECONDS) {
-        playedRef.current += delta;
+      const playedTick = delta > 0 && delta <= SEEK_GAP_SECONDS ? delta : 0;
+      if (playedTick) {
+        playedRef.current += playedTick;
       }
 
       if (
@@ -315,6 +344,29 @@ const WatchPlyrPlayer = ({
         markedWatchedRef.current = true;
       }
 
+      if (!isRewatchRef.current) {
+        if (
+          !firstViewPostedRef.current &&
+          playedRef.current >= FIRST_VIEW_SECONDS
+        ) {
+          firstViewPostedRef.current = true;
+          isRewatchRef.current = true;
+          markWatched(id);
+          markedWatchedRef.current = true;
+          postAppView(id);
+        }
+      } else if (
+        rewatchFromStartRef.current &&
+        !rewatchViewPostedRef.current &&
+        playedTick
+      ) {
+        sessionRewatchPlayedRef.current += playedTick;
+        if (sessionRewatchPlayedRef.current >= REWATCH_VIEW_SECONDS) {
+          rewatchViewPostedRef.current = true;
+          postAppView(id);
+        }
+      }
+
       if (
         playedRef.current - lastSavedPlayedRef.current >=
         PROGRESS_SAVE_EVERY_SECONDS
@@ -323,7 +375,7 @@ const WatchPlyrPlayer = ({
         lastSavedPlayedRef.current = playedRef.current;
       }
     },
-    [mediaDuration]
+    [mediaDuration, postAppView]
   );
 
   useEffect(() => {
@@ -336,6 +388,11 @@ const WatchPlyrPlayer = ({
         (isWatched(videoId) || playedRef.current >= WATCHED_AFTER_SECONDS)
     );
     markedWatchedRef.current = alreadyWatched;
+    isRewatchRef.current = alreadyWatched;
+    firstViewPostedRef.current = alreadyWatched;
+    rewatchFromStartRef.current = false;
+    sessionRewatchPlayedRef.current = 0;
+    rewatchViewPostedRef.current = false;
     if (videoId && alreadyWatched) {
       markWatched(videoId);
     }

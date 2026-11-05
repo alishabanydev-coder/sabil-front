@@ -69,3 +69,30 @@ export async function toggleReaction(videoId, type, action) {
     };
   }
 }
+
+export async function countAppView(videoId) {
+  const normalizedVideoId = typeof videoId === "string" ? videoId.trim() : "";
+
+  if (!normalizedVideoId) {
+    return { ok: false, count: 0 };
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE}/api/admin/public/videos/${normalizedVideoId}/views`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deviceId: getDeviceId() }),
+        keepalive: true,
+      }
+    );
+    const data = await readJson(response);
+    if (!response.ok) {
+      return { ok: false, count: Math.max(0, Number(data?.count) || 0) };
+    }
+    return { ok: true, count: Math.max(0, Number(data?.count) || 0) };
+  } catch {
+    return { ok: false, count: 0 };
+  }
+}
