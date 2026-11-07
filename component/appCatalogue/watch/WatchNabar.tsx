@@ -5,7 +5,7 @@ import { ArrowBack } from "@mui/icons-material";
 import { IconButton, Stack } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { shouldIgnoreWatchNavbarBack } from "./suppressWatchNavbarBack";
+import { shouldIgnoreWatchNavbarBack } from "../utils/suppressWatchNavbarBack";
 
 const WatchNabar = () => {
   const router = useRouter();

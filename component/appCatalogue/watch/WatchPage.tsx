@@ -3,9 +3,9 @@
 import { CircularProgress, Skeleton, Stack, Typography } from "@mui/material";
 import WatchPlyrPlayer, {
   FULLSCREEN_ANIM_MS,
-} from "@/component/appCatalogue/watch/WatchPlyrPlayer";
-import WatchRelatedRail from "@/component/appCatalogue/watch/WatchRelatedRail";
-import { useWatchPage } from "@/component/appCatalogue/watch/useWatchPage";
+} from "./WatchPlyrPlayer";
+import WatchRelatedRail from "./WatchRelatedRail";
+import { useWatchPage } from "@/component/appCatalogue/hooks/useWatchPage";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
 const PLAYER_FLEX = 7;

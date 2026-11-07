@@ -1,6 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import { WatchCatalogueVideo } from "./buildWatchRelatedVideos";
+import type { WatchCatalogueVideo } from "../utils/buildWatchRelatedVideos";
 
 const TitleTextStack = ({
   isOverlay,

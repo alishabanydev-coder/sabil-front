@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import type { WatchCatalogueVideo } from "./buildWatchRelatedVideos";
+import type { WatchCatalogueVideo } from "../utils/buildWatchRelatedVideos";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
 
 //FIXME: add switch button to toggle between Urdo and English in videoPage and SabeelToons.

@@ -8,17 +8,17 @@ import {
 import {
   buildWatchRelatedVideos,
   type WatchCatalogueVideo,
-} from "@/component/appCatalogue/watch/buildWatchRelatedVideos";
+} from "../utils/buildWatchRelatedVideos";
 import {
   enrichWatchRelatedVideos,
   type ProjectPreviewMap,
-} from "@/component/appCatalogue/watch/enrichWatchRelatedVideos";
+} from "../utils/enrichWatchRelatedVideos";
 import { useEffect, useState } from "react";
 import type {
   ProjectDetails,
   VideoDetails,
   WatchPageViewModel,
-} from "./watchPageTypes";
+} from "../utils/watchPageTypes";
 
 export function useWatchPage(videoId: string): WatchPageViewModel {
   const [video, setVideo] = useState<VideoDetails | null>(null);
