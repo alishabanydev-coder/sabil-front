@@ -216,28 +216,31 @@ export function useWatchPlyrPlayer({
     );
   }, []);
 
-  const resumeTarget = useCallback((player: PlyrPlayer) => {
-    const id = videoIdRef.current?.trim();
-    if (!id) {
-      return 0;
-    }
+  const resumeTarget = useCallback(
+    (player: PlyrPlayer) => {
+      const id = videoIdRef.current?.trim();
+      if (!id) {
+        return 0;
+      }
 
-    const saved = getProgress(id);
-    if (!saved) {
-      return 0;
-    }
+      const saved = getProgress(id);
+      if (!saved) {
+        return 0;
+      }
 
-    const length = mediaDuration(player);
-    if (
-      length <= 0 ||
-      saved.position <= RESUME_MIN_SECONDS ||
-      saved.position >= length * FINISHED_RATIO
-    ) {
-      return 0;
-    }
+      const length = mediaDuration(player);
+      if (
+        length <= 0 ||
+        saved.position <= RESUME_MIN_SECONDS ||
+        saved.position >= length * FINISHED_RATIO
+      ) {
+        return 0;
+      }
 
-    return saved.position;
-  }, [mediaDuration]);
+      return saved.position;
+    },
+    [mediaDuration]
+  );
 
   const paintSeekBar = useCallback((player: PlyrPlayer, seconds: number) => {
     const seek = player.elements.container?.querySelector('[data-plyr="seek"]');
@@ -260,27 +263,32 @@ export function useWatchPlyrPlayer({
     seek.style.setProperty("--value", `${(percent / max) * 100}%`);
   }, []);
 
-  const paintCurrentTime = useCallback((player: PlyrPlayer, seconds: number) => {
-    const label = player.elements.container?.querySelector(".plyr__time--current");
-    if (!label) {
-      return;
-    }
+  const paintCurrentTime = useCallback(
+    (player: PlyrPlayer, seconds: number) => {
+      const label = player.elements.container?.querySelector(
+        ".plyr__time--current"
+      );
+      if (!label) {
+        return;
+      }
 
-    const length =
-      Number(player.duration) ||
-      Number(durationRef.current) ||
-      getProgress(videoIdRef.current || "")?.duration ||
-      0;
-    const total = Math.max(0, Math.floor(seconds));
-    const hours = Math.floor(total / 3600);
-    const minutes = Math.floor((total % 3600) / 60);
-    const secs = total % 60;
-    const pad = (value: number) => String(value).padStart(2, "0");
-    label.textContent =
-      length >= 3600 || hours > 0
-        ? `${hours}:${pad(minutes)}:${pad(secs)}`
-        : `${pad(minutes)}:${pad(secs)}`;
-  }, []);
+      const length =
+        Number(player.duration) ||
+        Number(durationRef.current) ||
+        getProgress(videoIdRef.current || "")?.duration ||
+        0;
+      const total = Math.max(0, Math.floor(seconds));
+      const hours = Math.floor(total / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const secs = total % 60;
+      const pad = (value: number) => String(value).padStart(2, "0");
+      label.textContent =
+        length >= 3600 || hours > 0
+          ? `${hours}:${pad(minutes)}:${pad(secs)}`
+          : `${pad(minutes)}:${pad(secs)}`;
+    },
+    []
+  );
 
   const holdSeekDisplay = useCallback(
     (player: PlyrPlayer) => {
@@ -316,20 +324,18 @@ export function useWatchPlyrPlayer({
       }
 
       const saved = getProgress(id);
-      if (!saved) {
-        resumedRef.current = true;
-        return;
-      }
-
-      const position = resumeTarget(player);
+      const position =
+        resumeHoldRef.current > 0
+          ? resumeHoldRef.current
+          : resumeTarget(player);
       if (!position) {
-        if (mediaDuration(player) > 0) {
+        if (!saved || mediaDuration(player) > 0) {
           resumedRef.current = true;
         }
         return;
       }
 
-      // Plyr ignores currentTime until YouTube has a duration. Keep retrying.
+      // Plyr ignores currentTime until the length is known. Keep retrying.
       if (!player.duration) {
         resumeHoldRef.current = position;
         paintSeekBar(player, position);
@@ -815,24 +821,22 @@ export function useWatchPlyrPlayer({
         return;
       }
 
+      const savedProgress = videoIdRef.current?.trim()
+        ? getProgress(videoIdRef.current.trim())
+        : null;
+      const knownDuration =
+        Number(durationRef.current) || savedProgress?.duration || 0;
       const resumeAt = (() => {
-        const id = videoIdRef.current?.trim();
-        if (!id) {
-          return 0;
-        }
-
-        const saved = getProgress(id);
-        const length = Number(durationRef.current) || saved?.duration || 0;
         if (
-          !saved ||
-          length <= 0 ||
-          saved.position <= RESUME_MIN_SECONDS ||
-          saved.position >= length * FINISHED_RATIO
+          !savedProgress ||
+          knownDuration <= 0 ||
+          savedProgress.position <= RESUME_MIN_SECONDS ||
+          savedProgress.position >= knownDuration * FINISHED_RATIO
         ) {
           return 0;
         }
 
-        return saved.position;
+        return savedProgress.position;
       })();
       if (resumeAt > 0) {
         resumeHoldRef.current = resumeAt;
@@ -849,6 +853,7 @@ export function useWatchPlyrPlayer({
         ],
         settings: ["captions", "quality", "speed"],
         tooltips: { controls: true, seek: true },
+        ...(knownDuration > 0 ? { duration: knownDuration } : {}),
         fullscreen: {
           enabled: !isNative,
           fallback: "force",
@@ -883,9 +888,8 @@ export function useWatchPlyrPlayer({
         setPlyrRoot(player?.elements.container ?? null);
         if (player) {
           injectPlyrVolumeSetting(player);
-          const seek = player.elements.container?.querySelector(
-            '[data-plyr="seek"]'
-          );
+          const seek =
+            player.elements.container?.querySelector('[data-plyr="seek"]');
           seek?.addEventListener("input", () => {
             if (!player || !(seek instanceof HTMLInputElement)) {
               return;
@@ -903,9 +907,7 @@ export function useWatchPlyrPlayer({
             const max = Number(seek.max) || 100;
             const seconds = (Number(seek.value) / max) * length;
             resumeHoldRef.current = seconds;
-            if (!player.duration) {
-              player.media.currentTime = seconds;
-            }
+            player.currentTime = seconds;
             seek.style.setProperty(
               "--value",
               `${(Number(seek.value) / max) * 100}%`
@@ -1001,10 +1003,25 @@ export function useWatchPlyrPlayer({
           holdSeekDisplay(player);
         }
       });
-      player.on("durationchange", () => {
-        if (player) {
-          tryResume(player);
+      const onDurationChange = player.on as (
+        event: "durationchange",
+        callback: () => void
+      ) => void;
+      onDurationChange("durationchange", () => {
+        if (!player) {
+          return;
         }
+
+        const hold = resumeHoldRef.current;
+        if (hold > 0) {
+          const clock = Number(player.currentTime) || 0;
+          if (player.duration && Math.abs(clock - hold) > 1.5) {
+            player.currentTime = hold;
+          }
+          holdSeekDisplay(player);
+        }
+
+        tryResume(player);
       });
       player.on("playing", () => {
         hasPlayedRef.current = true;
