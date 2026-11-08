@@ -132,6 +132,23 @@ const WatchPlyrPlayer = ({
         <Stack
           ref={shellRef}
           className="watch-plyr-shell"
+          onClick={(event) => {
+            if (started || isUnavailable) {
+              return;
+            }
+
+            const target = event.target;
+            if (
+              target instanceof Element &&
+              target.closest(
+                ".plyr__controls, .plyr__menu, .plyr__menu__container"
+              )
+            ) {
+              return;
+            }
+
+            beginPlayback();
+          }}
           sx={{ width: "100%", height: "100%", bgcolor: "#000" }}
         >
           <Stack
@@ -215,26 +232,16 @@ const WatchPlyrPlayer = ({
       {!started && !isUnavailable ? (
         <Stack
           className="watch-player-preview"
-          component="button"
-          type="button"
-          onClick={beginPlayback}
-          aria-label={`Play ${title || "video"}`}
+          aria-hidden
           sx={{
             position: "absolute",
             inset: 0,
             zIndex: 4,
-            border: 0,
-            p: 0,
-            m: 0,
-            cursor: "pointer",
+            pointerEvents: "none",
             bgcolor: "transparent",
             overflow: "hidden",
             width: "100%",
             height: "100%",
-            appearance: "none",
-            WebkitAppearance: "none",
-            font: "inherit",
-            color: "inherit",
           }}
         >
           <WatchPlayerPlayIcon />

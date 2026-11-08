@@ -190,6 +190,7 @@ export function useWatchPlyrPlayer({
   const sessionRewatchPlayedRef = useRef(0);
   const rewatchViewPostedRef = useRef(false);
   const resumedRef = useRef(false);
+  const resumeHoldRef = useRef(0);
   const [started, setStarted] = useState(false);
   const [plyrRoot, setPlyrRoot] = useState<HTMLElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -215,6 +216,94 @@ export function useWatchPlyrPlayer({
     );
   }, []);
 
+  const resumeTarget = useCallback((player: PlyrPlayer) => {
+    const id = videoIdRef.current?.trim();
+    if (!id) {
+      return 0;
+    }
+
+    const saved = getProgress(id);
+    if (!saved) {
+      return 0;
+    }
+
+    const length = mediaDuration(player);
+    if (
+      length <= 0 ||
+      saved.position <= RESUME_MIN_SECONDS ||
+      saved.position >= length * FINISHED_RATIO
+    ) {
+      return 0;
+    }
+
+    return saved.position;
+  }, [mediaDuration]);
+
+  const paintSeekBar = useCallback((player: PlyrPlayer, seconds: number) => {
+    const seek = player.elements.container?.querySelector('[data-plyr="seek"]');
+    if (!(seek instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const length =
+      Number(player.duration) ||
+      Number(durationRef.current) ||
+      getProgress(videoIdRef.current || "")?.duration ||
+      0;
+    if (length <= 0) {
+      return;
+    }
+
+    const percent = Math.min(100, Math.max(0, (seconds / length) * 100));
+    seek.value = percent.toFixed(2);
+    const max = Number(seek.max) || 100;
+    seek.style.setProperty("--value", `${(percent / max) * 100}%`);
+  }, []);
+
+  const paintCurrentTime = useCallback((player: PlyrPlayer, seconds: number) => {
+    const label = player.elements.container?.querySelector(".plyr__time--current");
+    if (!label) {
+      return;
+    }
+
+    const length =
+      Number(player.duration) ||
+      Number(durationRef.current) ||
+      getProgress(videoIdRef.current || "")?.duration ||
+      0;
+    const total = Math.max(0, Math.floor(seconds));
+    const hours = Math.floor(total / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const secs = total % 60;
+    const pad = (value: number) => String(value).padStart(2, "0");
+    label.textContent =
+      length >= 3600 || hours > 0
+        ? `${hours}:${pad(minutes)}:${pad(secs)}`
+        : `${pad(minutes)}:${pad(secs)}`;
+  }, []);
+
+  const holdSeekDisplay = useCallback(
+    (player: PlyrPlayer) => {
+      const hold = resumeHoldRef.current;
+      const clock = Number(player.currentTime) || 0;
+      const shown = hold > 0 ? hold : clock;
+      if (shown <= 0) {
+        return;
+      }
+
+      if (!player.duration || (hold > 0 && Math.abs(clock - hold) > 1.5)) {
+        paintSeekBar(player, shown);
+        paintCurrentTime(player, shown);
+        return;
+      }
+
+      if (hold > 0) {
+        resumeHoldRef.current = 0;
+      }
+    },
+    [paintCurrentTime, paintSeekBar]
+  );
+
   const tryResume = useCallback(
     (player: PlyrPlayer) => {
       if (resumedRef.current) {
@@ -232,21 +321,30 @@ export function useWatchPlyrPlayer({
         return;
       }
 
-      const length = mediaDuration(player);
-      if (length <= 0) {
+      const position = resumeTarget(player);
+      if (!position) {
+        if (mediaDuration(player) > 0) {
+          resumedRef.current = true;
+        }
         return;
       }
 
-      if (
-        saved.position > RESUME_MIN_SECONDS &&
-        saved.position < length * FINISHED_RATIO
-      ) {
-        player.currentTime = saved.position;
+      // Plyr ignores currentTime until YouTube has a duration. Keep retrying.
+      if (!player.duration) {
+        resumeHoldRef.current = position;
+        paintSeekBar(player, position);
+        return;
       }
 
+      resumeHoldRef.current = position;
+      const clock = Number(player.currentTime) || 0;
+      if (Math.abs(clock - position) > 1.5) {
+        player.currentTime = position;
+      }
+      paintSeekBar(player, position);
       resumedRef.current = true;
     },
-    [mediaDuration]
+    [mediaDuration, paintSeekBar, resumeTarget]
   );
 
   const flushProgress = useCallback(
@@ -256,7 +354,9 @@ export function useWatchPlyrPlayer({
         return;
       }
 
-      const now = Number(player.currentTime) || 0;
+      const clock = Number(player.currentTime) || 0;
+      const hold = resumeHoldRef.current;
+      const now = hold > 0 && clock + 1 < hold ? hold : clock;
       const length = mediaDuration(player);
 
       if (ended) {
@@ -381,6 +481,7 @@ export function useWatchPlyrPlayer({
       markWatched(videoId);
     }
     resumedRef.current = false;
+    resumeHoldRef.current = 0;
   }, [videoId]);
 
   const clearHudHide = useCallback(() => {
@@ -714,6 +815,29 @@ export function useWatchPlyrPlayer({
         return;
       }
 
+      const resumeAt = (() => {
+        const id = videoIdRef.current?.trim();
+        if (!id) {
+          return 0;
+        }
+
+        const saved = getProgress(id);
+        const length = Number(durationRef.current) || saved?.duration || 0;
+        if (
+          !saved ||
+          length <= 0 ||
+          saved.position <= RESUME_MIN_SECONDS ||
+          saved.position >= length * FINISHED_RATIO
+        ) {
+          return 0;
+        }
+
+        return saved.position;
+      })();
+      if (resumeAt > 0) {
+        resumeHoldRef.current = resumeAt;
+      }
+
       player = new PlyrCtor(target, {
         autoplay: false,
         autopause: true,
@@ -737,6 +861,7 @@ export function useWatchPlyrPlayer({
           modestbranding: 1,
           controls: 0,
           customControls: true,
+          ...(resumeAt > 0 ? { start: Math.floor(resumeAt) } : {}),
         },
       });
 
@@ -758,6 +883,39 @@ export function useWatchPlyrPlayer({
         setPlyrRoot(player?.elements.container ?? null);
         if (player) {
           injectPlyrVolumeSetting(player);
+          const seek = player.elements.container?.querySelector(
+            '[data-plyr="seek"]'
+          );
+          seek?.addEventListener("input", () => {
+            if (!player || !(seek instanceof HTMLInputElement)) {
+              return;
+            }
+
+            const length =
+              Number(player.duration) ||
+              Number(durationRef.current) ||
+              getProgress(videoIdRef.current || "")?.duration ||
+              0;
+            if (length <= 0) {
+              return;
+            }
+
+            const max = Number(seek.max) || 100;
+            const seconds = (Number(seek.value) / max) * length;
+            resumeHoldRef.current = seconds;
+            if (!player.duration) {
+              player.media.currentTime = seconds;
+            }
+            seek.style.setProperty(
+              "--value",
+              `${(Number(seek.value) / max) * 100}%`
+            );
+            paintCurrentTime(player, seconds);
+            if (seconds > 0.05) {
+              hasFrameRef.current = true;
+              setHasFrame(true);
+            }
+          });
           tryResume(player);
         }
         tryStartFromGesture();
@@ -835,7 +993,18 @@ export function useWatchPlyrPlayer({
           return;
         }
 
+        holdSeekDisplay(player);
         trackPlayback(player);
+      });
+      player.on("seeked", () => {
+        if (player) {
+          holdSeekDisplay(player);
+        }
+      });
+      player.on("durationchange", () => {
+        if (player) {
+          tryResume(player);
+        }
       });
       player.on("playing", () => {
         hasPlayedRef.current = true;
@@ -955,6 +1124,9 @@ export function useWatchPlyrPlayer({
     tryResume,
     trackPlayback,
     flushProgress,
+    paintSeekBar,
+    paintCurrentTime,
+    holdSeekDisplay,
   ]);
 
   return {

@@ -21,6 +21,10 @@ const playButtonWave = keyframes`
 
 export default function AppCataloguePageCard({ video }: { video: VideoData }) {
   const router = useRouter();
+  const openVideo = () => {
+    router.push(`/app/watch/${video._id}`);
+  };
+
   return (
     <Stack
       tabIndex={0}
@@ -60,11 +64,11 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
       <VideoProgressBar videoId={video._id} duration={video.duration} />
 
       <Stack
-        onClick={() => router.push(`/app/watch/${video._id}`)}
+        onClick={openVideo}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            router.push(`/app/watch/${video._id}`);
+            openVideo();
           }
         }}
         sx={{
@@ -122,6 +126,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
         ))}
         <Box
           className="app-catalogue-page-play-button"
+          onClick={openVideo}
           sx={{
             position: "relative",
             zIndex: 1,
