@@ -8,6 +8,9 @@ export type WatchCatalogueVideo = {
   showInHomepage?: boolean;
   episode?: number;
   season?: number;
+  saveCount?: number;
+  likeCount?: number;
+  viewCount?: number;
 };
 
 function episodeOrder(video: WatchCatalogueVideo): number {

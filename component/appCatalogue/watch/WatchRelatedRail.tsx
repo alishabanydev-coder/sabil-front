@@ -1,6 +1,15 @@
 "use client";
 
-import { Box, Skeleton, Stack, Typography } from "@mui/material";
+import {
+  alpha,
+  Box,
+  Divider,
+  keyframes,
+  Skeleton,
+  Stack,
+  SvgIconProps,
+  Typography,
+} from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
@@ -8,6 +17,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import type { WatchCatalogueVideo } from "../utils/buildWatchRelatedVideos";
 import { useNativeApp } from "@/lib/capacitor/nativeApp";
+import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
+import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+import { ElementType } from "react";
+import { compactStat } from "../component/appCatalogue/component/compactStat";
 
 //FIXME: add switch button to toggle between Urdo and English in videoPage and SabeelToons.
 
@@ -20,16 +34,76 @@ type WatchRelatedRailProps = {
   isLoading: boolean;
 };
 
+type ReactionKind = "save" | "like" | "view";
+
+type StatConfig = {
+  kind: ReactionKind;
+  color: [string, string];
+  label: string;
+  activeIcon: ElementType<SvgIconProps>;
+  number: number;
+};
+
+function GradientIcon({
+  icon: Icon,
+  colors,
+}: {
+  icon: ElementType<SvgIconProps>;
+  colors: [string, string];
+}) {
+  return (
+    <Icon
+      sx={{
+        fontSize: 22,
+        fill: colors[0],
+      }}
+    />
+  );
+}
+
+const STATS = (value: WatchCatalogueVideo): StatConfig[] => [
+  {
+    kind: "save",
+    color: ["#0F70E3", "#044CD4"],
+    label: "save",
+    activeIcon: BookmarkOutlinedIcon,
+    number: value.saveCount ?? 0,
+  },
+  {
+    kind: "like",
+    color: ["#FB5C73", "#FB2C5C"],
+    label: "likes",
+    activeIcon: FavoriteRoundedIcon,
+    number: value.likeCount ?? 0,
+  },
+  {
+    kind: "view",
+    color: ["#7E4DDE", "#6C32C9"],
+    label: "views",
+    activeIcon: VisibilityRoundedIcon,
+    number: value.viewCount ?? 0,
+  },
+];
+
 const slideStyle = {
   height: "100%",
   width: "auto",
 };
 
+const playButtonWave = keyframes`
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+`;
+
 function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
   const router = useRouter();
   const isNative = useNativeApp();
-
-  const projectName = item.projectTitle?.trim() || "Project";
 
   return (
     <Stack
@@ -68,6 +142,20 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
             transform: "translateY(0)",
             scale: 1.1,
           },
+          "& .app-catalogue-page-play-button": {
+            bgcolor: alpha("#fff", 0.85),
+            scale: 1.1,
+            transition: "all 0.3s ease",
+          },
+          "& .app-catalogue-play-wave": {
+            animationName: `${playButtonWave}`,
+            animationDuration: "1.45s",
+            animationTimingFunction: "ease-out",
+            animationIterationCount: "infinite",
+          },
+          "& .app-catalogue-play-wave-late": {
+            animationDelay: "0.5s",
+          },
         },
       }}
     >
@@ -95,6 +183,67 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
         ) : null}
       </Stack>
 
+      <Box
+        sx={{
+          position: "absolute",
+          left: "50%",
+          top: {
+            xs: "calc(50% - 25px)",
+            sm: "calc(50% - 30px)",
+            lg: "calc(50% - 35px)",
+          },
+          width: { xs: 54, sm: 60, md: 64, lg: 66, xl: 70 },
+          height: { xs: 54, sm: 60, md: 64, lg: 66, xl: 70 },
+          transform: "translateX(-50%)",
+        }}
+      >
+        {[
+          "app-catalogue-play-wave",
+          "app-catalogue-play-wave app-catalogue-play-wave-late",
+        ].map((waveClass) => (
+          <Box
+            key={waveClass}
+            aria-hidden
+            className={waveClass}
+            sx={{
+              position: "absolute",
+              inset: 0,
+              borderRadius: "50%",
+              border: "2px solid",
+              borderColor: "primary.main",
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+              transform: "scale(1)",
+              transformOrigin: "center",
+              opacity: 0,
+              pointerEvents: "none",
+            }}
+          />
+        ))}
+        <Box
+          className="app-catalogue-page-play-button"
+          sx={{
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            boxShadow: 5,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            bgcolor: alpha("#fff", 0.7),
+            cursor: "pointer",
+          }}
+        >
+          <PlayArrowRoundedIcon
+            sx={{
+              fontSize: { xs: 45, sm: 48, md: 54, lg: 60, xl: 64 },
+              color: "primary.main",
+            }}
+          />
+        </Box>
+      </Box>
+
       <Stack
         className="watch-related-rail-meta"
         direction="row"
@@ -114,70 +263,52 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
         <Stack
           sx={{
             width: "100%",
-            bgcolor: "white",
+            bgcolor: "rgba(0, 0, 0, 0.8)",
             borderRadius: 0,
             boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
-            pl: isNative ? 5 : { xs: 7, sm: 7 },
+            px: 1,
             position: "relative",
-            pt: isNative ? 0.8 : { xs: 1.2, sm: 1 },
-            pb: { xs: 0.8, sm: 0 },
+            pt: 0.8,
+            pb: 0.7,
           }}
         >
-          <Box
-            className="watch-related-rail-play-button"
+          <Stack
+            direction="row"
             sx={{
-              position: "absolute",
-              left: isNative ? 8 : 12,
-              top: isNative ? -14 : { xs: -20, sm: -20 },
-              width: isNative ? 30 : { xs: 40, sm: 38, md: 38, lg: 42 },
-              height: isNative ? 30 : { xs: 40, sm: 40, md: 40, lg: 42 },
-              borderRadius: "50%",
-              boxShadow: 5,
-              display: "flex",
-              justifyContent: "center",
+              gap: 2,
               alignItems: "center",
-              bgcolor: "white",
-              transition: "all 0.3s ease",
-            }}
-          >
-            <PlayArrowRoundedIcon
-              sx={{
-                fontSize: isNative ? 30 : { xs: 36, md: 45, lg: 36 },
-                color: "primary.main",
-              }}
-            />
-          </Box>
-
-          <Typography
-            variant="h6"
-            sx={{
-              color: "primary.main",
-              fontWeight: 800,
-              fontSize: { xs: 12, md: 14, lg: 16 },
-              textTransform: "uppercase",
               width: "100%",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              lineHeight: 1,
+              justifyContent: "center",
             }}
           >
-            {item.title}
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            sx={{
-              width: "100%",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              color: "text.secondary",
-              fontWeight: 800,
-              fontSize: { xs: 10, md: 11, lg: 12 },
-            }}
-          >
-            {projectName}
-          </Typography>
+            {STATS(item).map((action, index) => (
+              <>
+                <Stack
+                  key={action.kind}
+                  direction="row"
+                  sx={{
+                    gap: 0.5,
+                    alignItems: "center",
+                  }}
+                >
+                  <GradientIcon
+                    icon={action.activeIcon}
+                    colors={action.color}
+                  />
+                  <Typography sx={{ color: action.color[0], fontWeight: 600 }}>
+                    {compactStat(action.number ?? 0)}
+                  </Typography>
+                </Stack>
+                {index < STATS(item).length - 1 && (
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ height: 22, bgcolor: "rgba(255, 255, 255, 0.3)" }}
+                  />
+                )}
+              </>
+            ))}
+          </Stack>
         </Stack>
       </Stack>
     </Stack>
