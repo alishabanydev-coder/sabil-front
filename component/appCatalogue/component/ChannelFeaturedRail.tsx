@@ -40,9 +40,8 @@ const railRootSx = {
   width: "82%",
   mx: "auto",
   alignItems: "center",
-  gap: { sm: 1.5, md: 2.5 },
-  mt: { xs: -3, sm: -16, md: -22, lg: -30, xl: -36 },
-  mb: { sm: 2, md: 3 },
+  gap: { sm: 1, md: 1.6 },
+  my: { sm: 1, md: 3 },
   zIndex: 100,
 } as const;
 
@@ -66,13 +65,13 @@ function FeaturedRailLabel({ label }: { label: string }) {
         alignItems: "center",
         gap: 1,
         flexShrink: 0,
-        maxWidth: { sm: 100, md: 150 },
+        maxWidth: { sm: 100, md: 150, xl: 180 },
       }}
     >
       <Box
         sx={{
-          width: { sm: 36, md: 48 },
-          height: { sm: 36, md: 48 },
+          width: { sm: 36, md: 48, lg: 52, xl: 58 },
+          height: { sm: 36, md: 48, lg: 52, xl: 58 },
           borderRadius: "50%",
           bgcolor: "primary.main",
           display: "flex",
@@ -86,15 +85,15 @@ function FeaturedRailLabel({ label }: { label: string }) {
           sx={{
             transform: "rotate(35deg)",
             color: "#f1d332",
-            fontSize: { sm: 28, md: 36 },
+            fontSize: { sm: 28, md: 36, lg: 45, xl: 48 },
           }}
         />
       </Box>
       <Typography
         sx={{
           color: "primary.main",
-          fontWeight: 700,
-          fontSize: { sm: 12, md: 18 },
+          fontWeight: 900,
+          fontSize: { sm: 12, md: 18, lg: 22, xl: 26 },
           lineHeight: 1.15,
           letterSpacing: 0.5,
           textTransform: "lowercase",
@@ -156,7 +155,7 @@ export default function ChannelFeaturedRail({
                 animation="pulse"
                 sx={{
                   flexShrink: 0,
-                  width: { sm: 140, md: 180, lg: 210 },
+                  width: { sm: "18vw", md: "20vw", lg: "20vw", xl: "22vw" },
                   aspectRatio: "16 / 9",
                   height: "auto",
                   borderRadius: 5,
@@ -236,6 +235,20 @@ export default function ChannelFeaturedRail({
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
           }}
+          breakpoints={{
+            600: {
+              spaceBetween: 8,
+            },
+            1200: {
+              spaceBetween: 15,
+            },
+            1440: {
+              spaceBetween: 18,
+            },
+            1640: {
+              spaceBetween: 24,
+            },
+          }}
         >
           {videos.map((video) => (
             <SwiperSlide key={video._id}>
@@ -243,9 +256,9 @@ export default function ChannelFeaturedRail({
                 onClick={() => router.push(`/app/watch/${video._id}`)}
                 sx={{
                   position: "relative",
-                  width: { sm: 140, md: 180, lg: 210 },
+                  width: { sm: "25vw", md: "22vw", lg: "20vw", xl: "20vw" },
                   aspectRatio: "16 / 9",
-                  borderRadius: 5,
+                  borderRadius: { sm: 4, md: 5, lg: 6, xl: 8 },
                   overflow: "hidden",
                   bgcolor: "white",
                   border: "1px solid",

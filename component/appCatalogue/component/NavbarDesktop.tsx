@@ -64,12 +64,11 @@ const NavbarDesktop = ({
       sx={{
         position: "relative",
         width: "100%",
-        aspectRatio: "1447 / 480",
         backgroundImage: "url(/application-background.webp)",
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        mb: isHome ? 5 : { sm: 1, md: 0 },
+        mb: isHome ? 0 : { sm: 1, md: 0 },
       }}
     >
       <Stack
@@ -202,8 +201,8 @@ const NavbarDesktop = ({
             left: { md: 32, lg: 38, xl: 45 },
             "& .logo": {
               zIndex: 115,
-              width: { md: 130, lg: 155, xl: 165 },
-              height: { md: 120, lg: 145, xl: 150 },
+              width: { sm: 92, md: 120, lg: 145, xl: 155},
+              height: { sm: 85, md: 110, lg: 130, xl: 140 },
               cursor: "pointer",
               transition: "all 0.3s ease",
               "&:hover": {
@@ -260,7 +259,7 @@ const NavbarDesktop = ({
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        borderRadius: { sm: 5, md: 8, lg: 8 },
+                        borderRadius: { sm: 5, md: 6, lg: 7 },
                         p: { sm: 0.3, md: 0.8, lg: 1 },
                         bgcolor: (theme) =>
                           isSelected
@@ -274,8 +273,9 @@ const NavbarDesktop = ({
                             : alpha(theme.palette.background.paper, 1),
                         transition: "all 0.3s ease",
                         "& img": {
-                          width: { sm: 60, md: 85, lg: 110 },
-                          height: { sm: 50, md: 70, lg: 85 },
+                          width: { sm: "9vw", md: "7vw", lg: "6vw", xl: "7vw" },
+                          height: "auto",
+                          aspectRatio: "100 / 85",
                           transition: "filter 0.3s ease",
                         },
                         "&:hover": {
@@ -324,11 +324,8 @@ const NavbarDesktop = ({
       {isHome && (
         <Stack
           sx={{
-            position: "absolute",
-            bottom: { sm: -110, md: -100, lg: -80 },
-            left: 0,
             width: "100%",
-            aspectRatio: "1448 / 460",
+            my: { sm: -5, md: -7, lg: -8 },
             minHeight: { sm: 260, md: 340 },
             backgroundImage: "url(/featuredBackground.webp)",
             backgroundSize: "100% 100%",
@@ -426,8 +423,8 @@ const NavbarDesktop = ({
                     my: "auto",
                     left: { sm: 30, md: 40, lg: 50 },
                     zIndex: 20,
-                    width: { sm: 35, md: 40, lg: 45 },
-                    height: { sm: 35, md: 40, lg: 45 },
+                    width: { sm: 35, md: 40, lg: 45, xl: 50 },
+                    height: { sm: 35, md: 40, lg: 45, xl: 50 },
                     borderRadius: "50%",
                     bgcolor: "secondary.main",
                     border: "1px solid white",
@@ -444,7 +441,10 @@ const NavbarDesktop = ({
                   }}
                 >
                   <NavigateBeforeRoundedIcon
-                    sx={{ fontSize: { sm: 26, md: 34, lg: 42 }, pr: 0.6 }}
+                    sx={{
+                      fontSize: { sm: 26, md: 34, lg: 45, xl: 48 },
+                      pr: 0.6,
+                    }}
                   />
                 </Box>
 
@@ -458,8 +458,8 @@ const NavbarDesktop = ({
                     my: "auto",
                     right: { sm: 30, md: 40, lg: 50 },
                     zIndex: 20,
-                    width: { sm: 35, md: 40, lg: 45 },
-                    height: { sm: 35, md: 40, lg: 45 },
+                    width: { sm: 35, md: 40, lg: 45, xl: 50 },
+                    height: { sm: 35, md: 40, lg: 45, xl: 50 },
                     borderRadius: "50%",
                     bgcolor: "secondary.main",
                     border: "1px solid white",
@@ -476,7 +476,7 @@ const NavbarDesktop = ({
                   }}
                 >
                   <NavigateNextRoundedIcon
-                    sx={{ fontSize: { sm: 26, md: 34, lg: 42 } }}
+                    sx={{ fontSize: { sm: 26, md: 34, lg: 45, xl: 48 } }}
                   />
                 </Box>
 

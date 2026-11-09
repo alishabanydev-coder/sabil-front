@@ -54,7 +54,7 @@ function GradientIcon({
   return (
     <Icon
       sx={{
-        fontSize: 22,
+        fontSize: { xs: 16, sm: 18, md: 20, lg: 22, xl: 24 },
         fill: colors[0],
       }}
     />
@@ -192,8 +192,8 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
             sm: "calc(50% - 30px)",
             lg: "calc(50% - 35px)",
           },
-          width: { xs: 54, sm: 60, md: 64, lg: 66, xl: 70 },
-          height: { xs: 54, sm: 60, md: 64, lg: 66, xl: 70 },
+          width: { xs: 50, sm: 48, md: 64, lg: 66, xl: 70 },
+          height: { xs: 50, sm: 48, md: 64, lg: 66, xl: 70 },
           transform: "translateX(-50%)",
         }}
       >
@@ -237,7 +237,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
         >
           <PlayArrowRoundedIcon
             sx={{
-              fontSize: { xs: 45, sm: 48, md: 54, lg: 60, xl: 64 },
+              fontSize: { xs: 45, sm: 42, md: 54, lg: 60, xl: 64 },
               color: "primary.main",
             }}
           />
@@ -268,14 +268,14 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
             boxShadow: "0px 0px 10px 1px rgba(0, 0, 0, 0.5)",
             px: 1,
             position: "relative",
-            pt: 0.8,
-            pb: 0.7,
+            pt: { xs: 0.3, md: 0.8 },
+            pb: { xs: 0.3, md: 0.7 },
           }}
         >
           <Stack
             direction="row"
             sx={{
-              gap: 2,
+              gap: { xs: 0.5, sm: 1, md: 2 },
               alignItems: "center",
               width: "100%",
               justifyContent: "center",
@@ -287,7 +287,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
                   key={action.kind}
                   direction="row"
                   sx={{
-                    gap: 0.5,
+                    gap: { xs: 0, sm: 0.3, md: 0.5 },
                     alignItems: "center",
                   }}
                 >
@@ -295,7 +295,13 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
                     icon={action.activeIcon}
                     colors={action.color}
                   />
-                  <Typography sx={{ color: action.color[0], fontWeight: 600 }}>
+                  <Typography
+                    sx={{
+                      color: action.color[0],
+                      fontWeight: 600,
+                      fontSize: { xs: 12, sm: 13, md: 16, lg: 18, xl: 20 },
+                    }}
+                  >
                     {compactStat(action.number ?? 0)}
                   </Typography>
                 </Stack>

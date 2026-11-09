@@ -31,7 +31,7 @@ export default function AppCataloguePage({
         color: "#fff",
         pt: isHome
           ? { xs: 3, sm: 7, md: 5, lg: 3 }
-          : { xs: 3, sm: 2, md: 2, lg: 1.5 },
+          : { xs: 3, sm: 2, md: 2, lg: 1 },
         pb: 2,
         flex: { xs: 1, sm: "none" },
         minHeight: { xs: 0, sm: "auto" },

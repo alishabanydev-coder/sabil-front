@@ -53,7 +53,7 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
         justifyContent: isNative ? "flex-end" : { xs: "flex-start", sm: "end" },
         alignItems: isNative ? "center" : { xs: "stretch", sm: "end" },
         flexDirection: "column",
-        gap: isNative ? 0.5 : { xs: 0, md: 1 },
+        gap: isNative ? 0.3 : { xs: 0, md: 1 },
         overflow: "hidden",
       }}
     >
