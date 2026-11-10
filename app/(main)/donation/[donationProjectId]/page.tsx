@@ -63,7 +63,7 @@ export async function generateMetadata({
       images: [image],
     },
     robots: {
-      index: true,
+      index: false,
       follow: true,
     },
   };
