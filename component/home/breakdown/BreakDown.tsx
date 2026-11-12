@@ -144,6 +144,7 @@ const BreakDown = ({
                     }}
                   >
                     <IconButton
+                      aria-label={`Play ${item.title}`}
                       sx={{
                         flexShrink: 0,
                         width: { xs: 42, md: 50, lg: 54, xl: 56 },

@@ -31,7 +31,8 @@ export default function Footer() {
     >
       <Image
         src="/footer.webp"
-        alt="some image"
+        alt="footer background"
+        aria-hidden
         fill
         style={{ objectFit: "fill" }}
       />
@@ -54,7 +55,7 @@ export default function Footer() {
         >
           <Image
             src="/kid-with-ball.webp"
-            alt="some image"
+            alt="Child playing with a ball"
             fill
             style={{ objectFit: "contain" }}
           />
@@ -78,7 +79,8 @@ export default function Footer() {
         >
           <Image
             src="/ball.webp"
-            alt="some image"
+            alt="football ball"
+            aria-hidden
             fill
             style={{ objectFit: "cover" }}
           />
@@ -180,7 +182,7 @@ export default function Footer() {
         >
           <Image
             src="/logo-skatch.webp"
-            alt="some image"
+            alt="Sabeel Kids"
             fill
             className="cursor-pointer"
           />

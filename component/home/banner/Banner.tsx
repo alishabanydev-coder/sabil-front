@@ -126,8 +126,10 @@ const Banner = ({
     >
       <Image
         src="/banner-background.webp"
-        alt="some image"
+        alt="Sabeel Kids homepage banner"
         fill
+        priority
+        sizes="100vw"
         style={{ objectFit: "fill" }}
       />
       <Leftside

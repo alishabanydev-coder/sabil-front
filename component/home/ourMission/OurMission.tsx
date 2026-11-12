@@ -61,7 +61,7 @@ const WhyCard = ({
   >
     <Image
       src={icon}
-      alt=""
+      alt={title}
       width={70}
       height={70}
       style={{ width: "clamp(40px, 8vw, 70px)", height: "auto" }}

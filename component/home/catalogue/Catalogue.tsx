@@ -109,7 +109,7 @@ const Catalogue = ({
               <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
                 <Image
                   src={catalogue.image}
-                  alt={catalogue._id}
+                  alt={catalogue.header || "Catalogue image"}
                   fill
                   style={{ objectFit: "cover" }}
                 />

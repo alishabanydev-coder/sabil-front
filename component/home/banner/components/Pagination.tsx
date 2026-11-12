@@ -11,6 +11,7 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
   return (
     <Stack direction="row" sx={{ gap: { xs: 0.5, md: 1 } }}>
       <IconButton
+        aria-label="Next slide"
         onClick={onNext}
         sx={{
           width: { xs: 50, sm: 72},
@@ -79,6 +80,7 @@ const Pagination = ({ onNext, onPrev }: PaginationProps) => {
         </Box>
       </IconButton>
       <IconButton
+        aria-label="Previous slide"
         onClick={onPrev}
         sx={{
           width: { xs: 28, sm: 40 },

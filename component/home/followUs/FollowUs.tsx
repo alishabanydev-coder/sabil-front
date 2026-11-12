@@ -105,10 +105,16 @@ const FollowUs = ({
               }}
             >
               {icons.map((item) => (
-                <IconButton key={item.id} href={item.url} target="_blank">
+                <IconButton
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={item.name}
+                >
                   <Image
                     src={item.icon}
-                    alt={item.name}
+                    alt=""
                     width={100}
                     height={100}
                   />

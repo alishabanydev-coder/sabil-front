@@ -263,6 +263,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                       className="quote-icon quote-inactive"
                       src="/pink-qout.webp"
                       alt=""
+                      aria-hidden
                       fill
                       sizes="42px"
                     />
@@ -270,6 +271,7 @@ const PeopleOpinion = ({ commentData }: { commentData: CommentData[] }) => {
                       className="quote-icon quote-active"
                       src="/white-qout.webp"
                       alt=""
+                      aria-hidden
                       fill
                       sizes="42px"
                     />

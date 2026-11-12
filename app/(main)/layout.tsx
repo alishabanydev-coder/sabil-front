@@ -43,7 +43,7 @@ export default function MainLayout({
   return (
     <>
       <Navbar />
-      {children}
+      <main>{children}</main>
       <Footer />
     </>
   );

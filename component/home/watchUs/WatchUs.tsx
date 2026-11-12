@@ -221,6 +221,7 @@ const WatchUs = ({ videoData }: { videoData: VideoData[] }) => {
                     <Box className="play-button-wrap">
                       <IconButton
                         className="play-button"
+                        aria-label={`Play ${slide.title}`}
                         onClick={() => onOpenWatchUsModal(slide)}
                       >
                         <PlayArrowRoundedIcon
