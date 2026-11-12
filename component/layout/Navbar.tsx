@@ -178,7 +178,7 @@ export default function Navbar({
               onClick={() => handleHrefClick(item.href)}
               sx={{
                 color: "#000",
-                fontSize: { xs: 10, sm: 10, md: 12, lg: 18, xl: 20 },
+                fontSize: { xs: 11, sm: 12, md: 16, lg: 20, xl: 22 },
                 fontWeight: 800,
                 textDecoration: "none",
                 "&:hover": {

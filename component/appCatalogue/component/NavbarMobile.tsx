@@ -31,6 +31,7 @@ const NavbarMobile = ({
     >
       {/* logo */}
       <Stack
+        aria-label="logo"
         sx={{
           position: "absolute",
           top: 15,
@@ -59,6 +60,7 @@ const NavbarMobile = ({
       >
         <IconButton
           // onClick={handleLogout}
+          aria-label="search"
           sx={{
             width: 35,
             height: 35,
@@ -82,6 +84,7 @@ const NavbarMobile = ({
 
         <IconButton
           href="/downloads/sabeel-kids.apk"
+          aria-label="download app"
           download
           sx={{
             width: 35,
@@ -106,6 +109,7 @@ const NavbarMobile = ({
 
         <IconButton
           onClick={handleLogout}
+          aria-label="logout"
           sx={{
             width: 35,
             height: 35,
@@ -158,6 +162,8 @@ const NavbarMobile = ({
                 return (
                   <SwiperSlide key={item.id} style={{ width: "auto" }}>
                     <Stack
+                      role="button"
+                      aria-label={`navigation button ${item.title}`}
                       sx={{
                         flexDirection: "row",
                         alignItems: "center",
@@ -182,6 +188,7 @@ const NavbarMobile = ({
                       onClick={() => setSelectedNav(buttonId)}
                     >
                       <Image
+                        aria-label={`navigation button image ${item.title}`}
                         src={item.image}
                         alt={item.title}
                         width={110}

@@ -152,7 +152,10 @@ export default function AppCataloguePage({
               </Stack>
             ))
           : selectedVideos.map((item) => (
-              <AppCataloguePageCard key={item._id} video={item} />
+              <AppCataloguePageCard
+                key={item._id}
+                video={item}
+              />
             ))}
       </Stack>
     </Stack>

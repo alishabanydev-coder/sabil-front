@@ -60,6 +60,7 @@ const NavbarCapacitor = ({
         }}
       >
         <Image
+          aria-label="logo"
           src="/new-logo.webp"
           alt="sabeel kids logo"
           fill
@@ -108,7 +109,10 @@ const NavbarCapacitor = ({
                 return (
                   <SwiperSlide key={item.id}>
                     <Stack
+                      role="button"
+                      aria-label={`navigation button ${item.title}`}
                       onClick={() => setSelectedNav(buttonId)}
+                      tabIndex={0}
                       sx={{
                         height: "50%",
                         aspectRatio: "1 / .85",
@@ -130,6 +134,7 @@ const NavbarCapacitor = ({
                       }}
                     >
                       <Image
+                        aria-label={`navigation button image ${item.title}`}
                         src={item.image}
                         alt={item.title}
                         width={72}
@@ -168,11 +173,15 @@ const NavbarCapacitor = ({
           alignItems: "center",
         }}
       >
-        <IconButton sx={IconButtonSx}>
+        <IconButton aria-label="search" sx={IconButtonSx}>
           <SearchRoundedIcon />
         </IconButton>
 
-        <IconButton onClick={handleLogout} sx={IconButtonSx}>
+        <IconButton
+          aria-label="logout"
+          onClick={handleLogout}
+          sx={IconButtonSx}
+        >
           <LogoutIcon sx={{ fontSize: 22 }} />
         </IconButton>
       </Stack>

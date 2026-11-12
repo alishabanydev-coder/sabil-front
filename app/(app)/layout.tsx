@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     "App-style landscape catalogue experience for Sabeel Kids with horizontal movie rails.",
   robots: {
     index: true,
-    follow: true,   
+    follow: true,
   },
 };
 
@@ -18,8 +18,10 @@ export default function AppShellLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AppShellStack>    
-      <CapacitorShell>{children}</CapacitorShell>
+    <AppShellStack>
+      <CapacitorShell>
+        <main>{children}</main>
+      </CapacitorShell>
     </AppShellStack>
   );
 }

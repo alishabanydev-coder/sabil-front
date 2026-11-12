@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Capacitor } from "@capacitor/core";
 import { Network } from "@capacitor/network";
 import { SplashScreen } from "@capacitor/splash-screen";
@@ -47,7 +53,7 @@ export default function CapacitorShell({
         return true;
       }
     } catch {
-      // Fall through. Production still shows the offline screen below.
+      console.log("error in the checkConnection");
     }
 
     // USB live-reload uses localhost, which Android does not count as "online".
@@ -119,7 +125,7 @@ export default function CapacitorShell({
           await StatusBar.setBackgroundColor({ color: "#12041f" });
         }
       } catch {
-        console.log('no capcitor')
+        console.log("no capcitor");
       }
 
       const rehideSystemUi = () => {
@@ -153,7 +159,7 @@ export default function CapacitorShell({
           }
         );
       } catch {
-        console.log('error in the Browser to load')
+        console.log("error in the Browser to load");
       }
 
       window.addEventListener("online", onBrowserOnline);
@@ -186,9 +192,7 @@ export default function CapacitorShell({
     <>
       {children}
       <NativeAppBackButton />
-      {isOffline ? (
-        <NativeConnectionErrorScreen onRetry={handleRetry} />
-      ) : null}
+      {isOffline ? <NativeConnectionErrorScreen onRetry={handleRetry} /> : null}
     </>
   );
 }

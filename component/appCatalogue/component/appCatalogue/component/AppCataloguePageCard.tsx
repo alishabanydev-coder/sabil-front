@@ -28,6 +28,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
   return (
     <Stack
       tabIndex={0}
+      aria-label={`catalogue page card ${video.title}`}
       role="button"
       sx={{
         position: "relative",
@@ -81,6 +82,7 @@ export default function AppCataloguePageCard({ video }: { video: VideoData }) {
       >
         <Image
           className="app-catalogue-page-image"
+          aria-label={`catalogue page image ${video.title}`}
           src={video.thumbnail}
           alt={video.title}
           fill

@@ -14,7 +14,6 @@ import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import {
   alpha,
-  Button,
   CircularProgress,
   Stack,
   Typography,
@@ -143,14 +142,7 @@ function ViewStatButton({
   const displayCount = getViewTotal(videoId, count);
 
   return (
-    <Button
-      type="button"
-      disableRipple
-      disableFocusRipple
-      disableTouchRipple
-      disableElevation
-      tabIndex={-1}
-      aria-label={stat.label}
+    <Stack
       sx={{
         ...BUTTON_SX[variant],
         border: `2px solid ${alpha(stat.color[0], 0.2)}`,
@@ -172,7 +164,7 @@ function ViewStatButton({
         <Typography>{compactStat(displayCount)}</Typography>
         <Typography component="span">{stat.label}</Typography>
       </Stack>
-    </Button>
+    </Stack>
   );
 }
 
@@ -207,17 +199,7 @@ function ReactionStatButton({
   };
 
   return (
-    <Button
-      type="button"
-      disableRipple
-      disableFocusRipple
-      disableTouchRipple
-      disableElevation
-      disabled={reaction.pending}
-      aria-pressed={reaction.active}
-      aria-busy={reaction.pending || undefined}
-      aria-label={stat.label}
-      onClick={handleClick}
+    <Stack
       sx={{
         ...BUTTON_SX[variant],
         border: `2px solid ${alpha(stat.color[0], 0.2)}`,
@@ -263,7 +245,7 @@ function ReactionStatButton({
         <Typography>{compactStat(reaction.count)}</Typography>
         <Typography component="span">{stat.label}</Typography>
       </Stack>
-    </Button>
+    </Stack>
   );
 }
 

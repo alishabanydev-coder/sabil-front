@@ -64,13 +64,24 @@ const NavbarDesktop = ({
       sx={{
         position: "relative",
         width: "100%",
-        backgroundImage: "url(/application-background.webp)",
-        backgroundSize: "100% 100%",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
         mb: isHome ? 0 : { sm: 1, md: 0 },
+        "main-background-image": {
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        },
       }}
     >
+      <Image
+        src="/application-background.webp"
+        alt="main background"
+        fill
+        priority
+        sizes="100vw"
+        style={{ objectFit: "fill", zIndex: 0, pointerEvents: "none" }}
+      />
       <Stack
         sx={{
           flexDirection: "row",
@@ -124,14 +135,18 @@ const NavbarDesktop = ({
                   "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.3)",
               },
             }}
-            aria-label="download app"
             startIcon={
               <FileDownloadIcon sx={{ fontSize: { sm: 20, md: 18, lg: 22 } }} />
             }
           >
             <Box
               component="span"
-              sx={{ display: { sm: "none", md: "inline" } }}
+              sx={{
+                display: { sm: "none", md: "inline" },
+                fontSize: { sm: 12, md: 14, lg: 16 },
+                fontWeight: 700,
+              }}
+              aria-label="download app"
             >
               Download App
             </Box>
@@ -139,6 +154,7 @@ const NavbarDesktop = ({
 
           <IconButton
             // onClick={handleLogout}
+            aria-label="search"
             sx={{
               width: { sm: 36, md: 38, lg: 44 },
               height: { sm: 36, md: 38, lg: 44 },
@@ -167,6 +183,7 @@ const NavbarDesktop = ({
 
           <IconButton
             onClick={handleLogout}
+            aria-label="logout"
             sx={{
               width: { sm: 36, md: 38, lg: 44 },
               height: { sm: 36, md: 38, lg: 44 },
@@ -201,7 +218,7 @@ const NavbarDesktop = ({
             left: { md: 32, lg: 38, xl: 45 },
             "& .logo": {
               zIndex: 115,
-              width: { sm: 92, md: 120, lg: 145, xl: 155},
+              width: { sm: 92, md: 120, lg: 145, xl: 155 },
               height: { sm: 85, md: 110, lg: 130, xl: 140 },
               cursor: "pointer",
               transition: "all 0.3s ease",
@@ -212,6 +229,7 @@ const NavbarDesktop = ({
           }}
         >
           <Image
+            aria-label="logo"
             className="logo"
             src="/icon-512.webp"
             alt="Sabeel Kids logo"
@@ -241,7 +259,6 @@ const NavbarDesktop = ({
               alignItems: "center",
               gap: { sm: 0.8, md: 1.2, lg: 2 },
               pt: { sm: 1, md: 2, lg: 2.8, xl: 3 },
-              // pr: { sm: 8, md: 17, lg: 19 },
             }}
           >
             {navigationButtons.length > 0
@@ -254,6 +271,8 @@ const NavbarDesktop = ({
                   return (
                     <Stack
                       key={item.id}
+                      role="button"
+                      aria-label={`navigation button ${item.title}`}
                       sx={{
                         flexDirection: "row",
                         alignItems: "center",
@@ -296,6 +315,7 @@ const NavbarDesktop = ({
                       }}
                     >
                       <Image
+                        aria-label={`navigation button image ${item.title}`}
                         src={item.image}
                         alt={item.title}
                         width={110}
@@ -324,15 +344,20 @@ const NavbarDesktop = ({
       {isHome && (
         <Stack
           sx={{
+            position: "relative",
             width: "100%",
             my: { sm: -5, md: -7, lg: -8 },
             minHeight: { sm: 260, md: 340 },
-            backgroundImage: "url(/featuredBackground.webp)",
-            backgroundSize: "100% 100%",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
           }}
         >
+          <Image
+            src="/featuredBackground.webp"
+            alt="featured background"
+            fill
+            loading="eager"
+            sizes="100vw"
+            style={{ objectFit: "fill", zIndex: 0, pointerEvents: "none" }}
+          />
           <Stack
             sx={{
               position: "relative",
@@ -416,6 +441,7 @@ const NavbarDesktop = ({
                 <Box
                   ref={prevElRef}
                   className="featured-swiper-prev-desktop"
+                  aria-label="previous slide"
                   sx={{
                     position: "absolute",
                     top: 0,
@@ -451,6 +477,7 @@ const NavbarDesktop = ({
                 <Box
                   ref={nextElRef}
                   className="featured-swiper-next-desktop"
+                  aria-label="next slide"
                   sx={{
                     position: "absolute",
                     top: 0,
