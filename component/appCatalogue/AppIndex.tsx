@@ -1,11 +1,13 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useState } from "react";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import AppCataloguePage from "./component/appCatalogue/AppCataloguePage";
 import AppCatalogueCapacitor from "./component/appCatalogue/AppCatalogueCapacitor";
 import Navbar from "./component/Navbar";
+import ToolbarOverlay from "./component/ToolbarOverlay";
 import AppRouteLoader from "./component/AppRouteLoader";
+import { useToolbar } from "./hooks/toolbarHook";
 import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
 import {
   getStoredCatalogueNav,
@@ -76,6 +78,7 @@ const AppIndex = ({
       selectedNav === "home" ? [] : featuredByProjectId[selectedNav] || [],
     [featuredByProjectId, selectedNav]
   );
+  const toolbar = useToolbar(allVideos, selectedNav);
 
   const catalogueProps = {
     navigationButtons,
@@ -112,11 +115,14 @@ const AppIndex = ({
         suggestedVideos={suggestedVideos}
       />
 
-      {isNative ? (
-        <AppCatalogueCapacitor {...catalogueProps} />
-      ) : (
-        <AppCataloguePage {...catalogueProps} />
-      )}
+      <Box sx={{ position: "relative", flex: 1, minHeight: 0 }}>
+        {isNative ? (
+          <AppCatalogueCapacitor {...catalogueProps} />
+        ) : (
+          <AppCataloguePage {...catalogueProps} />
+        )}
+        <ToolbarOverlay open={toolbar.open} onClose={toolbar.close} />
+      </Box>
     </Stack>
   );
 };
