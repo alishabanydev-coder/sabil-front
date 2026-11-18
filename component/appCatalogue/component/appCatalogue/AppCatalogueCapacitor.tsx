@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton, Stack } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import { FreeMode } from "swiper/modules";
@@ -13,7 +13,6 @@ import AppCatalogueCapacitorCard from "./component/AppCatalogueCapacitorCard";
 const CARD_SKELETON_COUNT = 4;
 const CARD_ASPECT = 16 / 9;
 const VERTICAL_INSET = 8;
-const TITLE_BLOCK = 56;
 const SIDE_INSET = 16;
 
 export default function AppCatalogueCapacitor({
@@ -28,6 +27,12 @@ export default function AppCatalogueCapacitor({
   const swiperRef = useRef<SwiperType | null>(null);
   const [cardHeight, setCardHeight] = useState(0);
 
+  const isCatalogueLoading =
+    navigationButtons.length === 0 &&
+    homeVideos.length === 0 &&
+    suggestedVideos.length === 0 &&
+    allVideos.length === 0;
+
   const cardWidth = cardHeight > 0 ? cardHeight * CARD_ASPECT : 0;
   const slideStyle = {
     width: cardWidth || 280,
@@ -39,7 +44,7 @@ export default function AppCatalogueCapacitor({
     alignItems: "center",
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
@@ -54,14 +59,14 @@ export default function AppCatalogueCapacitor({
         : 0;
       const swiperHeight =
         (swiperEl?.clientHeight || track.clientHeight) - padTop - padBottom;
-      const titleEl = track.querySelector(
-        "[data-catalogue-title]"
+      const footerEl = track.querySelector(
+        "[data-catalogue-footer]"
       ) as HTMLElement | null;
-      const titleHeight = titleEl?.offsetHeight || TITLE_BLOCK;
+      const footerHeight = footerEl ? footerEl.offsetHeight : 0;
       setCardHeight((current) => {
         const next = Math.max(
           0,
-          Math.floor(swiperHeight - VERTICAL_INSET * 2 - titleHeight)
+          Math.floor(swiperHeight - VERTICAL_INSET * 2 - footerHeight)
         );
         return Math.abs(current - next) < 2 ? current : next;
       });
@@ -70,8 +75,12 @@ export default function AppCatalogueCapacitor({
     updateSize();
     const observer = new ResizeObserver(updateSize);
     observer.observe(track);
+    const firstFooter = track.querySelector("[data-catalogue-footer]");
+    if (firstFooter) {
+      observer.observe(firstFooter);
+    }
     return () => observer.disconnect();
-  }, [selectedVideos]);
+  }, [selectedVideos, isCatalogueLoading]);
 
   useEffect(() => {
     if (cardHeight <= 0) return;
@@ -85,18 +94,13 @@ export default function AppCatalogueCapacitor({
     swiper.update();
   }, [selectedNav, selectedVideos]);
 
-  const isCatalogueLoading =
-    navigationButtons.length === 0 &&
-    homeVideos.length === 0 &&
-    suggestedVideos.length === 0 &&
-    allVideos.length === 0;
-
   return (
     <Stack
       ref={trackRef}
       sx={{
         position: "relative",
         width: "100%",
+        height: "100%",
         flex: 1,
         minHeight: 0,
         "& .swiper": {

@@ -19,9 +19,7 @@ export default function AppShellLayout({
 }) {
   return (
     <AppShellStack>
-      <CapacitorShell>
-        <main>{children}</main>
-      </CapacitorShell>
+      <CapacitorShell>{children}</CapacitorShell>
     </AppShellStack>
   );
 }

@@ -282,7 +282,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
             }}
           >
             {STATS(item).map((action, index) => (
-              <>
+              <Stack key={`${index}-${action.label}`}>
                 <Stack
                   key={action.kind}
                   direction="row"
@@ -312,7 +312,7 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
                     sx={{ height: 22, bgcolor: "rgba(255, 255, 255, 0.3)" }}
                   />
                 )}
-              </>
+              </Stack>
             ))}
           </Stack>
         </Stack>

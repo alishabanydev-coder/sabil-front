@@ -346,8 +346,6 @@ const DonationModal = ({
     return () => controller.abort();
   }, []);
 
-  console.log(staff);
-
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
     setImage(file);

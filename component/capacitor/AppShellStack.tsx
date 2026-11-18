@@ -12,6 +12,7 @@ export default function AppShellStack({
 
   return (
     <Stack
+      component="main"
       className="app-shell"
       sx={{
         width: "100%",

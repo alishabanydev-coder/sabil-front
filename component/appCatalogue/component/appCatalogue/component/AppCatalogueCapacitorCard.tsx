@@ -46,7 +46,7 @@ export default function AppCatalogueCapacitorCard({
         WebkitTapHighlightColor: "transparent",
         userSelect: "none",
         WebkitUserSelect: "none",
-        transition: "all 0.35s ease",
+        transition: "box-shadow 0.35s ease",
 
         "&:hover, &:focus-visible": {
           boxShadow: (theme) =>
@@ -195,6 +195,7 @@ export default function AppCatalogueCapacitorCard({
 
       {/* Stats */}
       <Stack
+        data-catalogue-footer
         direction="row"
         sx={{
           width: "100%",

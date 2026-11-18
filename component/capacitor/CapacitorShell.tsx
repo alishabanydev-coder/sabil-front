@@ -166,20 +166,21 @@ export default function CapacitorShell({
       window.addEventListener("offline", onBrowserOffline);
     };
 
+    let disposed = false;
     const runSetup = async () => {
-      cleanupSystemUi = await setupNativeShell();
+      const cleanup = await setupNativeShell();
+      if (disposed) {
+        cleanup?.();
+        return;
+      }
+      cleanupSystemUi = cleanup;
       await setupNetworkWatch();
     };
 
-    if (document.readyState === "complete") {
-      void runSetup();
-    } else {
-      window.addEventListener("load", () => void runSetup(), {
-        once: true,
-      });
-    }
+    void runSetup();
 
     return () => {
+      disposed = true;
       cleanupSystemUi?.();
       void networkListener?.remove();
       window.removeEventListener("online", onBrowserOnline);

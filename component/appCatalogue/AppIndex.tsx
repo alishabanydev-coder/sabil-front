@@ -7,12 +7,9 @@ import AppCatalogueCapacitor from "./component/appCatalogue/AppCatalogueCapacito
 import Navbar from "./component/Navbar";
 import ToolbarOverlay from "./component/ToolbarOverlay";
 import AppRouteLoader from "./component/AppRouteLoader";
-import { useToolbar } from "./hooks/toolbarHook";
+// import { useToolbar } from "./hooks/toolbarHook";
 import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
-import {
-  getStoredCatalogueNav,
-  persistCatalogueNav,
-} from "@/lib/catalogueNav";
+import { getStoredCatalogueNav, persistCatalogueNav } from "@/lib/catalogueNav";
 
 type NavigationButtonData = {
   id: string;
@@ -78,7 +75,7 @@ const AppIndex = ({
       selectedNav === "home" ? [] : featuredByProjectId[selectedNav] || [],
     [featuredByProjectId, selectedNav]
   );
-  const toolbar = useToolbar(allVideos, selectedNav);
+  // const toolbar = useToolbar(allVideos, selectedNav);
 
   const catalogueProps = {
     navigationButtons,
@@ -115,13 +112,21 @@ const AppIndex = ({
         suggestedVideos={suggestedVideos}
       />
 
-      <Box sx={{ position: "relative", flex: 1, minHeight: 0 }}>
+      <Box
+        sx={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          minHeight: 0,
+        }}
+      >
         {isNative ? (
           <AppCatalogueCapacitor {...catalogueProps} />
         ) : (
           <AppCataloguePage {...catalogueProps} />
         )}
-        <ToolbarOverlay open={toolbar.open} onClose={toolbar.close} />
+        {/* <ToolbarOverlay open={toolbar.open} onClose={toolbar.close} /> */}
       </Box>
     </Stack>
   );
