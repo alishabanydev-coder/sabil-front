@@ -59,6 +59,7 @@ export type {
   AdminAccountRecord,
   AdminPermissionProjectRef,
   AdminPermissionTabKey,
+  AdminRoleType,
 } from "./admins";
 export {
   ADMIN_PERMISSION_TAB_KEYS,

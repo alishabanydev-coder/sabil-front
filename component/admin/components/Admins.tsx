@@ -19,6 +19,7 @@ import {
   ADMIN_PERMISSION_TAB_KEYS,
   ADMIN_PERMISSION_TAB_LABELS,
   type AdminPermissionTabKey,
+  type AdminRoleType,
 } from "@/types/admin";
 import { getRecordId, useAdminAdmins } from "../hooks/useAdminAdmins";
 
@@ -47,6 +48,7 @@ const Admins = () => {
     adminRole,
     admins,
     disabled,
+    displayName,
     firstFieldRef,
     getPermissionLabel,
     handleAddAdmin,
@@ -64,6 +66,7 @@ const Admins = () => {
     setAdminPermissions,
     setAdminProjectIds,
     setAdminRole,
+    setDisplayName,
     setUserName,
     submitting,
     userName,
@@ -211,7 +214,13 @@ const Admins = () => {
                     ).length === 0 ? (
                       <Chip
                         size="small"
-                        label="Full access"
+                        label={
+                          admin.role === "author"
+                            ? "YouTube Reports (Own Channels)"
+                            : admin.role === "accountant"
+                              ? "YouTube Reports & Sheet Sync"
+                              : "Full access"
+                        }
                         variant="outlined"
                       />
                     ) : (
@@ -254,7 +263,7 @@ const Admins = () => {
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
             <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
-              Admins name:
+              Username:
             </Typography>
             <TextField
               inputRef={firstFieldRef}
@@ -266,6 +275,21 @@ const Admins = () => {
               slotProps={{
                 htmlInput: { autoCapitalize: "off", spellCheck: false },
               }}
+            />
+          </Stack>
+          <Stack
+            direction="row"
+            sx={{ justifyContent: "space-between", alignItems: "center" }}
+          >
+            <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
+              Display name:
+            </Typography>
+            <TextField
+              variant="standard"
+              value={displayName}
+              disabled={disabled}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder={disabled ? "" : "Shown in reports (optional)"}
             />
           </Stack>
           <Stack
@@ -300,53 +324,53 @@ const Admins = () => {
               value={adminRole}
               disabled={disabled}
               onChange={(e) =>
-                setAdminRole(e.target.value as "admin" | "super_admin")
+                setAdminRole(e.target.value as AdminRoleType)
               }
             >
               <MenuItem value="admin">admin</MenuItem>
+              <MenuItem value="author">author</MenuItem>
+              <MenuItem value="accountant">accountant</MenuItem>
               <MenuItem value="super_admin">super_admin</MenuItem>
             </TextField>
           </Stack>
-          <Stack
-            direction="row"
-            sx={{ justifyContent: "space-between", alignItems: "center" }}
-          >
-            <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
-              Admins permissions:
-            </Typography>
-            <TextField
-              variant="standard"
-              select
-              value={adminPermissions}
-              disabled={disabled}
-              onChange={(e) =>
-                setAdminPermissions(
-                  e.target.value as unknown as AdminPermissionTabKey[]
-                )
-              }
-              slotProps={{
-                select: {
-                  multiple: true,
-                  renderValue: (selected) =>
-                    (selected as AdminPermissionTabKey[])
-                      .map((tab) => ADMIN_PERMISSION_TAB_LABELS[tab])
-                      .join(", "),
-                },
-              }}
-              helperText={
-                adminRole === "admin"
-                  ? "Selected tabs get full CRUD access."
-                  : "Super admins automatically get all permissions."
-              }
+          {adminRole === "admin" && (
+            <Stack
+              direction="row"
+              sx={{ justifyContent: "space-between", alignItems: "center" }}
             >
-              {ADMIN_PERMISSION_TAB_KEYS.map((tab) => (
-                <MenuItem key={tab} value={tab}>
-                  <Checkbox checked={adminPermissions.includes(tab)} />
-                  <ListItemText primary={ADMIN_PERMISSION_TAB_LABELS[tab]} />
-                </MenuItem>
-              ))}
-            </TextField>
-          </Stack>
+              <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
+                Admins permissions:
+              </Typography>
+              <TextField
+                variant="standard"
+                select
+                value={adminPermissions}
+                disabled={disabled}
+                onChange={(e) =>
+                  setAdminPermissions(
+                    e.target.value as unknown as AdminPermissionTabKey[]
+                  )
+                }
+                slotProps={{
+                  select: {
+                    multiple: true,
+                    renderValue: (selected) =>
+                      (selected as AdminPermissionTabKey[])
+                        .map((tab) => ADMIN_PERMISSION_TAB_LABELS[tab])
+                        .join(", "),
+                  },
+                }}
+                helperText="Selected tabs get full CRUD access."
+              >
+                {ADMIN_PERMISSION_TAB_KEYS.map((tab) => (
+                  <MenuItem key={tab} value={tab}>
+                    <Checkbox checked={adminPermissions.includes(tab)} />
+                    <ListItemText primary={ADMIN_PERMISSION_TAB_LABELS[tab]} />
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Stack>
+          )}
           {adminRole === "admin" && adminPermissions.includes("channels") && (
             <Stack
               direction="row"

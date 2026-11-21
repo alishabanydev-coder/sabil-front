@@ -12,7 +12,13 @@ export default function AdminPage() {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
-    setIsValid(Boolean(token) && (role === "admin" || role === "super_admin"));
+    setIsValid(
+      Boolean(token) &&
+        (role === "admin" ||
+          role === "super_admin" ||
+          role === "author" ||
+          role === "accountant")
+    );
     setIsMounted(true);
   }, []);
 

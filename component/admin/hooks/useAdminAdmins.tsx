@@ -2,6 +2,7 @@ import type {
   AdminAccountRecord,
   AdminPermissionTabKey,
   AdminProjectRecord,
+  AdminRoleType,
 } from "@/types/admin";
 import {
   ADMIN_PERMISSION_TAB_KEYS,
@@ -36,8 +37,9 @@ export const useAdminAdmins = () => {
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [userName, setUserName] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
-  const [adminRole, setAdminRole] = useState<"admin" | "super_admin">("admin");
+  const [adminRole, setAdminRole] = useState<AdminRoleType>("admin");
   const [adminPermissions, setAdminPermissions] = useState<
     AdminPermissionTabKey[]
   >([]);
@@ -54,6 +56,7 @@ export const useAdminAdmins = () => {
 
   const reset = useCallback(() => {
     setUserName("");
+    setDisplayName("");
     setAdminPassword("");
     setAdminRole("admin");
     setAdminPermissions([]);
@@ -110,10 +113,12 @@ export const useAdminAdmins = () => {
 
   const handleEditAdmin = useCallback(
     (admin: AdminAccountRecord) => {
-      const nextRole =
-        admin.role === "super_admin"
-          ? ("super_admin" as const)
-          : ("admin" as const);
+      const nextRole: AdminRoleType =
+        admin.role === "super_admin" ||
+        admin.role === "author" ||
+        admin.role === "accountant"
+          ? admin.role
+          : "admin";
       const nextPermissions: AdminPermissionTabKey[] = (admin.permissions || [])
         .map((permission) => permission.tab)
         .filter(
@@ -136,6 +141,7 @@ export const useAdminAdmins = () => {
       setFormSuccess("");
       setEditingAdminId(admin._id || admin.id || "");
       setUserName(admin.userName || "");
+      setDisplayName(admin.name || admin.userName || "");
       setAdminPassword("");
       setAdminRole(nextRole);
       setAdminPermissions(nextPermissions);
@@ -201,9 +207,10 @@ export const useAdminAdmins = () => {
         : undefined;
 
     setSubmitting(true);
+    const resolvedName = displayName.trim() || u;
     const payload = {
       userName: u,
-      name: u,
+      name: resolvedName,
       role: adminRole,
       ...(adminPassword ? { password: adminPassword } : {}),
       ...(adminRole === "admin" && permissions ? { permissions } : {}),
@@ -234,6 +241,7 @@ export const useAdminAdmins = () => {
     adminPermissions,
     adminProjectIds,
     adminRole,
+    displayName,
     editingAdminId,
     isEditing,
     isFormOpen,
@@ -321,6 +329,7 @@ export const useAdminAdmins = () => {
     adminRole,
     admins,
     disabled,
+    displayName,
     editingAdminId,
     firstFieldRef,
     formError,
@@ -342,6 +351,7 @@ export const useAdminAdmins = () => {
     setAdminPermissions,
     setAdminProjectIds,
     setAdminRole,
+    setDisplayName,
     setUserName,
     submitting,
     userName,

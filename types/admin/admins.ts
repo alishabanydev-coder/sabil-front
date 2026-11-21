@@ -33,12 +33,14 @@ export type AdminPermissionProjectRef = {
   name?: string;
 };
 
+export type AdminRoleType = "admin" | "super_admin" | "author" | "accountant";
+
 export type AdminAccountRecord = {
   _id?: string;
   id?: string;
   userName?: string;
   name?: string;
-  role?: string;
+  role?: AdminRoleType | string;
   permissions?: Array<{
     tab?: string;
     projectIds?: Array<string | AdminPermissionProjectRef>;

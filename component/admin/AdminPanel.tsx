@@ -32,6 +32,7 @@ import Catalogue from "./components/Catalogue";
 import Donation from "./components/Donation";
 import Supporters from "./components/Supporters";
 import Users from "./components/Users";
+import YtReportPanel from "./components/ytReport/YtReportPanel";
 import AdminNoticeBar from "./snackbar/AdminNoticeBar";
 
 interface TabPanelProps {
@@ -206,6 +207,18 @@ const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   }, [onLogout]);
 
   const visibleTabs = useMemo(() => {
+    if (adminRole === "author" || adminRole === "accountant") {
+      return [
+        {
+          id: 99,
+          label: "YouTube Reports",
+          title: "YouTube Reports",
+          permissionKey: "ytReports",
+          component: <YtReportPanel role={adminRole} />,
+        },
+      ];
+    }
+
     if (adminRole === "super_admin") {
       return allTabs;
     }
