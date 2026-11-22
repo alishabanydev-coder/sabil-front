@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import NextLink from "next/link";
 import { Box, Container, Divider, Link, Paper, Stack, Typography } from "@mui/material";
 
 export const metadata: Metadata = {
@@ -36,10 +35,15 @@ export default function PortalTermsPage() {
         >
           <Stack spacing={3}>
             <Box>
-              <Typography variant="overline" color="primary" fontWeight={700}>
+              <Typography variant="overline" color="primary" sx={{ fontWeight: 700 }}>
                 Sabeel Creator Analytics
               </Typography>
-              <Typography variant="h4" component="h1" fontWeight={700} gutterBottom>
+              <Typography
+                variant="h4"
+                component="h1"
+                gutterBottom
+                sx={{ fontWeight: 700 }}
+              >
                 Terms of Service
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -50,7 +54,7 @@ export default function PortalTermsPage() {
             <Divider />
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 1. Acceptance of Terms
               </Typography>
               <Typography variant="body1">
@@ -58,10 +62,7 @@ export default function PortalTermsPage() {
                 <strong>analytics.sabeelgroup.org</strong> (&ldquo;the Portal&rdquo;), or by
                 connecting a YouTube channel via Google OAuth 2.0, you agree to these Terms of
                 Service, our{" "}
-                <Link component={NextLink} href="/privacy">
-                  Privacy Policy
-                </Link>
-                , and the{" "}
+                <Link href="/privacy">Privacy Policy</Link>, and the{" "}
                 <Link
                   href="https://www.youtube.com/t/terms"
                   target="_blank"
@@ -74,7 +75,7 @@ export default function PortalTermsPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 2. Purpose of the Service &amp; Read-Only Scope
               </Typography>
               <Typography variant="body1">
@@ -87,7 +88,7 @@ export default function PortalTermsPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 3. Creator Authorization &amp; Account Responsibilities
               </Typography>
               <Box component="ul" sx={{ pl: 3, m: 0, "& li": { mb: 1 } }}>
@@ -115,7 +116,7 @@ export default function PortalTermsPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 4. Disconnecting &amp; Termination
               </Typography>
               <Typography variant="body1">
@@ -134,7 +135,7 @@ export default function PortalTermsPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 5. Disclaimer &amp; Contact
               </Typography>
               <Typography variant="body1">
@@ -148,11 +149,11 @@ export default function PortalTermsPage() {
 
             <Divider />
 
-            <Stack direction="row" spacing={3} alignItems="center">
-              <Link component={NextLink} href="/" underline="hover">
+            <Stack direction="row" spacing={3} sx={{ alignItems: "center" }}>
+              <Link href="/" underline="hover">
                 &larr; Back to Portal Sign In
               </Link>
-              <Link component={NextLink} href="/privacy" underline="hover">
+              <Link href="/privacy" underline="hover">
                 Privacy Policy
               </Link>
             </Stack>

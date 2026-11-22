@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import NextLink from "next/link";
 import { Box, Container, Divider, Link, Paper, Stack, Typography } from "@mui/material";
 
 export const metadata: Metadata = {
@@ -36,10 +35,15 @@ export default function PortalPrivacyPage() {
         >
           <Stack spacing={3}>
             <Box>
-              <Typography variant="overline" color="primary" fontWeight={700}>
+              <Typography variant="overline" color="primary" sx={{ fontWeight: 700 }}>
                 Sabeel Creator Analytics
               </Typography>
-              <Typography variant="h4" component="h1" fontWeight={700} gutterBottom>
+              <Typography
+                variant="h4"
+                component="h1"
+                gutterBottom
+                sx={{ fontWeight: 700 }}
+              >
                 Privacy Policy
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -50,10 +54,10 @@ export default function PortalPrivacyPage() {
             <Divider />
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 1. Overview &amp; YouTube API Services Disclosure
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 Sabeel Creator Analytics (&ldquo;the Portal&rdquo;), operated by Sabeel Group at{" "}
                 <strong>analytics.sabeelgroup.org</strong>, helps independent content creators
                 track and review their channel performance metrics alongside designated
@@ -83,10 +87,10 @@ export default function PortalPrivacyPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 2. Read-Only Data We Access
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 When an authorized channel owner (&ldquo;Author&rdquo;) connects their channel via
                 Google OAuth 2.0, the Portal requests strictly <strong>read-only</strong>{" "}
                 permissions (<code>youtube.readonly</code>, <code>yt-analytics.readonly</code>,
@@ -126,10 +130,10 @@ export default function PortalPrivacyPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 3. How Data Is Used &amp; Authorized Specialist Review
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 By connecting your YouTube channel to the Portal, you expressly authorize Sabeel
                 Group&rsquo;s designated internal analytics and accounting specialists to access,
                 compile, and export your channel&rsquo;s performance reports (including into
@@ -145,7 +149,7 @@ export default function PortalPrivacyPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 4. Local Storage &amp; Security Controls
               </Typography>
               <Typography variant="body1">
@@ -158,10 +162,10 @@ export default function PortalPrivacyPage() {
             </Box>
 
             <Box>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
                 5. Revoking Access &amp; Requesting Data Deletion
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 You remain in full control of your channel connection and may revoke access at
                 any time through either method below:
               </Typography>
@@ -201,11 +205,11 @@ export default function PortalPrivacyPage() {
 
             <Divider />
 
-            <Stack direction="row" spacing={3} alignItems="center">
-              <Link component={NextLink} href="/" underline="hover">
+            <Stack direction="row" spacing={3} sx={{ alignItems: "center" }}>
+              <Link href="/" underline="hover">
                 &larr; Back to Portal Sign In
               </Link>
-              <Link component={NextLink} href="/terms" underline="hover">
+              <Link href="/terms" underline="hover">
                 Terms of Service
               </Link>
             </Stack>

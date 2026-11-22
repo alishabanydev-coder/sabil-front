@@ -78,9 +78,9 @@ export default function PortalPage() {
         dir="ltr"
         direction="row"
         spacing={2}
-        alignItems="center"
-        justifyContent="center"
         sx={{
+          alignItems: "center",
+          justifyContent: "center",
           position: "fixed",
           bottom: 14,
           left: 0,
