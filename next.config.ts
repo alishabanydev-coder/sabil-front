@@ -28,17 +28,64 @@ function buildImageRemotePattern() {
   };
 }
 
+const ANALYTICS_PORTAL_HOSTS = [
+  "analytics.sabeelgroup.org",
+  "analytics.localhost",
+];
+
 const nextConfig: NextConfig = {
   allowedDevOrigins: [
     "127.0.0.1",
     "10.221.183.149",
     "10.0.2.2",
     "192.168.2.224",
+    "analytics.localhost",
   ],
   images: {
     dangerouslyAllowLocalIP: true,
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [buildImageRemotePattern()],
+  },
+  async rewrites() {
+    return {
+      beforeFiles: ANALYTICS_PORTAL_HOSTS.flatMap((host) => [
+        {
+          source: "/",
+          has: [{ type: "host", value: host }],
+          destination: "/portal",
+        },
+        {
+          source: "/privacy",
+          has: [{ type: "host", value: host }],
+          destination: "/portal/privacy",
+        },
+        {
+          source: "/terms",
+          has: [{ type: "host", value: host }],
+          destination: "/portal/terms",
+        },
+      ]),
+    };
+  },
+  async redirects() {
+    const blockedPortalPaths = [
+      "/app",
+      "/app/:path*",
+      "/about",
+      "/donation",
+      "/donation/:path*",
+      "/sign-in",
+      "/admin",
+    ];
+
+    return ANALYTICS_PORTAL_HOSTS.flatMap((host) =>
+      blockedPortalPaths.map((source) => ({
+        source,
+        has: [{ type: "host", value: host }],
+        destination: "/",
+        permanent: false,
+      }))
+    );
   },
   async headers() {
     return [
