@@ -59,10 +59,10 @@ const trustItems = [
       "our content of shoped by a council of trusted Islamic scholars",
   },
   {
-    title: "Produced in Qom",
+    title: "Rooted in Heritage",
     icon: "/green-mosque.webp",
     description:
-      "proudly created in Qom the center of islamic learning and values",
+      "Proudly crafted around timeless Islamic learning, heritage, and moral values.",
   },
   {
     title: "Professional Team",
