@@ -1,18 +1,14 @@
 import type {
   AdminChannelProjectRecord,
   AdminChannelVideoRecord,
-  ConnectedYouTubeChannelRecord,
 } from "@/types/admin";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   createChannelVideo,
   deleteChannelVideo,
-  disconnectYouTubeChannel,
   fetchChannelProjects,
   fetchChannelVideos,
-  fetchConnectedYouTubeChannels,
   fetchYouTubeVideoDetails,
-  startYouTubeOAuth,
   syncProjectVideosFromYouTube,
   updateChannelVideo,
 } from "../services/projectsApi";
@@ -60,10 +56,6 @@ export const useAdminChannels = () => {
   const [youtubeVideoId, setYoutubeVideoId] = useState("");
   const [youtubeChannelId, setYoutubeChannelId] = useState("");
   const [isFetchingYouTube, setIsFetchingYouTube] = useState(false);
-  const [connectedYouTubeChannels, setConnectedYouTubeChannels] = useState<
-    ConnectedYouTubeChannelRecord[]
-  >([]);
-  const [isConnectingYouTube, setIsConnectingYouTube] = useState(false);
   const [isSyncingProjectVideos, setIsSyncingProjectVideos] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [season, setSeason] = useState("");
@@ -221,85 +213,6 @@ export const useAdminChannels = () => {
     resetForm();
   }, [resetForm]);
 
-  const loadConnectedYouTubeChannels = useCallback(async () => {
-    try {
-      const result = await fetchConnectedYouTubeChannels();
-      if (result.ok) {
-        setConnectedYouTubeChannels(result.channels);
-      } else {
-        notifyAdminError(
-          result.message || "Failed to load connected YouTube channels."
-        );
-      }
-    } catch (error) {
-      notifyAdminError(
-        error instanceof Error
-          ? error.message
-          : "Failed to load connected YouTube channels."
-      );
-    }
-  }, []);
-
-  const handleConnectYouTube = useCallback(async () => {
-    setIsConnectingYouTube(true);
-
-    try {
-      const result = await startYouTubeOAuth();
-      if (!result.ok || !result.authUrl) {
-        notifyAdminError(
-          result.message || "Failed to start YouTube connection."
-        );
-        return;
-      }
-
-      const width = 560;
-      const height = 680;
-      const left = window.screenX + (window.outerWidth - width) / 2;
-      const top = window.screenY + (window.outerHeight - height) / 2;
-
-      window.open(
-        result.authUrl,
-        "ConnectYouTubeOAuth",
-        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
-      );
-      notifyAdminSuccess("Google sign-in opened. Finish connecting in the popup.");
-    } catch (error) {
-      notifyAdminError(
-        error instanceof Error
-          ? error.message
-          : "Failed to start YouTube connection."
-      );
-    } finally {
-      setIsConnectingYouTube(false);
-    }
-  }, []);
-
-  const handleDisconnectYouTubeChannel = useCallback(
-    async (channelId: string) => {
-      try {
-        const result = await disconnectYouTubeChannel(channelId);
-        if (!result.ok) {
-          notifyAdminError(
-            result.message || "Failed to disconnect YouTube channel."
-          );
-          return;
-        }
-
-        setConnectedYouTubeChannels((current) =>
-          current.filter((ch) => ch.youtubeChannelId !== channelId)
-        );
-        notifyAdminSuccess(result.message || "YouTube channel disconnected.");
-      } catch (error) {
-        notifyAdminError(
-          error instanceof Error
-            ? error.message
-            : "Failed to disconnect YouTube channel."
-        );
-      }
-    },
-    []
-  );
-
   const handleFetchFromYouTube = useCallback(async () => {
     if (!videoUrl.trim()) {
       notifyAdminError("Please enter a YouTube video URL first.");
@@ -344,9 +257,7 @@ export const useAdminChannels = () => {
       }
 
       const tagCount = Array.isArray(details.tags) ? details.tags.length : 0;
-      const ownerNote = details.matchedOwnerChannel
-        ? `Fetched from "${details.youtubeChannelTitle}" (${tagCount} tag(s)).`
-        : `Fetched public details from "${details.youtubeChannelTitle}". Connect this video's channel to also fetch private tags.`;
+      const ownerNote = `Fetched from "${details.youtubeChannelTitle}" (${tagCount} tag(s)).`;
       const posterNote = details.thumbnailPath
         ? " Poster saved as WebP."
         : details.posterError
@@ -556,31 +467,6 @@ export const useAdminChannels = () => {
   }, []);
 
   useEffect(() => {
-    loadConnectedYouTubeChannels();
-
-    const handleMessage = (event: MessageEvent) => {
-      const payload = event?.data;
-      if (!payload || payload.type !== "YOUTUBE_OAUTH_RESULT") {
-        return;
-      }
-
-      if (payload.ok) {
-        notifyAdminSuccess(
-          payload.message || `Connected YouTube channel "${payload.title}".`
-        );
-        loadConnectedYouTubeChannels();
-      } else {
-        notifyAdminError(
-          payload.message || "Failed to connect YouTube channel."
-        );
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [loadConnectedYouTubeChannels]);
-
-  useEffect(() => {
     const controller = new AbortController();
 
     async function loadProjects() {
@@ -690,16 +576,13 @@ export const useAdminChannels = () => {
   return {
     activeThumbnailPreviewUrl,
     commentCount,
-    connectedYouTubeChannels,
     duration,
     description,
     episode,
     episodeAlreadyExists,
     errorMsg,
     handleClose,
-    handleConnectYouTube,
     handleDelete,
-    handleDisconnectYouTubeChannel,
     handleFetchFromYouTube,
     handleOpen,
     handleSelectProject,
@@ -707,7 +590,6 @@ export const useAdminChannels = () => {
     handleSubmit,
     handleSyncProjectVideosFromYouTube,
     handleToggleSeason,
-    isConnectingYouTube,
     isEditing,
     isEditingVideo,
     isFetchingYouTube,

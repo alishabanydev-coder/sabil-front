@@ -2,7 +2,6 @@
 
 import {
   Button,
-  Chip,
   CircularProgress,
   Divider,
   IconButton,
@@ -20,7 +19,6 @@ const Channels = () => {
   const {
     activeThumbnailPreviewUrl,
     commentCount,
-    connectedYouTubeChannels,
     duration,
     description,
     episode,
@@ -28,9 +26,7 @@ const Channels = () => {
     errorMsg,
     handleClose,
     hasFetchedPoster,
-    handleConnectYouTube,
     handleDelete,
-    handleDisconnectYouTubeChannel,
     handleFetchFromYouTube,
     handleOpen,
     handleSelectProject,
@@ -38,7 +34,6 @@ const Channels = () => {
     handleSubmit,
     handleSyncProjectVideosFromYouTube,
     handleToggleSeason,
-    isConnectingYouTube,
     isEditing,
     isEditingVideo,
     isFetchingYouTube,
@@ -149,69 +144,33 @@ const Channels = () => {
             </Stack>
           </Stack>
 
-          <Stack
-            direction="row"
-            sx={{
-              gap: 1.5,
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "space-between",
-              px: 1,
-            }}
-          >
+          {selectedProject ? (
             <Stack
               direction="row"
-              sx={{ gap: 1, flexWrap: "wrap", alignItems: "center" }}
+              sx={{
+                gap: 1.5,
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "space-between",
+                px: 1,
+              }}
             >
               <Button
                 size="small"
                 variant="outlined"
-                color="primary"
-                disabled={isConnectingYouTube}
-                onClick={handleConnectYouTube}
+                color="secondary"
+                disabled={isSyncingProjectVideos}
+                onClick={handleSyncProjectVideosFromYouTube}
                 startIcon={
-                  isConnectingYouTube ? (
+                  isSyncingProjectVideos ? (
                     <CircularProgress size={14} color="inherit" />
                   ) : undefined
                 }
               >
-                Connect YouTube
+                Sync Project Videos from YouTube
               </Button>
-
-              {selectedProject ? (
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="secondary"
-                  disabled={
-                    isSyncingProjectVideos ||
-                    connectedYouTubeChannels.length === 0
-                  }
-                  onClick={handleSyncProjectVideosFromYouTube}
-                  startIcon={
-                    isSyncingProjectVideos ? (
-                      <CircularProgress size={14} color="inherit" />
-                    ) : undefined
-                  }
-                >
-                  Sync Project Videos from YouTube
-                </Button>
-              ) : null}
-
-              {connectedYouTubeChannels.map((channel) => (
-                <Chip
-                  key={channel.youtubeChannelId}
-                  label={`YT: ${channel.channelTitle}`}
-                  size="small"
-                  color="success"
-                  variant="outlined"
-                  onDelete={() =>
-                    handleDisconnectYouTubeChannel(channel.youtubeChannelId)
-                  }
-                />
-              ))}
             </Stack>
-          </Stack>
+          ) : null}
         </Stack>
 
         <Stack
