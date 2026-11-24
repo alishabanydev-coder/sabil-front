@@ -151,7 +151,10 @@ export default function PortalTermsPage() {
 
             <Stack direction="row" spacing={3} sx={{ alignItems: "center" }}>
               <Link href="/" underline="hover">
-                &larr; Back to Portal Sign In
+                &larr; Back to Home
+              </Link>
+              <Link href="/sign-in" underline="hover">
+                Sign In
               </Link>
               <Link href="/privacy" underline="hover">
                 Privacy Policy

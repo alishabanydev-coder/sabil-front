@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Sabeel Creator Analytics",
   description:
-    "Creator and specialist analytics portal for tracking authorized channel performance.",
+    "Sabeel Creator Analytics is a read-only YouTube performance portal for authorized creators and Sabeel specialists. Connect a channel, review metrics, and export Excel or Sheet reports.",
   openGraph: {
     title: "Sabeel Creator Analytics",
     description:
-      "Creator and specialist analytics portal for tracking authorized channel performance.",
+      "Read-only YouTube performance reporting for creators and authorized Sabeel specialists.",
     siteName: "Sabeel Creator Analytics",
     type: "website",
   },

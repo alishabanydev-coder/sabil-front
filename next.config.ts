@@ -55,6 +55,16 @@ const nextConfig: NextConfig = {
           destination: "/portal",
         },
         {
+          source: "/sign-in",
+          has: [{ type: "host", value: host }],
+          destination: "/portal/sign-in",
+        },
+        {
+          source: "/panel",
+          has: [{ type: "host", value: host }],
+          destination: "/portal/panel",
+        },
+        {
           source: "/privacy",
           has: [{ type: "host", value: host }],
           destination: "/portal/privacy",
@@ -74,7 +84,6 @@ const nextConfig: NextConfig = {
       "/about",
       "/donation",
       "/donation/:path*",
-      "/sign-in",
       "/admin",
     ];
 
