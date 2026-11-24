@@ -255,7 +255,7 @@ export default function YtReportPanel({ role }: YtReportPanelProps) {
             <Typography variant="body2" color="text.secondary">
               {role === "accountant"
                 ? `Connected channels across all authors: ${channels.length}`
-                : "Connect your YouTube channel(s) once, then view live reports or export Excel anytime."}
+                : "Connect each YouTube channel once, then view live reports or export Excel anytime."}
             </Typography>
           </Box>
 
@@ -273,6 +273,18 @@ export default function YtReportPanel({ role }: YtReportPanelProps) {
           )}
         </Stack>
 
+        {role === "author" ? (
+          <Alert severity="info" sx={{ mt: 2 }}>
+            Google always shows <strong>Gmail accounts</strong> first — that is
+            normal. To connect <strong>Sabeel Kids</strong>,{" "}
+            <strong>Sabeel Toons</strong>, or another Brand Account channel: click
+            Connect again, then on Google&apos;s chooser pick the{" "}
+            <strong>YouTube channel / Brand Account name</strong> (or that
+            channel&apos;s own Gmail), not only the same Gmail that owns Story
+            Book. One OAuth click = one channel. Repeat for each channel.
+          </Alert>
+        ) : null}
+
         <Stack
           direction="row"
           sx={{ gap: 1, flexWrap: "wrap", mt: 2, alignItems: "center" }}
@@ -286,28 +298,38 @@ export default function YtReportPanel({ role }: YtReportPanelProps) {
                 : "No authors have connected any YouTube channels yet."}
             </Typography>
           ) : (
-            channels.map((ch) => (
-              <Chip
-                key={ch.youtubeChannelId}
-                avatar={
-                  ch.channelThumbnail ? (
-                    <Avatar src={ch.channelThumbnail} alt={ch.channelTitle} />
-                  ) : undefined
-                }
-                label={
-                  role === "accountant" && ch.adminName
-                    ? `${ch.channelTitle} (${ch.adminName})`
-                    : ch.channelTitle
-                }
-                onDelete={
-                  role === "author"
-                    ? () => handleDisconnectChannel(ch)
-                    : undefined
-                }
-                variant="outlined"
-                color="primary"
-              />
-            ))
+            channels.map((ch) => {
+              const handle = ch.customUrl
+                ? ch.customUrl.startsWith("@")
+                  ? ch.customUrl
+                  : `@${ch.customUrl}`
+                : "";
+              const baseLabel = handle
+                ? `${ch.channelTitle} (${handle})`
+                : ch.channelTitle;
+              return (
+                <Chip
+                  key={ch.youtubeChannelId}
+                  avatar={
+                    ch.channelThumbnail ? (
+                      <Avatar src={ch.channelThumbnail} alt={ch.channelTitle} />
+                    ) : undefined
+                  }
+                  label={
+                    role === "accountant" && ch.adminName
+                      ? `${baseLabel} · ${ch.adminName}`
+                      : baseLabel
+                  }
+                  onDelete={
+                    role === "author"
+                      ? () => handleDisconnectChannel(ch)
+                      : undefined
+                  }
+                  variant="outlined"
+                  color="primary"
+                />
+              );
+            })
           )}
         </Stack>
       </Paper>

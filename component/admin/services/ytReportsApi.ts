@@ -7,6 +7,7 @@ export type YtReportChannelItem = {
   _id: string;
   youtubeChannelId: string;
   channelTitle: string;
+  customUrl?: string;
   channelThumbnail: string;
   adminName: string;
   updatedAt?: string;
