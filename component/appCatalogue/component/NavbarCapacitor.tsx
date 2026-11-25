@@ -40,13 +40,13 @@ const NavbarCapacitor = ({
       direction="row"
       sx={{
         width: "100%",
-        height: "30%",
+        height: "28%",
         minHeight: 0,
         flexShrink: 0,
         alignItems: "center",
         px: 2,
         gap: 1.5,
-        pl: "max(16px, env(safe-area-inset-left))",
+        // pl: "max(16px, env(safe-area-inset-left))",
         pr: "max(16px, env(safe-area-inset-right))",
         pt: "env(safe-area-inset-top)",
       }}
@@ -54,7 +54,7 @@ const NavbarCapacitor = ({
       <Stack
         sx={{
           flexShrink: 0,
-          height: "78%",
+          height: "88%",
           aspectRatio: "1 / 1",
           position: "relative",
         }}
@@ -114,8 +114,8 @@ const NavbarCapacitor = ({
                       onClick={() => setSelectedNav(buttonId)}
                       tabIndex={0}
                       sx={{
-                        height: "50%",
-                        aspectRatio: "1 / .85",
+                        height: "58%",
+                        aspectRatio: "1 / .88",
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",

@@ -10,6 +10,7 @@ import AppRouteLoader from "./component/AppRouteLoader";
 // import { useToolbar } from "./hooks/toolbarHook";
 import { useAppDisplayMode } from "@/lib/useAppDisplayMode";
 import { getStoredCatalogueNav, persistCatalogueNav } from "@/lib/catalogueNav";
+import { APP_GRADIENT } from "./appGradient";
 
 type NavigationButtonData = {
   id: string;
@@ -27,9 +28,6 @@ type VideoData = {
   season?: number;
   episode?: number;
 };
-
-const APP_GRADIENT =
-  "linear-gradient(to top, #8acbfa 0%, #8acbfa 10%, transparent 100%)";
 
 const AppIndex = ({
   navigationButtons,

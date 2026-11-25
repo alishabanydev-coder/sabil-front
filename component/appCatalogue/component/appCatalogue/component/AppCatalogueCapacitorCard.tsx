@@ -50,7 +50,7 @@ export default function AppCatalogueCapacitorCard({
 
         "&:hover, &:focus-visible": {
           boxShadow: (theme) =>
-            `0px 2px 10px 1px ${theme.palette.primary.main}`,
+            `0px 3px 10px 1px ${theme.palette.primary.main}`,
         },
 
         "&:hover .app-catalogue-page-image, &:focus-visible .app-catalogue-page-image":
@@ -98,7 +98,6 @@ export default function AppCatalogueCapacitorCard({
         },
       }}
     >
-
       {/* Thumbnail */}
       <Box
         onClick={watchVideo}
