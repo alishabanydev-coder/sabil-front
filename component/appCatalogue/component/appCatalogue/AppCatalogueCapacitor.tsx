@@ -49,7 +49,8 @@ export default function AppCatalogueCapacitor({
   suggestedVideos,
   allVideos,
   selectedNav,
-}: AppCatalogueProps) {
+  isNative,
+}: AppCatalogueProps & { isNative?: boolean }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
   const [cardHeight, setCardHeight] = useState(0);
@@ -245,7 +246,7 @@ export default function AppCatalogueCapacitor({
             ))
           : selectedVideos.map((item) => (
               <SwiperSlide key={item._id} style={slideStyle}>
-                <AppCatalogueCapacitorCard video={item} />
+                <AppCatalogueCapacitorCard video={item} isNative={isNative} />
               </SwiperSlide>
             ))}
       </Swiper>

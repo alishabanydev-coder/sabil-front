@@ -120,7 +120,7 @@ const AppIndex = ({
         }}
       >
         {isNative ? (
-          <AppCatalogueCapacitor {...catalogueProps} />
+          <AppCatalogueCapacitor {...catalogueProps} isNative={isNative} />
         ) : (
           <AppCataloguePage {...catalogueProps} />
         )}

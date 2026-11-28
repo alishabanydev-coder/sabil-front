@@ -194,6 +194,8 @@ export function useWatchPlyrPlayer({
   const [started, setStarted] = useState(false);
   const [plyrRoot, setPlyrRoot] = useState<HTMLElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  /** True from expand start through shrink end — shell-level back button. */
+  const [isLifted, setIsLifted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hudVisible, setHudVisible] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -564,11 +566,21 @@ export function useWatchPlyrPlayer({
     shell.style.zIndex = "";
   }, []);
 
-  const enterAppFullscreen = useCallback(() => {
-    if (!isNative) {
-      return;
-    }
+  const pinShellRect = useCallback(
+    (shell: HTMLElement, rect: DOMRect | { top: number; left: number; width: number; height: number }) => {
+      // Inline fixed positioning so React re-renders can't drop the FLIP shell.
+      shell.classList.add("watch-plyr-shell--lifted");
+      shell.style.position = "fixed";
+      shell.style.zIndex = "10000000";
+      shell.style.top = `${rect.top}px`;
+      shell.style.left = `${rect.left}px`;
+      shell.style.width = `${rect.width}px`;
+      shell.style.height = `${rect.height}px`;
+    },
+    []
+  );
 
+  const enterAppFullscreen = useCallback(() => {
     const shell = shellRef.current;
     const slot = slotRef.current;
     if (!shell || !slot || fsPhaseRef.current !== "idle") {
@@ -580,13 +592,11 @@ export function useWatchPlyrPlayer({
     onNativeBelowShiftRef.current?.(
       Math.max(0, window.innerHeight - rect.bottom)
     );
-    shell.classList.add("watch-plyr-shell--lifted");
     shell.style.transition = "none";
-    shell.style.top = `${rect.top}px`;
-    shell.style.left = `${rect.left}px`;
-    shell.style.width = `${rect.width}px`;
-    shell.style.height = `${rect.height}px`;
+    pinShellRect(shell, rect);
     shell.style.borderRadius = "16px";
+    // After pin: safe to mount shell exit above poster/spinner.
+    setIsLifted(true);
 
     let finished = false;
     const finishEnter = () => {
@@ -624,13 +634,9 @@ export function useWatchPlyrPlayer({
         shell.style.borderRadius = "0px";
       });
     });
-  }, [isNative]);
+  }, [pinShellRect]);
 
   const exitAppFullscreen = useCallback(() => {
-    if (!isNative) {
-      return;
-    }
-
     const shell = shellRef.current;
     const slot = slotRef.current;
     if (!shell || !slot) {
@@ -646,17 +652,17 @@ export function useWatchPlyrPlayer({
 
     fsPhaseRef.current = "exiting";
     isFullscreenRef.current = false;
-    setHudVisible(false);
     clearHudHide();
     onNativeBelowShiftRef.current?.(0);
 
     const current = shell.getBoundingClientRect();
     const dest = slot.getBoundingClientRect();
     shell.style.transition = "none";
-    shell.style.top = `${current.top}px`;
-    shell.style.left = `${current.left}px`;
-    shell.style.width = `${current.width}px`;
-    shell.style.height = `${current.height}px`;
+    pinShellRect(shell, current);
+    // Defer HUD hide so we don't re-render/wipe classes mid-FLIP.
+    window.requestAnimationFrame(() => {
+      setHudVisible(false);
+    });
 
     let finished = false;
     const finishExit = () => {
@@ -668,6 +674,7 @@ export function useWatchPlyrPlayer({
       clearShellInlineStyles();
       fsPhaseRef.current = "idle";
       setIsFullscreen(false);
+      setIsLifted(false);
       setHudVisible(true);
     };
 
@@ -694,7 +701,7 @@ export function useWatchPlyrPlayer({
         shell.style.borderRadius = "16px";
       });
     });
-  }, [isNative, clearHudHide, clearShellInlineStyles]);
+  }, [clearHudHide, clearShellInlineStyles, pinShellRect]);
 
   const handleExitFullscreen = useCallback(() => {
     const player = playerRef.current;
@@ -703,15 +710,12 @@ export function useWatchPlyrPlayer({
     }
 
     suppressWatchNavbarBack(1000);
-    if (isNative) {
-      exitAppFullscreen();
-      player.pause();
-      return;
-    }
-
+    exitAppFullscreen();
     player.pause();
-    player.fullscreen.exit();
-  }, [isNative, exitAppFullscreen]);
+    if (player.fullscreen.active) {
+      player.fullscreen.exit();
+    }
+  }, [exitAppFullscreen]);
 
   const enterAppFullscreenRef = useRef(enterAppFullscreen);
   enterAppFullscreenRef.current = enterAppFullscreen;
@@ -742,10 +746,8 @@ export function useWatchPlyrPlayer({
     }
 
     void player.play();
-    if (isNative) {
-      enterAppFullscreen();
-    }
-  }, [isNative, markStarted, enterAppFullscreen]);
+    enterAppFullscreen();
+  }, [markStarted, enterAppFullscreen]);
 
   useEffect(() => {
     startedRef.current = false;
@@ -762,6 +764,7 @@ export function useWatchPlyrPlayer({
     onNativeBelowShiftRef.current?.(0);
     setStarted(false);
     setIsFullscreen(false);
+    setIsLifted(false);
     setIsPlaying(false);
     setHudVisible(false);
     setPlyrRoot(null);
@@ -794,6 +797,34 @@ export function useWatchPlyrPlayer({
       window.removeEventListener("watch-plyr-exit-fullscreen", onHardwareExit);
     };
   }, [isNative, handleExitFullscreen]);
+
+  // Desktop Escape (and native keyboard): shrink back to the inline player and pause.
+  useEffect(() => {
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      const player = playerRef.current;
+      const inAppFullscreen =
+        isFullscreenRef.current ||
+        fsPhaseRef.current === "fullscreen" ||
+        fsPhaseRef.current === "entering";
+      const inBrowserFullscreen = Boolean(player?.fullscreen.active);
+
+      if (!inAppFullscreen && !inBrowserFullscreen) {
+        return;
+      }
+
+      event.preventDefault();
+      handleExitFullscreen();
+    };
+
+    window.addEventListener("keydown", onEscape);
+    return () => {
+      window.removeEventListener("keydown", onEscape);
+    };
+  }, [handleExitFullscreen]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -876,9 +907,7 @@ export function useWatchPlyrPlayer({
         }
 
         void player.play();
-        if (isNative) {
-          enterAppFullscreenRef.current();
-        }
+        enterAppFullscreenRef.current();
       };
 
       player.on("ready", () => {
@@ -923,7 +952,8 @@ export function useWatchPlyrPlayer({
         tryStartFromGesture();
       });
       syncDesktopFullscreen = () => {
-        if (isNative) {
+        // App fullscreen owns expanded state; only sync true browser fullscreen.
+        if (fsPhaseRef.current !== "idle") {
           return;
         }
 
@@ -943,15 +973,11 @@ export function useWatchPlyrPlayer({
       };
 
       player.on("enterfullscreen", () => {
-        if (isNative) {
-          return;
-        }
-
         syncDesktopFullscreen?.();
       });
       document.addEventListener("fullscreenchange", syncDesktopFullscreen);
       player.on("exitfullscreen", () => {
-        if (isNative) {
+        if (fsPhaseRef.current !== "idle") {
           return;
         }
 
@@ -966,11 +992,11 @@ export function useWatchPlyrPlayer({
         isPlayingRef.current = true;
         setIsPlaying(true);
         markStarted();
-        if (isNative && fsPhaseRef.current === "idle") {
+        if (fsPhaseRef.current === "idle") {
           enterAppFullscreenRef.current();
-        } else if (isNative && isFullscreenRef.current) {
+        } else if (isFullscreenRef.current) {
           revealHudRef.current();
-        } else if (!isNative) {
+        } else {
           setHudVisible(true);
         }
       });
@@ -1034,11 +1060,7 @@ export function useWatchPlyrPlayer({
         if (!unavailableRef.current && hasFrameRef.current) {
           setShowSpinner(false);
         }
-        if (isNative && isFullscreenRef.current) {
-          scheduleHudHideRef.current();
-        } else if (!isNative) {
-          scheduleHudHideRef.current();
-        }
+        scheduleHudHideRef.current();
       });
       player.on("waiting", () => {
         isPlaybackActiveRef.current = false;
@@ -1077,14 +1099,18 @@ export function useWatchPlyrPlayer({
         if (player) {
           flushProgress(player, true);
         }
-        if (isNative && isFullscreenRef.current) {
+        if (
+          isFullscreenRef.current ||
+          fsPhaseRef.current === "fullscreen" ||
+          fsPhaseRef.current === "entering"
+        ) {
           exitAppFullscreenRef.current();
-        } else if (!isNative && player?.fullscreen.active) {
+        } else if (player?.fullscreen.active) {
           player.fullscreen.exit();
         }
       });
       player.on("controlsshown", () => {
-        if (!isNative || !isFullscreenRef.current) {
+        if (!isFullscreenRef.current) {
           return;
         }
 
@@ -1129,6 +1155,7 @@ export function useWatchPlyrPlayer({
       playerRef.current = null;
       setPlyrRoot(null);
       setIsFullscreen(false);
+      setIsLifted(false);
       setHudVisible(false);
       player?.destroy();
       container.innerHTML = "";
@@ -1154,6 +1181,7 @@ export function useWatchPlyrPlayer({
     started,
     plyrRoot,
     isFullscreen,
+    isLifted,
     isPlaying,
     hudVisible,
     showSpinner,

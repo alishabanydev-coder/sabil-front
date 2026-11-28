@@ -8,6 +8,8 @@ import type { PointerEvent } from "react";
 
 type WatchPlyrFullscreenHudProps = {
   visible: boolean;
+  /** Keep the exit control up even when the rest of the HUD is hidden (e.g. while loading). */
+  exitVisible?: boolean;
   isPlaying: boolean;
   variant?: "fullscreen" | "inline";
   centerButtonSize?: number;
@@ -23,6 +25,7 @@ const CENTER_ICON_SIZE = 32;
 
 const WatchPlyrFullscreenHud = ({
   visible,
+  exitVisible,
   isPlaying,
   variant = "fullscreen",
   centerButtonSize = CENTER_BUTTON_SIZE,
@@ -32,6 +35,7 @@ const WatchPlyrFullscreenHud = ({
   onExitFullscreen,
 }: WatchPlyrFullscreenHudProps) => {
   const isInline = variant === "inline";
+  const showExit = exitVisible ?? visible;
   const handleSurfacePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
@@ -56,7 +60,7 @@ const WatchPlyrFullscreenHud = ({
       sx={{
         position: "absolute",
         inset: 0,
-        zIndex: 20,
+        zIndex: 40,
         pointerEvents: "none",
         transform: "translateZ(0)",
       }}
@@ -87,17 +91,17 @@ const WatchPlyrFullscreenHud = ({
       {!isInline ? (
       <IconButton
         aria-label="Exit fullscreen"
-        aria-hidden={!visible}
-        tabIndex={visible ? 0 : -1}
+        aria-hidden={!showExit}
+        tabIndex={showExit ? 0 : -1}
         onPointerDown={handleExitPointerDown}
         sx={{
           position: "absolute",
           top: "max(12px, env(safe-area-inset-top, 0px))",
           right: "max(12px, env(safe-area-inset-left, 0px))",
-          zIndex: 2,
-          pointerEvents: visible ? "auto" : "none",
-          opacity: visible ? 1 : 0,
-          transform: visible ? "scale(1)" : "scale(0.92)",
+          zIndex: 50,
+          pointerEvents: showExit ? "auto" : "none",
+          opacity: showExit ? 1 : 0,
+          transform: showExit ? "scale(1)" : "scale(0.92)",
           transition: "opacity 0.2s ease, transform 0.2s ease",
           bgcolor: "secondary.main",
           color: "white",

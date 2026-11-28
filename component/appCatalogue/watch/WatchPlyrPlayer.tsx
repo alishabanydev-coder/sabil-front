@@ -3,8 +3,15 @@
 import WatchPlayerPlayIcon from "./WatchPlayerPlayIcon";
 import WatchPlyrFullscreenHud from "./WatchPlyrFullscreenHud";
 import { useWatchPlyrPlayer } from "@/component/appCatalogue/hooks/useWatchPlyrPlayer";
+import ArrowBack from "@mui/icons-material/ArrowBack";
 import VideocamOffOutlined from "@mui/icons-material/VideocamOffOutlined";
-import { CircularProgress, Stack, Typography, useTheme } from "@mui/material";
+import {
+  CircularProgress,
+  IconButton,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { createPortal } from "react-dom";
 
 export {
@@ -48,6 +55,7 @@ const WatchPlyrPlayer = ({
     started,
     plyrRoot,
     isFullscreen,
+    isLifted,
     isPlaying,
     hudVisible,
     showSpinner,
@@ -81,6 +89,34 @@ const WatchPlyrPlayer = ({
           transform: "translateZ(0)",
         }}
       />
+    ) : null;
+
+  const loadingSpinner =
+    showSpinner && !isUnavailable ? (
+      <Stack
+        sx={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 30,
+          alignItems: "center",
+          justifyContent: "center",
+          pointerEvents: "none",
+        }}
+      >
+        <CircularProgress
+          size={90}
+          thickness={4}
+          disableShrink
+          aria-label="Loading video"
+          sx={{
+            color: "primary.light",
+            "& .MuiCircularProgress-circle": {
+              strokeLinecap: "round",
+              animation: "none",
+            },
+          }}
+        />
+      </Stack>
     ) : null;
 
   if (!youtubeId) {
@@ -131,7 +167,12 @@ const WatchPlyrPlayer = ({
       >
         <Stack
           ref={shellRef}
-          className="watch-plyr-shell"
+          className={[
+            "watch-plyr-shell",
+            isLifted ? "watch-plyr-shell--lifted" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
           onClick={(event) => {
             if (started || isUnavailable) {
               return;
@@ -170,32 +211,7 @@ const WatchPlyrPlayer = ({
             }}
           />
           {cover && !plyrRoot ? cover : null}
-          {showSpinner && !isUnavailable ? (
-            <Stack
-              sx={{
-                position: "absolute",
-                inset: 0,
-                zIndex: 30,
-                alignItems: "center",
-                justifyContent: "center",
-                pointerEvents: "none",
-              }}
-            >
-              <CircularProgress
-                size={90}
-                thickness={4}
-                disableShrink
-                aria-label="Loading video"
-                sx={{
-                  color: "primary.light",
-                  "& .MuiCircularProgress-circle": {
-                    strokeLinecap: "round",
-                    animation: "none",
-                  },
-                }}
-              />
-            </Stack>
-          ) : null}
+          {loadingSpinner && !plyrRoot ? loadingSpinner : null}
           {isUnavailable ? (
             <Stack
               role="status"
@@ -226,6 +242,32 @@ const WatchPlyrPlayer = ({
               </Stack>
             </Stack>
           ) : null}
+          {/* Above poster/spinner — not inside plyrRoot — desktop + Capacitor. */}
+          {isLifted && !isUnavailable ? (
+            <IconButton
+              aria-label="Exit fullscreen"
+              onPointerDown={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                handleExitFullscreen();
+              }}
+              sx={{
+                position: "absolute",
+                top: "max(12px, env(safe-area-inset-top, 0px))",
+                right: "max(12px, env(safe-area-inset-right, 0px))",
+                zIndex: 100,
+                bgcolor: "secondary.main",
+                color: "white",
+                boxShadow: (t) =>
+                  `0 2px 10px 2px ${t.palette.secondary.main}`,
+                "&:hover": {
+                  bgcolor: "secondary.main",
+                },
+              }}
+            >
+              <ArrowBack sx={{ fontSize: 32 }} />
+            </IconButton>
+          ) : null}
         </Stack>
       </Stack>
 
@@ -249,13 +291,20 @@ const WatchPlyrPlayer = ({
       ) : null}
 
       {cover && plyrRoot ? createPortal(cover, plyrRoot) : null}
+      {loadingSpinner && plyrRoot
+        ? createPortal(loadingSpinner, plyrRoot)
+        : null}
 
-      {isNative && isFullscreen && plyrRoot
+      {isFullscreen && plyrRoot
         ? createPortal(
             <WatchPlyrFullscreenHud
-              centerButtonSize={NATIVE_PLAY_BUTTON_SIZE}
-              centerIconSize={NATIVE_PLAY_ICON_SIZE}
+              centerButtonSize={
+                isNative ? NATIVE_PLAY_BUTTON_SIZE : 72
+              }
+              centerIconSize={isNative ? NATIVE_PLAY_ICON_SIZE : 56}
               visible={hudVisible}
+              // Shell owns the back button so it stays above poster/loader.
+              exitVisible={false}
               isPlaying={isPlaying}
               onSurfaceTap={handleTogglePlayback}
               onTogglePlayback={handleTogglePlayback}
@@ -265,27 +314,14 @@ const WatchPlyrPlayer = ({
           )
         : null}
 
-      {!isNative && started && plyrRoot
+      {started && !isFullscreen && plyrRoot
         ? createPortal(
             <WatchPlyrFullscreenHud
               variant="inline"
-              centerButtonSize={72}
-              centerIconSize={56}
-              visible={hudVisible}
-              isPlaying={isPlaying}
-              onSurfaceTap={handleTogglePlayback}
-              onTogglePlayback={handleTogglePlayback}
-            />,
-            plyrRoot
-          )
-        : null}
-
-      {isNative && started && !isFullscreen && plyrRoot
-        ? createPortal(
-            <WatchPlyrFullscreenHud
-              variant="inline"
-              centerButtonSize={NATIVE_PLAY_BUTTON_SIZE}
-              centerIconSize={NATIVE_PLAY_ICON_SIZE}
+              centerButtonSize={
+                isNative ? NATIVE_PLAY_BUTTON_SIZE : 72
+              }
+              centerIconSize={isNative ? NATIVE_PLAY_ICON_SIZE : 56}
               visible={hudVisible}
               isPlaying={isPlaying}
               onSurfaceTap={handleTogglePlayback}

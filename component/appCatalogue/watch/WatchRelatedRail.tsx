@@ -305,13 +305,6 @@ function RelatedVideoCard({ item }: { item: WatchCatalogueVideo }) {
                     {compactStat(action.number ?? 0)}
                   </Typography>
                 </Stack>
-                {index < STATS(item).length - 1 && (
-                  <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ height: 22, bgcolor: "rgba(255, 255, 255, 0.3)" }}
-                  />
-                )}
               </Stack>
             ))}
           </Stack>

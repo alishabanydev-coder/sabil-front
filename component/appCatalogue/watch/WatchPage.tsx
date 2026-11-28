@@ -30,14 +30,12 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
     setNativeBelowShift,
   } = useWatchPage(videoId);
 
-  const nativeShiftSx = isNative
-    ? {
-        transform: `translate3d(0, ${nativeBelowShift}px, 0)`,
-        transition: `transform ${FULLSCREEN_ANIM_MS}ms ${
-          nativeBelowShift > 0 ? "ease-out" : "ease-in"
-        }`,
-      }
-    : undefined;
+  const expandShiftSx = {
+    transform: `translate3d(0, ${nativeBelowShift}px, 0)`,
+    transition: `transform ${FULLSCREEN_ANIM_MS}ms ${
+      nativeBelowShift > 0 ? "ease-out" : "ease-in"
+    }`,
+  };
 
   return (
     <Stack
@@ -165,7 +163,7 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
                     duration={video?.duration}
                     thumbnail={videoThumbnail}
                     title={video?.title}
-                    isNative={true}
+                    isNative={isNative}
                     onNativeBelowShift={setNativeBelowShift}
                   />
                 </Stack>
@@ -198,7 +196,7 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
           flexShrink: 0,
           width: "100%",
           zIndex: 2,
-          ...nativeShiftSx,
+          ...expandShiftSx,
           borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
           "&::after": {
             content: '""',
@@ -225,7 +223,7 @@ const WatchPage = ({ videoId }: WatchPageProps) => {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          ...nativeShiftSx,
+          ...expandShiftSx,
         }}
       >
         <WatchRelatedRail

@@ -13,9 +13,11 @@ const FINISHED_RATIO = 0.9;
 export default function VideoProgressBar({
   videoId,
   duration,
+  isNative,
 }: {
   videoId: string;
   duration?: number;
+  isNative?: boolean;
 }) {
   useSyncExternalStore(subscribePlaylist, getPlaylistSnapshot, () => 0);
 
@@ -37,13 +39,15 @@ export default function VideoProgressBar({
         position: "absolute",
         left: 0,
         right: 0,
-        bottom: {
-          xs: "calc(0% + 52px)",
-          sm: "calc(0% + 58px)",
-          md: "calc(0% + 56px)",
-          lg: "calc(0% + 60px)",
-        },
-        height: { xs: 3, lg: 4 },
+        bottom: isNative
+          ? "calc(0% - 0px)"
+          : {
+              xs: "calc(0% + 52px)",
+              sm: "calc(0% + 58px)",
+              md: "calc(0% + 56px)",
+              lg: "calc(0% + 60px)",
+            },
+        height: 4,
         zIndex: 3,
         bgcolor: "rgba(0, 0, 0, 0.35)",
         pointerEvents: "none",

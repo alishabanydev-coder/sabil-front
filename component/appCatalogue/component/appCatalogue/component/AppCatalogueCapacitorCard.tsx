@@ -21,8 +21,10 @@ const playButtonWave = keyframes`
 
 export default function AppCatalogueCapacitorCard({
   video,
+  isNative,
 }: {
   video: VideoData;
+  isNative?: boolean;
 }) {
   const router = useRouter();
 
@@ -125,7 +127,11 @@ export default function AppCatalogueCapacitorCard({
             transition: "transform 0.3s ease",
           }}
         />
-        <VideoProgressBar videoId={video._id} duration={video.duration} />
+        <VideoProgressBar
+          videoId={video._id}
+          duration={video.duration}
+          isNative={isNative}
+        />
       </Box>
 
       {/* Centered play button */}
